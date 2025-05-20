@@ -49,3 +49,39 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY org.eclipse.wst.common.project.facet.core 4 0 2025-05-20 16:02:58.762
 !MESSAGE Project facet wst.jsdt.web has not been defined. It is used in plugin org.eclipse.wst.server.preview.adapter.
+
+!ENTRY org.eclipse.mylyn.tasks.core 2 0 2025-05-20 16:55:09.013
+!MESSAGE Save failed for Task List
+!STACK 1
+org.eclipse.core.runtime.CoreException: Saving Task List failed
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizer.writeTaskList(TaskListExternalizer.java:76)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizationParticipant.lambda$1(TaskListExternalizationParticipant.java:128)
+	at org.eclipse.mylyn.internal.tasks.core.TaskList.run(TaskList.java:735)
+	at org.eclipse.mylyn.internal.tasks.core.TaskList.run(TaskList.java:726)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizationParticipant.save(TaskListExternalizationParticipant.java:131)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.AbstractExternalizationParticipant.execute(AbstractExternalizationParticipant.java:75)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.ExternalizationManager$ExternalizationJob.run(ExternalizationManager.java:227)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+Caused by: java.io.FileNotFoundException: D:\Work_Space\AOS\.metadata\.mylyn\tasks.xml.zip (Access is denied)
+	at java.base/java.io.FileOutputStream.open0(Native Method)
+	at java.base/java.io.FileOutputStream.open(FileOutputStream.java:289)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:230)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:179)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizer.writeTaskList(TaskListExternalizer.java:61)
+	... 7 more
+!SUBENTRY 1 org.eclipse.mylyn.tasks.core 4 0 2025-05-20 16:55:09.015
+!MESSAGE Saving Task List failed
+!STACK 0
+java.io.FileNotFoundException: D:\Work_Space\AOS\.metadata\.mylyn\tasks.xml.zip (Access is denied)
+	at java.base/java.io.FileOutputStream.open0(Native Method)
+	at java.base/java.io.FileOutputStream.open(FileOutputStream.java:289)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:230)
+	at java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:179)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizer.writeTaskList(TaskListExternalizer.java:61)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizationParticipant.lambda$1(TaskListExternalizationParticipant.java:128)
+	at org.eclipse.mylyn.internal.tasks.core.TaskList.run(TaskList.java:735)
+	at org.eclipse.mylyn.internal.tasks.core.TaskList.run(TaskList.java:726)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.TaskListExternalizationParticipant.save(TaskListExternalizationParticipant.java:131)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.AbstractExternalizationParticipant.execute(AbstractExternalizationParticipant.java:75)
+	at org.eclipse.mylyn.internal.tasks.core.externalization.ExternalizationManager$ExternalizationJob.run(ExternalizationManager.java:227)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)

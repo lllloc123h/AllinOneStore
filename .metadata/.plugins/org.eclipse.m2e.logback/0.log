@@ -1,0 +1,134 @@
+2025-05-20 15:59:08,276 [Worker-6: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is not available. Remote download required.
+2025-05-20 16:02:56,519 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.aos:AOS_BE:0.0.1-SNAPSHOT @ D:\Work_Space\AOS\AOS_BE\pom.xml.
+2025-05-20 16:02:57,024 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.e.AbstractTransferListenerAdapter - Downloading https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.4.5/spring-security-test-6.4.5.pom
+2025-05-20 16:02:57,037 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.e.AbstractTransferListenerAdapter - Downloaded https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.4.5/spring-security-test-6.4.5.pom
+2025-05-20 16:02:57,175 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.e.AbstractTransferListenerAdapter - Downloading https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.4.5/spring-security-test-6.4.5.jar
+2025-05-20 16:02:57,268 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.e.AbstractTransferListenerAdapter - Downloaded https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.4.5/spring-security-test-6.4.5.jar
+2025-05-20 16:02:57,923 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AOS_BE/src/main/java
+2025-05-20 16:02:57,924 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AOS_BE/src/main/resources
+2025-05-20 16:02:57,927 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AOS_BE/src/main/resources
+2025-05-20 16:02:57,929 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AOS_BE/src/test/java
+2025-05-20 16:02:57,930 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AOS_BE/src/test/resources
+2025-05-20 16:02:58,944 [Worker-2: Download sources and javadoc] INFO  o.e.m.c.i.e.AbstractTransferListenerAdapter - Downloading https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.4.5/spring-security-test-6.4.5-sources.jar
+2025-05-20 16:02:58,992 [Worker-2: Download sources and javadoc] INFO  o.e.m.c.i.e.AbstractTransferListenerAdapter - Downloaded https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.4.5/spring-security-test-6.4.5-sources.jar
+2025-05-20 16:02:58,997 [Worker-2: Download sources and javadoc] INFO  o.e.m.j.internal.DownloadSourcesJob - Downloaded sources for org.springframework.security:spring-security-test:6.4.5
+2025-05-20 16:02:59,152 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 1 project(s) in 3 sec
+2025-05-20 16:02:59,155 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update started
+2025-05-20 16:02:59,397 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.aos:AOS_BE:0.0.1-SNAPSHOT @ D:\Work_Space\AOS\AOS_BE\pom.xml.
+2025-05-20 16:03:00,149 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AOS_BE/src/main/java
+2025-05-20 16:03:00,150 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AOS_BE/src/main/resources
+2025-05-20 16:03:00,151 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AOS_BE/src/main/resources
+2025-05-20 16:03:00,152 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AOS_BE/src/test/java
+2025-05-20 16:03:00,153 [Worker-11: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AOS_BE/src/test/resources
+2025-05-20 16:03:00,861 [Worker-11: Import Getting Started Content] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Cleaning filtered folder for AOS_BE
+2025-05-20 16:03:00,878 [Worker-11: Import Getting Started Content] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update completed for 1 poms: local refresh takes 0.00 sec, refresh facades takes 0.00 sec, update config takes 0.00 sec 
+2025-05-20 16:03:01,431 [Compiler Source File Reader] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:368) - Instantiated org.burningwave.core.SLF4JManagedLoggerRepository
+2025-05-20 16:03:01,433 [Compiler Source File Reader] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:369) - 
+
+	Configuration values for static components:
+
+		background-executor.all-tasks-monitoring.enabled=\
+			true
+		background-executor.all-tasks-monitoring.interval=\
+			30000
+		background-executor.all-tasks-monitoring.logger.enabled=\
+			false
+		background-executor.all-tasks-monitoring.minimum-elapsed-time-to-consider-a-task-as-probable-dead-locked=\
+			300000
+		background-executor.all-tasks-monitoring.probable-dead-locked-tasks-handling.policy=\
+			log only
+		background-executor.queued-task-executor[0].name=\
+			Low priority tasks
+		background-executor.queued-task-executor[0].priority=\
+			1
+		background-executor.queued-task-executor[1].name=\
+			Normal priority tasks
+		background-executor.queued-task-executor[1].priority=\
+			5
+		background-executor.queued-task-executor[2].name=\
+			High priority tasks
+		background-executor.queued-task-executor[2].priority=\
+			10
+		background-executor.task-creation-tracking.enabled=\
+			${background-executor.all-tasks-monitoring.enabled}
+		banner.additonal-informations=\
+			${Implementation-Title} ${Implementation-Version}
+		banner.additonal-informations.retrieve-from-manifest-file-with-implementation-title=\
+			Burningwave Core
+		banner.file=\
+			org/burningwave/banner.bwb
+		banner.hide=\
+			true
+		buffer-handler.default-allocation-mode=\
+			ByteBuffer::allocateDirect
+		buffer-handler.default-buffer-size=\
+			1024
+		group-name-for-named-elements=\
+			Burningwave
+		iterable-object-helper.default-values-separator=\
+			;
+		iterable-object-helper.parallel-iteration.applicability.default-minimum-collection-size=\
+			2
+		iterable-object-helper.parallel-iteration.applicability.max-runtime-thread-count-threshold=\
+			autodetect
+		iterable-object-helper.parallel-iteration.applicability.output-collection-enabled-types=\
+			java.util.concurrent.ConcurrentHashMap$CollectionView;\
+			java.util.Collections$SynchronizedCollection;\
+			java.util.concurrent.CopyOnWriteArrayList;\
+			java.util.concurrent.CopyOnWriteArraySet;\
+			java.util.concurrent.BlockingQueue;\
+			java.util.concurrent.ConcurrentSkipListSet;\
+			java.util.concurrent.ConcurrentSkipListMap$EntrySet;\
+			java.util.concurrent.ConcurrentSkipListMap$KeySet;\
+			java.util.concurrent.ConcurrentSkipListMap$Values;
+		jvm.driver.init=\
+			false
+		managed-logger.repository=\
+			autodetect
+		managed-logger.repository.enabled=\
+			true
+		managed-logger.repository.logging.warn.disabled-for=\
+			org.burningwave.core.assembler.ComponentContainer$ClassLoader;\
+			org.burningwave.core.classes.MemoryClassLoader;\
+			org.burningwave.core.classes.PathScannerClassLoader;
+		modules.export-all-to-all=\
+			true
+		resource-releaser.enabled=\
+			true
+		synchronizer.all-threads-monitoring.enabled=\
+			false
+		synchronizer.all-threads-monitoring.interval=\
+			90000
+		thread-supplier.default-daemon-flag-value=\
+			true
+		thread-supplier.default-thread-priority=\
+			5
+		thread-supplier.max-detached-thread-count=\
+			${thread-supplier.max-poolable-thread-count}
+		thread-supplier.max-detached-thread-count.elapsed-time-threshold-from-last-increase-for-gradual-decreasing-to-initial-value=\
+			30000
+		thread-supplier.max-detached-thread-count.increasing-step=\
+			autodetect
+		thread-supplier.max-poolable-thread-count=\
+			autodetect
+		thread-supplier.poolable-thread-request-timeout=\
+			6000
+
+
+2025-05-20 16:03:01,434 [Compiler Source File Reader] INFO  o.b.core.jvm.BufferHandler - (BufferHandler.java:127) - default buffer size: 1024 bytes
+2025-05-20 16:03:01,435 [Compiler Source File Reader] INFO  o.b.core.jvm.BufferHandler - (BufferHandler.java:141) - default allocation mode: ByteBuffer::allocateDirect
+2025-05-20 16:03:01,438 [Compiler Source File Reader] INFO  org.burningwave.core.Cache - (Cache.java:76) - Building cache
+2025-05-20 16:03:01,454 [Compiler Source File Reader] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:443) - org.burningwave.core.assembler.StaticComponentContainer initialized in 0.0752176 seconds
+2025-05-20 16:03:02,223 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-05-20 16:03:02,262 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-05-20 16:03:02,268 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\Work_Space\AOS\AOS_BE\src\test\resources
+2025-05-20 16:03:02,268 [Worker-11: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of AOS_BE
+2025-05-20 16:03:02,269 [Worker-11: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for AOS_BE
+2025-05-20 16:55:09,971 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:391) - ... Waiting for all tasks ending
+2025-05-20 16:55:09,975 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:397) - Closing all component containers
+2025-05-20 16:55:09,977 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:403) - Closing FileSystemHelper
+2025-05-20 16:55:09,979 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:409) - ... Waiting for all tasks ending before shutting down the BackgroundExecutor
+2025-05-20 16:55:09,979 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:414) - Shutting down BackgroundExecutor
+2025-05-20 16:55:09,980 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:420) - Stopping all threads monitoring thread
+2025-05-20 16:55:09,981 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:425) - Closing ThreadHolder
+2025-05-20 16:55:09,982 [Burningwave - Resource releaser] INFO  o.b.c.a.StaticComponentContainer - (StaticComponentContainer.java:430) - Shutting down ThreadSupplier
