@@ -1,81 +1,18 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.aos.AOSBE.Entity.Accounts;
-import com.aos.AOSBE.Entity.Authorities;
-import com.aos.AOSBE.Entity.Base_products;
-import com.aos.AOSBE.Entity.Cancels;
-import com.aos.AOSBE.Entity.Cart_items;
-import com.aos.AOSBE.Entity.Catalogs;
-import com.aos.AOSBE.Entity.Categories;
-import com.aos.AOSBE.Entity.Cost_histories;
-import com.aos.AOSBE.Entity.Coupons;
-import com.aos.AOSBE.Entity.Employees;
-import com.aos.AOSBE.Entity.Extend_infors;
-import com.aos.AOSBE.Entity.Extend_values;
-import com.aos.AOSBE.Entity.Order_items;
-import com.aos.AOSBE.Entity.Orders;
-import com.aos.AOSBE.Entity.Payment_method;
-import com.aos.AOSBE.Entity.Price_histories;
-import com.aos.AOSBE.Entity.Product_images;
-import com.aos.AOSBE.Entity.Product_items;
-import com.aos.AOSBE.Entity.PromotionProduct;
-import com.aos.AOSBE.Entity.Promotions;
-import com.aos.AOSBE.Entity.Purchase_order_items;
-import com.aos.AOSBE.Entity.Purchase_orders;
-import com.aos.AOSBE.Entity.Returns;
-import com.aos.AOSBE.Entity.Reviews;
-import com.aos.AOSBE.Entity.Roles;
-import com.aos.AOSBE.Entity.Shipping_method;
-import com.aos.AOSBE.Entity.Suppliers;
-import com.aos.AOSBE.Entity.Trace_xe_action_map;
-import com.aos.AOSBE.Entity.Trace_xe_event_map;
-import com.aos.AOSBE.Entity.User_addresses;
-import com.aos.AOSBE.Entity.User_infors;
-import com.aos.AOSBE.Entity.Variant_values;
-import com.aos.AOSBE.Entity.Variants;
-import com.aos.AOSBE.Entity.Work_histories;
-import com.aos.AOSBE.Repository.AccountsRepository;
-import com.aos.AOSBE.Repository.AuthoritiesRepository;
-import com.aos.AOSBE.Repository.Base_productsRepository;
-import com.aos.AOSBE.Repository.CancelsRepository;
-import com.aos.AOSBE.Repository.Cart_itemsRepository;
-import com.aos.AOSBE.Repository.CatalogsRepository;
-import com.aos.AOSBE.Repository.CategoriesRepository;
-import com.aos.AOSBE.Repository.Cost_historiesRepository;
-import com.aos.AOSBE.Repository.CouponsRepository;
-import com.aos.AOSBE.Repository.EmployeesRepository;
-import com.aos.AOSBE.Repository.Extend_inforsRepository;
-import com.aos.AOSBE.Repository.Extend_valuesRepository;
-import com.aos.AOSBE.Repository.Order_itemsRepository;
-import com.aos.AOSBE.Repository.OrdersRepository;
-import com.aos.AOSBE.Repository.Payment_methodRepository;
-import com.aos.AOSBE.Repository.Price_historiesRepository;
-import com.aos.AOSBE.Repository.Product_imagesRepository;
-import com.aos.AOSBE.Repository.Product_itemsRepository;
-import com.aos.AOSBE.Repository.PromotionProductRepository;
-import com.aos.AOSBE.Repository.PromotionsRepository;
-import com.aos.AOSBE.Repository.Purchase_order_itemsRepository;
-import com.aos.AOSBE.Repository.Purchase_ordersRepository;
-import com.aos.AOSBE.Repository.ReturnsRepository;
-import com.aos.AOSBE.Repository.ReviewsRepository;
-import com.aos.AOSBE.Repository.RolesRepository;
-import com.aos.AOSBE.Repository.Shipping_methodRepository;
-import com.aos.AOSBE.Repository.SuppliersRepository;
-import com.aos.AOSBE.Repository.Trace_xe_action_mapRepository;
-import com.aos.AOSBE.Repository.Trace_xe_event_mapRepository;
-import com.aos.AOSBE.Repository.User_addressesRepository;
-import com.aos.AOSBE.Repository.User_inforsRepository;
-import com.aos.AOSBE.Repository.Variant_valuesRepository;
-import com.aos.AOSBE.Repository.VariantsRepository;
-import com.aos.AOSBE.Repository.Work_historiesRepository;
-
+import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Repository.*;
+import java.util.*;
 public class Service {
 
-    @Autowired
+
+
+  @Autowired
     private AccountsRepository accountsRepository;
 
     public List<Accounts> accountsFindAll() {
@@ -86,7 +23,16 @@ public class Service {
         return accountsRepository.save(accounts);
     }
 
-    @Autowired
+    public Optional<Accounts> accountsFindById(String id) {
+        return accountsRepository.findById(id);
+    }
+
+    public void accountsDeleteById(String id) {
+        accountsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private AuthoritiesRepository authoritiesRepository;
 
     public List<Authorities> authoritiesFindAll() {
@@ -97,7 +43,16 @@ public class Service {
         return authoritiesRepository.save(authorities);
     }
 
-    @Autowired
+    public Optional<Authorities> authoritiesFindById(String id) {
+        return authoritiesRepository.findById(id);
+    }
+
+    public void authoritiesDeleteById(String id) {
+        authoritiesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Base_productsRepository base_productsRepository;
 
     public List<Base_products> base_productsFindAll() {
@@ -108,7 +63,16 @@ public class Service {
         return base_productsRepository.save(base_products);
     }
 
-    @Autowired
+    public Optional<Base_products> base_productsFindById(int id) {
+        return base_productsRepository.findById(id);
+    }
+
+    public void base_productsDeleteById(int id) {
+        base_productsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private CancelsRepository cancelsRepository;
 
     public List<Cancels> cancelsFindAll() {
@@ -119,7 +83,16 @@ public class Service {
         return cancelsRepository.save(cancels);
     }
 
-    @Autowired
+    public Optional<Cancels> cancelsFindById(int id) {
+        return cancelsRepository.findById(id);
+    }
+
+    public void cancelsDeleteById(int id) {
+        cancelsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Cart_itemsRepository cart_itemsRepository;
 
     public List<Cart_items> cart_itemsFindAll() {
@@ -130,7 +103,16 @@ public class Service {
         return cart_itemsRepository.save(cart_items);
     }
 
-    @Autowired
+    public Optional<Cart_items> cart_itemsFindById(int id) {
+        return cart_itemsRepository.findById(id);
+    }
+
+    public void cart_itemsDeleteById(int id) {
+        cart_itemsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private CatalogsRepository catalogsRepository;
 
     public List<Catalogs> catalogsFindAll() {
@@ -141,7 +123,16 @@ public class Service {
         return catalogsRepository.save(catalogs);
     }
 
-    @Autowired
+    public Optional<Catalogs> catalogsFindById(String id) {
+        return catalogsRepository.findById(id);
+    }
+
+    public void catalogsDeleteById(String id) {
+        catalogsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private CategoriesRepository categoriesRepository;
 
     public List<Categories> categoriesFindAll() {
@@ -152,7 +143,16 @@ public class Service {
         return categoriesRepository.save(categories);
     }
 
-    @Autowired
+    public Optional<Categories> categoriesFindById(String id) {
+        return categoriesRepository.findById(id);
+    }
+
+    public void categoriesDeleteById(String id) {
+        categoriesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Cost_historiesRepository cost_historiesRepository;
 
     public List<Cost_histories> cost_historiesFindAll() {
@@ -163,7 +163,16 @@ public class Service {
         return cost_historiesRepository.save(cost_histories);
     }
 
-    @Autowired
+    public Optional<Cost_histories> cost_historiesFindById(int id) {
+        return cost_historiesRepository.findById(id);
+    }
+
+    public void cost_historiesDeleteById(int id) {
+        cost_historiesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private CouponsRepository couponsRepository;
 
     public List<Coupons> couponsFindAll() {
@@ -174,7 +183,16 @@ public class Service {
         return couponsRepository.save(coupons);
     }
 
-    @Autowired
+    public Optional<Coupons> couponsFindById(int id) {
+        return couponsRepository.findById(id);
+    }
+
+    public void couponsDeleteById(int id) {
+        couponsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private EmployeesRepository employeesRepository;
 
     public List<Employees> employeesFindAll() {
@@ -185,7 +203,16 @@ public class Service {
         return employeesRepository.save(employees);
     }
 
-    @Autowired
+    public Optional<Employees> employeesFindById(String id) {
+        return employeesRepository.findById(id);
+    }
+
+    public void employeesDeleteById(String id) {
+        employeesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Extend_inforsRepository extend_inforsRepository;
 
     public List<Extend_infors> extend_inforsFindAll() {
@@ -196,7 +223,16 @@ public class Service {
         return extend_inforsRepository.save(extend_infors);
     }
 
-    @Autowired
+    public Optional<Extend_infors> extend_inforsFindById(String id) {
+        return extend_inforsRepository.findById(id);
+    }
+
+    public void extend_inforsDeleteById(String id) {
+        extend_inforsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Extend_valuesRepository extend_valuesRepository;
 
     public List<Extend_values> extend_valuesFindAll() {
@@ -207,7 +243,16 @@ public class Service {
         return extend_valuesRepository.save(extend_values);
     }
 
-    @Autowired
+    public Optional<Extend_values> extend_valuesFindById(int id) {
+        return extend_valuesRepository.findById(id);
+    }
+
+    public void extend_valuesDeleteById(int id) {
+        extend_valuesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Order_itemsRepository order_itemsRepository;
 
     public List<Order_items> order_itemsFindAll() {
@@ -218,7 +263,16 @@ public class Service {
         return order_itemsRepository.save(order_items);
     }
 
-    @Autowired
+    public Optional<Order_items> order_itemsFindById(int id) {
+        return order_itemsRepository.findById(id);
+    }
+
+    public void order_itemsDeleteById(int id) {
+        order_itemsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private OrdersRepository ordersRepository;
 
     public List<Orders> ordersFindAll() {
@@ -229,7 +283,16 @@ public class Service {
         return ordersRepository.save(orders);
     }
 
-    @Autowired
+    public Optional<Orders> ordersFindById(int id) {
+        return ordersRepository.findById(id);
+    }
+
+    public void ordersDeleteById(int id) {
+        ordersRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Payment_methodRepository payment_methodRepository;
 
     public List<Payment_method> payment_methodFindAll() {
@@ -240,7 +303,16 @@ public class Service {
         return payment_methodRepository.save(payment_method);
     }
 
-    @Autowired
+    public Optional<Payment_method> payment_methodFindById(int id) {
+        return payment_methodRepository.findById(id);
+    }
+
+    public void payment_methodDeleteById(int id) {
+        payment_methodRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Price_historiesRepository price_historiesRepository;
 
     public List<Price_histories> price_historiesFindAll() {
@@ -251,7 +323,16 @@ public class Service {
         return price_historiesRepository.save(price_histories);
     }
 
-    @Autowired
+    public Optional<Price_histories> price_historiesFindById(int id) {
+        return price_historiesRepository.findById(id);
+    }
+
+    public void price_historiesDeleteById(int id) {
+        price_historiesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Product_imagesRepository product_imagesRepository;
 
     public List<Product_images> product_imagesFindAll() {
@@ -262,7 +343,16 @@ public class Service {
         return product_imagesRepository.save(product_images);
     }
 
-    @Autowired
+    public Optional<Product_images> product_imagesFindById(int id) {
+        return product_imagesRepository.findById(id);
+    }
+
+    public void product_imagesDeleteById(int id) {
+        product_imagesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Product_itemsRepository product_itemsRepository;
 
     public List<Product_items> product_itemsFindAll() {
@@ -273,7 +363,16 @@ public class Service {
         return product_itemsRepository.save(product_items);
     }
 
-    @Autowired
+    public Optional<Product_items> product_itemsFindById(int id) {
+        return product_itemsRepository.findById(id);
+    }
+
+    public void product_itemsDeleteById(int id) {
+        product_itemsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private PromotionProductRepository promotionProductRepository;
 
     public List<PromotionProduct> promotionProductFindAll() {
@@ -284,7 +383,16 @@ public class Service {
         return promotionProductRepository.save(promotionProduct);
     }
 
-    @Autowired
+    public Optional<PromotionProduct> promotionProductFindById(int id) {
+        return promotionProductRepository.findById(id);
+    }
+
+    public void promotionProductDeleteById(int id) {
+        promotionProductRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private PromotionsRepository promotionsRepository;
 
     public List<Promotions> promotionsFindAll() {
@@ -295,7 +403,16 @@ public class Service {
         return promotionsRepository.save(promotions);
     }
 
-    @Autowired
+    public Optional<Promotions> promotionsFindById(int id) {
+        return promotionsRepository.findById(id);
+    }
+
+    public void promotionsDeleteById(int id) {
+        promotionsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Purchase_order_itemsRepository purchase_order_itemsRepository;
 
     public List<Purchase_order_items> purchase_order_itemsFindAll() {
@@ -306,7 +423,16 @@ public class Service {
         return purchase_order_itemsRepository.save(purchase_order_items);
     }
 
-    @Autowired
+    public Optional<Purchase_order_items> purchase_order_itemsFindById(int id) {
+        return purchase_order_itemsRepository.findById(id);
+    }
+
+    public void purchase_order_itemsDeleteById(int id) {
+        purchase_order_itemsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Purchase_ordersRepository purchase_ordersRepository;
 
     public List<Purchase_orders> purchase_ordersFindAll() {
@@ -317,7 +443,16 @@ public class Service {
         return purchase_ordersRepository.save(purchase_orders);
     }
 
-    @Autowired
+    public Optional<Purchase_orders> purchase_ordersFindById(int id) {
+        return purchase_ordersRepository.findById(id);
+    }
+
+    public void purchase_ordersDeleteById(int id) {
+        purchase_ordersRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private ReturnsRepository returnsRepository;
 
     public List<Returns> returnsFindAll() {
@@ -328,7 +463,16 @@ public class Service {
         return returnsRepository.save(returns);
     }
 
-    @Autowired
+    public Optional<Returns> returnsFindById(int id) {
+        return returnsRepository.findById(id);
+    }
+
+    public void returnsDeleteById(int id) {
+        returnsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private ReviewsRepository reviewsRepository;
 
     public List<Reviews> reviewsFindAll() {
@@ -339,7 +483,16 @@ public class Service {
         return reviewsRepository.save(reviews);
     }
 
-    @Autowired
+    public Optional<Reviews> reviewsFindById(int id) {
+        return reviewsRepository.findById(id);
+    }
+
+    public void reviewsDeleteById(int id) {
+        reviewsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private RolesRepository rolesRepository;
 
     public List<Roles> rolesFindAll() {
@@ -350,7 +503,16 @@ public class Service {
         return rolesRepository.save(roles);
     }
 
-    @Autowired
+    public Optional<Roles> rolesFindById(int id) {
+        return rolesRepository.findById(id);
+    }
+
+    public void rolesDeleteById(int id) {
+        rolesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Shipping_methodRepository shipping_methodRepository;
 
     public List<Shipping_method> shipping_methodFindAll() {
@@ -361,7 +523,16 @@ public class Service {
         return shipping_methodRepository.save(shipping_method);
     }
 
-    @Autowired
+    public Optional<Shipping_method> shipping_methodFindById(int id) {
+        return shipping_methodRepository.findById(id);
+    }
+
+    public void shipping_methodDeleteById(int id) {
+        shipping_methodRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private SuppliersRepository suppliersRepository;
 
     public List<Suppliers> suppliersFindAll() {
@@ -372,7 +543,16 @@ public class Service {
         return suppliersRepository.save(suppliers);
     }
 
-    @Autowired
+    public Optional<Suppliers> suppliersFindById(int id) {
+        return suppliersRepository.findById(id);
+    }
+
+    public void suppliersDeleteById(int id) {
+        suppliersRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private User_addressesRepository user_addressesRepository;
 
     public List<User_addresses> user_addressesFindAll() {
@@ -383,7 +563,16 @@ public class Service {
         return user_addressesRepository.save(user_addresses);
     }
 
-    @Autowired
+    public Optional<User_addresses> user_addressesFindById(int id) {
+        return user_addressesRepository.findById(id);
+    }
+
+    public void user_addressesDeleteById(int id) {
+        user_addressesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private User_inforsRepository user_inforsRepository;
 
     public List<User_infors> user_inforsFindAll() {
@@ -394,7 +583,16 @@ public class Service {
         return user_inforsRepository.save(user_infors);
     }
 
-    @Autowired
+    public Optional<User_infors> user_inforsFindById(String id) {
+        return user_inforsRepository.findById(id);
+    }
+
+    public void user_inforsDeleteById(String id) {
+        user_inforsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Variant_valuesRepository variant_valuesRepository;
 
     public List<Variant_values> variant_valuesFindAll() {
@@ -405,7 +603,16 @@ public class Service {
         return variant_valuesRepository.save(variant_values);
     }
 
-    @Autowired
+    public Optional<Variant_values> variant_valuesFindById(int id) {
+        return variant_valuesRepository.findById(id);
+    }
+
+    public void variant_valuesDeleteById(int id) {
+        variant_valuesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private VariantsRepository variantsRepository;
 
     public List<Variants> variantsFindAll() {
@@ -416,7 +623,16 @@ public class Service {
         return variantsRepository.save(variants);
     }
 
-    @Autowired
+    public Optional<Variants> variantsFindById(String id) {
+        return variantsRepository.findById(id);
+    }
+
+    public void variantsDeleteById(String id) {
+        variantsRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Work_historiesRepository work_historiesRepository;
 
     public List<Work_histories> work_historiesFindAll() {
@@ -427,7 +643,16 @@ public class Service {
         return work_historiesRepository.save(work_histories);
     }
 
-    @Autowired
+    public Optional<Work_histories> work_historiesFindById(int id) {
+        return work_historiesRepository.findById(id);
+    }
+
+    public void work_historiesDeleteById(int id) {
+        work_historiesRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Trace_xe_action_mapRepository trace_xe_action_mapRepository;
 
     public List<Trace_xe_action_map> trace_xe_action_mapFindAll() {
@@ -438,7 +663,16 @@ public class Service {
         return trace_xe_action_mapRepository.save(trace_xe_action_map);
     }
 
-    @Autowired
+    public Optional<Trace_xe_action_map> trace_xe_action_mapFindById(String id) {
+        return trace_xe_action_mapRepository.findById(id);
+    }
+
+    public void trace_xe_action_mapDeleteById(String id) {
+        trace_xe_action_mapRepository.deleteById(id);
+    }
+
+
+  @Autowired
     private Trace_xe_event_mapRepository trace_xe_event_mapRepository;
 
     public List<Trace_xe_event_map> trace_xe_event_mapFindAll() {
@@ -447,6 +681,14 @@ public class Service {
 
     public Trace_xe_event_map trace_xe_event_mapSave(Trace_xe_event_map trace_xe_event_map) {
         return trace_xe_event_mapRepository.save(trace_xe_event_map);
+    }
+
+    public Optional<Trace_xe_event_map> trace_xe_event_mapFindById(String id) {
+        return trace_xe_event_mapRepository.findById(id);
+    }
+
+    public void trace_xe_event_mapDeleteById(String id) {
+        trace_xe_event_mapRepository.deleteById(id);
     }
 
 }
