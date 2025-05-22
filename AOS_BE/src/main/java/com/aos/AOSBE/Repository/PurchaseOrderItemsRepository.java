@@ -1,0 +1,10 @@
+package com.aos.AOSBE.Repository;
+
+import com.aos.AOSBE.Entity.PurchaseOrderItems;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PurchaseOrderItemsRepository extends JpaRepository<PurchaseOrderItems, Integer> {
+    // Add custom query methods here if needed
+}
