@@ -23,9 +23,6 @@ public class TraceXeActionMap {
     @Column(name = "xe_action_name")
     private String xeActionName;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_email")
-    private Accounts accounts;
 
 
 

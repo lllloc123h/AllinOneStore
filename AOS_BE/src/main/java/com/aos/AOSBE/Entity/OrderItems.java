@@ -18,24 +18,26 @@ public class OrderItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "order_id")
-    private int orderId;
+    @Column(name = "qty")
+    private int qty;
     @Column(name = "cost")
     private double cost;
     @Column(name = "selling_price")
     private double sellingPrice;
+    @Column(name = "total")
+    private double total;
     @Column(name = "coupon_code")
     private int couponCode;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "name")
-    private ExtendInfors extendExtendInfors;
+    @JoinColumn(name = "order_id")
+    private Orders orders;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "product_item_id")
     private ProductItems productProductItems;
 
 

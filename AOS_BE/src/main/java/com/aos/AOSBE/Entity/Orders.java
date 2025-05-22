@@ -18,8 +18,8 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "account_email")
-    private String accountEmail;
+    @Column(name = "created_by_employee_id")
+    private int createdByEmployeeId;
     @Column(name = "shipping_status")
     private String shippingStatus;
     @Column(name = "shipping_fee")
@@ -28,29 +28,30 @@ public class Orders {
     private int point;
     @Column(name = "total")
     private double total;
-    @Column(name = "shipping_infor")
-    private String shippingInfor;
+    @Column(name = "order_infor")
+    private String orderInfor;
     @Column(name = "shipped_date")
     private LocalDateTime shippedDate;
     @Column(name = "payment_status")
     private String paymentStatus;
-    @Column(name = "payment_method")
-    private String paymentMethod;
-    @Column(name = "shipping_method")
-    private String shippingMethod;
+    @Column(name = "shipping_method_id")
+    private int shippingMethodId;
     @Column(name = "note")
     private String note;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Orders orders;
+    @JoinColumn(name = "account_id")
+    private Accounts accounts;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private ProductItems productProductItems;
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethods paymentPaymentMethods;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private ShippingMethods shippingShippingMethods;
 
 
 

@@ -34,17 +34,11 @@ public class Promotions {
     private LocalDateTime startAt;
     @Column(name = "end_at")
     private LocalDateTime endAt;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private ProductItems productProductItems;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promotion_id")
-    private Promotions promotions;
 
 
 

@@ -9,45 +9,34 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_items")
+@Table(name = "components")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductItems {
+public class Components {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
     @Column(name = "name")
     private String name;
-    @Column(name = "cost")
-    private double cost;
-    @Column(name = "price")
-    private double price;
-    @Column(name = "turn_buy")
-    private int turnBuy;
+    @Column(name = "material")
+    private String material;
+    @Column(name = "color")
+    private String color;
+    @Column(name = "unit")
+    private String unit;
     @Column(name = "description")
     private String description;
-    @Column(name = "for_sale")
-    private boolean forSale;
-    @Column(name = "sku")
-    private String sku;
-    @Column(name = "safety_stock")
-    private int safetyStock;
     @Column(name = "qty")
     private int qty;
-    @Column(name = "sell_start")
-    private LocalDateTime sellStart;
-    @Column(name = "sell_end")
-    private LocalDateTime sellEnd;
+    @Column(name = "type")
+    private String type;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "base_id")
-    private BaseProducts baseBaseProducts;
 
 
 

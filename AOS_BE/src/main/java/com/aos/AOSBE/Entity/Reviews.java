@@ -18,22 +18,20 @@ public class Reviews {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "item_id")
-    private int itemId;
-    @Column(name = "account_email")
-    private String accountEmail;
+    @Column(name = "account_id")
+    private int accountId;
     @Column(name = "rating")
     private int rating;
     @Column(name = "comment")
     private String comment;
     @Column(name = "images")
     private String images;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item_id")
-    private OrderItems orderOrderItems;
+    @JoinColumn(name = "product_item_id")
+    private ProductItems productProductItems;
 
 
 

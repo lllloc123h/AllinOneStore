@@ -18,10 +18,10 @@ public class AuthoritiesService {
     public Authorities authoritiesSave(Authorities authorities) {
         return authoritiesRepository.save(authorities);
     }
-    public Optional<Authorities> authoritiesFindById(String id) {
+    public Optional<Authorities> authoritiesFindById(int id) {
         return authoritiesRepository.findById(id);
     }
-    public void authoritiesDeleteById(String id) {
+    public void authoritiesDeleteById(int id) {
         authoritiesRepository.deleteById(id);
     }
 }

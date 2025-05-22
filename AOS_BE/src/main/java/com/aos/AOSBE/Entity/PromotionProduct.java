@@ -18,24 +18,23 @@ public class PromotionProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "promotion_id")
-    private int promotionId;
-    @Column(name = "item_id")
-    private int itemId;
     @Column(name = "discount_type")
     private String discountType;
     @Column(name = "discount_value")
     private double discountValue;
     @Column(name = "max_discount")
     private double maxDiscount;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "base_id")
-    private BaseProducts baseBaseProducts;
+    @JoinColumn(name = "product_item_id")
+    private ProductItems productProductItems;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promotion_id")
+    private Promotions promotions;
 
 
 

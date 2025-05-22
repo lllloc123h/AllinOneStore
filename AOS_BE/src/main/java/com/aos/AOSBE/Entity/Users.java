@@ -9,15 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_infors")
+@Table(name = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfors {
+public class Users {
     @Id
-    
-    @Column(name = "email")
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "average_order_value")
     private double averageOrderValue;
     @Column(name = "user_rank")
@@ -28,13 +26,13 @@ public class UserInfors {
     private int totalOrder;
     @Column(name = "loyalty_point")
     private int loyaltyPoint;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_email")
+    @JoinColumn(name = "account_id")
     private Accounts accounts;
 
 

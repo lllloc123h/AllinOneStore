@@ -18,16 +18,14 @@ public class CostHistories {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "item_id")
-    private int itemId;
     @Column(name = "cost")
     private double cost;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "catalog_name")
-    private Catalogs catalogs;
+    @JoinColumn(name = "product_item_id")
+    private ProductItems productProductItems;
 
 
 

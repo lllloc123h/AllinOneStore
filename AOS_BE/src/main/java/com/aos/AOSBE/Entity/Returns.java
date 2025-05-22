@@ -18,8 +18,6 @@ public class Returns {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "order_item_id")
-    private int orderItemId;
     @Column(name = "reason")
     private String reason;
     @Column(name = "image1")
@@ -34,14 +32,14 @@ public class Returns {
     private String isReturnedItem;
     @Column(name = "status")
     private String status;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id")
-    private Suppliers suppliers;
+    @JoinColumn(name = "order_product_item_id")
+    private OrderItems orderOrderItems;
 
 
 

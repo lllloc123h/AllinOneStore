@@ -18,18 +18,16 @@ public class VariantValues {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "variant_name")
-    private String variantName;
     @Column(name = "value")
     private String value;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
-    private Accounts accounts;
+    @JoinColumn(name = "variant_id")
+    private Variants variants;
 
 
 

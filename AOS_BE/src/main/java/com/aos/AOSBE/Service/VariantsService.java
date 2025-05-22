@@ -18,10 +18,10 @@ public class VariantsService {
     public Variants variantsSave(Variants variants) {
         return variantsRepository.save(variants);
     }
-    public Optional<Variants> variantsFindById(String id) {
+    public Optional<Variants> variantsFindById(int id) {
         return variantsRepository.findById(id);
     }
-    public void variantsDeleteById(String id) {
+    public void variantsDeleteById(int id) {
         variantsRepository.deleteById(id);
     }
 }

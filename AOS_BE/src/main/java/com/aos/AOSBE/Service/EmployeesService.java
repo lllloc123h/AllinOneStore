@@ -18,10 +18,10 @@ public class EmployeesService {
     public Employees employeesSave(Employees employees) {
         return employeesRepository.save(employees);
     }
-    public Optional<Employees> employeesFindById(String id) {
+    public Optional<Employees> employeesFindById(int id) {
         return employeesRepository.findById(id);
     }
-    public void employeesDeleteById(String id) {
+    public void employeesDeleteById(int id) {
         employeesRepository.deleteById(id);
     }
 }

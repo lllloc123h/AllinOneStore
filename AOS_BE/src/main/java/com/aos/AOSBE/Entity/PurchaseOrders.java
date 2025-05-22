@@ -18,8 +18,6 @@ public class PurchaseOrders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "supplier_id")
-    private int supplierId;
     @Column(name = "order_date")
     private LocalDateTime orderDate;
     @Column(name = "expected_date")
@@ -34,15 +32,12 @@ public class PurchaseOrders {
     private String note;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private ProductItems productProductItems;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "purchase_order_id")
-    private PurchaseOrders purchasePurchaseOrders;
+    @JoinColumn(name = "supplier_id")
+    private Suppliers suppliers;
 
 
 

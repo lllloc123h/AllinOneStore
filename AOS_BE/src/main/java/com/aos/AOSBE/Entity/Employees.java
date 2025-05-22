@@ -15,9 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Employees {
     @Id
-    
-    @Column(name = "email")
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "salary")
     private double salary;
     @Column(name = "province")
@@ -28,14 +26,14 @@ public class Employees {
     private String ward;
     @Column(name = "street")
     private String street;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item")
-    private OrderItems orderOrderItems;
+    @JoinColumn(name = "account_id")
+    private Accounts accounts;
 
 
 

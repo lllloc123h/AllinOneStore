@@ -18,20 +18,18 @@ public class CartItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "account_email")
-    private String accountEmail;
-    @Column(name = "item_id")
-    private int itemId;
+    @Column(name = "account_id")
+    private int accountId;
     @Column(name = "qty")
     private int qty;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Orders orders;
+    @JoinColumn(name = "product_item_id")
+    private ProductItems productProductItems;
 
 
 

@@ -9,21 +9,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "extend_values")
+@Table(name = "payment_methods")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExtendValues {
+public class PaymentMethods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(name = "order_id")
+    private int orderId;
     @Column(name = "name")
     private String name;
-    @Column(name = "item_id")
-    private int itemId;
-    @Column(name = "value")
-    private String value;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "is_active")
+    private boolean isActive;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
 
 

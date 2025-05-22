@@ -18,17 +18,23 @@ public class PurchaseOrderItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "purchase_order_id")
-    private int purchaseOrderId;
-    @Column(name = "item_id")
-    private int itemId;
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "qty")
+    private int qty;
     @Column(name = "cost")
     private double cost;
     @Column(name = "total_cost")
     private double totalCost;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "component_id")
+    private Components components;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchase_order_id")
+    private PurchaseOrders purchasePurchaseOrders;
 
 
 

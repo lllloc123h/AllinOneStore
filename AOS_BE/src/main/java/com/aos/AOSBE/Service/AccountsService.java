@@ -18,10 +18,10 @@ public class AccountsService {
     public Accounts accountsSave(Accounts accounts) {
         return accountsRepository.save(accounts);
     }
-    public Optional<Accounts> accountsFindById(String id) {
+    public Optional<Accounts> accountsFindById(int id) {
         return accountsRepository.findById(id);
     }
-    public void accountsDeleteById(String id) {
+    public void accountsDeleteById(int id) {
         accountsRepository.deleteById(id);
     }
 }

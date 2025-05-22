@@ -18,8 +18,6 @@ public class UserAddresses {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "account_email")
-    private String accountEmail;
     @Column(name = "recipient_name")
     private String recipientName;
     @Column(name = "phone")
@@ -38,11 +36,14 @@ public class UserAddresses {
     private boolean isdefault;
     @Column(name = "note")
     private String note;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Accounts accounts;
 
 
 

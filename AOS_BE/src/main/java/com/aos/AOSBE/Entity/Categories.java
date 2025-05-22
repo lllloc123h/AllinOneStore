@@ -15,16 +15,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Categories {
     @Id
-    
-    @Column(name = "name")
-    private String name;
-    @Column(name = "catalog_name")
-    private String catalogName;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catalog_id")
+    private Catalogs catalogs;
 
 
 

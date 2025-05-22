@@ -18,8 +18,6 @@ public class Coupons {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "order_item")
-    private int orderItem;
     @Column(name = "code")
     private String code;
     @Column(name = "description")
@@ -50,12 +48,12 @@ public class Coupons {
     private LocalDateTime endAt;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private ProductItems productProductItems;
+    @JoinColumn(name = "order_item")
+    private OrderItems orderOrderItems;
 
 
 

@@ -18,10 +18,10 @@ public class CatalogsService {
     public Catalogs catalogsSave(Catalogs catalogs) {
         return catalogsRepository.save(catalogs);
     }
-    public Optional<Catalogs> catalogsFindById(String id) {
+    public Optional<Catalogs> catalogsFindById(int id) {
         return catalogsRepository.findById(id);
     }
-    public void catalogsDeleteById(String id) {
+    public void catalogsDeleteById(int id) {
         catalogsRepository.deleteById(id);
     }
 }

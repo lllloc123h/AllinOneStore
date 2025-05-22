@@ -20,8 +20,8 @@ public class BaseProducts {
     private int id;
     @Column(name = "name")
     private String name;
-    @Column(name = "category_name")
-    private String categoryName;
+    @Column(name = "unit")
+    private String unit;
     @Column(name = "main_image")
     private String mainImage;
     @Column(name = "turn_buy")
@@ -30,11 +30,14 @@ public class BaseProducts {
     private int rating;
     @Column(name = "for_sale")
     private boolean forSale;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Categories categories;
 
 
 

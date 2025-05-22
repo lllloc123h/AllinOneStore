@@ -9,11 +9,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "shipping_method")
+@Table(name = "shipping_methods")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShippingMethod {
+public class ShippingMethods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -31,12 +31,6 @@ public class ShippingMethod {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_email")
-    private Accounts accounts;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_name")
-    private Authorities authorities;
 
 
 

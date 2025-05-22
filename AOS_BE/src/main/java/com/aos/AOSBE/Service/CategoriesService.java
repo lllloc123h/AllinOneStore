@@ -18,10 +18,10 @@ public class CategoriesService {
     public Categories categoriesSave(Categories categories) {
         return categoriesRepository.save(categories);
     }
-    public Optional<Categories> categoriesFindById(String id) {
+    public Optional<Categories> categoriesFindById(int id) {
         return categoriesRepository.findById(id);
     }
-    public void categoriesDeleteById(String id) {
+    public void categoriesDeleteById(int id) {
         categoriesRepository.deleteById(id);
     }
 }
