@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Employees {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     @Column(name = "email")
     private String email;
     @Column(name = "salary")
@@ -28,10 +29,14 @@ public class Employees {
     @Column(name = "street")
     private String street;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_item")
+    private OrderItems orderOrderItems;
+
 
 
 

@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,9 @@ public class Reviews {
     @Column(name = "id")
     private int id;
     @Column(name = "item_id")
-    private int item_id;
+    private int itemId;
     @Column(name = "account_email")
-    private String account_email;
+    private String accountEmail;
     @Column(name = "rating")
     private int rating;
     @Column(name = "comment")
@@ -28,8 +29,12 @@ public class Reviews {
     @Column(name = "images")
     private String images;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_item_id")
+    private OrderItems orderOrderItems;
+
 
 
 

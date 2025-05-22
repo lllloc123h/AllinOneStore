@@ -9,23 +9,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "extend_infors")
+@Table(name = "sysdiagrams")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExtendInfors {
+public class Sysdiagrams {
     @Id
     
     @Column(name = "name")
     private String name;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "principal_id")
+    private int principalId;
+    @Column(name = "diagram_id")
+    private int diagramId;
+    @Column(name = "version")
+    private int version;
+    @Column(name = "definition")
+    private String definition;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
-    private Accounts accounts;
 
 
 

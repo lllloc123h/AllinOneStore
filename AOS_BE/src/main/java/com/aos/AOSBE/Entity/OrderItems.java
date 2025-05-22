@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,20 +19,25 @@ public class OrderItems {
     @Column(name = "id")
     private int id;
     @Column(name = "order_id")
-    private int order_id;
-    @Column(name = "item_id")
-    private int item_id;
+    private int orderId;
     @Column(name = "cost")
     private double cost;
     @Column(name = "selling_price")
-    private double selling_price;
+    private double sellingPrice;
     @Column(name = "coupon_code")
-    private int coupon_code;
+    private int couponCode;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "name")
+    private ExtendInfors extendExtendInfors;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private ProductItems productProductItems;
+
 
 
 

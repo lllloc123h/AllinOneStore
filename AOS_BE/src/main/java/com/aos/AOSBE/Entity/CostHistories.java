@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,16 @@ public class CostHistories {
     @Column(name = "id")
     private int id;
     @Column(name = "item_id")
-    private int item_id;
+    private int itemId;
     @Column(name = "cost")
     private double cost;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "catalog_name")
+    private Catalogs catalogs;
+
 
 
 

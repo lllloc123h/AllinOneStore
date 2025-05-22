@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +15,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TraceXeActionMap {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     @Column(name = "trace_column_id")
-    private String trace_column_id;
+    private String traceColumnId;
     @Column(name = "package_name")
-    private String package_name;
+    private String packageName;
     @Column(name = "xe_action_name")
-    private String xe_action_name;
+    private String xeActionName;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_email")
+    private Accounts accounts;
+
 
 
 

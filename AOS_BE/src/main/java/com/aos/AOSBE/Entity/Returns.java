@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class Returns {
     @Column(name = "id")
     private int id;
     @Column(name = "order_item_id")
-    private int order_item_id;
+    private int orderItemId;
     @Column(name = "reason")
     private String reason;
     @Column(name = "image1")
@@ -28,16 +29,20 @@ public class Returns {
     @Column(name = "image3")
     private String image3;
     @Column(name = "is_returned_money")
-    private String is_returned_money;
+    private String isReturnedMoney;
     @Column(name = "is_returned_item")
-    private String is_returned_item;
+    private String isReturnedItem;
     @Column(name = "status")
     private String status;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
+    private Suppliers suppliers;
+
 
 
 

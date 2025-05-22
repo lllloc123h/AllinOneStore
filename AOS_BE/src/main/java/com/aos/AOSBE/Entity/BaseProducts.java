@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,20 +21,21 @@ public class BaseProducts {
     @Column(name = "name")
     private String name;
     @Column(name = "category_name")
-    private String category_name;
+    private String categoryName;
     @Column(name = "main_image")
-    private String main_image;
+    private String mainImage;
     @Column(name = "turn_buy")
-    private int turn_buy;
+    private int turnBuy;
     @Column(name = "rating")
     private int rating;
     @Column(name = "for_sale")
-    private boolean for_sale;
+    private boolean forSale;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+
 
 
 

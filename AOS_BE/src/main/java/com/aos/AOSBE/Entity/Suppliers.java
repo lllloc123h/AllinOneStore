@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ public class Suppliers {
     @Column(name = "name")
     private String name;
     @Column(name = "contact_name")
-    private String contact_name;
+    private String contactName;
     @Column(name = "phone")
     private String phone;
     @Column(name = "email")
@@ -30,10 +31,14 @@ public class Suppliers {
     @Column(name = "status")
     private boolean status;
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Orders orders;
+
 
 
 

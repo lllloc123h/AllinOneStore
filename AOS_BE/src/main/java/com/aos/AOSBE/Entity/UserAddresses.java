@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,9 @@ public class UserAddresses {
     @Column(name = "id")
     private int id;
     @Column(name = "account_email")
-    private String account_email;
+    private String accountEmail;
     @Column(name = "recipient_name")
-    private String recipient_name;
+    private String recipientName;
     @Column(name = "phone")
     private String phone;
     @Column(name = "province")
@@ -38,10 +39,11 @@ public class UserAddresses {
     @Column(name = "note")
     private String note;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+
 
 
 

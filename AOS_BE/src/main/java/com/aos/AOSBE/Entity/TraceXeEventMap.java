@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +15,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TraceXeEventMap {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     @Column(name = "trace_event_id")
-    private String trace_event_id;
+    private String traceEventId;
     @Column(name = "package_name")
-    private String package_name;
+    private String packageName;
     @Column(name = "xe_event_name")
-    private String xe_event_name;
+    private String xeEventName;
    
+
 
 
 

@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,11 @@ public class ExtendValues {
     @Column(name = "name")
     private String name;
     @Column(name = "item_id")
-    private int item_id;
+    private int itemId;
     @Column(name = "value")
     private String value;
    
+
 
 
 

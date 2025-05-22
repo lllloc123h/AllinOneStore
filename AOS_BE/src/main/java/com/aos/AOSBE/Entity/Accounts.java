@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 
 import java.time.*;
 import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Accounts {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     @Column(name = "email")
     private String email;
     @Column(name = "password")
@@ -26,10 +27,11 @@ public class Accounts {
     @Column(name = "phone")
     private String phone;
     @Column(name = "create_at")
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
     @Column(name = "update_at")
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
    
+
 
 
 
