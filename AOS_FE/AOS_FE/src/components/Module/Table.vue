@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container-fluid">
     <h1 class="h3 fw-bold mb-4">Dynamic Data Table</h1>
 
     <div v-if="loading" class="text-primary">Loading...</div>

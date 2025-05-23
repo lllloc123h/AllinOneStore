@@ -1,18 +1,18 @@
 <template>
-    <div></div>
-    <div class="container row">
-
-        <aside class="col-3">aside</aside>
-        <article class="col-9">
-            <Table TableName="Accounts"></Table>
-        </article>
-    </div>
+    <ModuleQuanLy :TableName="props.TableName"></ModuleQuanLy>
 </template>
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-import Table from '../Module/Table.vue'
+import ModuleQuanLy from '../Admin/ModuleQuanLy.vue'
+
+const props = defineProps({
+  TableName: {
+    type: String,
+    required: true
+  }
+})
 </script>
 
 <style scoped>

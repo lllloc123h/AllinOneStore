@@ -1,17 +1,19 @@
 <template>
-    <div></div>
-    <div class="container row">
-
-        <aside class="col-3">aside</aside>
-        <article class="col-9">
+    
+    <div class="container row">        
+        <div class="col-3">
+            <Dashboard></Dashboard>
+        </div>
+        <div class="col-9">
             <Table :TableName="props.TableName"></Table>
-        </article>
+        </div>
     </div>
 </template>
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Table from '../Module/Table.vue'
+import Dashboard from '../Module/Dashboard.vue'
 
 const props = defineProps({
   TableName: {
