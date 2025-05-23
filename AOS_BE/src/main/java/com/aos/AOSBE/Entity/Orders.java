@@ -34,8 +34,6 @@ public class Orders {
     private LocalDateTime shippedDate;
     @Column(name = "payment_status")
     private String paymentStatus;
-    @Column(name = "shipping_method_id")
-    private int shippingMethodId;
     @Column(name = "note")
     private String note;
     @Column(name = "created_at")
@@ -50,7 +48,7 @@ public class Orders {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethods paymentPaymentMethods;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_method_id")
+    @JoinColumn(name = "shipping_method_id")
     private ShippingMethods shippingShippingMethods;
 
 

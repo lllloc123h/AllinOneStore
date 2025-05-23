@@ -1,13 +1,18 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import java.util.*;
+
+
+@Service
 public class AccountsService {
 	@Autowired
     private AccountsRepository accountsRepository;
