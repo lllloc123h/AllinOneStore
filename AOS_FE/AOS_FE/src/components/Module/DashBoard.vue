@@ -8,20 +8,8 @@
 
                 <!-- Each link in its own row -->
                 <div class="mb-12">
-                    <RouterLink to="/Admin/QuanLyTaiKhoan" class="nav-link text-white">
+                    <RouterLink to="/Admin/Accounts" class="nav-link text-white">
                         Accounts
-                    </RouterLink>
-                </div>
-
-                <div class="mb-12">
-                    <RouterLink to="/Admin/UserManagement" class="nav-link text-white">
-                        User Management
-                    </RouterLink>
-                </div>
-
-                <div class="mb-12">
-                    <RouterLink to="/Admin/StaffManagement" class="nav-link text-white">
-                        Staff Management
                     </RouterLink>
                 </div>
             </nav>

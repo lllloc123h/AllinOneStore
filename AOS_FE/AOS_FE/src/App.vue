@@ -6,5 +6,3 @@ import QuanLyModule from './components/Admin/ModuleQuanLy.vue'
 <template>
   <router-view />
 </template>
-
-

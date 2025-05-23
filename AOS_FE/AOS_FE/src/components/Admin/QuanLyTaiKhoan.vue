@@ -1,5 +1,5 @@
 <template>
-    <ModuleQuanLy :TableName="props.TableName"></ModuleQuanLy>
+    <ModuleQuanLy :TableName="props.TableName" :id="props.id"></ModuleQuanLy>
 </template>
 <script setup>
 import { ref, watch, onMounted } from 'vue'
@@ -8,10 +8,14 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import ModuleQuanLy from '../Admin/ModuleQuanLy.vue'
 
 const props = defineProps({
-  TableName: {
-    type: String,
-    required: true
-  }
+    TableName: {
+        type: String,
+        required: true
+    },
+    id: {
+        type: String,
+        required: true
+    }
 })
 </script>
 

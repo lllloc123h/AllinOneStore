@@ -5,12 +5,12 @@ import adminRoutes from './Admin/AdminRouter.js'
 
 // Merge all routes
 const routes = [
-  ...adminRoutes
+    ...adminRoutes
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+    history: createWebHistory(),
+    routes
 })
 
 export default router
