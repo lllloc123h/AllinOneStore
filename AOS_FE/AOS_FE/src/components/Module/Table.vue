@@ -20,7 +20,7 @@
                         {{ item[key] }}
                     </td>
                     <td class="row">
-                        <button type="button" @click="goToView(index)" class="btn btn-primary me-2 row-6">Edit</button>
+                        <button type="button" @click="goToView(index+1)" class="btn btn-primary me-2 row-6">Edit</button>
                         <button type="button" @click="" class="btn btn-danger row-6">Delete</button>
 
                     </td>

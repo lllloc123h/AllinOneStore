@@ -6,7 +6,7 @@ export default [
         path: '/Admin/Accounts',
         component: QuanLyTaiKhoan,
         name: 'QuanLyTaiKhoan',
-        props: {id:"0", TableName: 'Accounts' }
+        props: {id:"-1", TableName: 'Accounts' }
     },
     {
         path: '/Admin/Accounts/view/:id',
