@@ -8,9 +8,14 @@
 
                 <!-- Each link in its own row -->
                 <div class="mb-12">
-                    <RouterLink to="/Admin/Accounts" class="nav-link text-white">
-                        Accounts
-                    </RouterLink>
+
+                    <div v-for="(items, index) in listDashBoard" :key="key" class="mb-3">
+                        <button @click="goToView(items)" class="nav-link text-white">
+                            {{items}}
+                        </button>
+
+                       
+                    </div>
                 </div>
             </nav>
 
@@ -26,6 +31,17 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 import 'bootstrap/dist/css/bootstrap.min.css'
+defineProps({
+    listDashBoard: {
+        type: Array,
+        required: true
+    }
+})
 
+function goToView(id) {
+    router.push(`/Admin/${props.TableName}/view/${id}`)
+}
 </script>
