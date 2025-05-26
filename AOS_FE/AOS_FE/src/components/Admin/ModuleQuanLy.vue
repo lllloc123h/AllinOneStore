@@ -1,5 +1,4 @@
 <template>
-
     <div class="container row">
         <div class="col-3">
             <Dashboard :listDashBoard="props.listDashBoard"></Dashboard>
@@ -34,8 +33,4 @@ const props = defineProps({
 
 </script>
 
-<style scoped>
-table {
-    border-collapse: collapse;
-}
-</style>
+

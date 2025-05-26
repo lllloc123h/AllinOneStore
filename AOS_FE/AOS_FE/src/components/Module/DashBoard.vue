@@ -9,7 +9,7 @@
                 <!-- Each link in its own row -->
                 <div class="mb-12">
 
-                    <div v-for="(items, index) in listDashBoard" :key="key" class="mb-3">
+                    <div v-for="(items, index) in props.listDashBoard"  class="mb-3">
                         <button @click="goToView(items)" class="nav-link text-white">
                             {{items}}
                         </button>
@@ -19,10 +19,6 @@
                 </div>
             </nav>
 
-            <!-- Main content area -->
-            <main class="col-9 p-4 overflow-auto">
-                <router-view />
-            </main>
 
         </div>
     </div>
@@ -34,7 +30,7 @@ import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import 'bootstrap/dist/css/bootstrap.min.css'
-defineProps({
+const props = defineProps({
     listDashBoard: {
         type: Array,
         required: true

@@ -1,62 +1,70 @@
-import QuanLyTaiKhoan from '../../components/Admin/QuanLyTaiKhoan.vue'
-// import QuanLyDonHang from '../../components/Admin/QuanLyDonHang.vue'
-import QuanLyHinhAnhSanPham from '../../components/Admin/QuanLyHinhAnhSanPham.vue'
-import QuanLyNhanVien from '../../components/Admin/QuanLyNhanVien.vue'
-import QuanLyPhuongThucThanhToan from '../../components/Admin/QuanLyPhuongThucThanhToan.vue'
-import QuanLySanPham from '../../components/Admin/QuanLySanPham.vue'
-function getUserDashBoard(/**user.id */){
-    
-}
+import ModuleQuanLy from '../../components/Admin/ModuleQuanLy.vue'
+const listDashBoard = [
+        "Accounts",
+        "Authorities",
+        "BaseProducts",
+        "Cancels",
+        "Catalogs",
+        "Categories",
+        "CostHistories",
+        "Coupons",
+        "News",
+        "Orders",
+        "PaymetMethods",
+        "Promotions",
+        "ProductItems", 
+]
 
 export default [
     {
         path: '/Admin/Accounts',
-        component: QuanLyTaiKhoan,
+        component: ModuleQuanLy,
         name: 'QuanLyTaiKhoan',
-        props: {id:"-1", TableName: 'Accounts' }
+        props: { id: "-1", TableName: 'Accounts',listDashBoard:listDashBoard }
     },
     {
         path: '/Admin/Accounts/view/:id',
-        component: QuanLyTaiKhoan,
+        component: ModuleQuanLy,
         name: 'AdminViewAccount',
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Accounts' })
+        props: route => ({ id: route.params.id, action: 'view', TableName: 'Accounts',listDashBoard:listDashBoard })
     },
     {
         path: '/Admin/Accounts/update/:id',
-        component: QuanLyTaiKhoan,
+        component: ModuleQuanLy,
         name: 'AdminUpdateAccount',
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Accounts' })
+        props: route => ({ id: route.params.id, action: 'update', TableName: 'Accounts' ,listDashBoard:listDashBoard})
     },
     {
         path: '/Admin/Accounts/delete/:id',
-        component: QuanLyTaiKhoan,
+        component: ModuleQuanLy,
         name: 'AdminDeleteAccount',
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Accounts' })
+        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Accounts' ,listDashBoard:listDashBoard})
     }
-    
-    // ,{
-    //     path: '/Admin/ProductItems',
-    //     component: QuanLySanPham,
-    //     name: 'QuanLyTaiKhoan',
-    //     props: {id:"-1", TableName: 'ProductItems' }
-    // },
-    // {
-    //     path: '/Admin/ProductItems/view/:id',
-    //     component: QuanLySanPham,
-    //     name: 'AdminViewAccount',
-    //     props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductItems' })
-    // },
+
+    ,{
+        path: '/Admin/ProductItems',
+        component: ModuleQuanLy,
+        name: 'QuanLySanPham',
+        props: {id:"-1", TableName: 'ProductItems' ,listDashBoard:listDashBoard }
+    }
+    ,
+    {
+        path: '/Admin/ProductItems/view/:id',
+        component: ModuleQuanLy,
+        name: 'AdminViewAccount',
+        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductItems' ,listDashBoard:listDashBoard})
+    },
     // {
     //     path: '/Admin/ProductItems/update/:id',
-    //     component: QuanLySanPham,
+    //     component: ModuleQuanLy,
     //     name: 'AdminUpdateAccount',
-    //     props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductItems' })
+    //     props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductItems' ,listDashBoard:listDashBoard})
     // },
     // {
     //     path: '/Admin/ProductItems/delete/:id',
-    //     component: QuanLySanPham,
+    //     component: ModuleQuanLy,
     //     name: 'AdminDeleteAccount',
-    //     props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductItems' })
+    //     props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductItems',listDashBoard:listDashBoard })
     // }
     // ,{
     //     path: '/Admin/PaymentMethods',
@@ -81,30 +89,6 @@ export default [
     //     component: QuanLyPhuongThucThanhToan,
     //     name: 'AdminDeleteAccount',
     //     props: route => ({ id: route.params.id, action: 'delete', TableName: 'PaymentMethods' })
-    // }
-    // ,{
-    //     path: '/Admin/Employees',
-    //     component: QuanLyNhanVien,
-    //     name: 'QuanLyTaiKhoan',
-    //     props: {id:"-1", TableName: 'Employees' }
-    // },
-    // {
-    //     path: '/Admin/Employees/view/:id',
-    //     component: QuanLyNhanVien,
-    //     name: 'AdminViewAccount',
-    //     props: route => ({ id: route.params.id, action: 'view', TableName: 'Employees' })
-    // },
-    // {
-    //     path: '/Admin/Employees/update/:id',
-    //     component: QuanLyNhanVien,
-    //     name: 'AdminUpdateAccount',
-    //     props: route => ({ id: route.params.id, action: 'update', TableName: 'Employees' })
-    // },
-    // {
-    //     path: '/Admin/Employees/delete/:id',
-    //     component: QuanLyNhanVien,
-    //     name: 'AdminDeleteAccount',
-    //     props: route => ({ id: route.params.id, action: 'delete', TableName: 'Employees' })
     // }
     // ,{
     //     path: '/Admin/ProductImages',

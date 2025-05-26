@@ -1,11 +1,11 @@
 <template>
     <div class="container-fluid">
-        <h1 class="h3 fw-bold mb-4">Dynamic Data Table</h1>
+        <h1 class="h3 fw-bold mb-4">{{props.TableName}}</h1>
 
         <div v-if="loading" class="text-primary">Loading...</div>
         <div v-if="error" class="text-danger">{{ error }}</div>
 
-        <table v-if="data.length" class="table table-bordered table-hover">
+        <table v-if="data.length" class="table table-bordered table-hover container-fluid">
             <thead class="table-light">
                 <tr>
                     <th v-for="key in columns" :key="key">
@@ -59,7 +59,7 @@ const fetchData = async () => {
     loading.value = true
     error.value = null
     try {
-        const response = await fetch("http://localhost:8080/Api/Admin/" + props.TableName)
+        const response = await fetch("http://localhost:8080/Api/Admin/" + props.TableName+ "?page=0"+"&size=5")
         if (!response.ok) throw new Error('Failed to fetch data')
         const json = await response.json()
         data.value = Array.isArray(json) ? json : [json]
