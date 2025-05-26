@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class ShippingMethodsService {
 	@Autowired
-    private ShippingMethodsRepository shippingShippingMethodsRepository;
+    private ShippingMethodsRepository shippingMethodsRepository;
 
-    public List<ShippingMethods> shippingShippingMethodsFindAll() {
-        return shippingShippingMethodsRepository.findAll();
+    public List<ShippingMethods> shippingMethodsFindAll() {
+        return shippingMethodsRepository.findAll();
     }
-    public ShippingMethods shippingShippingMethodsSave(ShippingMethods shippingShippingMethods) {
-        return shippingShippingMethodsRepository.save(shippingShippingMethods);
+    public ShippingMethods shippingMethodsSave(ShippingMethods shippingMethods) {
+        return shippingMethodsRepository.save(shippingMethods);
     }
-    public Optional<ShippingMethods> shippingShippingMethodsFindById(int id) {
-        return shippingShippingMethodsRepository.findById(id);
+    public Optional<ShippingMethods> shippingMethodsFindById(int id) {
+        return shippingMethodsRepository.findById(id);
     }
-    public void shippingShippingMethodsDeleteById(int id) {
-        shippingShippingMethodsRepository.deleteById(id);
+    public void shippingMethodsDeleteById(int id) {
+        shippingMethodsRepository.deleteById(id);
     }
 }

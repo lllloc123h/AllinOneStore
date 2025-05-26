@@ -18,24 +18,32 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "created_by_employee_id")
-    private int createdByEmployeeId;
+    @Column(name = "shipping_method_id")
+    private int shippingMethodId;
     @Column(name = "shipping_status")
     private String shippingStatus;
-    @Column(name = "shipping_fee")
-    private double shippingFee;
-    @Column(name = "point")
-    private int point;
-    @Column(name = "total")
-    private double total;
-    @Column(name = "order_infor")
-    private String orderInfor;
+    @Column(name = "estimated_shipping_fee")
+    private double estimatedShippingFee;
+    @Column(name = "freeship_coupon_code")
+    private String freeshipCouponCode;
+    @Column(name = "actual_shipping_fee")
+    private double actualShippingFee;
+    @Column(name = "discount_coupon_code")
+    private String discountCouponCode;
+    @Column(name = "discount_value")
+    private double discountValue;
     @Column(name = "shipped_date")
     private LocalDateTime shippedDate;
     @Column(name = "payment_status")
     private String paymentStatus;
     @Column(name = "note")
     private String note;
+    @Column(name = "point")
+    private int point;
+    @Column(name = "final_total")
+    private double finalTotal;
+    @Column(name = "order_infor")
+    private String orderInfor;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -46,10 +54,10 @@ public class Orders {
     private Accounts accounts;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
-    private PaymentMethods paymentPaymentMethods;
+    private PaymentMethods paymentMethods;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_method_id")
-    private ShippingMethods shippingShippingMethods;
+    private ShippingMethods shippingMethods;
 
 
 

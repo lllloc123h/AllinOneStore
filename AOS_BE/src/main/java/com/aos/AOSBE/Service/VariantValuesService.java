@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class VariantValuesService {
 	@Autowired
-    private VariantValuesRepository variantVariantValuesRepository;
+    private VariantValuesRepository variantValuesRepository;
 
-    public List<VariantValues> variantVariantValuesFindAll() {
-        return variantVariantValuesRepository.findAll();
+    public List<VariantValues> variantValuesFindAll() {
+        return variantValuesRepository.findAll();
     }
-    public VariantValues variantVariantValuesSave(VariantValues variantVariantValues) {
-        return variantVariantValuesRepository.save(variantVariantValues);
+    public VariantValues variantValuesSave(VariantValues variantValues) {
+        return variantValuesRepository.save(variantValues);
     }
-    public Optional<VariantValues> variantVariantValuesFindById(int id) {
-        return variantVariantValuesRepository.findById(id);
+    public Optional<VariantValues> variantValuesFindById(int id) {
+        return variantValuesRepository.findById(id);
     }
-    public void variantVariantValuesDeleteById(int id) {
-        variantVariantValuesRepository.deleteById(id);
+    public void variantValuesDeleteById(int id) {
+        variantValuesRepository.deleteById(id);
     }
 }

@@ -30,11 +30,11 @@ public class PurchaseOrderItems {
     private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "component_id")
-    private Components components;
+    @JoinColumn(name = "product_item_id")
+    private ProductItems productItems;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
-    private PurchaseOrders purchasePurchaseOrders;
+    private PurchaseOrders purchaseOrders;
 
 
 

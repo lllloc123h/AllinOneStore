@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentMethodsService {
 	@Autowired
-    private PaymentMethodsRepository paymentPaymentMethodsRepository;
+    private PaymentMethodsRepository paymentMethodsRepository;
 
-    public List<PaymentMethods> paymentPaymentMethodsFindAll() {
-        return paymentPaymentMethodsRepository.findAll();
+    public List<PaymentMethods> paymentMethodsFindAll() {
+        return paymentMethodsRepository.findAll();
     }
-    public PaymentMethods paymentPaymentMethodsSave(PaymentMethods paymentPaymentMethods) {
-        return paymentPaymentMethodsRepository.save(paymentPaymentMethods);
+    public PaymentMethods paymentMethodsSave(PaymentMethods paymentMethods) {
+        return paymentMethodsRepository.save(paymentMethods);
     }
-    public Optional<PaymentMethods> paymentPaymentMethodsFindById(int id) {
-        return paymentPaymentMethodsRepository.findById(id);
+    public Optional<PaymentMethods> paymentMethodsFindById(int id) {
+        return paymentMethodsRepository.findById(id);
     }
-    public void paymentPaymentMethodsDeleteById(int id) {
-        paymentPaymentMethodsRepository.deleteById(id);
+    public void paymentMethodsDeleteById(int id) {
+        paymentMethodsRepository.deleteById(id);
     }
 }

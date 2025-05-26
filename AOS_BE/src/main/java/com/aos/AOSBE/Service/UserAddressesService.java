@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserAddressesService {
 	@Autowired
-    private UserAddressesRepository userUserAddressesRepository;
+    private UserAddressesRepository userAddressesRepository;
 
-    public List<UserAddresses> userUserAddressesFindAll() {
-        return userUserAddressesRepository.findAll();
+    public List<UserAddresses> userAddressesFindAll() {
+        return userAddressesRepository.findAll();
     }
-    public UserAddresses userUserAddressesSave(UserAddresses userUserAddresses) {
-        return userUserAddressesRepository.save(userUserAddresses);
+    public UserAddresses userAddressesSave(UserAddresses userAddresses) {
+        return userAddressesRepository.save(userAddresses);
     }
-    public Optional<UserAddresses> userUserAddressesFindById(int id) {
-        return userUserAddressesRepository.findById(id);
+    public Optional<UserAddresses> userAddressesFindById(int id) {
+        return userAddressesRepository.findById(id);
     }
-    public void userUserAddressesDeleteById(int id) {
-        userUserAddressesRepository.deleteById(id);
+    public void userAddressesDeleteById(int id) {
+        userAddressesRepository.deleteById(id);
     }
 }

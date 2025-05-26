@@ -27,7 +27,9 @@ public class CategoriesAPI {
 	private CategoriesService categoriesService;
 
 	@GetMapping("/Categories")
-	public ResponseEntity<List<Categories>> getAllCategoriesApi() {
+	public ResponseEntity<List<Categories>> getAllCategoriesApi(	
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
 		List<Categories> categories = categoriesService.categoriesFindAll();
 		return ResponseEntity.ok(categories);
 	}

@@ -18,8 +18,6 @@ public class CartItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "account_id")
-    private int accountId;
     @Column(name = "qty")
     private int qty;
     @Column(name = "created_at")
@@ -28,8 +26,11 @@ public class CartItems {
     private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Accounts accounts;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")
-    private ProductItems productProductItems;
+    private ProductItems productItems;
 
 
 

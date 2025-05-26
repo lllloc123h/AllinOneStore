@@ -24,16 +24,20 @@ public class Promotions {
     private String description;
     @Column(name = "type")
     private String type;
-    @Column(name = "min_order_amount")
-    private double minOrderAmount;
     @Column(name = "discount_type")
     private String discountType;
     @Column(name = "discount_value")
     private double discountValue;
+    @Column(name = "combo_price")
+    private double comboPrice;
+    @Column(name = "usage_limit")
+    private int usageLimit;
     @Column(name = "start_at")
     private LocalDateTime startAt;
     @Column(name = "end_at")
     private LocalDateTime endAt;
+    @Column(name = "is_active")
+    private boolean isActive;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

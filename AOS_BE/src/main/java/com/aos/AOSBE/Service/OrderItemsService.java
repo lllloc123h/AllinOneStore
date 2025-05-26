@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderItemsService {
 	@Autowired
-    private OrderItemsRepository orderOrderItemsRepository;
+    private OrderItemsRepository orderItemsRepository;
 
-    public List<OrderItems> orderOrderItemsFindAll() {
-        return orderOrderItemsRepository.findAll();
+    public List<OrderItems> orderItemsFindAll() {
+        return orderItemsRepository.findAll();
     }
-    public OrderItems orderOrderItemsSave(OrderItems orderOrderItems) {
-        return orderOrderItemsRepository.save(orderOrderItems);
+    public OrderItems orderItemsSave(OrderItems orderItems) {
+        return orderItemsRepository.save(orderItems);
     }
-    public Optional<OrderItems> orderOrderItemsFindById(int id) {
-        return orderOrderItemsRepository.findById(id);
+    public Optional<OrderItems> orderItemsFindById(int id) {
+        return orderItemsRepository.findById(id);
     }
-    public void orderOrderItemsDeleteById(int id) {
-        orderOrderItemsRepository.deleteById(id);
+    public void orderItemsDeleteById(int id) {
+        orderItemsRepository.deleteById(id);
     }
 }

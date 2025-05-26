@@ -1,0 +1,61 @@
+package com.aos.AOSBE.API;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Service.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
+@RestController
+@RequestMapping("/Api/Admin")
+@CrossOrigin(origins = "http://localhost:5173")
+public class ShippingMethodsAPI {
+	@Autowired
+	private ShippingMethodsService shippingMethodsService;
+
+	@GetMapping("/ShippingMethods")
+	public ResponseEntity<List<ShippingMethods>> getAllShippingMethodsApi(	
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		List<ShippingMethods> shippingMethods = shippingMethodsService.shippingMethodsFindAll();
+		return ResponseEntity.ok(shippingMethods);
+	}
+
+	@GetMapping("/ShippingMethods/{id}")
+	public ResponseEntity<ShippingMethods> getShippingMethodsByIdApi(@PathVariable int id) {
+		ShippingMethods shippingMethods =(ShippingMethods)shippingMethodsService.shippingMethodsFindById(id).orElse(new ShippingMethods());
+		return ResponseEntity.ok(shippingMethods);
+	}
+	@PostMapping("/ShippingMethods")
+	public ResponseEntity<ShippingMethods> addNewShippingMethods(@RequestBody ShippingMethods entity) {
+	    ShippingMethods saved = shippingMethodsService.shippingMethodsSave(entity);
+	    return ResponseEntity.ok(saved);
+	}
+
+	@PutMapping("/ShippingMethods")
+	public ResponseEntity<ShippingMethods> updateShippingMethods(@RequestBody ShippingMethods entity) {
+	    ShippingMethods updated = shippingMethodsService.shippingMethodsSave(entity); 
+	    return ResponseEntity.ok(updated);
+	}
+	@DeleteMapping("/ShippingMethods/{id}")
+	public ResponseEntity<Void> deleteShippingMethods(@PathVariable int id) {
+	    shippingMethodsService.shippingMethodsDeleteById(id); 
+	    return ResponseEntity.noContent().build(); 
+	}
+
+
+	
+}

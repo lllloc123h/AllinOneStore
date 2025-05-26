@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class TraceXeEventMapService {
 	@Autowired
-    private TraceXeEventMapRepository traceTraceXeEventMapRepository;
+    private TraceXeEventMapRepository traceXeEventMapRepository;
 
-    public List<TraceXeEventMap> traceTraceXeEventMapFindAll() {
-        return traceTraceXeEventMapRepository.findAll();
+    public List<TraceXeEventMap> traceXeEventMapFindAll() {
+        return traceXeEventMapRepository.findAll();
     }
-    public TraceXeEventMap traceTraceXeEventMapSave(TraceXeEventMap traceTraceXeEventMap) {
-        return traceTraceXeEventMapRepository.save(traceTraceXeEventMap);
+    public TraceXeEventMap traceXeEventMapSave(TraceXeEventMap traceXeEventMap) {
+        return traceXeEventMapRepository.save(traceXeEventMap);
     }
-    public Optional<TraceXeEventMap> traceTraceXeEventMapFindById(String id) {
-        return traceTraceXeEventMapRepository.findById(id);
+    public Optional<TraceXeEventMap> traceXeEventMapFindById(String id) {
+        return traceXeEventMapRepository.findById(id);
     }
-    public void traceTraceXeEventMapDeleteById(String id) {
-        traceTraceXeEventMapRepository.deleteById(id);
+    public void traceXeEventMapDeleteById(String id) {
+        traceXeEventMapRepository.deleteById(id);
     }
 }

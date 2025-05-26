@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class CartItemsService {
 	@Autowired
-    private CartItemsRepository cartCartItemsRepository;
+    private CartItemsRepository cartItemsRepository;
 
-    public List<CartItems> cartCartItemsFindAll() {
-        return cartCartItemsRepository.findAll();
+    public List<CartItems> cartItemsFindAll() {
+        return cartItemsRepository.findAll();
     }
-    public CartItems cartCartItemsSave(CartItems cartCartItems) {
-        return cartCartItemsRepository.save(cartCartItems);
+    public CartItems cartItemsSave(CartItems cartItems) {
+        return cartItemsRepository.save(cartItems);
     }
-    public Optional<CartItems> cartCartItemsFindById(int id) {
-        return cartCartItemsRepository.findById(id);
+    public Optional<CartItems> cartItemsFindById(int id) {
+        return cartItemsRepository.findById(id);
     }
-    public void cartCartItemsDeleteById(int id) {
-        cartCartItemsRepository.deleteById(id);
+    public void cartItemsDeleteById(int id) {
+        cartItemsRepository.deleteById(id);
     }
 }

@@ -24,12 +24,12 @@ public class ProductItems {
     private double cost;
     @Column(name = "price")
     private double price;
+    @Column(name = "is_promote")
+    private boolean isPromote;
     @Column(name = "turn_buy")
     private int turnBuy;
     @Column(name = "description")
     private String description;
-    @Column(name = "for_sale")
-    private boolean forSale;
     @Column(name = "sku")
     private String sku;
     @Column(name = "safety_stock")
@@ -47,7 +47,7 @@ public class ProductItems {
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "base_id")
-    private BaseProducts baseBaseProducts;
+    private BaseProducts baseProducts;
 
 
 

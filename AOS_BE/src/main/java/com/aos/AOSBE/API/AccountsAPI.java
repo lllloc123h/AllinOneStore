@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aos.AOSBE.Entity.Accounts;
-import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Service.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,34 +22,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/Api/Admin")
 @CrossOrigin(origins = "http://localhost:5173")
-public class AccountAPI {
+public class AccountsAPI {
 	@Autowired
 	private AccountsService accountsService;
 
 	@GetMapping("/Accounts")
-	public ResponseEntity<List<Accounts>> getAllAccountsApi() {
+	public ResponseEntity<List<Accounts>> getAllAccountsApi(	
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
 		List<Accounts> accounts = accountsService.accountsFindAll();
 		return ResponseEntity.ok(accounts);
 	}
 
 	@GetMapping("/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
-		Accounts accounts =(Accounts) accountsService.accountsFindById(id).orElse(new Accounts());
+		Accounts accounts =(Accounts)accountsService.accountsFindById(id).orElse(new Accounts());
 		return ResponseEntity.ok(accounts);
 	}
 	@PostMapping("/Accounts")
-	public ResponseEntity<Accounts> addNewAccount(@RequestBody Accounts entity) {
+	public ResponseEntity<Accounts> addNewAccounts(@RequestBody Accounts entity) {
 	    Accounts saved = accountsService.accountsSave(entity);
 	    return ResponseEntity.ok(saved);
 	}
 
 	@PutMapping("/Accounts")
-	public ResponseEntity<Accounts> updateAccount(@RequestBody Accounts entity) {
+	public ResponseEntity<Accounts> updateAccounts(@RequestBody Accounts entity) {
 	    Accounts updated = accountsService.accountsSave(entity); 
 	    return ResponseEntity.ok(updated);
 	}
 	@DeleteMapping("/Accounts/{id}")
-	public ResponseEntity<Void> deleteAccount(@PathVariable int id) {
+	public ResponseEntity<Void> deleteAccounts(@PathVariable int id) {
 	    accountsService.accountsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 
 	}

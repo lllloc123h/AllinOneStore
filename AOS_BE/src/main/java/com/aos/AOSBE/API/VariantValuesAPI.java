@@ -1,0 +1,61 @@
+package com.aos.AOSBE.API;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Service.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
+@RestController
+@RequestMapping("/Api/Admin")
+@CrossOrigin(origins = "http://localhost:5173")
+public class VariantValuesAPI {
+	@Autowired
+	private VariantValuesService variantValuesService;
+
+	@GetMapping("/VariantValues")
+	public ResponseEntity<List<VariantValues>> getAllVariantValuesApi(	
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		List<VariantValues> variantValues = variantValuesService.variantValuesFindAll();
+		return ResponseEntity.ok(variantValues);
+	}
+
+	@GetMapping("/VariantValues/{id}")
+	public ResponseEntity<VariantValues> getVariantValuesByIdApi(@PathVariable int id) {
+		VariantValues variantValues =(VariantValues)variantValuesService.variantValuesFindById(id).orElse(new VariantValues());
+		return ResponseEntity.ok(variantValues);
+	}
+	@PostMapping("/VariantValues")
+	public ResponseEntity<VariantValues> addNewVariantValues(@RequestBody VariantValues entity) {
+	    VariantValues saved = variantValuesService.variantValuesSave(entity);
+	    return ResponseEntity.ok(saved);
+	}
+
+	@PutMapping("/VariantValues")
+	public ResponseEntity<VariantValues> updateVariantValues(@RequestBody VariantValues entity) {
+	    VariantValues updated = variantValuesService.variantValuesSave(entity); 
+	    return ResponseEntity.ok(updated);
+	}
+	@DeleteMapping("/VariantValues/{id}")
+	public ResponseEntity<Void> deleteVariantValues(@PathVariable int id) {
+	    variantValuesService.variantValuesDeleteById(id); 
+	    return ResponseEntity.noContent().build(); 
+	}
+
+
+	
+}

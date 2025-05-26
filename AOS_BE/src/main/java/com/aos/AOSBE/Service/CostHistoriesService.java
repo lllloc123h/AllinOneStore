@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class CostHistoriesService {
 	@Autowired
-    private CostHistoriesRepository costCostHistoriesRepository;
+    private CostHistoriesRepository costHistoriesRepository;
 
-    public List<CostHistories> costCostHistoriesFindAll() {
-        return costCostHistoriesRepository.findAll();
+    public List<CostHistories> costHistoriesFindAll() {
+        return costHistoriesRepository.findAll();
     }
-    public CostHistories costCostHistoriesSave(CostHistories costCostHistories) {
-        return costCostHistoriesRepository.save(costCostHistories);
+    public CostHistories costHistoriesSave(CostHistories costHistories) {
+        return costHistoriesRepository.save(costHistories);
     }
-    public Optional<CostHistories> costCostHistoriesFindById(int id) {
-        return costCostHistoriesRepository.findById(id);
+    public Optional<CostHistories> costHistoriesFindById(int id) {
+        return costHistoriesRepository.findById(id);
     }
-    public void costCostHistoriesDeleteById(int id) {
-        costCostHistoriesRepository.deleteById(id);
+    public void costHistoriesDeleteById(int id) {
+        costHistoriesRepository.deleteById(id);
     }
 }

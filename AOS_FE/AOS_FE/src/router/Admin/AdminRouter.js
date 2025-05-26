@@ -1,5 +1,5 @@
 import QuanLyTaiKhoan from '../../components/Admin/QuanLyTaiKhoan.vue'
-import QuanLyDonHang from '../../components/Admin/QuanLyDonHang.vue'
+// import QuanLyDonHang from '../../components/Admin/QuanLyDonHang.vue'
 import QuanLyHinhAnhSanPham from '../../components/Admin/QuanLyHinhAnhSanPham.vue'
 import QuanLyNhanVien from '../../components/Admin/QuanLyNhanVien.vue'
 import QuanLyPhuongThucThanhToan from '../../components/Admin/QuanLyPhuongThucThanhToan.vue'

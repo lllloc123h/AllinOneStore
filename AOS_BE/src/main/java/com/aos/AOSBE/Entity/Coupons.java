@@ -34,10 +34,8 @@ public class Coupons {
     private int usageLimit;
     @Column(name = "usage_per_customer")
     private int usagePerCustomer;
-    @Column(name = "start_date")
-    private LocalDateTime startDate;
-    @Column(name = "end_date")
-    private LocalDateTime endDate;
+    @Column(name = "allow_voucher")
+    private boolean allowVoucher;
     @Column(name = "active")
     private boolean active;
     @Column(name = "customer_group")
@@ -51,9 +49,6 @@ public class Coupons {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item")
-    private OrderItems orderOrderItems;
 
 
 

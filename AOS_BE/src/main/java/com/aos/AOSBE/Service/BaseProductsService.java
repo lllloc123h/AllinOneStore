@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class BaseProductsService {
 	@Autowired
-    private BaseProductsRepository baseBaseProductsRepository;
+    private BaseProductsRepository baseProductsRepository;
 
-    public List<BaseProducts> baseBaseProductsFindAll() {
-        return baseBaseProductsRepository.findAll();
+    public List<BaseProducts> baseProductsFindAll() {
+        return baseProductsRepository.findAll();
     }
-    public BaseProducts baseBaseProductsSave(BaseProducts baseBaseProducts) {
-        return baseBaseProductsRepository.save(baseBaseProducts);
+    public BaseProducts baseProductsSave(BaseProducts baseProducts) {
+        return baseProductsRepository.save(baseProducts);
     }
-    public Optional<BaseProducts> baseBaseProductsFindById(int id) {
-        return baseBaseProductsRepository.findById(id);
+    public Optional<BaseProducts> baseProductsFindById(int id) {
+        return baseProductsRepository.findById(id);
     }
-    public void baseBaseProductsDeleteById(int id) {
-        baseBaseProductsRepository.deleteById(id);
+    public void baseProductsDeleteById(int id) {
+        baseProductsRepository.deleteById(id);
     }
 }

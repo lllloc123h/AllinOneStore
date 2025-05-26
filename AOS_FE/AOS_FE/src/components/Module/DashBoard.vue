@@ -41,7 +41,7 @@ defineProps({
     }
 })
 
-function goToView(id) {
-    router.push(`/Admin/${props.TableName}/view/${id}`)
+function goToView(tableName) {
+    router.push(`/Admin/${tableName}`)
 }
 </script>

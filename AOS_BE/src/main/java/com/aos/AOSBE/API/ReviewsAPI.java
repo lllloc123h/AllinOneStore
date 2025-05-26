@@ -1,0 +1,61 @@
+package com.aos.AOSBE.API;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Service.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
+@RestController
+@RequestMapping("/Api/Admin")
+@CrossOrigin(origins = "http://localhost:5173")
+public class ReviewsAPI {
+	@Autowired
+	private ReviewsService reviewsService;
+
+	@GetMapping("/Reviews")
+	public ResponseEntity<List<Reviews>> getAllReviewsApi(	
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		List<Reviews> reviews = reviewsService.reviewsFindAll();
+		return ResponseEntity.ok(reviews);
+	}
+
+	@GetMapping("/Reviews/{id}")
+	public ResponseEntity<Reviews> getReviewsByIdApi(@PathVariable int id) {
+		Reviews reviews =(Reviews)reviewsService.reviewsFindById(id).orElse(new Reviews());
+		return ResponseEntity.ok(reviews);
+	}
+	@PostMapping("/Reviews")
+	public ResponseEntity<Reviews> addNewReviews(@RequestBody Reviews entity) {
+	    Reviews saved = reviewsService.reviewsSave(entity);
+	    return ResponseEntity.ok(saved);
+	}
+
+	@PutMapping("/Reviews")
+	public ResponseEntity<Reviews> updateReviews(@RequestBody Reviews entity) {
+	    Reviews updated = reviewsService.reviewsSave(entity); 
+	    return ResponseEntity.ok(updated);
+	}
+	@DeleteMapping("/Reviews/{id}")
+	public ResponseEntity<Void> deleteReviews(@PathVariable int id) {
+	    reviewsService.reviewsDeleteById(id); 
+	    return ResponseEntity.noContent().build(); 
+	}
+
+
+	
+}

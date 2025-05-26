@@ -35,9 +35,6 @@ public class PurchaseOrders {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id")
-    private Suppliers suppliers;
 
 
 

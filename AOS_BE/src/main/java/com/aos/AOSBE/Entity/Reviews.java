@@ -18,8 +18,6 @@ public class Reviews {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "account_id")
-    private int accountId;
     @Column(name = "rating")
     private int rating;
     @Column(name = "comment")
@@ -30,8 +28,11 @@ public class Reviews {
     private LocalDateTime createdAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Accounts accounts;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")
-    private ProductItems productProductItems;
+    private ProductItems productItems;
 
 
 

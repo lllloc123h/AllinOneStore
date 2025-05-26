@@ -18,8 +18,10 @@ public class VariantValues {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "value")
-    private String value;
+    @Column(name = "signal_sku")
+    private String signalSku;
+    @Column(name = "description")
+    private String description;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

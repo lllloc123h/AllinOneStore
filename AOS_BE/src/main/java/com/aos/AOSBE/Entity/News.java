@@ -9,27 +9,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "suppliers")
+@Table(name = "news")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Suppliers {
+public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "contact_name")
-    private String contactName;
-    @Column(name = "phone")
-    private String phone;
-    @Column(name = "email")
-    private String email;
-    @Column(name = "address")
-    private String address;
-    @Column(name = "status")
-    private boolean status;
+    @Column(name = "image")
+    private String image;
+    @Column(name = "is_home")
+    private boolean isHome;
+    @Column(name = "description")
+    private String description;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

@@ -18,10 +18,14 @@ public class OrderItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(name = "promotion_id")
+    private int promotionId;
     @Column(name = "qty")
     private int qty;
     @Column(name = "cost")
     private double cost;
+    @Column(name = "is_gift")
+    private boolean isGift;
     @Column(name = "selling_price")
     private double sellingPrice;
     @Column(name = "total")
@@ -38,7 +42,7 @@ public class OrderItems {
     private Orders orders;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")
-    private ProductItems productProductItems;
+    private ProductItems productItems;
 
 
 

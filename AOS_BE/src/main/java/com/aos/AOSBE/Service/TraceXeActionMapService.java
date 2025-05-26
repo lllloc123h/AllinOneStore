@@ -10,18 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class TraceXeActionMapService {
 	@Autowired
-    private TraceXeActionMapRepository traceTraceXeActionMapRepository;
+    private TraceXeActionMapRepository traceXeActionMapRepository;
 
-    public List<TraceXeActionMap> traceTraceXeActionMapFindAll() {
-        return traceTraceXeActionMapRepository.findAll();
+    public List<TraceXeActionMap> traceXeActionMapFindAll() {
+        return traceXeActionMapRepository.findAll();
     }
-    public TraceXeActionMap traceTraceXeActionMapSave(TraceXeActionMap traceTraceXeActionMap) {
-        return traceTraceXeActionMapRepository.save(traceTraceXeActionMap);
+    public TraceXeActionMap traceXeActionMapSave(TraceXeActionMap traceXeActionMap) {
+        return traceXeActionMapRepository.save(traceXeActionMap);
     }
-    public Optional<TraceXeActionMap> traceTraceXeActionMapFindById(String id) {
-        return traceTraceXeActionMapRepository.findById(id);
+    public Optional<TraceXeActionMap> traceXeActionMapFindById(String id) {
+        return traceXeActionMapRepository.findById(id);
     }
-    public void traceTraceXeActionMapDeleteById(String id) {
-        traceTraceXeActionMapRepository.deleteById(id);
+    public void traceXeActionMapDeleteById(String id) {
+        traceXeActionMapRepository.deleteById(id);
     }
 }

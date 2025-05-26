@@ -20,16 +20,20 @@ public class BaseProducts {
     private int id;
     @Column(name = "name")
     private String name;
-    @Column(name = "unit")
-    private String unit;
+    @Column(name = "material")
+    private String material;
     @Column(name = "main_image")
     private String mainImage;
+    @Column(name = "is_custom")
+    private boolean isCustom;
     @Column(name = "turn_buy")
     private int turnBuy;
     @Column(name = "rating")
     private int rating;
-    @Column(name = "for_sale")
-    private boolean forSale;
+    @Column(name = "is_discount")
+    private boolean isDiscount;
+    @Column(name = "is_active")
+    private boolean isActive;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
