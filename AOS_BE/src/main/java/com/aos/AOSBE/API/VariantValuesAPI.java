@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,8 +29,9 @@ public class VariantValuesAPI {
 	@GetMapping("/VariantValues")
 	public ResponseEntity<List<VariantValues>> getAllVariantValuesApi(	
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		List<VariantValues> variantValues = variantValuesService.variantValuesFindAll();
+			@RequestParam(defaultValue = "5") int size) {
+			
+		List<VariantValues> variantValues = variantValuesService.variantValuesFindAll(page,size);
 		return ResponseEntity.ok(variantValues);
 	}
 

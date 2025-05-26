@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import java.util.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 @Service
 public class CancelsService {
 	@Autowired
     private CancelsRepository cancelsRepository;
 
-    public List<Cancels> cancelsFindAll() {
-        return cancelsRepository.findAll();
+    public List<Cancels> cancelsFindAll(int page, int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+		return cancelsRepository.findAll(pageable).getContent();
     }
     public Cancels cancelsSave(Cancels cancels) {
         return cancelsRepository.save(cancels);

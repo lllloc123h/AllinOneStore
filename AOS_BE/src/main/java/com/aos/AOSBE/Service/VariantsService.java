@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import java.util.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 @Service
 public class VariantsService {
 	@Autowired
     private VariantsRepository variantsRepository;
 
-    public List<Variants> variantsFindAll() {
-        return variantsRepository.findAll();
+    public List<Variants> variantsFindAll(int page, int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+		return variantsRepository.findAll(pageable).getContent();
     }
     public Variants variantsSave(Variants variants) {
         return variantsRepository.save(variants);

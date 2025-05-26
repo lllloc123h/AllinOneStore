@@ -2,7 +2,7 @@
 
     <div class="container row">
         <div class="col-3">
-            <Dashboard></Dashboard>
+            <Dashboard :listDashBoard="props.listDashBoard"></Dashboard>
         </div>
         <div class="col-9">
             <Form :TableName="props.TableName" :id="props.id"></Form>
@@ -23,8 +23,11 @@ const props = defineProps({
         required: true
     },
     id: {
-
         type: String,
+        required: true
+    },
+    listDashBoard: {
+        type: Array,
         required: true
     }
 })

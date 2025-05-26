@@ -5,7 +5,12 @@ import adminRoutes from './Admin/AdminRouter.js'
 
 // Merge all routes
 const routes = [
-    ...adminRoutes
+    ...adminRoutes,
+    {
+        path: '/',
+        redirect: '/Admin/Accounts'
+    }
+
 ]
 
 const router = createRouter({

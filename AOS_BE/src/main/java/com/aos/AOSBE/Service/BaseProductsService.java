@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import java.util.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 @Service
 public class BaseProductsService {
 	@Autowired
     private BaseProductsRepository baseProductsRepository;
 
-    public List<BaseProducts> baseProductsFindAll() {
-        return baseProductsRepository.findAll();
+    public List<BaseProducts> baseProductsFindAll(int page, int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+		return baseProductsRepository.findAll(pageable).getContent();
     }
     public BaseProducts baseProductsSave(BaseProducts baseProducts) {
         return baseProductsRepository.save(baseProducts);

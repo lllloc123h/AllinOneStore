@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import java.util.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 @Service
 public class PaymentMethodsService {
 	@Autowired
     private PaymentMethodsRepository paymentMethodsRepository;
 
-    public List<PaymentMethods> paymentMethodsFindAll() {
-        return paymentMethodsRepository.findAll();
+    public List<PaymentMethods> paymentMethodsFindAll(int page, int size) {
+    	Pageable pageable = PageRequest.of(page, size);
+		return paymentMethodsRepository.findAll(pageable).getContent();
     }
     public PaymentMethods paymentMethodsSave(PaymentMethods paymentMethods) {
         return paymentMethodsRepository.save(paymentMethods);

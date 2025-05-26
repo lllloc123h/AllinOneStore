@@ -18,8 +18,6 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "shipping_method_id")
-    private int shippingMethodId;
     @Column(name = "shipping_status")
     private String shippingStatus;
     @Column(name = "estimated_shipping_fee")
