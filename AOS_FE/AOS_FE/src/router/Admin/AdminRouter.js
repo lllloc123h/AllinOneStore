@@ -20,86 +20,86 @@ export default [
         path: '/Admin/Accounts',
         component: ModuleQuanLy,
         name: 'QuanLyTaiKhoan',
-        props: { id: "-1", TableName: 'Accounts', listDashBoard: listDashBoard }
+        props: { id: "-1", TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard }
     },
     {
         path: '/Admin/Accounts/view/:id',
         component: ModuleQuanLy,
         name: 'AdminViewAccount',
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Accounts', listDashBoard: listDashBoard })
+        props: route => ({ id: route.params.id, action: 'view', TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/Accounts/update/:id',
         component: ModuleQuanLy,
         name: 'AdminUpdateAccount',
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Accounts', listDashBoard: listDashBoard })
+        props: route => ({ id: route.params.id, action: 'update', TableName: 'Accounts', isEditing: true, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/Accounts/delete/:id',
         component: ModuleQuanLy,
         name: 'AdminDeleteAccount',
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Accounts', listDashBoard: listDashBoard })
+        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard })
     }
 
     , {
         path: '/Admin/ProductItems',
         component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'ProductItems', listDashBoard: listDashBoard }
+        props: { id: "-1", TableName: 'ProductItems', isEditing: false, listDashBoard: listDashBoard }
     }
     ,
     {
         path: '/Admin/ProductItems/view/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductItems', listDashBoard: listDashBoard })
+        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductItems', isEditing: false, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/ProductItems/update/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductItems', listDashBoard: listDashBoard })
+        props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductItems', isEditing: true, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/ProductItems/delete/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductItems', listDashBoard: listDashBoard })
+        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductItems', isEditing: false, listDashBoard: listDashBoard })
     }
     , {
         path: '/Admin/PaymentMethods',
         component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'PaymentMethods', listDashBoard: listDashBoard }
+        props: { id: "-1", TableName: 'PaymentMethods', isEditing: false, listDashBoard: listDashBoard }
     },
     {
         path: '/Admin/PaymentMethods/view/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'PaymentMethods' ,listDashBoard:listDashBoard})
+        props: route => ({ id: route.params.id, action: 'view', TableName: 'PaymentMethods', isEditing: false, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/PaymentMethods/update/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'PaymentMethods' ,listDashBoard:listDashBoard})
+        props: route => ({ id: route.params.id, action: 'update', TableName: 'PaymentMethods', isEditing: false, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/PaymentMethods/delete/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PaymentMethods' ,listDashBoard:listDashBoard})
+        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PaymentMethods', isEditing: true, listDashBoard: listDashBoard })
     }
-    ,{
+    , {
         path: '/Admin/ProductImages',
         component: ModuleQuanLy,
-        props: {id:"-1", TableName: 'ProductImages' ,listDashBoard:listDashBoard}
+        props: { id: "-1", TableName: 'ProductImages', isEditing: false, listDashBoard: listDashBoard }
     },
     {
         path: '/Admin/ProductImages/view/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductImages',listDashBoard:listDashBoard })
+        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductImages', isEditing: false, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/ProductImages/update/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductImages' ,listDashBoard:listDashBoard})
+        props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductImages', isEditing: true, listDashBoard: listDashBoard })
     },
     {
         path: '/Admin/ProductImages/delete/:id',
         component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductImages' ,listDashBoard:listDashBoard})
+        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductImages', isEditing: false, listDashBoard: listDashBoard })
     }
 ]

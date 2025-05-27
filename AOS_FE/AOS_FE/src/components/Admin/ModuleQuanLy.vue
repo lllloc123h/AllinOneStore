@@ -4,7 +4,7 @@
             <Dashboard :listDashBoard="props.listDashBoard"></Dashboard>
         </div>
         <div class="col-9">
-            <Form :TableName="props.TableName" :id="props.id"></Form>
+            <Form :TableName="props.TableName" :id="props.id" v-if="props.isEditing" ></Form>
             <Table :TableName="props.TableName"></Table>
         </div>
     </div>
@@ -25,6 +25,10 @@ const props = defineProps({
         type: String,
         required: true
     },
+    isEditing: {
+        type: Boolean,
+        required: true
+    },
     listDashBoard: {
         type: Array,
         required: true
@@ -32,5 +36,3 @@ const props = defineProps({
 })
 
 </script>
-
-
