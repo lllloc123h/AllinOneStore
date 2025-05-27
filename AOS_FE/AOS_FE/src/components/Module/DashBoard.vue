@@ -1,12 +1,7 @@
 <template>
     <div class="container-fluid vh-100">
         <div class="row h-100">
-
-            <!-- Sidebar with 3 RouterLinks, stacked vertically -->
             <nav class="col-12 bg-dark text-white p-3 d-flex flex-column justify-content-start">
-                <h3 class="mb-4">Admin Panel</h3>
-
-                <!-- Each link in its own row -->
                 <div class="mb-12">
 
                     <div v-for="(items, index) in props.listDashBoard"  class="mb-3">

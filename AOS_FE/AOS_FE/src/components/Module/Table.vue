@@ -2,7 +2,11 @@
     <div class="container-fluid">
         <h1 class="h3 fw-bold mb-4">{{ props.TableName }}</h1>
 
-        <div v-if="loading" class="text-primary">Loading...</div>
+        <div v-if="loading" class="text-primary">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
         <div v-if="error" class="text-danger">{{ error }}</div>
 
         <table v-if="data.length" class="table table-bordered table-hover container-fluid">

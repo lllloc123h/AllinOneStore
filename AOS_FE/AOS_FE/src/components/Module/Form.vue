@@ -2,7 +2,7 @@
     <form @submit.prevent="submitForm" v-if="columns.length" class="p-3 border rounded bg-light">
         <div v-for="key in columns" :key="key" class="mb-3">
             <label :for="key" class="form-label text-capitalize">{{ key }}</label>
-            <input :id="key" v-model="formData[key]" type="text" class="form-control" :placeholder="`Enter ${key}`" />
+            <input :id="key"  v-model="formData[key]" type="text" class="form-control" :placeholder="`Enter ${key}`" />
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
@@ -11,7 +11,11 @@
     <div v-else-if="error" class="text-danger">{{ error }}</div>
 
 </template>
-
+<style>
+input#id{
+    
+}
+</style>
 
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
