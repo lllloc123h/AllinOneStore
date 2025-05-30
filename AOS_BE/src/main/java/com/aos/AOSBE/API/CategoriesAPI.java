@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
+
+import com.aos.AOSBE.DTOS.CategoriesDTOS;
 import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Mapper.CategoriesMapper;
 import com.aos.AOSBE.Service.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/Api/Admin")
@@ -25,38 +28,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CategoriesAPI {
 	@Autowired
 	private CategoriesService categoriesService;
+	private CategoriesMapper categoriesMapper=new CategoriesMapper();
 
 	@GetMapping("/Categories")
-	public ResponseEntity<List<Categories>> getAllCategoriesApi(	
-			@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<CategoriesDTOS>> getAllCategoriesApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
-			
-		List<Categories> categories = categoriesService.categoriesFindAll(page,size);
+		List<CategoriesDTOS> categories = new ArrayList<CategoriesDTOS>();
+		categoriesService.categoriesFindAll(page, size).forEach(e -> {
+			categories.add(categoriesMapper.mapper(e));
+		});
 		return ResponseEntity.ok(categories);
 	}
 
 	@GetMapping("/Categories/{id}")
 	public ResponseEntity<Categories> getCategoriesByIdApi(@PathVariable int id) {
-		Categories categories =(Categories)categoriesService.categoriesFindById(id).orElse(new Categories());
+		Categories categories = (Categories) categoriesService.categoriesFindById(id).orElse(new Categories());
 		return ResponseEntity.ok(categories);
 	}
+
 	@PostMapping("/Categories")
 	public ResponseEntity<Categories> addNewCategories(@RequestBody Categories entity) {
-	    Categories saved = categoriesService.categoriesSave(entity);
-	    return ResponseEntity.ok(saved);
+		Categories saved = categoriesService.categoriesSave(entity);
+		return ResponseEntity.ok(saved);
 	}
 
 	@PutMapping("/Categories")
 	public ResponseEntity<Categories> updateCategories(@RequestBody Categories entity) {
-	    Categories updated = categoriesService.categoriesSave(entity); 
-	    return ResponseEntity.ok(updated);
+		Categories updated = categoriesService.categoriesSave(entity);
+		return ResponseEntity.ok(updated);
 	}
+
 	@DeleteMapping("/Categories/{id}")
 	public ResponseEntity<Void> deleteCategories(@PathVariable int id) {
-	    categoriesService.categoriesDeleteById(id); 
-	    return ResponseEntity.noContent().build(); 
+		categoriesService.categoriesDeleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 
-
-	
 }
