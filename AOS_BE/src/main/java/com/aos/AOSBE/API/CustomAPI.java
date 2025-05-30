@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CustomAPI {
 	@Autowired
 	private CustomService customService;
+	private CustomMapper customMapper=new CustomMapper();
 
 	@GetMapping("/Custom")
-	public ResponseEntity<List<Custom>> getAllCustomApi(	
+	public ResponseEntity<List<CustomDTOS>> getAllCustomApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<Custom> custom = customService.customFindAll(page,size);
+		List<CustomDTOS> custom = new ArrayList<CustomDTOS>();
+		customService.customFindAll(page, size).forEach(e -> {
+			custom.add(customMapper.mapper(e));
+		});
 		return ResponseEntity.ok(custom);
 	}
 

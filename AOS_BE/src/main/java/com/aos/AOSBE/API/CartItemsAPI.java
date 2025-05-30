@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CartItemsAPI {
 	@Autowired
 	private CartItemsService cartItemsService;
+	private CartItemsMapper cartItemsMapper=new CartItemsMapper();
 
 	@GetMapping("/CartItems")
-	public ResponseEntity<List<CartItems>> getAllCartItemsApi(	
+	public ResponseEntity<List<CartItemsDTOS>> getAllCartItemsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<CartItems> cartItems = cartItemsService.cartItemsFindAll(page,size);
+		List<CartItemsDTOS> cartItems = new ArrayList<CartItemsDTOS>();
+		cartItemsService.cartItemsFindAll(page, size).forEach(e -> {
+			cartItems.add(cartItemsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(cartItems);
 	}
 

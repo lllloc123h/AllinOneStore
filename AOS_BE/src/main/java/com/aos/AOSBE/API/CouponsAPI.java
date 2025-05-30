@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CouponsAPI {
 	@Autowired
 	private CouponsService couponsService;
+	private CouponsMapper couponsMapper=new CouponsMapper();
 
 	@GetMapping("/Coupons")
-	public ResponseEntity<List<Coupons>> getAllCouponsApi(	
+	public ResponseEntity<List<CouponsDTOS>> getAllCouponsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<Coupons> coupons = couponsService.couponsFindAll(page,size);
+		List<CouponsDTOS> coupons = new ArrayList<CouponsDTOS>();
+		couponsService.couponsFindAll(page, size).forEach(e -> {
+			coupons.add(couponsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(coupons);
 	}
 

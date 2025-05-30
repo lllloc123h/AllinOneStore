@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ReturnsAPI {
 	@Autowired
 	private ReturnsService returnsService;
+	private ReturnsMapper returnsMapper=new ReturnsMapper();
 
 	@GetMapping("/Returns")
-	public ResponseEntity<List<Returns>> getAllReturnsApi(	
+	public ResponseEntity<List<ReturnsDTOS>> getAllReturnsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<Returns> returns = returnsService.returnsFindAll(page,size);
+		List<ReturnsDTOS> returns = new ArrayList<ReturnsDTOS>();
+		returnsService.returnsFindAll(page, size).forEach(e -> {
+			returns.add(returnsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(returns);
 	}
 

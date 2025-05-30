@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PurchaseOrderItemsAPI {
 	@Autowired
 	private PurchaseOrderItemsService purchaseOrderItemsService;
+	private PurchaseOrderItemsMapper purchaseOrderItemsMapper=new PurchaseOrderItemsMapper();
 
 	@GetMapping("/PurchaseOrderItems")
-	public ResponseEntity<List<PurchaseOrderItems>> getAllPurchaseOrderItemsApi(	
+	public ResponseEntity<List<PurchaseOrderItemsDTOS>> getAllPurchaseOrderItemsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<PurchaseOrderItems> purchaseOrderItems = purchaseOrderItemsService.purchaseOrderItemsFindAll(page,size);
+		List<PurchaseOrderItemsDTOS> purchaseOrderItems = new ArrayList<PurchaseOrderItemsDTOS>();
+		purchaseOrderItemsService.purchaseOrderItemsFindAll(page, size).forEach(e -> {
+			purchaseOrderItems.add(purchaseOrderItemsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(purchaseOrderItems);
 	}
 

@@ -22,7 +22,7 @@ public class BaseProductsMapper {
 				entity.isCustom(),
 				entity.getTurnBuy(),
 				entity.getRating(),
-				entity.isDiscount(),
+				entity.isPromote(),
 				entity.isActive(),
 				entity.getCreatedAt(),
 				entity.getUpdatedAt(),

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProductImagesAPI {
 	@Autowired
 	private ProductImagesService productImagesService;
+	private ProductImagesMapper productImagesMapper=new ProductImagesMapper();
 
 	@GetMapping("/ProductImages")
-	public ResponseEntity<List<ProductImages>> getAllProductImagesApi(	
+	public ResponseEntity<List<ProductImagesDTOS>> getAllProductImagesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<ProductImages> productImages = productImagesService.productImagesFindAll(page,size);
+		List<ProductImagesDTOS> productImages = new ArrayList<ProductImagesDTOS>();
+		productImagesService.productImagesFindAll(page, size).forEach(e -> {
+			productImages.add(productImagesMapper.mapper(e));
+		});
 		return ResponseEntity.ok(productImages);
 	}
 

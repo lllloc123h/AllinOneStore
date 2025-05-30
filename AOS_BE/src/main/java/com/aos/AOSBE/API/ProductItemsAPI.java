@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProductItemsAPI {
 	@Autowired
 	private ProductItemsService productItemsService;
+	private ProductItemsMapper productItemsMapper=new ProductItemsMapper();
 
 	@GetMapping("/ProductItems")
-	public ResponseEntity<List<ProductItems>> getAllProductItemsApi(	
+	public ResponseEntity<List<ProductItemsDTOS>> getAllProductItemsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<ProductItems> productItems = productItemsService.productItemsFindAll(page,size);
+		List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
+		productItemsService.productItemsFindAll(page, size).forEach(e -> {
+			productItems.add(productItemsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(productItems);
 	}
 

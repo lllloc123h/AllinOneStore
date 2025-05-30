@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PaymentMethodsAPI {
 	@Autowired
 	private PaymentMethodsService paymentMethodsService;
+	private PaymentMethodsMapper paymentMethodsMapper=new PaymentMethodsMapper();
 
 	@GetMapping("/PaymentMethods")
-	public ResponseEntity<List<PaymentMethods>> getAllPaymentMethodsApi(	
+	public ResponseEntity<List<PaymentMethodsDTOS>> getAllPaymentMethodsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<PaymentMethods> paymentMethods = paymentMethodsService.paymentMethodsFindAll(page,size);
+		List<PaymentMethodsDTOS> paymentMethods = new ArrayList<PaymentMethodsDTOS>();
+		paymentMethodsService.paymentMethodsFindAll(page, size).forEach(e -> {
+			paymentMethods.add(paymentMethodsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(paymentMethods);
 	}
 

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class VariantValuesAPI {
 	@Autowired
 	private VariantValuesService variantValuesService;
+	private VariantValuesMapper variantValuesMapper=new VariantValuesMapper();
 
 	@GetMapping("/VariantValues")
-	public ResponseEntity<List<VariantValues>> getAllVariantValuesApi(	
+	public ResponseEntity<List<VariantValuesDTOS>> getAllVariantValuesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<VariantValues> variantValues = variantValuesService.variantValuesFindAll(page,size);
+		List<VariantValuesDTOS> variantValues = new ArrayList<VariantValuesDTOS>();
+		variantValuesService.variantValuesFindAll(page, size).forEach(e -> {
+			variantValues.add(variantValuesMapper.mapper(e));
+		});
 		return ResponseEntity.ok(variantValues);
 	}
 

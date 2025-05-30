@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AccountsAPI {
 	@Autowired
 	private AccountsService accountsService;
+	private AccountsMapper accountsMapper=new AccountsMapper();
 
 	@GetMapping("/Accounts")
-	public ResponseEntity<List<Accounts>> getAllAccountsApi(	
+	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<Accounts> accounts = accountsService.accountsFindAll(page,size);
+		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
+		accountsService.accountsFindAll(page, size).forEach(e -> {
+			accounts.add(accountsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(accounts);
 	}
 

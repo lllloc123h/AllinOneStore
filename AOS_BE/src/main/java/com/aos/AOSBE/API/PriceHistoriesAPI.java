@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PriceHistoriesAPI {
 	@Autowired
 	private PriceHistoriesService priceHistoriesService;
+	private PriceHistoriesMapper priceHistoriesMapper=new PriceHistoriesMapper();
 
 	@GetMapping("/PriceHistories")
-	public ResponseEntity<List<PriceHistories>> getAllPriceHistoriesApi(	
+	public ResponseEntity<List<PriceHistoriesDTOS>> getAllPriceHistoriesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<PriceHistories> priceHistories = priceHistoriesService.priceHistoriesFindAll(page,size);
+		List<PriceHistoriesDTOS> priceHistories = new ArrayList<PriceHistoriesDTOS>();
+		priceHistoriesService.priceHistoriesFindAll(page, size).forEach(e -> {
+			priceHistories.add(priceHistoriesMapper.mapper(e));
+		});
 		return ResponseEntity.ok(priceHistories);
 	}
 

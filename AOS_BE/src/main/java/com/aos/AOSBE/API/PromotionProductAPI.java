@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PromotionProductAPI {
 	@Autowired
 	private PromotionProductService promotionProductService;
+	private PromotionProductMapper promotionProductMapper=new PromotionProductMapper();
 
 	@GetMapping("/PromotionProduct")
-	public ResponseEntity<List<PromotionProduct>> getAllPromotionProductApi(	
+	public ResponseEntity<List<PromotionProductDTOS>> getAllPromotionProductApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<PromotionProduct> promotionProduct = promotionProductService.promotionProductFindAll(page,size);
+		List<PromotionProductDTOS> promotionProduct = new ArrayList<PromotionProductDTOS>();
+		promotionProductService.promotionProductFindAll(page, size).forEach(e -> {
+			promotionProduct.add(promotionProductMapper.mapper(e));
+		});
 		return ResponseEntity.ok(promotionProduct);
 	}
 

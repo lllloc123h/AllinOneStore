@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ReviewsAPI {
 	@Autowired
 	private ReviewsService reviewsService;
+	private ReviewsMapper reviewsMapper=new ReviewsMapper();
 
 	@GetMapping("/Reviews")
-	public ResponseEntity<List<Reviews>> getAllReviewsApi(	
+	public ResponseEntity<List<ReviewsDTOS>> getAllReviewsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<Reviews> reviews = reviewsService.reviewsFindAll(page,size);
+		List<ReviewsDTOS> reviews = new ArrayList<ReviewsDTOS>();
+		reviewsService.reviewsFindAll(page, size).forEach(e -> {
+			reviews.add(reviewsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(reviews);
 	}
 

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserLogsAPI {
 	@Autowired
 	private UserLogsService userLogsService;
+	private UserLogsMapper userLogsMapper=new UserLogsMapper();
 
 	@GetMapping("/UserLogs")
-	public ResponseEntity<List<UserLogs>> getAllUserLogsApi(	
+	public ResponseEntity<List<UserLogsDTOS>> getAllUserLogsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<UserLogs> userLogs = userLogsService.userLogsFindAll(page,size);
+		List<UserLogsDTOS> userLogs = new ArrayList<UserLogsDTOS>();
+		userLogsService.userLogsFindAll(page, size).forEach(e -> {
+			userLogs.add(userLogsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(userLogs);
 	}
 

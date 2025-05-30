@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +27,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CostHistoriesAPI {
 	@Autowired
 	private CostHistoriesService costHistoriesService;
+	private CostHistoriesMapper costHistoriesMapper=new CostHistoriesMapper();
 
 	@GetMapping("/CostHistories")
-	public ResponseEntity<List<CostHistories>> getAllCostHistoriesApi(	
+	public ResponseEntity<List<CostHistoriesDTOS>> getAllCostHistoriesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<CostHistories> costHistories = costHistoriesService.costHistoriesFindAll(page,size);
+		List<CostHistoriesDTOS> costHistories = new ArrayList<CostHistoriesDTOS>();
+		costHistoriesService.costHistoriesFindAll(page, size).forEach(e -> {
+			costHistories.add(costHistoriesMapper.mapper(e));
+		});
 		return ResponseEntity.ok(costHistories);
 	}
 
