@@ -30,8 +30,8 @@ public class BaseProducts {
     private int turnBuy;
     @Column(name = "rating")
     private int rating;
-    @Column(name = "is_discount")
-    private boolean isDiscount;
+    @Column(name = "is_promote")
+    private boolean isPromote;
     @Column(name = "is_active")
     private boolean isActive;
     @Column(name = "created_at")

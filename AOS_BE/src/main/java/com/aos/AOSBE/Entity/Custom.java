@@ -9,32 +9,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "PromotionProduct")
+@Table(name = "custom")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PromotionProduct {
+public class Custom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "require_qty")
-    private int requireQty;
-    @Column(name = "is_gift")
-    private boolean isGift;
-    @Column(name = "cost_share")
-    private int costShare;
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "infor")
+    private String infor;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promotion_id")
-    private Promotions promotions;
 
 
 
