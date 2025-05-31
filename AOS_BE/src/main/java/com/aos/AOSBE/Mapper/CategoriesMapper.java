@@ -1,10 +1,18 @@
 package com.aos.AOSBE.Mapper;
 
-import com.aos.AOSBE.DTOS.CategoriesDTOS;
-import com.aos.AOSBE.Entity.Categories;
+import java.time.LocalDateTime;
+
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Entity.*;
+
 
 public class CategoriesMapper {
 	public CategoriesDTOS mapper(Categories entity) {
-		return new CategoriesDTOS(entity.getId(),entity.getName(),entity.getCreatedAt(),entity.getUpdatedAt(),entity.getCatalogs().getName());
+		return new CategoriesDTOS(
+				    entity.id,
+				    entity.name,
+				    entity.createdAt,
+				    entity.updatedAt,
+			);
 	}
 }

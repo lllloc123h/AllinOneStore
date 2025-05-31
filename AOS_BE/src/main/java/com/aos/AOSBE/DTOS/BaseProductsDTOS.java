@@ -4,14 +4,9 @@ import jakarta.persistence.*;
 import java.time.*;
 import java.math.*;
 import java.util.*;
-
-import com.aos.AOSBE.Entity.Catalogs;
-import com.aos.AOSBE.Entity.Categories;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @AllArgsConstructor
@@ -24,15 +19,9 @@ public class BaseProductsDTOS {
     private boolean isCustom;
     private int turnBuy;
     private int rating;
-    private boolean isDiscount;
+    private boolean isPromote;
     private boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-   
     private String categories;
-
-
-
-
-
 }

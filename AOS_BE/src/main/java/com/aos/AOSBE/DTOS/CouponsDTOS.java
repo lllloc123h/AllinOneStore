@@ -1,0 +1,31 @@
+package com.aos.AOSBE.DTOS;
+import jakarta.persistence.*;
+
+import java.time.*;
+import java.math.*;
+import java.util.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CouponsDTOS {
+    private int id;
+    private String code;
+    private String description;
+    private String discountType;
+    private double discountValue;
+    private double minOrderAmount;
+    private double maxDiscountAmount;
+    private int usageLimit;
+    private int usagePerCustomer;
+    private boolean allowVoucher;
+    private boolean active;
+    private String customerGroup;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+}
