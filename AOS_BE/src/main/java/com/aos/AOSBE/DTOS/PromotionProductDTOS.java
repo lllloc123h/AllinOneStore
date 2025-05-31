@@ -18,6 +18,6 @@ public class PromotionProductDTOS {
     private int costShare;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String productItems;
-    private String promotions;
+    private int productItems;
+    private int promotions;
 }

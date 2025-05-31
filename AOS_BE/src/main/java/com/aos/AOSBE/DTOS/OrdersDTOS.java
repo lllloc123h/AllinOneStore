@@ -27,7 +27,7 @@ public class OrdersDTOS {
     private String orderInfor;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String accounts;
-    private String paymentMethods;
-    private String shippingMethods;
+    private int accounts;
+    private int paymentMethods;
+    private int shippingMethods;
 }

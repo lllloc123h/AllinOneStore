@@ -9,18 +9,19 @@ import com.aos.AOSBE.Entity.*;
 public class UserAddressesMapper {
 	public UserAddressesDTOS mapper(UserAddresses entity) {
 		return new UserAddressesDTOS(
-				    entity.id,
-				    entity.recipientName,
-				    entity.phone,
-				    entity.province,
-				    entity.district,
-				    entity.ward,
-				    entity.street,
-				    entity.label,
-				    entity.isdefault,
-				    entity.note,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getRecipientName(),
+				    entity.getPhone(),
+				    entity.getProvince(),
+				    entity.getDistrict(),
+				    entity.getWard(),
+				    entity.getStreet(),
+				    entity.getLabel(),
+				    entity.isdefault(),
+				    entity.getNote(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getAccounts().getId()
 			);
 	}
 }

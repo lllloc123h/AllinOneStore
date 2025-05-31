@@ -9,21 +9,24 @@ import com.aos.AOSBE.Entity.*;
 public class OrdersMapper {
 	public OrdersDTOS mapper(Orders entity) {
 		return new OrdersDTOS(
-				    entity.id,
-				    entity.shippingStatus,
-				    entity.estimatedShippingFee,
-				    entity.freeshipCouponCode,
-				    entity.actualShippingFee,
-				    entity.discountCouponCode,
-				    entity.discountValue,
-				    entity.shippedDate,
-				    entity.paymentStatus,
-				    entity.note,
-				    entity.point,
-				    entity.finalTotal,
-				    entity.orderInfor,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getShippingStatus(),
+				    entity.getEstimatedShippingFee(),
+				    entity.getFreeshipCouponCode(),
+				    entity.getActualShippingFee(),
+				    entity.getDiscountCouponCode(),
+				    entity.getDiscountValue(),
+				    entity.getShippedDate(),
+				    entity.getPaymentStatus(),
+				    entity.getNote(),
+				    entity.getPoint(),
+				    entity.getFinalTotal(),
+				    entity.getOrderInfor(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getAccounts().getId(),
+				    entity.getPaymentMethods().getId(),
+				    entity.getShippingMethods().getId()
 			);
 	}
 }

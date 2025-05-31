@@ -9,8 +9,9 @@ import com.aos.AOSBE.Entity.*;
 public class CustomMapper {
 	public CustomDTOS mapper(Custom entity) {
 		return new CustomDTOS(
-				    entity.id,
-				    entity.infor,
+				    entity.getId(),
+				    entity.getInfor(),
+				    entity.getProductItems().getId()
 			);
 	}
 }

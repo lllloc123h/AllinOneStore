@@ -9,13 +9,13 @@ import com.aos.AOSBE.Entity.*;
 public class ShippingMethodsMapper {
 	public ShippingMethodsDTOS mapper(ShippingMethods entity) {
 		return new ShippingMethodsDTOS(
-				    entity.id,
-				    entity.orderId,
-				    entity.name,
-				    entity.description,
-				    entity.isActive,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getOrderId(),
+				    entity.getName(),
+				    entity.getDescription(),
+				    entity.isActive(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt()
 			);
 	}
 }

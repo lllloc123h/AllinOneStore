@@ -9,9 +9,9 @@ import com.aos.AOSBE.Entity.*;
 public class TraceXeEventMapMapper {
 	public TraceXeEventMapDTOS mapper(TraceXeEventMap entity) {
 		return new TraceXeEventMapDTOS(
-				    entity.traceEventId,
-				    entity.packageName,
-				    entity.xeEventName,
+				    entity.getTraceEventId(),
+				    entity.getPackageName(),
+				    entity.getXeEventName()
 			);
 	}
 }

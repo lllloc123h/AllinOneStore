@@ -9,10 +9,10 @@ import com.aos.AOSBE.Entity.*;
 public class CatalogsMapper {
 	public CatalogsDTOS mapper(Catalogs entity) {
 		return new CatalogsDTOS(
-				    entity.id,
-				    entity.name,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getName(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt()
 			);
 	}
 }

@@ -9,9 +9,11 @@ import com.aos.AOSBE.Entity.*;
 public class RolesMapper {
 	public RolesDTOS mapper(Roles entity) {
 		return new RolesDTOS(
-				    entity.id,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getAccounts().getId(),
+				    entity.getAuthorities().getId()
 			);
 	}
 }

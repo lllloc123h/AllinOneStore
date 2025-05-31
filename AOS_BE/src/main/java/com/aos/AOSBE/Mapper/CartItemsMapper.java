@@ -9,10 +9,12 @@ import com.aos.AOSBE.Entity.*;
 public class CartItemsMapper {
 	public CartItemsDTOS mapper(CartItems entity) {
 		return new CartItemsDTOS(
-				    entity.id,
-				    entity.qty,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getQty(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getAccounts().getId(),
+				    entity.getProductItems().getId()
 			);
 	}
 }

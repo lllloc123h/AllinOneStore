@@ -16,6 +16,6 @@ public class CartItemsDTOS {
     private int qty;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String accounts;
-    private String productItems;
+    private int accounts;
+    private int productItems;
 }

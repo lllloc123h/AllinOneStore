@@ -9,22 +9,22 @@ import com.aos.AOSBE.Entity.*;
 public class CouponsMapper {
 	public CouponsDTOS mapper(Coupons entity) {
 		return new CouponsDTOS(
-				    entity.id,
-				    entity.code,
-				    entity.description,
-				    entity.discountType,
-				    entity.discountValue,
-				    entity.minOrderAmount,
-				    entity.maxDiscountAmount,
-				    entity.usageLimit,
-				    entity.usagePerCustomer,
-				    entity.allowVoucher,
-				    entity.active,
-				    entity.customerGroup,
-				    entity.startAt,
-				    entity.endAt,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getCode(),
+				    entity.getDescription(),
+				    entity.getDiscountType(),
+				    entity.getDiscountValue(),
+				    entity.getMinOrderAmount(),
+				    entity.getMaxDiscountAmount(),
+				    entity.getUsageLimit(),
+				    entity.getUsagePerCustomer(),
+				    entity.allowVoucher(),
+				    entity.active(),
+				    entity.getCustomerGroup(),
+				    entity.getStartAt(),
+				    entity.getEndAt(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt()
 			);
 	}
 }

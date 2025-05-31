@@ -17,6 +17,6 @@ public class ReviewsDTOS {
     private String comment;
     private String images;
     private LocalDateTime createdAt;
-    private String accounts;
-    private String productItems;
+    private int accounts;
+    private int productItems;
 }

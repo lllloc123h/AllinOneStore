@@ -9,10 +9,11 @@ import com.aos.AOSBE.Entity.*;
 public class CategoriesMapper {
 	public CategoriesDTOS mapper(Categories entity) {
 		return new CategoriesDTOS(
-				    entity.id,
-				    entity.name,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getName(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getCatalogs().getId()
 			);
 	}
 }

@@ -9,9 +9,9 @@ import com.aos.AOSBE.Entity.*;
 public class TraceXeActionMapMapper {
 	public TraceXeActionMapDTOS mapper(TraceXeActionMap entity) {
 		return new TraceXeActionMapDTOS(
-				    entity.traceColumnId,
-				    entity.packageName,
-				    entity.xeActionName,
+				    entity.getTraceColumnId(),
+				    entity.getPackageName(),
+				    entity.getXeActionName()
 			);
 	}
 }

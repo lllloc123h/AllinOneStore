@@ -9,19 +9,19 @@ import com.aos.AOSBE.Entity.*;
 public class PromotionsMapper {
 	public PromotionsDTOS mapper(Promotions entity) {
 		return new PromotionsDTOS(
-				    entity.id,
-				    entity.name,
-				    entity.description,
-				    entity.type,
-				    entity.discountType,
-				    entity.discountValue,
-				    entity.comboPrice,
-				    entity.usageLimit,
-				    entity.startAt,
-				    entity.endAt,
-				    entity.isActive,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getName(),
+				    entity.getDescription(),
+				    entity.getType(),
+				    entity.getDiscountType(),
+				    entity.getDiscountValue(),
+				    entity.getComboPrice(),
+				    entity.getUsageLimit(),
+				    entity.getStartAt(),
+				    entity.getEndAt(),
+				    entity.isActive(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt()
 			);
 	}
 }

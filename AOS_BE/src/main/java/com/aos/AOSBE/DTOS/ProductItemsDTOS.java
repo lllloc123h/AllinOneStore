@@ -26,5 +26,5 @@ public class ProductItemsDTOS {
     private LocalDateTime sellEnd;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String baseProducts;
+    private int baseProducts;
 }

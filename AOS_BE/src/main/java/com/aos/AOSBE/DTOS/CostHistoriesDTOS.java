@@ -15,5 +15,5 @@ public class CostHistoriesDTOS {
     private int id;
     private double cost;
     private LocalDateTime createdAt;
-    private String productItems;
+    private int productItems;
 }

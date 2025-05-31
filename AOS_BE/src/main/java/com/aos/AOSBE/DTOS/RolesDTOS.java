@@ -15,6 +15,6 @@ public class RolesDTOS {
     private int id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String accounts;
-    private String authorities;
+    private int accounts;
+    private int authorities;
 }

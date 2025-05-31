@@ -9,12 +9,13 @@ import com.aos.AOSBE.Entity.*;
 public class CancelsMapper {
 	public CancelsDTOS mapper(Cancels entity) {
 		return new CancelsDTOS(
-				    entity.id,
-				    entity.reason,
-				    entity.isPaid,
-				    entity.status,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getReason(),
+				    entity.isPaid(),
+				    entity.getStatus(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getOrders().getId()
 			);
 	}
 }

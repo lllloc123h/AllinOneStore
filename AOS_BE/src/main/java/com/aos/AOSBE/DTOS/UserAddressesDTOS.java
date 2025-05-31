@@ -24,5 +24,5 @@ public class UserAddressesDTOS {
     private String note;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String accounts;
+    private int accounts;
 }

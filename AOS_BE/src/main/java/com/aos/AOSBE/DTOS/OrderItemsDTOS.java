@@ -22,6 +22,6 @@ public class OrderItemsDTOS {
     private int couponCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String orders;
-    private String productItems;
+    private int orders;
+    private int productItems;
 }

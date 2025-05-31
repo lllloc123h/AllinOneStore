@@ -23,5 +23,5 @@ public class BaseProductsDTOS {
     private boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String categories;
+    private int categories;
 }

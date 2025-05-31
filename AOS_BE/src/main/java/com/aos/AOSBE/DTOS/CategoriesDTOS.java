@@ -16,5 +16,5 @@ public class CategoriesDTOS {
     private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String catalogs;
+    private int catalogs;
 }

@@ -9,10 +9,11 @@ import com.aos.AOSBE.Entity.*;
 public class ProductImagesMapper {
 	public ProductImagesDTOS mapper(ProductImages entity) {
 		return new ProductImagesDTOS(
-				    entity.id,
-				    entity.image,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getImage(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getProductItems().getId()
 			);
 	}
 }

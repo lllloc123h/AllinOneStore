@@ -9,16 +9,18 @@ import com.aos.AOSBE.Entity.*;
 public class OrderItemsMapper {
 	public OrderItemsDTOS mapper(OrderItems entity) {
 		return new OrderItemsDTOS(
-				    entity.id,
-				    entity.promotionId,
-				    entity.qty,
-				    entity.cost,
-				    entity.isGift,
-				    entity.sellingPrice,
-				    entity.total,
-				    entity.couponCode,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getPromotionId(),
+				    entity.getQty(),
+				    entity.getCost(),
+				    entity.isGift(),
+				    entity.getSellingPrice(),
+				    entity.getTotal(),
+				    entity.getCouponCode(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getOrders().getId(),
+				    entity.getProductItems().getId()
 			);
 	}
 }

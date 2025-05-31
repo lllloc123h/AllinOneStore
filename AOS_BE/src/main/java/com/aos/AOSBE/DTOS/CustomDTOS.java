@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class CustomDTOS {
     private int id;
     private String infor;
-    private String productItems;
+    private int productItems;
 }

@@ -9,9 +9,10 @@ import com.aos.AOSBE.Entity.*;
 public class PriceHistoriesMapper {
 	public PriceHistoriesDTOS mapper(PriceHistories entity) {
 		return new PriceHistoriesDTOS(
-				    entity.id,
-				    entity.price,
-				    entity.createdAt,
+				    entity.getId(),
+				    entity.getPrice(),
+				    entity.getCreatedAt(),
+				    entity.getProductItems().getId()
 			);
 	}
 }

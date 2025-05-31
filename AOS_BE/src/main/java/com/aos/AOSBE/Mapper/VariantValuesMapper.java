@@ -9,11 +9,12 @@ import com.aos.AOSBE.Entity.*;
 public class VariantValuesMapper {
 	public VariantValuesDTOS mapper(VariantValues entity) {
 		return new VariantValuesDTOS(
-				    entity.id,
-				    entity.signalSku,
-				    entity.description,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getSignalSku(),
+				    entity.getDescription(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getVariants().getId()
 			);
 	}
 }

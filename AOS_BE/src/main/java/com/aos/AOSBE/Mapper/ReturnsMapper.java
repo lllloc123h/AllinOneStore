@@ -9,16 +9,17 @@ import com.aos.AOSBE.Entity.*;
 public class ReturnsMapper {
 	public ReturnsDTOS mapper(Returns entity) {
 		return new ReturnsDTOS(
-				    entity.id,
-				    entity.reason,
-				    entity.image1,
-				    entity.image2,
-				    entity.image3,
-				    entity.isReturnedMoney,
-				    entity.isReturnedItem,
-				    entity.status,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getReason(),
+				    entity.getImage1(),
+				    entity.getImage2(),
+				    entity.getImage3(),
+				    entity.getIsReturnedMoney(),
+				    entity.getIsReturnedItem(),
+				    entity.getStatus(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getOrderItems().getId()
 			);
 	}
 }

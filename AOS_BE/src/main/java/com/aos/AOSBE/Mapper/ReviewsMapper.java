@@ -9,11 +9,13 @@ import com.aos.AOSBE.Entity.*;
 public class ReviewsMapper {
 	public ReviewsDTOS mapper(Reviews entity) {
 		return new ReviewsDTOS(
-				    entity.id,
-				    entity.rating,
-				    entity.comment,
-				    entity.images,
-				    entity.createdAt,
+				    entity.getId(),
+				    entity.getRating(),
+				    entity.getComment(),
+				    entity.getImages(),
+				    entity.getCreatedAt(),
+				    entity.getAccounts().getId(),
+				    entity.getProductItems().getId()
 			);
 	}
 }

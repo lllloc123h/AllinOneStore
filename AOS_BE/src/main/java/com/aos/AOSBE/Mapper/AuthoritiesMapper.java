@@ -9,10 +9,10 @@ import com.aos.AOSBE.Entity.*;
 public class AuthoritiesMapper {
 	public AuthoritiesDTOS mapper(Authorities entity) {
 		return new AuthoritiesDTOS(
-				    entity.id,
-				    entity.name,
-				    entity.createdAt,
-				    entity.updatedAt,
+				    entity.getId(),
+				    entity.getName(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt()
 			);
 	}
 }

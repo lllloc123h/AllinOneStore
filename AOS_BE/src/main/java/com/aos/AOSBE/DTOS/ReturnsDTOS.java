@@ -22,5 +22,5 @@ public class ReturnsDTOS {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String orderItems;
+    private int orderItems;
 }

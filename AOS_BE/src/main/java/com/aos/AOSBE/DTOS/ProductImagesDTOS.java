@@ -16,5 +16,5 @@ public class ProductImagesDTOS {
     private String image;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String productItems;
+    private int productItems;
 }
