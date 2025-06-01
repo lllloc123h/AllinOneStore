@@ -1,12 +1,13 @@
 package com.aos.AOSBE.Mapper;
 
 import java.time.LocalDateTime;
-
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
-
+import com.aos.AOSBE.Service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class NewsMapper {
+	
 	public NewsDTOS mapper(News entity) {
 		return new NewsDTOS(
 				    entity.getId(),
@@ -17,4 +18,15 @@ public class NewsMapper {
 				    entity.getUpdatedAt()
 			);
 	}
+	public News mapperToObject(NewsDTOS entity) {
+		return new News(
+					entity.getId(),
+					entity.getImage(),
+					entity.isHome(),
+					entity.getDescription(),
+					entity.getCreatedAt(),
+					entity.getUpdatedAt()
+			);
+	}
+	
 }
