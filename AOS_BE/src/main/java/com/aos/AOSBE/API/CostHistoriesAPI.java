@@ -47,8 +47,9 @@ public class CostHistoriesAPI {
 		return ResponseEntity.ok(costHistories);
 	}
 	@PostMapping("/CostHistories")
-	public ResponseEntity<CostHistories> addNewCostHistories(@RequestBody CostHistories entity) {
-	    CostHistories saved = costHistoriesService.costHistoriesSave(entity);
+	public ResponseEntity<CostHistories> addNewCostHistories(@RequestBody CostHistoriesDTOS entity) {
+	    
+	    CostHistories saved = costHistoriesService.costHistoriesSave(costHistoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

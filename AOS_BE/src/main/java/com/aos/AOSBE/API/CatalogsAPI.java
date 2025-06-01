@@ -47,8 +47,9 @@ public class CatalogsAPI {
 		return ResponseEntity.ok(catalogs);
 	}
 	@PostMapping("/Catalogs")
-	public ResponseEntity<Catalogs> addNewCatalogs(@RequestBody Catalogs entity) {
-	    Catalogs saved = catalogsService.catalogsSave(entity);
+	public ResponseEntity<Catalogs> addNewCatalogs(@RequestBody CatalogsDTOS entity) {
+	    
+	    Catalogs saved = catalogsService.catalogsSave(catalogsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

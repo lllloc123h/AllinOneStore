@@ -47,8 +47,9 @@ public class PurchaseOrdersAPI {
 		return ResponseEntity.ok(purchaseOrders);
 	}
 	@PostMapping("/PurchaseOrders")
-	public ResponseEntity<PurchaseOrders> addNewPurchaseOrders(@RequestBody PurchaseOrders entity) {
-	    PurchaseOrders saved = purchaseOrdersService.purchaseOrdersSave(entity);
+	public ResponseEntity<PurchaseOrders> addNewPurchaseOrders(@RequestBody PurchaseOrdersDTOS entity) {
+	    
+	    PurchaseOrders saved = purchaseOrdersService.purchaseOrdersSave(purchaseOrdersMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

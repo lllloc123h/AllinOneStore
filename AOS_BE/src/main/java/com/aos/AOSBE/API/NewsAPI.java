@@ -47,8 +47,9 @@ public class NewsAPI {
 		return ResponseEntity.ok(news);
 	}
 	@PostMapping("/News")
-	public ResponseEntity<News> addNewNews(@RequestBody News entity) {
-	    News saved = newsService.newsSave(entity);
+	public ResponseEntity<News> addNewNews(@RequestBody NewsDTOS entity) {
+	    
+	    News saved = newsService.newsSave(newsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

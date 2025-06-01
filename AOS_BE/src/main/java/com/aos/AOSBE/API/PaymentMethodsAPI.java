@@ -47,8 +47,9 @@ public class PaymentMethodsAPI {
 		return ResponseEntity.ok(paymentMethods);
 	}
 	@PostMapping("/PaymentMethods")
-	public ResponseEntity<PaymentMethods> addNewPaymentMethods(@RequestBody PaymentMethods entity) {
-	    PaymentMethods saved = paymentMethodsService.paymentMethodsSave(entity);
+	public ResponseEntity<PaymentMethods> addNewPaymentMethods(@RequestBody PaymentMethodsDTOS entity) {
+	    
+	    PaymentMethods saved = paymentMethodsService.paymentMethodsSave(paymentMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

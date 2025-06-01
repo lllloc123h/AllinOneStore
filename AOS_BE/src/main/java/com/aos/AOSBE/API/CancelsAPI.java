@@ -47,8 +47,9 @@ public class CancelsAPI {
 		return ResponseEntity.ok(cancels);
 	}
 	@PostMapping("/Cancels")
-	public ResponseEntity<Cancels> addNewCancels(@RequestBody Cancels entity) {
-	    Cancels saved = cancelsService.cancelsSave(entity);
+	public ResponseEntity<Cancels> addNewCancels(@RequestBody CancelsDTOS entity) {
+	    
+	    Cancels saved = cancelsService.cancelsSave(cancelsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

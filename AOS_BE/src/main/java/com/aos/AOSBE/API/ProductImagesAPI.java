@@ -47,8 +47,9 @@ public class ProductImagesAPI {
 		return ResponseEntity.ok(productImages);
 	}
 	@PostMapping("/ProductImages")
-	public ResponseEntity<ProductImages> addNewProductImages(@RequestBody ProductImages entity) {
-	    ProductImages saved = productImagesService.productImagesSave(entity);
+	public ResponseEntity<ProductImages> addNewProductImages(@RequestBody ProductImagesDTOS entity) {
+	    
+	    ProductImages saved = productImagesService.productImagesSave(productImagesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

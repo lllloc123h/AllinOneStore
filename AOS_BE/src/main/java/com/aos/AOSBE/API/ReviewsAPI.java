@@ -47,8 +47,9 @@ public class ReviewsAPI {
 		return ResponseEntity.ok(reviews);
 	}
 	@PostMapping("/Reviews")
-	public ResponseEntity<Reviews> addNewReviews(@RequestBody Reviews entity) {
-	    Reviews saved = reviewsService.reviewsSave(entity);
+	public ResponseEntity<Reviews> addNewReviews(@RequestBody ReviewsDTOS entity) {
+	    
+	    Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

@@ -47,8 +47,9 @@ public class CartItemsAPI {
 		return ResponseEntity.ok(cartItems);
 	}
 	@PostMapping("/CartItems")
-	public ResponseEntity<CartItems> addNewCartItems(@RequestBody CartItems entity) {
-	    CartItems saved = cartItemsService.cartItemsSave(entity);
+	public ResponseEntity<CartItems> addNewCartItems(@RequestBody CartItemsDTOS entity) {
+	    
+	    CartItems saved = cartItemsService.cartItemsSave(cartItemsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

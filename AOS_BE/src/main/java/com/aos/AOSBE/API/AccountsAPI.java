@@ -47,8 +47,9 @@ public class AccountsAPI {
 		return ResponseEntity.ok(accounts);
 	}
 	@PostMapping("/Accounts")
-	public ResponseEntity<Accounts> addNewAccounts(@RequestBody Accounts entity) {
-	    Accounts saved = accountsService.accountsSave(entity);
+	public ResponseEntity<Accounts> addNewAccounts(@RequestBody AccountsDTOS entity) {
+	    
+	    Accounts saved = accountsService.accountsSave(accountsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

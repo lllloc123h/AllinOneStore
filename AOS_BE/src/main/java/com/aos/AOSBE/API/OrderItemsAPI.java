@@ -47,8 +47,9 @@ public class OrderItemsAPI {
 		return ResponseEntity.ok(orderItems);
 	}
 	@PostMapping("/OrderItems")
-	public ResponseEntity<OrderItems> addNewOrderItems(@RequestBody OrderItems entity) {
-	    OrderItems saved = orderItemsService.orderItemsSave(entity);
+	public ResponseEntity<OrderItems> addNewOrderItems(@RequestBody OrderItemsDTOS entity) {
+	    
+	    OrderItems saved = orderItemsService.orderItemsSave(orderItemsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

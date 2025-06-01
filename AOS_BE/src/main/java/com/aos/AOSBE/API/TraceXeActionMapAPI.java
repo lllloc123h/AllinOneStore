@@ -47,8 +47,9 @@ public class TraceXeActionMapAPI {
 		return ResponseEntity.ok(traceXeActionMap);
 	}
 	@PostMapping("/TraceXeActionMap")
-	public ResponseEntity<TraceXeActionMap> addNewTraceXeActionMap(@RequestBody TraceXeActionMap entity) {
-	    TraceXeActionMap saved = traceXeActionMapService.traceXeActionMapSave(entity);
+	public ResponseEntity<TraceXeActionMap> addNewTraceXeActionMap(@RequestBody TraceXeActionMapDTOS entity) {
+	    
+	    TraceXeActionMap saved = traceXeActionMapService.traceXeActionMapSave(traceXeActionMapMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

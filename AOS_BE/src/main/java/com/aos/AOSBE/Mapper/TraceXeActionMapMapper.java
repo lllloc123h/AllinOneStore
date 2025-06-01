@@ -12,14 +12,14 @@ public class TraceXeActionMapMapper {
 		return new TraceXeActionMapDTOS(
 				    entity.getTraceColumnId(),
 				    entity.getPackageName(),
-				    entity.getXeActionName(
+				    entity.getXeActionName()
 			);
 	}
 	public TraceXeActionMap mapperToObject(TraceXeActionMapDTOS entity) {
 		return new TraceXeActionMap(
 					entity.getTraceColumnId(),
 					entity.getPackageName(),
-					entity.getXeActionName(
+					entity.getXeActionName()
 			);
 	}
 	

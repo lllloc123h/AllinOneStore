@@ -47,8 +47,9 @@ public class UserLogsAPI {
 		return ResponseEntity.ok(userLogs);
 	}
 	@PostMapping("/UserLogs")
-	public ResponseEntity<UserLogs> addNewUserLogs(@RequestBody UserLogs entity) {
-	    UserLogs saved = userLogsService.userLogsSave(entity);
+	public ResponseEntity<UserLogs> addNewUserLogs(@RequestBody UserLogsDTOS entity) {
+	    
+	    UserLogs saved = userLogsService.userLogsSave(userLogsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

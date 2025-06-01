@@ -47,8 +47,9 @@ public class CustomAPI {
 		return ResponseEntity.ok(custom);
 	}
 	@PostMapping("/Custom")
-	public ResponseEntity<Custom> addNewCustom(@RequestBody Custom entity) {
-	    Custom saved = customService.customSave(entity);
+	public ResponseEntity<Custom> addNewCustom(@RequestBody CustomDTOS entity) {
+	    
+	    Custom saved = customService.customSave(customMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

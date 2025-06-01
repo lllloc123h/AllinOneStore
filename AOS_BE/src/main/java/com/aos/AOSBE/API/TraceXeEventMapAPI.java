@@ -47,8 +47,9 @@ public class TraceXeEventMapAPI {
 		return ResponseEntity.ok(traceXeEventMap);
 	}
 	@PostMapping("/TraceXeEventMap")
-	public ResponseEntity<TraceXeEventMap> addNewTraceXeEventMap(@RequestBody TraceXeEventMap entity) {
-	    TraceXeEventMap saved = traceXeEventMapService.traceXeEventMapSave(entity);
+	public ResponseEntity<TraceXeEventMap> addNewTraceXeEventMap(@RequestBody TraceXeEventMapDTOS entity) {
+	    
+	    TraceXeEventMap saved = traceXeEventMapService.traceXeEventMapSave(traceXeEventMapMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

@@ -47,8 +47,9 @@ public class UserAddressesAPI {
 		return ResponseEntity.ok(userAddresses);
 	}
 	@PostMapping("/UserAddresses")
-	public ResponseEntity<UserAddresses> addNewUserAddresses(@RequestBody UserAddresses entity) {
-	    UserAddresses saved = userAddressesService.userAddressesSave(entity);
+	public ResponseEntity<UserAddresses> addNewUserAddresses(@RequestBody UserAddressesDTOS entity) {
+	    
+	    UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

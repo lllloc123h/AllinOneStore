@@ -12,14 +12,14 @@ public class TraceXeEventMapMapper {
 		return new TraceXeEventMapDTOS(
 				    entity.getTraceEventId(),
 				    entity.getPackageName(),
-				    entity.getXeEventName(
+				    entity.getXeEventName()
 			);
 	}
 	public TraceXeEventMap mapperToObject(TraceXeEventMapDTOS entity) {
 		return new TraceXeEventMap(
 					entity.getTraceEventId(),
 					entity.getPackageName(),
-					entity.getXeEventName(
+					entity.getXeEventName()
 			);
 	}
 	

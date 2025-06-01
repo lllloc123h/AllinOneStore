@@ -47,8 +47,9 @@ public class VariantsAPI {
 		return ResponseEntity.ok(variants);
 	}
 	@PostMapping("/Variants")
-	public ResponseEntity<Variants> addNewVariants(@RequestBody Variants entity) {
-	    Variants saved = variantsService.variantsSave(entity);
+	public ResponseEntity<Variants> addNewVariants(@RequestBody VariantsDTOS entity) {
+	    
+	    Variants saved = variantsService.variantsSave(variantsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

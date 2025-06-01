@@ -47,8 +47,9 @@ public class RolesAPI {
 		return ResponseEntity.ok(roles);
 	}
 	@PostMapping("/Roles")
-	public ResponseEntity<Roles> addNewRoles(@RequestBody Roles entity) {
-	    Roles saved = rolesService.rolesSave(entity);
+	public ResponseEntity<Roles> addNewRoles(@RequestBody RolesDTOS entity) {
+	    
+	    Roles saved = rolesService.rolesSave(rolesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

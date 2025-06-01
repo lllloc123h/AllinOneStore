@@ -47,8 +47,9 @@ public class ShippingMethodsAPI {
 		return ResponseEntity.ok(shippingMethods);
 	}
 	@PostMapping("/ShippingMethods")
-	public ResponseEntity<ShippingMethods> addNewShippingMethods(@RequestBody ShippingMethods entity) {
-	    ShippingMethods saved = shippingMethodsService.shippingMethodsSave(entity);
+	public ResponseEntity<ShippingMethods> addNewShippingMethods(@RequestBody ShippingMethodsDTOS entity) {
+	    
+	    ShippingMethods saved = shippingMethodsService.shippingMethodsSave(shippingMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

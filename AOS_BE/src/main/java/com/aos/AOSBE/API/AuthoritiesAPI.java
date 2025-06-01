@@ -47,8 +47,9 @@ public class AuthoritiesAPI {
 		return ResponseEntity.ok(authorities);
 	}
 	@PostMapping("/Authorities")
-	public ResponseEntity<Authorities> addNewAuthorities(@RequestBody Authorities entity) {
-	    Authorities saved = authoritiesService.authoritiesSave(entity);
+	public ResponseEntity<Authorities> addNewAuthorities(@RequestBody AuthoritiesDTOS entity) {
+	    
+	    Authorities saved = authoritiesService.authoritiesSave(authoritiesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

@@ -47,8 +47,9 @@ public class CouponsAPI {
 		return ResponseEntity.ok(coupons);
 	}
 	@PostMapping("/Coupons")
-	public ResponseEntity<Coupons> addNewCoupons(@RequestBody Coupons entity) {
-	    Coupons saved = couponsService.couponsSave(entity);
+	public ResponseEntity<Coupons> addNewCoupons(@RequestBody CouponsDTOS entity) {
+	    
+	    Coupons saved = couponsService.couponsSave(couponsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

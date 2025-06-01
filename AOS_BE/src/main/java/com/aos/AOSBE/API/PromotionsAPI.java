@@ -47,8 +47,9 @@ public class PromotionsAPI {
 		return ResponseEntity.ok(promotions);
 	}
 	@PostMapping("/Promotions")
-	public ResponseEntity<Promotions> addNewPromotions(@RequestBody Promotions entity) {
-	    Promotions saved = promotionsService.promotionsSave(entity);
+	public ResponseEntity<Promotions> addNewPromotions(@RequestBody PromotionsDTOS entity) {
+	    
+	    Promotions saved = promotionsService.promotionsSave(promotionsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 
