@@ -4,5 +4,5 @@ import ImageUpload from './components/Module/ImageUpload.vue';
 
 <template>
   <router-view />
-  <ImageUpload></ImageUpload>
+  <!-- <ImageUpload></ImageUpload> -->
 </template>
