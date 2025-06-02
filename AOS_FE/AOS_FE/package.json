@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^3.0.8",
+    "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "vue": "^3.5.13"
   },
