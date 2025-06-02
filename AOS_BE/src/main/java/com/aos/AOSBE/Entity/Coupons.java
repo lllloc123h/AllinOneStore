@@ -34,10 +34,10 @@ public class Coupons {
     private int usageLimit;
     @Column(name = "usage_per_customer")
     private int usagePerCustomer;
-    @Column(name = "allow_voucher")
-    private boolean allowVoucher;
-    @Column(name = "active")
-    private boolean active;
+    @Column(name = "is_allow_voucher")
+    private boolean isAllowVoucher;
+    @Column(name = "is_active")
+    private boolean isActive;
     @Column(name = "customer_group")
     private String customerGroup;
     @Column(name = "start_at")

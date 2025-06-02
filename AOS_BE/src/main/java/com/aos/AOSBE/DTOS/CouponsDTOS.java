@@ -21,8 +21,8 @@ public class CouponsDTOS {
     private double maxDiscountAmount;
     private int usageLimit;
     private int usagePerCustomer;
-    private boolean allowVoucher;
-    private boolean active;
+    private boolean isAllowVoucher;
+    private boolean isActive;
     private String customerGroup;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
