@@ -86,6 +86,8 @@
   import { reactive, ref, onMounted, watch } from 'vue'
   import { formatDate } from '../../Module/CommonsFunctions.js'
   import Dashboard from '../../Module/Dashboard.vue'
+  import { useRouter } from 'vue-router'
+	const router = useRouter()
   import axios from 'axios'
   import 'bootstrap/dist/js/bootstrap.bundle.min.js'
   import 'bootstrap/dist/css/bootstrap.min.css'

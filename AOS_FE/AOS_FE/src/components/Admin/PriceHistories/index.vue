@@ -17,6 +17,8 @@
 <script setup>
   import Table from "../../Module/Table.vue";
   import Dashboard from "../../Module/Dashboard.vue";
+import { useRouter } from 'vue-router'
+const router = useRouter()
   const props = defineProps({
     TableName: {
       type: String,

@@ -37,7 +37,7 @@ public class UserAddressesMapper {
 					entity.getWard(),
 					entity.getStreet(),
 					entity.getLabel(),
-					entity.isDefault(),
+					entity.isIsdefault(),
 					entity.getNote(),
 					entity.getCreatedAt(),
 					entity.getUpdatedAt(),
