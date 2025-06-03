@@ -257,7 +257,7 @@
   async function submitUpdateForm() {
   	console.log(formData)
   	try {
-  		const response = await axios.put(`http://localhost:8080/Api/Admin/${props.TableName}`, formData)
+  		const response = await axios.put(`http://localhost:8080/api/admin/${props.TableName}`, formData)
   		console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   	} catch (error) {
@@ -269,7 +269,7 @@
   async function submitForm() {
   	console.log(formData)
   	try {
-  		const response = await axios.post(`http://localhost:8080/Api/Admin/${props.TableName}`, formData)
+  		const response = await axios.post(`http://localhost:8080/api/admin/${props.TableName}`, formData)
   		console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   	} catch (error) {
@@ -281,7 +281,7 @@
   	console.log(props.TableName + props.action)
   	if (!props.TableName) return
   	try {
-  		const response = await axios.get(`http://localhost:8080/Api/Admin/${props.TableName}/${props.id}`)
+  		const response = await axios.get(`http://localhost:8080/api/admin/${props.TableName}/${props.id}`)
   		response.data.createdAt = formatDate(response.data.createdAt)
   		response.data.updatedAt = formatDate(response.data.updatedAt)
   		Object.assign(formData, response.data)
