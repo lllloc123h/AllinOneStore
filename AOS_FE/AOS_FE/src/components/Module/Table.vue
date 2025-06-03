@@ -112,7 +112,6 @@ const fetchData = async () => {
         const json = await response.json()
         data.value = Array.isArray(json) ? json : [json]
         columns.value = data.value.length ? Object.keys(data.value[0]) : []
-        console.log(columns.value + data.value[0].id)
     } catch (err) {
         error.value = err.message
         data.value = []

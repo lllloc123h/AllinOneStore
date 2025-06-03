@@ -100,13 +100,13 @@
         </div>
 
         <div class="mb-3">
-          <label :for="isdefault" class="form-label text-capitalize">isdefault</label>
+          <label :for="isDefault" class="form-label text-capitalize">isDefault</label>
           <input
-            :id="isdefault"
-            v-model="formData.isdefault"
+            :id="isDefault"
+            v-model="formData.isDefault"
             type="text"
             class="form-control"
-            :placeholder="`Enter isdefault`"
+            :placeholder="`Enter isDefault`"
           />
         </div>
 
@@ -192,7 +192,7 @@
   			ward: '',
   			street: '',
   			label: '',
-  			isdefault: '',
+  			isDefault: '',
   			note: '',
   			createdAt: '',
   			updatedAt: '',

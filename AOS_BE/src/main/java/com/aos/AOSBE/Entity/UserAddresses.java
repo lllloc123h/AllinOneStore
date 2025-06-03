@@ -32,8 +32,8 @@ public class UserAddresses {
     private String street;
     @Column(name = "label")
     private String label;
-    @Column(name = "isdefault")
-    private boolean isdefault;
+    @Column(name = "is_default")
+    private boolean isDefault;
     @Column(name = "note")
     private String note;
     @Column(name = "created_at")

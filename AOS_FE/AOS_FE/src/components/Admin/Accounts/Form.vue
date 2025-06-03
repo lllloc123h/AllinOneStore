@@ -27,7 +27,7 @@
           <input
             :id="email"
             v-model="formData.email"
-            type="text"
+            type="email"
             class="form-control"
             :placeholder="`Enter email`"
           />
@@ -38,7 +38,7 @@
           <input
             :id="password"
             v-model="formData.password"
-            type="text"
+            type="password"
             class="form-control"
             :placeholder="`Enter password`"
           />

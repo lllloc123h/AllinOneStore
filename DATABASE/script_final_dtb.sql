@@ -147,7 +147,7 @@ create table user_addresses (
 	ward nvarchar(50) not null,
 	street nvarchar(50) not null, 
 	label nvarchar(20),
-	isdefault bit default 1,
+	is_default bit default 1,
 	note nvarchar(255),
 	created_at datetime default getdate(),
 	updated_at datetime default getdate(),
