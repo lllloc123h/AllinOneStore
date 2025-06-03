@@ -16,8 +16,8 @@ public class PurchaseOrderItemsDTOS {
     private int qty;
     private double cost;
     private double totalCost;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int productItems;
     private int purchaseOrders;
 }

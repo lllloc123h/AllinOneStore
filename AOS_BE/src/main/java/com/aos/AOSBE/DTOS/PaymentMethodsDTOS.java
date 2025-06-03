@@ -17,6 +17,6 @@ public class PaymentMethodsDTOS {
     private String name;
     private String description;
     private boolean isActive;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 }

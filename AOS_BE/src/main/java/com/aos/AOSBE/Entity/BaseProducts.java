@@ -35,9 +35,9 @@ public class BaseProducts {
     @Column(name = "is_active")
     private boolean isActive;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

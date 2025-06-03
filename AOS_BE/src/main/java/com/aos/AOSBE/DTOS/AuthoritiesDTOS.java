@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class AuthoritiesDTOS {
     private int id;
     private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 }

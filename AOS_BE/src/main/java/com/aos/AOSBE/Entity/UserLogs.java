@@ -29,7 +29,7 @@ public class UserLogs {
     @Column(name = "user_agent")
     private String userAgent;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "module")
     private String module;
    

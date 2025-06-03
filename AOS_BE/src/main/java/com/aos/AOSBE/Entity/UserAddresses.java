@@ -37,9 +37,9 @@ public class UserAddresses {
     @Column(name = "note")
     private String note;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

@@ -15,7 +15,7 @@ public class VariantValuesDTOS {
     private int id;
     private String signalSku;
     private String description;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int variants;
 }

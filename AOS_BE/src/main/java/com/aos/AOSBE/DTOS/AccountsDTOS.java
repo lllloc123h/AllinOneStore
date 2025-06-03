@@ -23,6 +23,6 @@ public class AccountsDTOS {
     private double totalSpent;
     private int totalOrder;
     private int loyaltyPoint;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 }

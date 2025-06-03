@@ -21,9 +21,9 @@ public class ProductImages {
     @Column(name = "image")
     private String image;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")

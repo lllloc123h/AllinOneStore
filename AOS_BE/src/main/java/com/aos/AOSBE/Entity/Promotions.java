@@ -33,15 +33,15 @@ public class Promotions {
     @Column(name = "usage_limit")
     private int usageLimit;
     @Column(name = "start_at")
-    private LocalDateTime startAt;
+    private LocalDate startAt;
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
     @Column(name = "is_active")
     private boolean isActive;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
 
 

@@ -37,13 +37,13 @@ public class ProductItems {
     @Column(name = "qty")
     private int qty;
     @Column(name = "sell_start")
-    private LocalDateTime sellStart;
+    private LocalDate sellStart;
     @Column(name = "sell_end")
-    private LocalDateTime sellEnd;
+    private LocalDate sellEnd;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "base_id")

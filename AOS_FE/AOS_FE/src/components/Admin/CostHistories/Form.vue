@@ -4,9 +4,8 @@
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     <div class="article col-9">
-    
       <form
-        @submit.prevent="props.action === 'create' ? submitForm : submitUpdateForm"
+        @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()"
       >
         <div
           class="mb-3"
@@ -126,6 +125,7 @@
   	try {
   		const response = await axios.put(`http://localhost:8080/Api/Admin/${props.TableName}`, formData)
   		console.log('Insert successful:', response.data)
+    router.push(`/Admin/${props.TableName}`)
   	} catch (error) {
   		console.error('Insert failed:', error)
   	}
@@ -137,6 +137,7 @@
   	try {
   		const response = await axios.post(`http://localhost:8080/Api/Admin/${props.TableName}`, formData)
   		console.log('Insert successful:', response.data)
+    router.push(`/Admin/${props.TableName}`)
   	} catch (error) {
   		console.error('Insert failed:', error)
   	}
