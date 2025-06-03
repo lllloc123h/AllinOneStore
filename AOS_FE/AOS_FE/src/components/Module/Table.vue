@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <h1 class="h3 fw-bold mb-4">{{ props.TableName }}</h1>
+        <h1 class=" fw-bold mb-4">{{ props.TableName }}</h1>
 
         <div v-if="loading" class="text-primary">
             <div class="spinner-border text-primary" role="status">
@@ -90,10 +90,10 @@ const props = defineProps({
     }
 })
 function goToView(id) {
-    router.push(`/Admin/${props.TableName}/view/${id}` + "?page=" + currentPage.value + "&size=" + currentSize.value)
+    router.push(`/Admin/${props.TableName}/view/${id}` )
 }
 function goToEdit(id) {
-    router.push(`/Admin/${props.TableName}/update/${id}` + "?page=" + currentPage.value + "&size=" + currentSize.value)
+    router.push(`/Admin/${props.TableName}/update/${id}` )
 }
 const data = ref([])
 const columns = ref([])

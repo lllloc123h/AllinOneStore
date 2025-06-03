@@ -1,4 +1,6 @@
 import ModuleQuanLy from '../../components/Admin/ModuleQuanLy.vue'
+import Index from '../../components/Admin/Accounts/index.vue'
+import Form from '../../components/Admin/Accounts/Form.vue'
 const listDashBoard = [
     "Accounts",
     "Authorities",
@@ -35,18 +37,23 @@ export default [
 
     {
         path: '/Admin/Accounts',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard }
+        component: Index,
+        // props: { id: "-1", TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard }
+    },
+    {
+        path: '/Admin/Accounts/create',
+        component: Form,
+        props: route => ({ TableName: 'Accounts', action: 'create', id: -1,})
     },
     {
         path: '/Admin/Accounts/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard })
+        component: Form,
+        props: route => ({ TableName: 'Accounts', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Accounts/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Accounts', isEditing: true, listDashBoard: listDashBoard })
+        component: Form,
+        props: route => ({ TableName: 'Accounts', action: 'update', id: route.params.id,})
     },
     {
         path: '/Admin/Accounts/delete/:id',
