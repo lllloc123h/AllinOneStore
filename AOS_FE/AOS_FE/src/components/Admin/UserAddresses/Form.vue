@@ -24,46 +24,13 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="email" class="form-label text-capitalize">email</label>
+          <label :for="recipientName" class="form-label text-capitalize">recipientName</label>
           <input
-            :id="email"
-            v-model="formData.email"
+            :id="recipientName"
+            v-model="formData.recipientName"
             type="text"
             class="form-control"
-            :placeholder="`Enter email`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="password" class="form-label text-capitalize">password</label>
-          <input
-            :id="password"
-            v-model="formData.password"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter password`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="fullname" class="form-label text-capitalize">fullname</label>
-          <input
-            :id="fullname"
-            v-model="formData.fullname"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter fullname`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="avatar" class="form-label text-capitalize">avatar</label>
-          <input
-            :id="avatar"
-            v-model="formData.avatar"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter avatar`"
+            :placeholder="`Enter recipientName`"
           />
         </div>
 
@@ -79,57 +46,79 @@
         </div>
 
         <div class="mb-3">
-          <label :for="averageOrderValue" class="form-label text-capitalize">averageOrderValue</label>
+          <label :for="province" class="form-label text-capitalize">province</label>
           <input
-            :id="averageOrderValue"
-            v-model="formData.averageOrderValue"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter averageOrderValue`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="userRank" class="form-label text-capitalize">userRank</label>
-          <input
-            :id="userRank"
-            v-model="formData.userRank"
+            :id="province"
+            v-model="formData.province"
             type="text"
             class="form-control"
-            :placeholder="`Enter userRank`"
+            :placeholder="`Enter province`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="totalSpent" class="form-label text-capitalize">totalSpent</label>
+          <label :for="district" class="form-label text-capitalize">district</label>
           <input
-            :id="totalSpent"
-            v-model="formData.totalSpent"
-            type="number"
+            :id="district"
+            v-model="formData.district"
+            type="text"
             class="form-control"
-            :placeholder="`Enter totalSpent`"
+            :placeholder="`Enter district`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="totalOrder" class="form-label text-capitalize">totalOrder</label>
+          <label :for="ward" class="form-label text-capitalize">ward</label>
           <input
-            :id="totalOrder"
-            v-model="formData.totalOrder"
-            type="number"
+            :id="ward"
+            v-model="formData.ward"
+            type="text"
             class="form-control"
-            :placeholder="`Enter totalOrder`"
+            :placeholder="`Enter ward`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="loyaltyPoint" class="form-label text-capitalize">loyaltyPoint</label>
+          <label :for="street" class="form-label text-capitalize">street</label>
           <input
-            :id="loyaltyPoint"
-            v-model="formData.loyaltyPoint"
-            type="number"
+            :id="street"
+            v-model="formData.street"
+            type="text"
             class="form-control"
-            :placeholder="`Enter loyaltyPoint`"
+            :placeholder="`Enter street`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="label" class="form-label text-capitalize">label</label>
+          <input
+            :id="label"
+            v-model="formData.label"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter label`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="isdefault" class="form-label text-capitalize">isdefault</label>
+          <input
+            :id="isdefault"
+            v-model="formData.isdefault"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter isdefault`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="note" class="form-label text-capitalize">note</label>
+          <input
+            :id="note"
+            v-model="formData.note"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter note`"
           />
         </div>
 
@@ -195,16 +184,15 @@
 
   const formData = reactive({
   			id: '',
-  			email: '',
-  			password: '',
-  			fullname: '',
-  			avatar: '',
+  			recipientName: '',
   			phone: '',
-  			averageOrderValue: '',
-  			userRank: '',
-  			totalSpent: '',
-  			totalOrder: '',
-  			loyaltyPoint: '',
+  			province: '',
+  			district: '',
+  			ward: '',
+  			street: '',
+  			label: '',
+  			isdefault: '',
+  			note: '',
   			createdAt: '',
   			updatedAt: '',
   })

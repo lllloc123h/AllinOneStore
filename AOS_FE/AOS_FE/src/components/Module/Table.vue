@@ -8,7 +8,8 @@
             </div>
         </div>
         <div v-if="error" class="text-danger">{{ error }}</div>
-
+        
+   	     <div ><a :href="`/Admin/${props.TableName}/create`"  class="btn btn-primary">Thêm mới</a></div>
         <table v-if="data.length" class="table table-bordered table-hover container-fluid">
             <thead class="table-light">
                 <tr>

@@ -1,4 +1,4 @@
-﻿create database all_in_store;
+﻿--create database all_in_store;
 GO
 -- Disable all constraints temporarily (optional safety)
 EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
@@ -119,7 +119,7 @@ create table accounts (
 GO
 
 create table authorities (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	name nvarchar(50),
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
@@ -127,7 +127,7 @@ create table authorities (
 GO
 
 create table roles(
-	id int identity(1,5) primary key,
+	id int identity(1,1) primary key,
 	account_id int not null,
 	author_id int not null,
 	created_at datetime default getdate(),
@@ -138,7 +138,7 @@ create table roles(
 GO
 
 create table user_addresses (
-	id int identity (1,10) primary key,
+	id int identity (1,1) primary key,
 	account_id int not null,
 	recipient_name nvarchar(100) not null,
 	phone varchar(15) not null,
@@ -156,7 +156,7 @@ create table user_addresses (
 GO
 
 create table catalogs(
-	id int identity (1,10) primary key,
+	id int identity (1,1) primary key,
 	name nvarchar(100) unique,
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
@@ -164,7 +164,7 @@ create table catalogs(
 GO
 
 create table categories (
-	id int identity (1,10) primary key,
+	id int identity (1,1) primary key,
 	catalog_id int not null,
 	name nvarchar(100) unique,
 	created_at datetime default getdate(),
@@ -191,7 +191,7 @@ create table base_products(
 GO
 
 create table product_items(
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	base_id int not null,
 	name nvarchar(100) not null,
 	cost decimal(18,2) not null,
@@ -251,7 +251,7 @@ create table news (
 GO
 
 CREATE TABLE promotions (
-	id INT identity(1,2) PRIMARY KEY,
+	id INT identity(1,1) PRIMARY KEY,
 	name NVARCHAR(100),
 	description NVARCHAR(255),
 	type VARCHAR(30) CHECK (type IN ('DISCOUNT','COMBO')),
@@ -282,7 +282,7 @@ CREATE TABLE PromotionProduct (
 GO
 
 create table cost_histories (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	product_item_id int not null,
 	cost decimal(18,2) not null,
 	created_at datetime default getdate(),
@@ -291,7 +291,7 @@ create table cost_histories (
 GO
 
 create table price_histories (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	product_item_id int not null,
 	price decimal(18,2) not null,
 	created_at datetime default getdate(),
@@ -300,7 +300,7 @@ create table price_histories (
 GO
 
 create table reviews (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	product_item_id int not null,
 	account_id int not null,
 	rating int not null,
@@ -313,7 +313,7 @@ create table reviews (
 GO
 
 create table cart_items (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	account_id int not null,
 	product_item_id int,
 	qty int,
@@ -325,7 +325,7 @@ create table cart_items (
 GO
 
 create TABLE payment_methods (
-	id INT identity(1,2) PRIMARY KEY,
+	id INT identity(1,1) PRIMARY KEY,
 	order_id int not null,
 	name nVARCHAR(100) NOT NULL,
 	description nvarchar(max),
@@ -336,7 +336,7 @@ create TABLE payment_methods (
 GO
 
 CREATE TABLE shipping_methods (
-	id INT identity(1,2) primary key,
+	id INT identity(1,1) primary key,
 	order_id int not null,
 	name nVARCHAR(100) NOT NULL,
 	description TEXT,
@@ -347,7 +347,7 @@ CREATE TABLE shipping_methods (
 GO
 
 create table orders (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	account_id int not null,
 	payment_method_id int not null,
 	shipping_method_id int not null,
@@ -384,7 +384,7 @@ create table cancels (
 GO
 
 create table order_items (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	order_id int not null,
 	product_item_id int not null,
 	promotion_id int,
@@ -402,7 +402,7 @@ create table order_items (
 GO
 
 create table returns (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	order_product_item_id int not null,
 	reason nvarchar(max) not null,
 	image1 varchar(255) not null,
@@ -418,7 +418,7 @@ create table returns (
 GO
 
 CREATE TABLE coupons (
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	code NVARCHAR(50) NOT NULL UNIQUE,
 	description NVARCHAR(255),
 	discount_type VARCHAR(20) CHECK (discount_type IN ('FREESHIP','G-DISCOUNT')),
@@ -438,7 +438,7 @@ CREATE TABLE coupons (
 GO
 
 create table variants(
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	name nvarchar(50) unique,
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
@@ -446,7 +446,7 @@ create table variants(
 GO
 
 create table variant_values(
-	id int identity(1,2) primary key,
+	id int identity(1,1) primary key,
 	variant_id int not null,
 	signal_sku nvarchar(50) unique,
 	description nvarchar(max) not null,
@@ -457,7 +457,7 @@ create table variant_values(
 GO
 
 CREATE TABLE purchase_orders (
-	id INT PRIMARY KEY IDENTITY(1,2),
+	id INT PRIMARY KEY IDENTITY(1,1),
 	order_date DATETIME DEFAULT GETDATE(),
 	expected_date DATETIME,
 	received_date DATETIME,

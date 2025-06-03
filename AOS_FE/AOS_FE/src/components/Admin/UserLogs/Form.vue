@@ -24,112 +24,57 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="email" class="form-label text-capitalize">email</label>
+          <label :for="userId" class="form-label text-capitalize">userId</label>
           <input
-            :id="email"
-            v-model="formData.email"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter email`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="password" class="form-label text-capitalize">password</label>
-          <input
-            :id="password"
-            v-model="formData.password"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter password`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="fullname" class="form-label text-capitalize">fullname</label>
-          <input
-            :id="fullname"
-            v-model="formData.fullname"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter fullname`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="avatar" class="form-label text-capitalize">avatar</label>
-          <input
-            :id="avatar"
-            v-model="formData.avatar"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter avatar`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="phone" class="form-label text-capitalize">phone</label>
-          <input
-            :id="phone"
-            v-model="formData.phone"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter phone`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="averageOrderValue" class="form-label text-capitalize">averageOrderValue</label>
-          <input
-            :id="averageOrderValue"
-            v-model="formData.averageOrderValue"
+            :id="userId"
+            v-model="formData.userId"
             type="number"
             class="form-control"
-            :placeholder="`Enter averageOrderValue`"
+            :placeholder="`Enter userId`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="userRank" class="form-label text-capitalize">userRank</label>
+          <label :for="action" class="form-label text-capitalize">action</label>
           <input
-            :id="userRank"
-            v-model="formData.userRank"
+            :id="action"
+            v-model="formData.action"
             type="text"
             class="form-control"
-            :placeholder="`Enter userRank`"
+            :placeholder="`Enter action`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="totalSpent" class="form-label text-capitalize">totalSpent</label>
+          <label :for="description" class="form-label text-capitalize">description</label>
           <input
-            :id="totalSpent"
-            v-model="formData.totalSpent"
-            type="number"
+            :id="description"
+            v-model="formData.description"
+            type="text"
             class="form-control"
-            :placeholder="`Enter totalSpent`"
+            :placeholder="`Enter description`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="totalOrder" class="form-label text-capitalize">totalOrder</label>
+          <label :for="ipAddress" class="form-label text-capitalize">ipAddress</label>
           <input
-            :id="totalOrder"
-            v-model="formData.totalOrder"
-            type="number"
+            :id="ipAddress"
+            v-model="formData.ipAddress"
+            type="text"
             class="form-control"
-            :placeholder="`Enter totalOrder`"
+            :placeholder="`Enter ipAddress`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="loyaltyPoint" class="form-label text-capitalize">loyaltyPoint</label>
+          <label :for="userAgent" class="form-label text-capitalize">userAgent</label>
           <input
-            :id="loyaltyPoint"
-            v-model="formData.loyaltyPoint"
-            type="number"
+            :id="userAgent"
+            v-model="formData.userAgent"
+            type="text"
             class="form-control"
-            :placeholder="`Enter loyaltyPoint`"
+            :placeholder="`Enter userAgent`"
           />
         </div>
 
@@ -145,13 +90,13 @@
         </div>
 
         <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
+          <label :for="module" class="form-label text-capitalize">module</label>
           <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
+            :id="module"
+            v-model="formData.module"
+            type="text"
             class="form-control"
-            :placeholder="`Enter updatedAt`"
+            :placeholder="`Enter module`"
           />
         </div>
 
@@ -195,18 +140,13 @@
 
   const formData = reactive({
   			id: '',
-  			email: '',
-  			password: '',
-  			fullname: '',
-  			avatar: '',
-  			phone: '',
-  			averageOrderValue: '',
-  			userRank: '',
-  			totalSpent: '',
-  			totalOrder: '',
-  			loyaltyPoint: '',
+  			userId: '',
+  			action: '',
+  			description: '',
+  			ipAddress: '',
+  			userAgent: '',
   			createdAt: '',
-  			updatedAt: '',
+  			module: '',
   })
 
   const listDashBoard = [

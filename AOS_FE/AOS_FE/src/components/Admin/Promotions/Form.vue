@@ -24,112 +24,112 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="email" class="form-label text-capitalize">email</label>
+          <label :for="name" class="form-label text-capitalize">name</label>
           <input
-            :id="email"
-            v-model="formData.email"
+            :id="name"
+            v-model="formData.name"
             type="text"
             class="form-control"
-            :placeholder="`Enter email`"
+            :placeholder="`Enter name`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="password" class="form-label text-capitalize">password</label>
+          <label :for="description" class="form-label text-capitalize">description</label>
           <input
-            :id="password"
-            v-model="formData.password"
+            :id="description"
+            v-model="formData.description"
             type="text"
             class="form-control"
-            :placeholder="`Enter password`"
+            :placeholder="`Enter description`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="fullname" class="form-label text-capitalize">fullname</label>
+          <label :for="type" class="form-label text-capitalize">type</label>
           <input
-            :id="fullname"
-            v-model="formData.fullname"
+            :id="type"
+            v-model="formData.type"
             type="text"
             class="form-control"
-            :placeholder="`Enter fullname`"
+            :placeholder="`Enter type`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="avatar" class="form-label text-capitalize">avatar</label>
+          <label :for="discountType" class="form-label text-capitalize">discountType</label>
           <input
-            :id="avatar"
-            v-model="formData.avatar"
+            :id="discountType"
+            v-model="formData.discountType"
             type="text"
             class="form-control"
-            :placeholder="`Enter avatar`"
+            :placeholder="`Enter discountType`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="phone" class="form-label text-capitalize">phone</label>
+          <label :for="discountValue" class="form-label text-capitalize">discountValue</label>
           <input
-            :id="phone"
-            v-model="formData.phone"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter phone`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="averageOrderValue" class="form-label text-capitalize">averageOrderValue</label>
-          <input
-            :id="averageOrderValue"
-            v-model="formData.averageOrderValue"
+            :id="discountValue"
+            v-model="formData.discountValue"
             type="number"
             class="form-control"
-            :placeholder="`Enter averageOrderValue`"
+            :placeholder="`Enter discountValue`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="userRank" class="form-label text-capitalize">userRank</label>
+          <label :for="comboPrice" class="form-label text-capitalize">comboPrice</label>
           <input
-            :id="userRank"
-            v-model="formData.userRank"
+            :id="comboPrice"
+            v-model="formData.comboPrice"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter comboPrice`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="usageLimit" class="form-label text-capitalize">usageLimit</label>
+          <input
+            :id="usageLimit"
+            v-model="formData.usageLimit"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter usageLimit`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="startAt" class="form-label text-capitalize">startAt</label>
+          <input
+            :id="startAt"
+            v-model="formData.startAt"
+            type="date"
+            class="form-control"
+            :placeholder="`Enter startAt`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="endAt" class="form-label text-capitalize">endAt</label>
+          <input
+            :id="endAt"
+            v-model="formData.endAt"
+            type="date"
+            class="form-control"
+            :placeholder="`Enter endAt`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="isActive" class="form-label text-capitalize">isActive</label>
+          <input
+            :id="isActive"
+            v-model="formData.isActive"
             type="text"
             class="form-control"
-            :placeholder="`Enter userRank`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="totalSpent" class="form-label text-capitalize">totalSpent</label>
-          <input
-            :id="totalSpent"
-            v-model="formData.totalSpent"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter totalSpent`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="totalOrder" class="form-label text-capitalize">totalOrder</label>
-          <input
-            :id="totalOrder"
-            v-model="formData.totalOrder"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter totalOrder`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="loyaltyPoint" class="form-label text-capitalize">loyaltyPoint</label>
-          <input
-            :id="loyaltyPoint"
-            v-model="formData.loyaltyPoint"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter loyaltyPoint`"
+            :placeholder="`Enter isActive`"
           />
         </div>
 
@@ -195,16 +195,16 @@
 
   const formData = reactive({
   			id: '',
-  			email: '',
-  			password: '',
-  			fullname: '',
-  			avatar: '',
-  			phone: '',
-  			averageOrderValue: '',
-  			userRank: '',
-  			totalSpent: '',
-  			totalOrder: '',
-  			loyaltyPoint: '',
+  			name: '',
+  			description: '',
+  			type: '',
+  			discountType: '',
+  			discountValue: '',
+  			comboPrice: '',
+  			usageLimit: '',
+  			startAt: '',
+  			endAt: '',
+  			isActive: '',
   			createdAt: '',
   			updatedAt: '',
   })

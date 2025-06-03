@@ -1,6 +1,4 @@
-import ModuleQuanLy from '../../components/Admin/ModuleQuanLy.vue'
-import Index from '../../components/Admin/Accounts/index.vue'
-import Form from '../../components/Admin/Accounts/Form.vue'
+
 const listDashBoard = [
     "Accounts",
     "Authorities",
@@ -11,6 +9,7 @@ const listDashBoard = [
     "Categories",
     "CostHistories",
     "Coupons",
+    "Custom",
     "News",
     "OrderItems",
     "Orders",
@@ -27,600 +26,589 @@ const listDashBoard = [
     "Roles",
     "ShippingMethods",
     "UserAddresses",
+    "UserLogs",
     "VariantValues",
     "Variants",
-    "TraceXeActionMap",
-    "TraceXeEventMap",
 ]
-
 export default [
-
-    {
+  	{
         path: '/Admin/Accounts',
-        component: Index,
-        // props: { id: "-1", TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Accounts/index.vue'),
+        props: route => ({ TableName: 'Accounts'})
     },
     {
         path: '/Admin/Accounts/create',
-        component: Form,
-        props: route => ({ TableName: 'Accounts', action: 'create', id: -1,})
+        component:  () => import('../../components/Admin/Accounts/Form.vue'),
+        props: route => ({ TableName: 'Accounts', action: 'create'})
     },
     {
         path: '/Admin/Accounts/view/:id',
-        component: Form,
+        component:  () => import('../../components/Admin/Accounts/Form.vue'),
         props: route => ({ TableName: 'Accounts', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Accounts/update/:id',
-        component: Form,
+        component:  () => import('../../components/Admin/Accounts/Form.vue'),
         props: route => ({ TableName: 'Accounts', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Accounts/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Accounts', isEditing: false, listDashBoard: listDashBoard })
+  	{
+        path: '/Admin/Authorities',
+        component: import('../../components/Admin/Authorities/index.vue'),
+        props: route => ({ TableName: 'Authorities'})
     },
     {
-        path: '/Admin/Authorities',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Authorities', isEditing: false, listDashBoard: listDashBoard }
+        path: '/Admin/Authorities/create',
+        component:  () => import('../../components/Admin/Authorities/Form.vue'),
+        props: route => ({ TableName: 'Authorities', action: 'create'})
     },
     {
         path: '/Admin/Authorities/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Authorities', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Authorities/Form.vue'),
+        props: route => ({ TableName: 'Authorities', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Authorities/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Authorities', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Authorities/Form.vue'),
+        props: route => ({ TableName: 'Authorities', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Authorities/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Authorities', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/BaseProducts',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'BaseProducts', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/BaseProducts/index.vue'),
+        props: route => ({ TableName: 'BaseProducts'})
+    },
+    {
+        path: '/Admin/BaseProducts/create',
+        component:  () => import('../../components/Admin/BaseProducts/Form.vue'),
+        props: route => ({ TableName: 'BaseProducts', action: 'create'})
     },
     {
         path: '/Admin/BaseProducts/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'BaseProducts', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/BaseProducts/Form.vue'),
+        props: route => ({ TableName: 'BaseProducts', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/BaseProducts/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'BaseProducts', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/BaseProducts/Form.vue'),
+        props: route => ({ TableName: 'BaseProducts', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/BaseProducts/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'BaseProducts', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Cancels',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Cancels', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Cancels/index.vue'),
+        props: route => ({ TableName: 'Cancels'})
+    },
+    {
+        path: '/Admin/Cancels/create',
+        component:  () => import('../../components/Admin/Cancels/Form.vue'),
+        props: route => ({ TableName: 'Cancels', action: 'create'})
     },
     {
         path: '/Admin/Cancels/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Cancels', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Cancels/Form.vue'),
+        props: route => ({ TableName: 'Cancels', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Cancels/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Cancels', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Cancels/Form.vue'),
+        props: route => ({ TableName: 'Cancels', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Cancels/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Cancels', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/CartItems',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'CartItems', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/CartItems/index.vue'),
+        props: route => ({ TableName: 'CartItems'})
+    },
+    {
+        path: '/Admin/CartItems/create',
+        component:  () => import('../../components/Admin/CartItems/Form.vue'),
+        props: route => ({ TableName: 'CartItems', action: 'create'})
     },
     {
         path: '/Admin/CartItems/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'CartItems', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/CartItems/Form.vue'),
+        props: route => ({ TableName: 'CartItems', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/CartItems/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'CartItems', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/CartItems/Form.vue'),
+        props: route => ({ TableName: 'CartItems', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/CartItems/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'CartItems', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Catalogs',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Catalogs', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Catalogs/index.vue'),
+        props: route => ({ TableName: 'Catalogs'})
+    },
+    {
+        path: '/Admin/Catalogs/create',
+        component:  () => import('../../components/Admin/Catalogs/Form.vue'),
+        props: route => ({ TableName: 'Catalogs', action: 'create'})
     },
     {
         path: '/Admin/Catalogs/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Catalogs', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Catalogs/Form.vue'),
+        props: route => ({ TableName: 'Catalogs', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Catalogs/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Catalogs', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Catalogs/Form.vue'),
+        props: route => ({ TableName: 'Catalogs', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Catalogs/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Catalogs', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Categories',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Categories', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Categories/index.vue'),
+        props: route => ({ TableName: 'Categories'})
+    },
+    {
+        path: '/Admin/Categories/create',
+        component:  () => import('../../components/Admin/Categories/Form.vue'),
+        props: route => ({ TableName: 'Categories', action: 'create'})
     },
     {
         path: '/Admin/Categories/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Categories', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Categories/Form.vue'),
+        props: route => ({ TableName: 'Categories', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Categories/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Categories', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Categories/Form.vue'),
+        props: route => ({ TableName: 'Categories', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Categories/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Categories', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/CostHistories',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'CostHistories', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/CostHistories/index.vue'),
+        props: route => ({ TableName: 'CostHistories'})
+    },
+    {
+        path: '/Admin/CostHistories/create',
+        component:  () => import('../../components/Admin/CostHistories/Form.vue'),
+        props: route => ({ TableName: 'CostHistories', action: 'create'})
     },
     {
         path: '/Admin/CostHistories/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'CostHistories', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/CostHistories/Form.vue'),
+        props: route => ({ TableName: 'CostHistories', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/CostHistories/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'CostHistories', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/CostHistories/Form.vue'),
+        props: route => ({ TableName: 'CostHistories', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/CostHistories/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'CostHistories', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Coupons',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Coupons', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Coupons/index.vue'),
+        props: route => ({ TableName: 'Coupons'})
+    },
+    {
+        path: '/Admin/Coupons/create',
+        component:  () => import('../../components/Admin/Coupons/Form.vue'),
+        props: route => ({ TableName: 'Coupons', action: 'create'})
     },
     {
         path: '/Admin/Coupons/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Coupons', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Coupons/Form.vue'),
+        props: route => ({ TableName: 'Coupons', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Coupons/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Coupons', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Coupons/Form.vue'),
+        props: route => ({ TableName: 'Coupons', action: 'update', id: route.params.id,})
+    },
+  	{
+        path: '/Admin/Custom',
+        component: import('../../components/Admin/Custom/index.vue'),
+        props: route => ({ TableName: 'Custom'})
     },
     {
-        path: '/Admin/Coupons/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Coupons', isEditing: false, listDashBoard: listDashBoard })
+        path: '/Admin/Custom/create',
+        component:  () => import('../../components/Admin/Custom/Form.vue'),
+        props: route => ({ TableName: 'Custom', action: 'create'})
     },
     {
+        path: '/Admin/Custom/view/:id',
+        component:  () => import('../../components/Admin/Custom/Form.vue'),
+        props: route => ({ TableName: 'Custom', action: 'view', id: route.params.id,})
+    },
+    {
+        path: '/Admin/Custom/update/:id',
+        component:  () => import('../../components/Admin/Custom/Form.vue'),
+        props: route => ({ TableName: 'Custom', action: 'update', id: route.params.id,})
+    },
+  	{
         path: '/Admin/News',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'News', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/News/index.vue'),
+        props: route => ({ TableName: 'News'})
+    },
+    {
+        path: '/Admin/News/create',
+        component:  () => import('../../components/Admin/News/Form.vue'),
+        props: route => ({ TableName: 'News', action: 'create'})
     },
     {
         path: '/Admin/News/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'News', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/News/Form.vue'),
+        props: route => ({ TableName: 'News', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/News/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'News', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/News/Form.vue'),
+        props: route => ({ TableName: 'News', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/News/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'News', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/OrderItems',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'OrderItems', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/OrderItems/index.vue'),
+        props: route => ({ TableName: 'OrderItems'})
+    },
+    {
+        path: '/Admin/OrderItems/create',
+        component:  () => import('../../components/Admin/OrderItems/Form.vue'),
+        props: route => ({ TableName: 'OrderItems', action: 'create'})
     },
     {
         path: '/Admin/OrderItems/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'OrderItems', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/OrderItems/Form.vue'),
+        props: route => ({ TableName: 'OrderItems', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/OrderItems/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'OrderItems', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/OrderItems/Form.vue'),
+        props: route => ({ TableName: 'OrderItems', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/OrderItems/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'OrderItems', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Orders',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Orders', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Orders/index.vue'),
+        props: route => ({ TableName: 'Orders'})
+    },
+    {
+        path: '/Admin/Orders/create',
+        component:  () => import('../../components/Admin/Orders/Form.vue'),
+        props: route => ({ TableName: 'Orders', action: 'create'})
     },
     {
         path: '/Admin/Orders/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Orders', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Orders/Form.vue'),
+        props: route => ({ TableName: 'Orders', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Orders/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Orders', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Orders/Form.vue'),
+        props: route => ({ TableName: 'Orders', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Orders/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Orders', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/PaymentMethods',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'PaymentMethods', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/PaymentMethods/index.vue'),
+        props: route => ({ TableName: 'PaymentMethods'})
+    },
+    {
+        path: '/Admin/PaymentMethods/create',
+        component:  () => import('../../components/Admin/PaymentMethods/Form.vue'),
+        props: route => ({ TableName: 'PaymentMethods', action: 'create'})
     },
     {
         path: '/Admin/PaymentMethods/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'PaymentMethods', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PaymentMethods/Form.vue'),
+        props: route => ({ TableName: 'PaymentMethods', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/PaymentMethods/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'PaymentMethods', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PaymentMethods/Form.vue'),
+        props: route => ({ TableName: 'PaymentMethods', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/PaymentMethods/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PaymentMethods', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/PriceHistories',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'PriceHistories', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/PriceHistories/index.vue'),
+        props: route => ({ TableName: 'PriceHistories'})
+    },
+    {
+        path: '/Admin/PriceHistories/create',
+        component:  () => import('../../components/Admin/PriceHistories/Form.vue'),
+        props: route => ({ TableName: 'PriceHistories', action: 'create'})
     },
     {
         path: '/Admin/PriceHistories/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'PriceHistories', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PriceHistories/Form.vue'),
+        props: route => ({ TableName: 'PriceHistories', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/PriceHistories/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'PriceHistories', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PriceHistories/Form.vue'),
+        props: route => ({ TableName: 'PriceHistories', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/PriceHistories/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PriceHistories', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/ProductImages',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'ProductImages', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/ProductImages/index.vue'),
+        props: route => ({ TableName: 'ProductImages'})
+    },
+    {
+        path: '/Admin/ProductImages/create',
+        component:  () => import('../../components/Admin/ProductImages/Form.vue'),
+        props: route => ({ TableName: 'ProductImages', action: 'create'})
     },
     {
         path: '/Admin/ProductImages/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductImages', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/ProductImages/Form.vue'),
+        props: route => ({ TableName: 'ProductImages', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/ProductImages/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductImages', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/ProductImages/Form.vue'),
+        props: route => ({ TableName: 'ProductImages', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/ProductImages/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductImages', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/ProductItems',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'ProductItems', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/ProductItems/index.vue'),
+        props: route => ({ TableName: 'ProductItems'})
+    },
+    {
+        path: '/Admin/ProductItems/create',
+        component:  () => import('../../components/Admin/ProductItems/Form.vue'),
+        props: route => ({ TableName: 'ProductItems', action: 'create'})
     },
     {
         path: '/Admin/ProductItems/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'ProductItems', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/ProductItems/Form.vue'),
+        props: route => ({ TableName: 'ProductItems', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/ProductItems/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'ProductItems', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/ProductItems/Form.vue'),
+        props: route => ({ TableName: 'ProductItems', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/ProductItems/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ProductItems', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/PromotionProduct',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'PromotionProduct', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/PromotionProduct/index.vue'),
+        props: route => ({ TableName: 'PromotionProduct'})
+    },
+    {
+        path: '/Admin/PromotionProduct/create',
+        component:  () => import('../../components/Admin/PromotionProduct/Form.vue'),
+        props: route => ({ TableName: 'PromotionProduct', action: 'create'})
     },
     {
         path: '/Admin/PromotionProduct/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'PromotionProduct', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PromotionProduct/Form.vue'),
+        props: route => ({ TableName: 'PromotionProduct', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/PromotionProduct/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'PromotionProduct', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PromotionProduct/Form.vue'),
+        props: route => ({ TableName: 'PromotionProduct', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/PromotionProduct/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PromotionProduct', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Promotions',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Promotions', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Promotions/index.vue'),
+        props: route => ({ TableName: 'Promotions'})
+    },
+    {
+        path: '/Admin/Promotions/create',
+        component:  () => import('../../components/Admin/Promotions/Form.vue'),
+        props: route => ({ TableName: 'Promotions', action: 'create'})
     },
     {
         path: '/Admin/Promotions/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Promotions', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Promotions/Form.vue'),
+        props: route => ({ TableName: 'Promotions', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Promotions/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Promotions', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Promotions/Form.vue'),
+        props: route => ({ TableName: 'Promotions', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Promotions/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Promotions', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/PurchaseOrderItems',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'PurchaseOrderItems', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/PurchaseOrderItems/index.vue'),
+        props: route => ({ TableName: 'PurchaseOrderItems'})
+    },
+    {
+        path: '/Admin/PurchaseOrderItems/create',
+        component:  () => import('../../components/Admin/PurchaseOrderItems/Form.vue'),
+        props: route => ({ TableName: 'PurchaseOrderItems', action: 'create'})
     },
     {
         path: '/Admin/PurchaseOrderItems/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'PurchaseOrderItems', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PurchaseOrderItems/Form.vue'),
+        props: route => ({ TableName: 'PurchaseOrderItems', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/PurchaseOrderItems/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'PurchaseOrderItems', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PurchaseOrderItems/Form.vue'),
+        props: route => ({ TableName: 'PurchaseOrderItems', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/PurchaseOrderItems/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PurchaseOrderItems', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/PurchaseOrders',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'PurchaseOrders', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/PurchaseOrders/index.vue'),
+        props: route => ({ TableName: 'PurchaseOrders'})
+    },
+    {
+        path: '/Admin/PurchaseOrders/create',
+        component:  () => import('../../components/Admin/PurchaseOrders/Form.vue'),
+        props: route => ({ TableName: 'PurchaseOrders', action: 'create'})
     },
     {
         path: '/Admin/PurchaseOrders/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'PurchaseOrders', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PurchaseOrders/Form.vue'),
+        props: route => ({ TableName: 'PurchaseOrders', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/PurchaseOrders/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'PurchaseOrders', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/PurchaseOrders/Form.vue'),
+        props: route => ({ TableName: 'PurchaseOrders', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/PurchaseOrders/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'PurchaseOrders', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Returns',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Returns', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Returns/index.vue'),
+        props: route => ({ TableName: 'Returns'})
+    },
+    {
+        path: '/Admin/Returns/create',
+        component:  () => import('../../components/Admin/Returns/Form.vue'),
+        props: route => ({ TableName: 'Returns', action: 'create'})
     },
     {
         path: '/Admin/Returns/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Returns', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Returns/Form.vue'),
+        props: route => ({ TableName: 'Returns', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Returns/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Returns', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Returns/Form.vue'),
+        props: route => ({ TableName: 'Returns', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Returns/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Returns', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Reviews',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Reviews', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Reviews/index.vue'),
+        props: route => ({ TableName: 'Reviews'})
+    },
+    {
+        path: '/Admin/Reviews/create',
+        component:  () => import('../../components/Admin/Reviews/Form.vue'),
+        props: route => ({ TableName: 'Reviews', action: 'create'})
     },
     {
         path: '/Admin/Reviews/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Reviews', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Reviews/Form.vue'),
+        props: route => ({ TableName: 'Reviews', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Reviews/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Reviews', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Reviews/Form.vue'),
+        props: route => ({ TableName: 'Reviews', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Reviews/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Reviews', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Roles',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Roles', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Roles/index.vue'),
+        props: route => ({ TableName: 'Roles'})
+    },
+    {
+        path: '/Admin/Roles/create',
+        component:  () => import('../../components/Admin/Roles/Form.vue'),
+        props: route => ({ TableName: 'Roles', action: 'create'})
     },
     {
         path: '/Admin/Roles/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Roles', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Roles/Form.vue'),
+        props: route => ({ TableName: 'Roles', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Roles/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Roles', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Roles/Form.vue'),
+        props: route => ({ TableName: 'Roles', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Roles/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Roles', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/ShippingMethods',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'ShippingMethods', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/ShippingMethods/index.vue'),
+        props: route => ({ TableName: 'ShippingMethods'})
+    },
+    {
+        path: '/Admin/ShippingMethods/create',
+        component:  () => import('../../components/Admin/ShippingMethods/Form.vue'),
+        props: route => ({ TableName: 'ShippingMethods', action: 'create'})
     },
     {
         path: '/Admin/ShippingMethods/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'ShippingMethods', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/ShippingMethods/Form.vue'),
+        props: route => ({ TableName: 'ShippingMethods', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/ShippingMethods/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'ShippingMethods', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/ShippingMethods/Form.vue'),
+        props: route => ({ TableName: 'ShippingMethods', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/ShippingMethods/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'ShippingMethods', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/UserAddresses',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'UserAddresses', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/UserAddresses/index.vue'),
+        props: route => ({ TableName: 'UserAddresses'})
+    },
+    {
+        path: '/Admin/UserAddresses/create',
+        component:  () => import('../../components/Admin/UserAddresses/Form.vue'),
+        props: route => ({ TableName: 'UserAddresses', action: 'create'})
     },
     {
         path: '/Admin/UserAddresses/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'UserAddresses', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/UserAddresses/Form.vue'),
+        props: route => ({ TableName: 'UserAddresses', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/UserAddresses/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'UserAddresses', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/UserAddresses/Form.vue'),
+        props: route => ({ TableName: 'UserAddresses', action: 'update', id: route.params.id,})
+    },
+  	{
+        path: '/Admin/UserLogs',
+        component: import('../../components/Admin/UserLogs/index.vue'),
+        props: route => ({ TableName: 'UserLogs'})
     },
     {
-        path: '/Admin/UserAddresses/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'UserAddresses', isEditing: false, listDashBoard: listDashBoard })
+        path: '/Admin/UserLogs/create',
+        component:  () => import('../../components/Admin/UserLogs/Form.vue'),
+        props: route => ({ TableName: 'UserLogs', action: 'create'})
     },
     {
+        path: '/Admin/UserLogs/view/:id',
+        component:  () => import('../../components/Admin/UserLogs/Form.vue'),
+        props: route => ({ TableName: 'UserLogs', action: 'view', id: route.params.id,})
+    },
+    {
+        path: '/Admin/UserLogs/update/:id',
+        component:  () => import('../../components/Admin/UserLogs/Form.vue'),
+        props: route => ({ TableName: 'UserLogs', action: 'update', id: route.params.id,})
+    },
+  	{
         path: '/Admin/VariantValues',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'VariantValues', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/VariantValues/index.vue'),
+        props: route => ({ TableName: 'VariantValues'})
+    },
+    {
+        path: '/Admin/VariantValues/create',
+        component:  () => import('../../components/Admin/VariantValues/Form.vue'),
+        props: route => ({ TableName: 'VariantValues', action: 'create'})
     },
     {
         path: '/Admin/VariantValues/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'VariantValues', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/VariantValues/Form.vue'),
+        props: route => ({ TableName: 'VariantValues', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/VariantValues/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'VariantValues', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/VariantValues/Form.vue'),
+        props: route => ({ TableName: 'VariantValues', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/VariantValues/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'VariantValues', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
+  	{
         path: '/Admin/Variants',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'Variants', isEditing: false, listDashBoard: listDashBoard }
+        component: import('../../components/Admin/Variants/index.vue'),
+        props: route => ({ TableName: 'Variants'})
+    },
+    {
+        path: '/Admin/Variants/create',
+        component:  () => import('../../components/Admin/Variants/Form.vue'),
+        props: route => ({ TableName: 'Variants', action: 'create'})
     },
     {
         path: '/Admin/Variants/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'Variants', isEditing: false, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Variants/Form.vue'),
+        props: route => ({ TableName: 'Variants', action: 'view', id: route.params.id,})
     },
     {
         path: '/Admin/Variants/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'Variants', isEditing: true, listDashBoard: listDashBoard })
+        component:  () => import('../../components/Admin/Variants/Form.vue'),
+        props: route => ({ TableName: 'Variants', action: 'update', id: route.params.id,})
     },
-    {
-        path: '/Admin/Variants/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'Variants', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
-        path: '/Admin/TraceXeActionMap',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'TraceXeActionMap', isEditing: false, listDashBoard: listDashBoard }
-    },
-    {
-        path: '/Admin/TraceXeActionMap/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'TraceXeActionMap', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
-        path: '/Admin/TraceXeActionMap/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'TraceXeActionMap', isEditing: true, listDashBoard: listDashBoard })
-    },
-    {
-        path: '/Admin/TraceXeActionMap/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'TraceXeActionMap', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
-        path: '/Admin/TraceXeEventMap',
-        component: ModuleQuanLy,
-        props: { id: "-1", TableName: 'TraceXeEventMap', isEditing: false, listDashBoard: listDashBoard }
-    },
-    {
-        path: '/Admin/TraceXeEventMap/view/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'view', TableName: 'TraceXeEventMap', isEditing: false, listDashBoard: listDashBoard })
-    },
-    {
-        path: '/Admin/TraceXeEventMap/update/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'update', TableName: 'TraceXeEventMap', isEditing: true, listDashBoard: listDashBoard })
-    },
-    {
-        path: '/Admin/TraceXeEventMap/delete/:id',
-        component: ModuleQuanLy,
-        props: route => ({ id: route.params.id, action: 'delete', TableName: 'TraceXeEventMap', isEditing: false, listDashBoard: listDashBoard })
-    },
-
-
-
 ]

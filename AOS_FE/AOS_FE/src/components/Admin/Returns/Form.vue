@@ -24,112 +24,79 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="email" class="form-label text-capitalize">email</label>
+          <label :for="reason" class="form-label text-capitalize">reason</label>
           <input
-            :id="email"
-            v-model="formData.email"
+            :id="reason"
+            v-model="formData.reason"
             type="text"
             class="form-control"
-            :placeholder="`Enter email`"
+            :placeholder="`Enter reason`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="password" class="form-label text-capitalize">password</label>
+          <label :for="image1" class="form-label text-capitalize">image1</label>
           <input
-            :id="password"
-            v-model="formData.password"
+            :id="image1"
+            v-model="formData.image1"
             type="text"
             class="form-control"
-            :placeholder="`Enter password`"
+            :placeholder="`Enter image1`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="fullname" class="form-label text-capitalize">fullname</label>
+          <label :for="image2" class="form-label text-capitalize">image2</label>
           <input
-            :id="fullname"
-            v-model="formData.fullname"
+            :id="image2"
+            v-model="formData.image2"
             type="text"
             class="form-control"
-            :placeholder="`Enter fullname`"
+            :placeholder="`Enter image2`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="avatar" class="form-label text-capitalize">avatar</label>
+          <label :for="image3" class="form-label text-capitalize">image3</label>
           <input
-            :id="avatar"
-            v-model="formData.avatar"
+            :id="image3"
+            v-model="formData.image3"
             type="text"
             class="form-control"
-            :placeholder="`Enter avatar`"
+            :placeholder="`Enter image3`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="phone" class="form-label text-capitalize">phone</label>
+          <label :for="isReturnedMoney" class="form-label text-capitalize">isReturnedMoney</label>
           <input
-            :id="phone"
-            v-model="formData.phone"
+            :id="isReturnedMoney"
+            v-model="formData.isReturnedMoney"
             type="text"
             class="form-control"
-            :placeholder="`Enter phone`"
+            :placeholder="`Enter isReturnedMoney`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="averageOrderValue" class="form-label text-capitalize">averageOrderValue</label>
+          <label :for="isReturnedItem" class="form-label text-capitalize">isReturnedItem</label>
           <input
-            :id="averageOrderValue"
-            v-model="formData.averageOrderValue"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter averageOrderValue`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="userRank" class="form-label text-capitalize">userRank</label>
-          <input
-            :id="userRank"
-            v-model="formData.userRank"
+            :id="isReturnedItem"
+            v-model="formData.isReturnedItem"
             type="text"
             class="form-control"
-            :placeholder="`Enter userRank`"
+            :placeholder="`Enter isReturnedItem`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="totalSpent" class="form-label text-capitalize">totalSpent</label>
+          <label :for="status" class="form-label text-capitalize">status</label>
           <input
-            :id="totalSpent"
-            v-model="formData.totalSpent"
-            type="number"
+            :id="status"
+            v-model="formData.status"
+            type="text"
             class="form-control"
-            :placeholder="`Enter totalSpent`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="totalOrder" class="form-label text-capitalize">totalOrder</label>
-          <input
-            :id="totalOrder"
-            v-model="formData.totalOrder"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter totalOrder`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="loyaltyPoint" class="form-label text-capitalize">loyaltyPoint</label>
-          <input
-            :id="loyaltyPoint"
-            v-model="formData.loyaltyPoint"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter loyaltyPoint`"
+            :placeholder="`Enter status`"
           />
         </div>
 
@@ -195,16 +162,13 @@
 
   const formData = reactive({
   			id: '',
-  			email: '',
-  			password: '',
-  			fullname: '',
-  			avatar: '',
-  			phone: '',
-  			averageOrderValue: '',
-  			userRank: '',
-  			totalSpent: '',
-  			totalOrder: '',
-  			loyaltyPoint: '',
+  			reason: '',
+  			image1: '',
+  			image2: '',
+  			image3: '',
+  			isReturnedMoney: '',
+  			isReturnedItem: '',
+  			status: '',
   			createdAt: '',
   			updatedAt: '',
   })
