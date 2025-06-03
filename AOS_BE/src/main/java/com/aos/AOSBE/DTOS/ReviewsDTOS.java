@@ -16,7 +16,7 @@ public class ReviewsDTOS {
     private int rating;
     private String comment;
     private String images;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     private int accounts;
     private int productItems;
 }

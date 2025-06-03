@@ -21,9 +21,9 @@ public class Authorities {
     @Column(name = "name")
     private String name;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
 
 

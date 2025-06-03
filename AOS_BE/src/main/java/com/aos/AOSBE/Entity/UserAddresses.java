@@ -32,14 +32,14 @@ public class UserAddresses {
     private String street;
     @Column(name = "label")
     private String label;
-    @Column(name = "isdefault")
-    private boolean isdefault;
+    @Column(name = "is_default")
+    private boolean isDefault;
     @Column(name = "note")
     private String note;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

@@ -20,8 +20,8 @@ public class OrderItemsDTOS {
     private double sellingPrice;
     private double total;
     private int couponCode;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int orders;
     private int productItems;
 }

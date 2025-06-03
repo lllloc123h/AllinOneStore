@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <h1 class="h3 fw-bold mb-4">{{ props.TableName }}</h1>
+        <h1 class=" fw-bold mb-4">{{ props.TableName }}</h1>
 
         <div v-if="loading" class="text-primary">
             <div class="spinner-border text-primary" role="status">
@@ -9,6 +9,7 @@
         </div>
         <div v-if="error" class="text-danger">{{ error }}</div>
 
+        <div><a :href="`/Admin/${props.TableName}/create`" class="btn btn-primary">Thêm mới</a></div>
         <table v-if="data.length" class="table table-bordered table-hover container-fluid">
             <thead class="table-light">
                 <tr>
@@ -24,9 +25,10 @@
                         {{ item[key] }}
                     </td>
                     <td class="row">
-                        <button type="button" @click="goToView(index + 1)"
+
+                        <button type="button" @click="goToView(item.id)"
                             class="btn btn-primary me-2 row-6">View</button>
-                        <button type="button" @click="goToEdit(index + 1)"
+                        <button type="button" @click="goToEdit(item.id)"
                             class="btn btn-primary me-2 row-6">Edit</button>
                         <button type="button" @click="" class="btn btn-danger row-6">Delete</button>
 
@@ -90,10 +92,10 @@ const props = defineProps({
     }
 })
 function goToView(id) {
-    router.push(`/Admin/${props.TableName}/view/${id}` + "?page=" + currentPage.value + "&size=" + currentSize.value)
+    router.push(`/Admin/${props.TableName}/view/${id}`)
 }
 function goToEdit(id) {
-    router.push(`/Admin/${props.TableName}/update/${id}` + "?page=" + currentPage.value + "&size=" + currentSize.value)
+    router.push(`/Admin/${props.TableName}/update/${id}`)
 }
 const data = ref([])
 const columns = ref([])

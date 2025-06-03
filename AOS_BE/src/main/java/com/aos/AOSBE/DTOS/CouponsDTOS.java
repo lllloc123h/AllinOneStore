@@ -24,8 +24,8 @@ public class CouponsDTOS {
     private boolean isAllowVoucher;
     private boolean isActive;
     private String customerGroup;
-    private LocalDateTime startAt;
-    private LocalDateTime endAt;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate startAt;
+    private LocalDate endAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 }

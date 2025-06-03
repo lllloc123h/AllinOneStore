@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ProductImagesDTOS {
     private int id;
     private String image;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int productItems;
 }

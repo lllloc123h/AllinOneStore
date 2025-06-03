@@ -18,6 +18,6 @@ public class UserLogsDTOS {
     private String description;
     private String ipAddress;
     private String userAgent;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     private String module;
 }
