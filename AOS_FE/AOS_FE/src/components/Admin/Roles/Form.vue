@@ -23,6 +23,17 @@
           />
         </div>
         <div class="mb-3">
+          <label :for="name" class="form-label text-capitalize">name</label>
+          <input
+            :id="name"
+            v-model="formData.name"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter name`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
           <input
             :id="createdAt"
@@ -86,6 +97,7 @@
 
   const formData = reactive({
   			id: '',
+  			name: '',
   			createdAt: '',
   			updatedAt: '',
   })

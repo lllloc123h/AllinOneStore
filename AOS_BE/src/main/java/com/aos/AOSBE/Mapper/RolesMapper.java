@@ -7,27 +7,21 @@ import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class RolesMapper {
-	@Autowired
-	private AccountsService accountsService;
-	@Autowired
-	private AuthoritiesService authoritiesService;
 	
 	public RolesDTOS mapper(Roles entity) {
 		return new RolesDTOS(
 				    entity.getId(),
+				    entity.getName(),
 				    entity.getCreatedAt(),
-				    entity.getUpdatedAt(),
-				    entity.getAccounts().getId(),
-				    entity.getAuthorities().getId()
+				    entity.getUpdatedAt()
 			);
 	}
 	public Roles mapperToObject(RolesDTOS entity) {
 		return new Roles(
 					entity.getId(),
+					entity.getName(),
 					entity.getCreatedAt(),
-					entity.getUpdatedAt(),
-					accountsService.accountsFindById(entity.getAccounts()).orElse(null),
-					authoritiesService.authoritiesFindById(entity.getAuthorities()).orElse(null)
+					entity.getUpdatedAt()
 			);
 	}
 	

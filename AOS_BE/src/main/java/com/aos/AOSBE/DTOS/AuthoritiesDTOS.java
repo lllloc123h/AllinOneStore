@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthoritiesDTOS {
     private int id;
-    private String name;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+    private int accounts;
+    private int roles;
 }

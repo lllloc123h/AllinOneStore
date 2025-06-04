@@ -118,23 +118,21 @@ create table accounts (
 );
 GO
 
-create table authorities (
-	id int identity(1,1) primary key,
-	name nvarchar(50),
+create table roles (
+	id int identity(1,2) primary key,
+	name nvarchar(50) ,
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
-);
-GO
-
-create table roles(
-	id int identity(1,1) primary key,
+)
+create table authorities(
+	id int identity(1,5) primary key,
 	account_id int not null,
-	author_id int not null,
+	role_id int not null,
 	created_at datetime default getdate(),
 	updated_at datetime default getdate(),
 	foreign key (account_id) references accounts(id),
-	foreign key (author_id) references authorities(id)
-);
+	foreign key (role_id) references roles(id)
+)
 GO
 
 create table user_addresses (

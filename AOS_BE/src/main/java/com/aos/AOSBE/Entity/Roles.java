@@ -18,17 +18,13 @@ public class Roles {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(name = "name")
+    private String name;
     @Column(name = "created_at")
     private LocalDate createdAt;
     @Column(name = "updated_at")
     private LocalDate updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Accounts accounts;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
-    private Authorities authorities;
 
 
 
