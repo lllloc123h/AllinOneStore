@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ReturnsAPI {
 	@Autowired
 	private ReturnsService returnsService;
-	private ReturnsMapper returnsMapper=new ReturnsMapper();
+	
+	@Autowired
+	private ReturnsMapper returnsMapper;
 
 	@GetMapping("/Returns")
 	public ResponseEntity<List<ReturnsDTOS>> getAllReturnsApi(	

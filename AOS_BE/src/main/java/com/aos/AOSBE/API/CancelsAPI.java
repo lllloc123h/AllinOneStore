@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CancelsAPI {
 	@Autowired
 	private CancelsService cancelsService;
-	private CancelsMapper cancelsMapper=new CancelsMapper();
+	
+	@Autowired
+	private CancelsMapper cancelsMapper;
 
 	@GetMapping("/Cancels")
 	public ResponseEntity<List<CancelsDTOS>> getAllCancelsApi(	

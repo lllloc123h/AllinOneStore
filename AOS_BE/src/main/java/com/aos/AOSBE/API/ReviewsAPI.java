@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ReviewsAPI {
 	@Autowired
 	private ReviewsService reviewsService;
-	private ReviewsMapper reviewsMapper=new ReviewsMapper();
+	
+	@Autowired
+	private ReviewsMapper reviewsMapper;
 
 	@GetMapping("/Reviews")
 	public ResponseEntity<List<ReviewsDTOS>> getAllReviewsApi(	

@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class BaseProductsAPI {
 	@Autowired
 	private BaseProductsService baseProductsService;
-	private BaseProductsMapper baseProductsMapper=new BaseProductsMapper();
+	
+	@Autowired
+	private BaseProductsMapper baseProductsMapper;
 
 	@GetMapping("/BaseProducts")
 	public ResponseEntity<List<BaseProductsDTOS>> getAllBaseProductsApi(	

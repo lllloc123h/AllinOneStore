@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProductImagesAPI {
 	@Autowired
 	private ProductImagesService productImagesService;
-	private ProductImagesMapper productImagesMapper=new ProductImagesMapper();
+	
+	@Autowired
+	private ProductImagesMapper productImagesMapper;
 
 	@GetMapping("/ProductImages")
 	public ResponseEntity<List<ProductImagesDTOS>> getAllProductImagesApi(	

@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PaymentMethodsAPI {
 	@Autowired
 	private PaymentMethodsService paymentMethodsService;
-	private PaymentMethodsMapper paymentMethodsMapper=new PaymentMethodsMapper();
+	
+	@Autowired
+	private PaymentMethodsMapper paymentMethodsMapper;
 
 	@GetMapping("/PaymentMethods")
 	public ResponseEntity<List<PaymentMethodsDTOS>> getAllPaymentMethodsApi(	

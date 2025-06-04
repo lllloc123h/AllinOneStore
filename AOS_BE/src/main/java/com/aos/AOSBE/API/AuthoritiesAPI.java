@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthoritiesAPI {
 	@Autowired
 	private AuthoritiesService authoritiesService;
-	private AuthoritiesMapper authoritiesMapper=new AuthoritiesMapper();
+	
+	@Autowired
+	private AuthoritiesMapper authoritiesMapper;
 
 	@GetMapping("/Authorities")
 	public ResponseEntity<List<AuthoritiesDTOS>> getAllAuthoritiesApi(	

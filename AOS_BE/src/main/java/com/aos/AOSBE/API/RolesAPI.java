@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class RolesAPI {
 	@Autowired
 	private RolesService rolesService;
-	private RolesMapper rolesMapper=new RolesMapper();
+	
+	@Autowired
+	private RolesMapper rolesMapper;
 
 	@GetMapping("/Roles")
 	public ResponseEntity<List<RolesDTOS>> getAllRolesApi(	

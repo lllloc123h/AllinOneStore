@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AccountsAPI {
 	@Autowired
 	private AccountsService accountsService;
-	private AccountsMapper accountsMapper=new AccountsMapper();
+	
+	@Autowired
+	private AccountsMapper accountsMapper;
 
 	@GetMapping("/Accounts")
 	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApi(	

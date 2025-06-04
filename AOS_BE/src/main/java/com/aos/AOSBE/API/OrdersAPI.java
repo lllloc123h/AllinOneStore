@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class OrdersAPI {
 	@Autowired
 	private OrdersService ordersService;
-	private OrdersMapper ordersMapper=new OrdersMapper();
+	
+	@Autowired
+	private OrdersMapper ordersMapper;
 
 	@GetMapping("/Orders")
 	public ResponseEntity<List<OrdersDTOS>> getAllOrdersApi(	

@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ShippingMethodsAPI {
 	@Autowired
 	private ShippingMethodsService shippingMethodsService;
-	private ShippingMethodsMapper shippingMethodsMapper=new ShippingMethodsMapper();
+	
+	@Autowired
+	private ShippingMethodsMapper shippingMethodsMapper;
 
 	@GetMapping("/ShippingMethods")
 	public ResponseEntity<List<ShippingMethodsDTOS>> getAllShippingMethodsApi(	

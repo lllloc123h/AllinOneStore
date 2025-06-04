@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CostHistoriesAPI {
 	@Autowired
 	private CostHistoriesService costHistoriesService;
-	private CostHistoriesMapper costHistoriesMapper=new CostHistoriesMapper();
+	
+	@Autowired
+	private CostHistoriesMapper costHistoriesMapper;
 
 	@GetMapping("/CostHistories")
 	public ResponseEntity<List<CostHistoriesDTOS>> getAllCostHistoriesApi(	

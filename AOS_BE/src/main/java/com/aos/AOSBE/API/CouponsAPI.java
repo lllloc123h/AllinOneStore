@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CouponsAPI {
 	@Autowired
 	private CouponsService couponsService;
-	private CouponsMapper couponsMapper=new CouponsMapper();
+	
+	@Autowired
+	private CouponsMapper couponsMapper;
 
 	@GetMapping("/Coupons")
 	public ResponseEntity<List<CouponsDTOS>> getAllCouponsApi(	

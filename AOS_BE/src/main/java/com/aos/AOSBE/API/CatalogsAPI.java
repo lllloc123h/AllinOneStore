@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CatalogsAPI {
 	@Autowired
 	private CatalogsService catalogsService;
-	private CatalogsMapper catalogsMapper=new CatalogsMapper();
+	
+	@Autowired
+	private CatalogsMapper catalogsMapper;
 
 	@GetMapping("/Catalogs")
 	public ResponseEntity<List<CatalogsDTOS>> getAllCatalogsApi(	

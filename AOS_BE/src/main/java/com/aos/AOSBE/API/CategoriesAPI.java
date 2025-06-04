@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CategoriesAPI {
 	@Autowired
 	private CategoriesService categoriesService;
-	private CategoriesMapper categoriesMapper=new CategoriesMapper();
+	
+	@Autowired
+	private CategoriesMapper categoriesMapper;
 
 	@GetMapping("/Categories")
 	public ResponseEntity<List<CategoriesDTOS>> getAllCategoriesApi(	

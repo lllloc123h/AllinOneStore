@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserAddressesAPI {
 	@Autowired
 	private UserAddressesService userAddressesService;
-	private UserAddressesMapper userAddressesMapper=new UserAddressesMapper();
+	
+	@Autowired
+	private UserAddressesMapper userAddressesMapper;
 
 	@GetMapping("/UserAddresses")
 	public ResponseEntity<List<UserAddressesDTOS>> getAllUserAddressesApi(	

@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class NewsAPI {
 	@Autowired
 	private NewsService newsService;
-	private NewsMapper newsMapper=new NewsMapper();
+	
+	@Autowired
+	private NewsMapper newsMapper;
 
 	@GetMapping("/News")
 	public ResponseEntity<List<NewsDTOS>> getAllNewsApi(	

@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CartItemsAPI {
 	@Autowired
 	private CartItemsService cartItemsService;
-	private CartItemsMapper cartItemsMapper=new CartItemsMapper();
+	
+	@Autowired
+	private CartItemsMapper cartItemsMapper;
 
 	@GetMapping("/CartItems")
 	public ResponseEntity<List<CartItemsDTOS>> getAllCartItemsApi(	

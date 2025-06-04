@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PriceHistoriesAPI {
 	@Autowired
 	private PriceHistoriesService priceHistoriesService;
-	private PriceHistoriesMapper priceHistoriesMapper=new PriceHistoriesMapper();
+	
+	@Autowired
+	private PriceHistoriesMapper priceHistoriesMapper;
 
 	@GetMapping("/PriceHistories")
 	public ResponseEntity<List<PriceHistoriesDTOS>> getAllPriceHistoriesApi(	

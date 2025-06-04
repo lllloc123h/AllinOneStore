@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserLogsAPI {
 	@Autowired
 	private UserLogsService userLogsService;
-	private UserLogsMapper userLogsMapper=new UserLogsMapper();
+	
+	@Autowired
+	private UserLogsMapper userLogsMapper;
 
 	@GetMapping("/UserLogs")
 	public ResponseEntity<List<UserLogsDTOS>> getAllUserLogsApi(	

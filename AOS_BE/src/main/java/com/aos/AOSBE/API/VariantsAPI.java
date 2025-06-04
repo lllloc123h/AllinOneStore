@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class VariantsAPI {
 	@Autowired
 	private VariantsService variantsService;
-	private VariantsMapper variantsMapper=new VariantsMapper();
+	
+	@Autowired
+	private VariantsMapper variantsMapper;
 
 	@GetMapping("/Variants")
 	public ResponseEntity<List<VariantsDTOS>> getAllVariantsApi(	

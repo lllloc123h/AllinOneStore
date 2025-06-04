@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PromotionProductAPI {
 	@Autowired
 	private PromotionProductService promotionProductService;
-	private PromotionProductMapper promotionProductMapper=new PromotionProductMapper();
+	
+	@Autowired
+	private PromotionProductMapper promotionProductMapper;
 
 	@GetMapping("/PromotionProduct")
 	public ResponseEntity<List<PromotionProductDTOS>> getAllPromotionProductApi(	

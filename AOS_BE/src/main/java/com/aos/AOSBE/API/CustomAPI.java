@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CustomAPI {
 	@Autowired
 	private CustomService customService;
-	private CustomMapper customMapper=new CustomMapper();
+	
+	@Autowired
+	private CustomMapper customMapper;
 
 	@GetMapping("/Custom")
 	public ResponseEntity<List<CustomDTOS>> getAllCustomApi(	

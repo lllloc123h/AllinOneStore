@@ -5,7 +5,8 @@ import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
+@Component
 public class VariantsMapper {
 	
 	public VariantsDTOS mapper(Variants entity) {

@@ -22,12 +22,14 @@ public class Authorities {
     private LocalDate createdAt;
     @Column(name = "updated_at")
     private LocalDate updatedAt;
+   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Accounts accounts;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Roles roles;
+
 
 
 
