@@ -25,7 +25,7 @@ public class Authorities {
     @Column(name = "updated_at")
     private LocalDate updatedAt;
    
-
+    String cam;
 
 
 
