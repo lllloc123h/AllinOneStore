@@ -27,4 +27,7 @@ public class AccountsService {
     public void accountsDeleteById(int id) {
         accountsRepository.deleteById(id);
     }
+    public Accounts accountsFindByEmail(String email) {
+		return accountsRepository.findByEmail(email);
+    }
 }
