@@ -19,11 +19,11 @@ public class PurchaseOrders {
     @Column(name = "id")
     private int id;
     @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
     @Column(name = "expected_date")
-    private LocalDateTime expectedDate;
+    private LocalDate expectedDate;
     @Column(name = "received_date")
-    private LocalDateTime receivedDate;
+    private LocalDate receivedDate;
     @Column(name = "total")
     private double total;
     @Column(name = "status")
@@ -31,9 +31,9 @@ public class PurchaseOrders {
     @Column(name = "note")
     private String note;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
 
 

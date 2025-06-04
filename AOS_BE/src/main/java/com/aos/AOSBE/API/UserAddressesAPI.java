@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Api/Admin")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserAddressesAPI {
 	@Autowired
@@ -47,8 +47,9 @@ public class UserAddressesAPI {
 		return ResponseEntity.ok(userAddresses);
 	}
 	@PostMapping("/UserAddresses")
-	public ResponseEntity<UserAddresses> addNewUserAddresses(@RequestBody UserAddresses entity) {
-	    UserAddresses saved = userAddressesService.userAddressesSave(entity);
+	public ResponseEntity<UserAddresses> addNewUserAddresses(@RequestBody UserAddressesDTOS entity) {
+	    
+	    UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

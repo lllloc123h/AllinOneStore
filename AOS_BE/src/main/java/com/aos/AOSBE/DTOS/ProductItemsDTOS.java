@@ -22,9 +22,9 @@ public class ProductItemsDTOS {
     private String sku;
     private int safetyStock;
     private int qty;
-    private LocalDateTime sellStart;
-    private LocalDateTime sellEnd;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate sellStart;
+    private LocalDate sellEnd;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int baseProducts;
 }

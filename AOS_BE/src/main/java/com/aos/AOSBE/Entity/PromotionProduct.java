@@ -23,11 +23,11 @@ public class PromotionProduct {
     @Column(name = "is_gift")
     private boolean isGift;
     @Column(name = "cost_share")
-    private int costShare;
+    private double costShare;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")

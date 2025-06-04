@@ -16,6 +16,6 @@ public class NewsDTOS {
     private String image;
     private boolean isHome;
     private String description;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 }

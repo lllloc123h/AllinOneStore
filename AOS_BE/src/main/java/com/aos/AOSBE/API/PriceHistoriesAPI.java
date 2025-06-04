@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Api/Admin")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PriceHistoriesAPI {
 	@Autowired
@@ -47,8 +47,9 @@ public class PriceHistoriesAPI {
 		return ResponseEntity.ok(priceHistories);
 	}
 	@PostMapping("/PriceHistories")
-	public ResponseEntity<PriceHistories> addNewPriceHistories(@RequestBody PriceHistories entity) {
-	    PriceHistories saved = priceHistoriesService.priceHistoriesSave(entity);
+	public ResponseEntity<PriceHistories> addNewPriceHistories(@RequestBody PriceHistoriesDTOS entity) {
+	    
+	    PriceHistories saved = priceHistoriesService.priceHistoriesSave(priceHistoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

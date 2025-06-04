@@ -12,9 +12,6 @@
 
 </template>
 <style>
-input#id{
-    
-}
 </style>
 
 <script setup>

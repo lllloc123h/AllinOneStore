@@ -21,7 +21,7 @@ public class PriceHistories {
     @Column(name = "price")
     private double price;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")

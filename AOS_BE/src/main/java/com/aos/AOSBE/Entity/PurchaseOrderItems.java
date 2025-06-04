@@ -25,9 +25,9 @@ public class PurchaseOrderItems {
     @Column(name = "total_cost")
     private double totalCost;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_item_id")

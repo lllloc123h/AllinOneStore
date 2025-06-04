@@ -20,9 +20,9 @@ public class UserAddressesDTOS {
     private String ward;
     private String street;
     private String label;
-    private boolean isdefault;
+    private boolean isDefault;
     private String note;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int accounts;
 }

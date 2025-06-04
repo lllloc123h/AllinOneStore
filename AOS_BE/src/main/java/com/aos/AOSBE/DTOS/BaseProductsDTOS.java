@@ -21,7 +21,7 @@ public class BaseProductsDTOS {
     private int rating;
     private boolean isPromote;
     private boolean isActive;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private int categories;
 }

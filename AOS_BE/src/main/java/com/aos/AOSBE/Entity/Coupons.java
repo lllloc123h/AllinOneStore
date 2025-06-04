@@ -34,20 +34,20 @@ public class Coupons {
     private int usageLimit;
     @Column(name = "usage_per_customer")
     private int usagePerCustomer;
-    @Column(name = "allow_voucher")
-    private boolean allowVoucher;
-    @Column(name = "active")
-    private boolean active;
+    @Column(name = "is_allow_voucher")
+    private boolean isAllowVoucher;
+    @Column(name = "is_active")
+    private boolean isActive;
     @Column(name = "customer_group")
     private String customerGroup;
     @Column(name = "start_at")
-    private LocalDateTime startAt;
+    private LocalDate startAt;
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
    
 
 

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Api/Admin")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:5173")
 public class BaseProductsAPI {
 	@Autowired
@@ -47,8 +47,9 @@ public class BaseProductsAPI {
 		return ResponseEntity.ok(baseProducts);
 	}
 	@PostMapping("/BaseProducts")
-	public ResponseEntity<BaseProducts> addNewBaseProducts(@RequestBody BaseProducts entity) {
-	    BaseProducts saved = baseProductsService.baseProductsSave(entity);
+	public ResponseEntity<BaseProducts> addNewBaseProducts(@RequestBody BaseProductsDTOS entity) {
+	    
+	    BaseProducts saved = baseProductsService.baseProductsSave(baseProductsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 

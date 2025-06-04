@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Api/Admin")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:5173")
 public class VariantValuesAPI {
 	@Autowired
@@ -47,8 +47,9 @@ public class VariantValuesAPI {
 		return ResponseEntity.ok(variantValues);
 	}
 	@PostMapping("/VariantValues")
-	public ResponseEntity<VariantValues> addNewVariantValues(@RequestBody VariantValues entity) {
-	    VariantValues saved = variantValuesService.variantValuesSave(entity);
+	public ResponseEntity<VariantValues> addNewVariantValues(@RequestBody VariantValuesDTOS entity) {
+	    
+	    VariantValues saved = variantValuesService.variantValuesSave(variantValuesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 
