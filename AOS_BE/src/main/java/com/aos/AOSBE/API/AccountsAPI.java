@@ -2,8 +2,17 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,24 +23,35 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.PageRequest;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Mapper.*;
+import com.aos.AOSBE.SecurityConfig.JwtUtil;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AccountsAPI {
 	@Autowired
+	HttpServletRequest request;
+	@Autowired
 	private AccountsService accountsService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtil jwtUtil;
 	
 	@Autowired
 	private AccountsMapper accountsMapper;
 
-	@GetMapping("/Accounts")
+	@GetMapping("/admin/Accounts")
 	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -42,30 +62,49 @@ public class AccountsAPI {
 		});
 		return ResponseEntity.ok(accounts);
 	}
-
-	@GetMapping("/Accounts/{id}")
+	
+	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
 		Accounts accounts =(Accounts)accountsService.accountsFindById(id).orElse(new Accounts());
 		return ResponseEntity.ok(accounts);
 	}
-	@PostMapping("/Accounts")
+	@PostMapping("/admin/Accounts")
 	public ResponseEntity<Accounts> addNewAccounts(@RequestBody AccountsDTOS entity) {
 	    
 	    Accounts saved = accountsService.accountsSave(accountsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
 
-	@PutMapping("/Accounts")
+	@PutMapping("/admin/Accounts")
 	public ResponseEntity<Accounts> updateAccounts(@RequestBody Accounts entity) {
 	    Accounts updated = accountsService.accountsSave(entity); 
 	    return ResponseEntity.ok(updated);
 	}
-	@DeleteMapping("/Accounts/{id}")
+	@DeleteMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Void> deleteAccounts(@PathVariable int id) {
 	    accountsService.accountsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 
 	}
-
+	@PostMapping("/Accounts/login")
+	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
+		 try {
+			 System.out.println(	new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+			 	new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
+	            Authentication authentication = authenticationManager.authenticate(
+	                new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword())
+	            );
+	            UserDetails user = (UserDetails) authentication.getPrincipal();
+	            UsernamePasswordAuthenticationToken authToken =
+	                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+	            SecurityContextHolder.getContext().setAuthentication(authToken);
+	            String token = jwtUtil.generateToken(user.getUsername());
+	            return ResponseEntity.ok(Collections.singletonMap("token", token));
+	            
+	        } catch (AuthenticationException e) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                                 .body(Collections.singletonMap("error", "Invalid credentials"));
+	        }
+	}
 
 	
 }

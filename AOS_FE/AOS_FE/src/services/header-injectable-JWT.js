@@ -15,11 +15,13 @@ api.interceptors.request.use(config => {
 });
 
 const authService = {
-  login(username, password) {
-    return api.post('/login', { username, password }).then(response => {
+  login(email, password) {
+    console.log( { email, password })
+    return api.post('/Accounts/login', { email, password }).then(response => {
       if (response.data && response.data.token) {
         localStorage.setItem('jwtToken', response.data.token);
       }
+      console.log(response.data)
       return response.data;
     });
   },

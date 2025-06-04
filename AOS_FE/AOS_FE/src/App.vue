@@ -6,5 +6,4 @@ import Register from './components/Module/Register.vue';
 
 <template>
   <router-view />
-  <Register/>
 </template>
