@@ -107,7 +107,7 @@ const fetchData = async () => {
     loading.value = true
     error.value = null
     try {
-        const response = await fetch("http://localhost:8080/Api/Admin/" + props.TableName + "?page=" + currentPage.value + "&size=" + currentSize.value)
+        const response = await fetch("http://localhost:8080/api/admin/" + props.TableName + "?page=" + currentPage.value + "&size=" + currentSize.value)
         if (!response.ok) throw new Error('Failed to fetch data')
         const json = await response.json()
         data.value = Array.isArray(json) ? json : [json]
