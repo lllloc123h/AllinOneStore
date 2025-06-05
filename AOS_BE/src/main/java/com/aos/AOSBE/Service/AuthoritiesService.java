@@ -27,4 +27,7 @@ public class AuthoritiesService {
     public void authoritiesDeleteById(int id) {
         authoritiesRepository.deleteById(id);
     }
+    public List<Authorities> findAllByEmail(String email) {
+        return authoritiesRepository.findAllByEmail(email);
+    }
 }

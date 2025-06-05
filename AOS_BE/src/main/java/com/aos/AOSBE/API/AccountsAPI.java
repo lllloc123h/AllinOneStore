@@ -3,7 +3,9 @@ package com.aos.AOSBE.API;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import com.aos.AOSBE.Repository.AuthoritiesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,13 +44,13 @@ public class AccountsAPI {
 	HttpServletRequest request;
 	@Autowired
 	private AccountsService accountsService;
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private EmailService emailService;
 	@Autowired
 	private JwtUtil jwtUtil;
-
 	@Autowired
 	private AccountsMapper accountsMapper;
 
@@ -63,6 +65,27 @@ public class AccountsAPI {
 		return ResponseEntity.ok(accounts);
 	}
 
+	@GetMapping("/test")
+	public ResponseEntity<?> test() {
+		System.err.println("test");
+
+		return ResponseEntity.ok(authoritiesService.
+				findAllByEmail("adminCUDE@gmail.com").stream().map(authority -> authority.getAccounts().getEmail()).toList());
+	}
+
+	@GetMapping("/user/Accounts")
+	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiUser(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
+
+		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
+		accountsService.accountsFindAll(page, size).forEach(e -> {
+			accounts.add(accountsMapper.mapper(e));
+		});
+		accounts.stream().forEach(e -> System.out.println(e.getEmail()));
+		return ResponseEntity.ok(accounts);
+	}
+	
 	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
 		Accounts accounts = (Accounts) accountsService.accountsFindById(id).orElse(new Accounts());
@@ -78,42 +101,37 @@ public class AccountsAPI {
 
 	@PutMapping("/admin/Accounts")
 	public ResponseEntity<Accounts> updateAccounts(@RequestBody Accounts entity) {
-		Accounts updated = accountsService.accountsSave(entity);
-		return ResponseEntity.ok(updated);
-	}
 
+	    Accounts updated = accountsService.accountsSave(entity); 
+	    return ResponseEntity.ok(updated);
+	}
 	@DeleteMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Void> deleteAccounts(@PathVariable int id) {
-		accountsService.accountsDeleteById(id);
-		return ResponseEntity.noContent().build();
+	    accountsService.accountsDeleteById(id); 
+	    return ResponseEntity.noContent().build(); 
 	}
-
 	@PostMapping("/Accounts/login")
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
-		try {
-			System.out.println(entity);
-			System.out.println(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
-			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
-			Authentication authentication = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
-			UserDetails user = (UserDetails) authentication.getPrincipal();
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
-					user.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(authToken);
-			String token = jwtUtil.generateToken(user.getUsername());
-			return ResponseEntity.ok(Collections.singletonMap("token", token));
-
-		} catch (AuthenticationException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Collections.singletonMap("error", "Invalid credentials"));
-		}
-
-	}
-
-	@GetMapping("/Accounts/register")
-	public ResponseEntity<?> handleregister() {
-		emailService.sendVerificationEmail("khannps39199@gmail.com", "123456");
-		return ResponseEntity.ok(Collections.singletonMap("token", "123456"));
+		 try {
+			 System.out.println(	new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+			 	new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
+	            Authentication authentication = authenticationManager.authenticate(
+	                new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword())
+	            );
+	            UserDetails user = (UserDetails) authentication.getPrincipal();
+	            UsernamePasswordAuthenticationToken authToken =
+	                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+	            SecurityContextHolder.getContext().setAuthentication(authToken);
+	            String token = jwtUtil.generateToken(user.getUsername());
+	            return ResponseEntity.ok(Map.of(
+						"message","Đăng nhập thành công",
+						"token", token,
+						"username", user.getAuthorities()));
+	            
+	        } catch (AuthenticationException e) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                                 .body(Collections.singletonMap("mesage", "Sai thông tin đăng nhập"));
+	        }
 
 	}
 

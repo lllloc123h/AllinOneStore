@@ -44,7 +44,7 @@ public class Security {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						auth -> auth
-								.requestMatchers("/api/Accounts/login", "/api/Account/register").permitAll()
+								.requestMatchers("/api/Accounts/login", "/api/Account/register", "/api/test").permitAll()
 								.requestMatchers("/api/admin/**").hasAuthority("ADMIN")
 								.requestMatchers("/api/user/**").hasAnyAuthority("USER", "ADMIN")
 								.anyRequest().authenticated())

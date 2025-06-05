@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface AuthoritiesRepository extends JpaRepository<Authorities, Integer> {
     // Add custom query methods here if needed
-    @Query("SELECT a FROM Authorities a WHERE a.accounts.email = :email")
+    @Query("SELECT a FROM Authorities a WHERE a.accounts.email = ?1")
     List<Authorities> findAllByEmail(String email);
+
 }
