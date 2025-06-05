@@ -16,14 +16,19 @@ import lombok.NoArgsConstructor;
 public class Reviews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 
     @Column(name = "id")
     private int id;
+	 
     @Column(name = "rating")
     private int rating;
+	 
     @Column(name = "comment")
     private String comment;
+	 
     @Column(name = "images")
     private String images;
+	 @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
    

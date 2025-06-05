@@ -16,10 +16,13 @@ import lombok.NoArgsConstructor;
 public class PriceHistories {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 
     @Column(name = "id")
     private int id;
+	 
     @Column(name = "price")
     private double price;
+	 @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
    

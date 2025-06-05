@@ -16,14 +16,19 @@ import lombok.NoArgsConstructor;
 public class VariantValues {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 
     @Column(name = "id")
     private int id;
+	 
     @Column(name = "signal_sku")
     private String signalSku;
+	 
     @Column(name = "description")
     private String description;
+	 @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+	 @@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    

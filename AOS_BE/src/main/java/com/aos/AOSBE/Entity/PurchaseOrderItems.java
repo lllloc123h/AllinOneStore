@@ -16,16 +16,22 @@ import lombok.NoArgsConstructor;
 public class PurchaseOrderItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 
     @Column(name = "id")
     private int id;
+	 
     @Column(name = "qty")
     private int qty;
+	 
     @Column(name = "cost")
     private double cost;
+	 
     @Column(name = "total_cost")
     private double totalCost;
+	 @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+	 @@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    

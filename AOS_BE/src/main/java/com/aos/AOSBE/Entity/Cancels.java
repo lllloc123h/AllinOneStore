@@ -16,16 +16,22 @@ import lombok.NoArgsConstructor;
 public class Cancels {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 
     @Column(name = "id")
     private int id;
+	 
     @Column(name = "reason")
     private String reason;
+	 
     @Column(name = "is_paid")
     private boolean isPaid;
+	 
     @Column(name = "status")
     private String status;
+	 @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+	 @@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    

@@ -16,8 +16,10 @@ import lombok.NoArgsConstructor;
 public class Custom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 
     @Column(name = "id")
     private int id;
+	 
     @Column(name = "infor")
     private String infor;
    
