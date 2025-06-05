@@ -3,11 +3,17 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Import modular route arrays
 import adminRoutes from './Admin/AdminRouter.js'
 import userRoutes from './User/UserRouter.js'
+import authService from '../services/header-injectable-JWT.js'
 
 // Merge all routes
 const routes = [
     ...adminRoutes,
-    ...userRoutes
+    ...userRoutes,
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('../components/Module/Login.vue')
+    }
 
 ]
 
@@ -16,10 +22,9 @@ const router = createRouter({
     routes
 })
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token') !== null
-    console.log(isAuthenticated);
+  const isAuthenticated = authService.getToken()!=null
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login')
+    next({name:'login'})
   } else {
     next()// tiếp tục như bình thường
   }
