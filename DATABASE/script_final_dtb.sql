@@ -480,4 +480,59 @@ create TABLE purchase_order_items (
 	FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
 );
 GO
+INSERT INTO accounts(
+    email,
+    password,
+    fullname,
+    avatar,
+    phone,
+    average_order_value,
+    user_rank,
+    total_spent,
+    total_order,
+    loyalty_point,
+    created_at,
+    updated_at
+) VALUES (
+    'adminCUDE@gmail.com',
+    '$2a$10$f1d6UJlXce9m0fNOUyoTRuIBb4Y9ETDjXZrdKdjRtGfLFrv5wvjSS',
+    'Nguyen Nhut Kha',
+    NULL,
+    '0866843926',
+    0.00,
+    'Bạc',
+    20.00,
+    20,
+    20,
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+);
+
+INSERT INTO roles (
+    name,
+    created_at,
+    updated_at
+) VALUES
+(
+    'USER',
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+),
+(
+    'ADMIN',
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+);
+INSERT INTO authorities (
+    account_id,
+    role_id,
+    created_at,
+    updated_at
+) VALUES (
+    1,
+    1,
+    '1970-01-01 00:00:00.000',
+    '1970-01-01 00:00:00.000'
+);
+
 
