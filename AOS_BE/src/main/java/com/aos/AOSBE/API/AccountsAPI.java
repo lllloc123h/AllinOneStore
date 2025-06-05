@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.aos.AOSBE.Repository.AuthoritiesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +31,7 @@ import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.SecurityConfig.JwtUtil;
 import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Service.AuthoritiesService;
 import com.aos.AOSBE.Service.EmailService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,6 +53,8 @@ public class AccountsAPI {
 	private JwtUtil jwtUtil;
 	@Autowired
 	private AccountsMapper accountsMapper;
+	@Autowired
+	private AuthoritiesService authoritiesService;
 
 	@GetMapping("/admin/Accounts")
 	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApi(@RequestParam(defaultValue = "0") int page,
@@ -69,13 +71,12 @@ public class AccountsAPI {
 	public ResponseEntity<?> test() {
 		System.err.println("test");
 
-		return ResponseEntity.ok(authoritiesService.
-				findAllByEmail("adminCUDE@gmail.com").stream().map(authority -> authority.getAccounts().getEmail()).toList());
+		return ResponseEntity.ok(authoritiesService.findAllByEmail("adminCUDE@gmail.com").stream()
+				.map(authority -> authority.getAccounts().getEmail()).toList());
 	}
 
 	@GetMapping("/user/Accounts")
-	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiUser(
-			@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiUser(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 
 		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
@@ -85,7 +86,7 @@ public class AccountsAPI {
 		accounts.stream().forEach(e -> System.out.println(e.getEmail()));
 		return ResponseEntity.ok(accounts);
 	}
-	
+
 	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
 		Accounts accounts = (Accounts) accountsService.accountsFindById(id).orElse(new Accounts());
@@ -102,36 +103,35 @@ public class AccountsAPI {
 	@PutMapping("/admin/Accounts")
 	public ResponseEntity<Accounts> updateAccounts(@RequestBody Accounts entity) {
 
-	    Accounts updated = accountsService.accountsSave(entity); 
-	    return ResponseEntity.ok(updated);
+		Accounts updated = accountsService.accountsSave(entity);
+		return ResponseEntity.ok(updated);
 	}
+
 	@DeleteMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Void> deleteAccounts(@PathVariable int id) {
-	    accountsService.accountsDeleteById(id); 
-	    return ResponseEntity.noContent().build(); 
+		accountsService.accountsDeleteById(id);
+		return ResponseEntity.noContent().build();
 	}
+
 	@PostMapping("/Accounts/login")
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
-		 try {
-			 System.out.println(	new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
-			 	new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
-	            Authentication authentication = authenticationManager.authenticate(
-	                new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword())
-	            );
-	            UserDetails user = (UserDetails) authentication.getPrincipal();
-	            UsernamePasswordAuthenticationToken authToken =
-	                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-	            SecurityContextHolder.getContext().setAuthentication(authToken);
-	            String token = jwtUtil.generateToken(user.getUsername());
-	            return ResponseEntity.ok(Map.of(
-						"message","Đăng nhập thành công",
-						"token", token,
-						"username", user.getAuthorities()));
-	            
-	        } catch (AuthenticationException e) {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                                 .body(Collections.singletonMap("mesage", "Sai thông tin đăng nhập"));
-	        }
+		try {
+			System.out.println(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
+			Authentication authentication = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+			UserDetails user = (UserDetails) authentication.getPrincipal();
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
+					user.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(authToken);
+			String token = jwtUtil.generateToken(user.getUsername());
+			return ResponseEntity
+					.ok(Map.of("message", "Đăng nhập thành công", "token", token, "username", user.getAuthorities()));
+
+		} catch (AuthenticationException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(Collections.singletonMap("mesage", "Sai thông tin đăng nhập"));
+		}
 
 	}
 
