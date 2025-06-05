@@ -19,6 +19,7 @@ const authService = {
     console.log( { email, password })
     return api.post('/Accounts/login', { email, password }).then(response => {
       if (response.data && response.data.token) {
+        localStorage.setItem('email',email);
         localStorage.setItem('jwtToken', response.data.token);
       }
       console.log(response.data)

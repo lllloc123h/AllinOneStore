@@ -31,7 +31,7 @@ public class Orders {
     @Column(name = "discount_value")
     private double discountValue;
     @Column(name = "shipped_date")
-    private LocalDate shippedDate;
+    private LocalDateTime shippedDate;
     @Column(name = "payment_status")
     private String paymentStatus;
     @Column(name = "note")
@@ -43,9 +43,9 @@ public class Orders {
     @Column(name = "order_infor")
     private String orderInfor;
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

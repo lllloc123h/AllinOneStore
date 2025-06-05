@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class CategoriesDTOS {
     private int id;
     private String name;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int catalogs;
 }

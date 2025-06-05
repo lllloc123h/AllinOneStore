@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class CostHistoriesDTOS {
     private int id;
     private double cost;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     private int productItems;
 }

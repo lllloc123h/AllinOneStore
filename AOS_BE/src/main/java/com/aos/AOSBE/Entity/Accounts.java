@@ -39,9 +39,9 @@ public class Accounts {
     @Column(name = "loyalty_point")
     private int loyaltyPoint;
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
 
 

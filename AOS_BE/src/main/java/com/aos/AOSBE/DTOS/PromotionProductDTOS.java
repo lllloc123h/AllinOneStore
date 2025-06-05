@@ -16,8 +16,8 @@ public class PromotionProductDTOS {
     private int requireQty;
     private boolean isGift;
     private double costShare;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int productItems;
     private int promotions;
 }

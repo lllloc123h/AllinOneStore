@@ -41,13 +41,13 @@ public class Coupons {
     @Column(name = "customer_group")
     private String customerGroup;
     @Column(name = "start_at")
-    private LocalDate startAt;
+    private LocalDateTime startAt;
     @Column(name = "end_at")
-    private LocalDate endAt;
+    private LocalDateTime endAt;
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
 
 

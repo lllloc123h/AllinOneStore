@@ -25,7 +25,7 @@ public class Reviews {
     @Column(name = "images")
     private String images;
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

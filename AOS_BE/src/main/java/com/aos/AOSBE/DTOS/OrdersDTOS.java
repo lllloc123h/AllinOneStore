@@ -19,14 +19,14 @@ public class OrdersDTOS {
     private double actualShippingFee;
     private String discountCouponCode;
     private double discountValue;
-    private LocalDate shippedDate;
+    private LocalDateTime shippedDate;
     private String paymentStatus;
     private String note;
     private int point;
     private double finalTotal;
     private String orderInfor;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int accounts;
     private int paymentMethods;
     private int shippingMethods;

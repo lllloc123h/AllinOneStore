@@ -22,7 +22,7 @@ public class UserAddressesDTOS {
     private String label;
     private boolean isDefault;
     private String note;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int accounts;
 }

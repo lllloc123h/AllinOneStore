@@ -20,7 +20,7 @@ public class ReturnsDTOS {
     private String isReturnedMoney;
     private String isReturnedItem;
     private String status;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int orderItems;
 }

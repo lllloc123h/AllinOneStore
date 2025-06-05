@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PurchaseOrdersDTOS {
     private int id;
-    private LocalDate orderDate;
-    private LocalDate expectedDate;
-    private LocalDate receivedDate;
+    private LocalDateTime orderDate;
+    private LocalDateTime expectedDate;
+    private LocalDateTime receivedDate;
     private double total;
     private String status;
     private String note;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

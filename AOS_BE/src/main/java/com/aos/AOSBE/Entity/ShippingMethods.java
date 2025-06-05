@@ -27,9 +27,9 @@ public class ShippingMethods {
     @Column(name = "is_active")
     private boolean isActive;
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
 
 
