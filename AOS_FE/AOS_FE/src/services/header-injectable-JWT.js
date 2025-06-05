@@ -16,10 +16,10 @@ api.interceptors.request.use(config => {
 
 const authService = {
   login(email, password) {
-    console.log( { email, password })
+    console.log({ email, password })
     return api.post('/Accounts/login', { email, password }).then(response => {
       if (response.data && response.data.token) {
-        localStorage.setItem('email',email);
+        localStorage.setItem('email', email);
         localStorage.setItem('jwtToken', response.data.token);
       }
       console.log(response.data)
@@ -38,6 +38,16 @@ const authService = {
 
   isLoggedIn() {
     return !!localStorage.getItem('jwtToken');
+  },
+  parseJwt(token) {
+    try {
+      var base64Url = token.split('.')[1];
+      var payload = atob(base64Url)
+      return JSON.parse(payload)
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 };
 
