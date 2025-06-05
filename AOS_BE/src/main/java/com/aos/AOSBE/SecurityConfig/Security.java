@@ -2,12 +2,14 @@ package com.aos.AOSBE.SecurityConfig;
 
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,12 +34,28 @@ public class Security {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    return http
 	    		.cors(withDefaults())
-	        .csrf(AbstractHttpConfigurer::disable)
+	        .csrf(csrf -> csrf.disable()) //AbstractHttpConfigurer::disable
 	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 	        .authorizeHttpRequests(auth -> auth
 	            .requestMatchers("/api/Accounts/login", "/api/account/register").permitAll()
 	            .anyRequest().authenticated()
 	        )
+				.oauth2Login(oauth2 -> oauth2
+						.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
+						.successHandler(customOAuth2SuccessHandler)
+						.failureUrl("/oauth2/failure")
+						.authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
+				)
+				.exceptionHandling(exception -> exception
+						.authenticationEntryPoint((request, response, authException) -> {
+							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+							response.getWriter().write("401 - Chưa đăng nhập hoặc token lỗi");
+						})
+						.accessDeniedHandler((request, response, accessDeniedException) -> {
+							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+							response.getWriter().write("403 - Không có quyền truy cập");
+						})
+				)
 	        .addFilterBefore(new JwtAuthFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class)
 	        .build();
 	}
@@ -47,6 +65,13 @@ public class Security {
 	        return config.getAuthenticationManager();
 	    }
 
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider(){
+		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+		return daoAuthenticationProvider;
+	}
 	    @Bean
 	    public PasswordEncoder passwordEncoder() {
 	        return new BCryptPasswordEncoder();

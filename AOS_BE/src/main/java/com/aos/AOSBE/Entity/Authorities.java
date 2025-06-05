@@ -21,7 +21,7 @@ public class Authorities {
     @Column(name = "created_at")
     private LocalDate createdAt;
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDate updatedAt = LocalDate.now();
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
