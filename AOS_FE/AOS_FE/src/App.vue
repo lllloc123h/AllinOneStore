@@ -7,5 +7,5 @@ import ShippingAddress from './components/Module/ShippingAddress.vue';
 
 <template>
   <router-view />
-  <shipping-address/>
+  <shipping-address />
 </template>
