@@ -52,7 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			userRegister.setEmail(email);
 			userRegister.setFullname(fullname);
 			userRegister.setAvatar(picture);
-			userRegister.setPassword(new BCryptPasswordEncoder().encode(userRegister.getPassword()));
+			userRegister.setPassword(new BCryptPasswordEncoder().encode("123"));
 			userRegister = userRepository.save(userRegister);
 			Authorities auth = new Authorities();
 			auth.setAccounts(userRegister);
