@@ -7,8 +7,6 @@ import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "accounts")
@@ -30,20 +28,18 @@ public class Accounts {
     private String avatar;
     @Column(name = "phone")
     private String phone;
-    @Column(name = "average_order_value",insertable = true)
+    @Column(name = "average_order_value")
     private double averageOrderValue;
-    @Column(name = "user_rank",insertable = true)
+    @Column(name = "user_rank")
     private String userRank;
-    @Column(name = "total_spent",insertable = true)
+    @Column(name = "total_spent")
     private double totalSpent;
-    @Column(name = "total_order",insertable = true)
+    @Column(name = "total_order")
     private int totalOrder;
-    @Column(name = "loyalty_point",insertable = true)
+    @Column(name = "loyalty_point")
     private int loyaltyPoint;
-    @CreationTimestamp
-    @Column(name = "created_at",updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    

@@ -1,6 +1,8 @@
 package com.aos.AOSBE.Entity;
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
 import java.math.*;
 import java.util.*;
@@ -16,12 +18,14 @@ import lombok.NoArgsConstructor;
 public class Custom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
     @Column(name = "id")
     private int id;
+	
     @Column(name = "infor")
     private String infor;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
 
