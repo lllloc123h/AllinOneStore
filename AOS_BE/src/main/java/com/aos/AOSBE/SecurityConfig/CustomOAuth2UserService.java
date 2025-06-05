@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.management.relation.Role;
 
+import com.aos.AOSBE.Entity.Roles;
+import com.aos.AOSBE.Repository.RolesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +33,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private AccountsRepository userRepository;
 	@Autowired
 	private AuthoritiesRepository authorityRepository;
-
+	@Autowired
+	private RolesRepository rolesRepository;
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -52,22 +55,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			userRegister.setPassword(new BCryptPasswordEncoder().encode(userRegister.getPassword()));
 			userRegister = userRepository.save(userRegister);
 			Authorities auth = new Authorities();
-			auth.setUser(userRegister);
-			auth.setRole(new Role("USER"));
+			auth.setAccounts(userRegister);
+			auth.setRoles(rolesRepository.findByName("USER").get());
 			authorityRepository.save(auth);
 		} else {
 			System.out.println("user ko null");
 			user.get().setFullname(fullname);
-			user.get().setPicture(picture);
+			user.get().setAvatar(picture);
 			userRepository.save(user.get());
 		}
 		// Lấy role từ database
-		List<Authority> authorities = authorityRepository.findAllByEmail(email);
+		List<Authorities> authorities = authorityRepository.findAllByEmail(email);
 		Collection<GrantedAuthority> grantedAuthoritySet = new HashSet<GrantedAuthority>();
-		for (Authority authority : authorities) {
-			grantedAuthoritySet.add(new SimpleGrantedAuthority(authority.getRole().getRole()));
+		for (Authorities authority : authorities) {
+			grantedAuthoritySet.add(new SimpleGrantedAuthority(authority.getRoles().getName()));
 		}
-		System.out.println(authorities.get(0).getRole().getRole());
+		System.out.println(authorities.get(0).getRoles().getName());
 		// Tạo UsernamePasswordAuthenticationToken để đồng bộ với đăng nhập
 		// Username/Password
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, // Username
