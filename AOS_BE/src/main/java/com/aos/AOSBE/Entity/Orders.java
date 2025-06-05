@@ -47,13 +47,13 @@ public class Orders {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "payment_method_id")
     private PaymentMethods paymentMethods;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "shipping_method_id")
     private ShippingMethods shippingMethods;
 

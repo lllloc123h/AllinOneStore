@@ -41,7 +41,7 @@ public class UserAddresses {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
 

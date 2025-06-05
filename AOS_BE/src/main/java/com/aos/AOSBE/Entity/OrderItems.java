@@ -37,10 +37,10 @@ public class OrderItems {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
 

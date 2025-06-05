@@ -29,7 +29,7 @@ public class Cancels {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
 

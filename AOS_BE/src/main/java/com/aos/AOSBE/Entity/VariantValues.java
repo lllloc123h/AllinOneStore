@@ -27,7 +27,7 @@ public class VariantValues {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "variant_id")
     private Variants variants;
 

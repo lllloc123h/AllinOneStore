@@ -25,7 +25,7 @@ public class Categories {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "catalog_id")
     private Catalogs catalogs;
 

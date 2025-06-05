@@ -23,7 +23,7 @@ public class CostHistories {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
 

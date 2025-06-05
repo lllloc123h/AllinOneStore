@@ -21,7 +21,7 @@ public class Custom {
     @Column(name = "infor")
     private String infor;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
 

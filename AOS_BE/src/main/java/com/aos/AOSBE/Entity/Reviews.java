@@ -27,10 +27,10 @@ public class Reviews {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
 

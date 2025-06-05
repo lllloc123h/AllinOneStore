@@ -45,7 +45,7 @@ public class ProductItems {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "base_id")
     private BaseProducts baseProducts;
 

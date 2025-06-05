@@ -22,6 +22,7 @@ public class Authorities {
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
