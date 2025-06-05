@@ -12,6 +12,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,12 +30,24 @@ public class Security {
 	@Autowired
 	private UserDetailService userDetailsService;
 
+	@Autowired
+	private JwtAuthFilter jwtAuthFilter;
+
+	@Autowired
+	private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+
+	@Autowired
+	private CustomOAuth2UserService customOAuth2UserService;
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http.cors(withDefaults()).csrf(csrf -> csrf.disable()) // AbstractHttpConfigurer::disable
+		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Account/register")
-						.permitAll().anyRequest().authenticated())
+				.authorizeHttpRequests(
+						auth -> auth
+								.requestMatchers("/api/Accounts/login", "/api/Account/register").permitAll()
+								.requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+								.requestMatchers("/api/user/**").hasAnyAuthority("USER", "ADMIN")
+								.anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
 						.successHandler(customOAuth2SuccessHandler).failureUrl("/oauth2/failure")
 						.authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization")))
@@ -46,7 +59,7 @@ public class Security {
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 							response.getWriter().write("403 - Không có quyền truy cập");
 						}))
-				.addFilterBefore(new JwtAuthFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
 

@@ -2,8 +2,7 @@ package com.aos.AOSBE.Entity;
 import jakarta.persistence.*;
 
 import java.time.*;
-import java.math.*;
-import java.util.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,11 +22,9 @@ public class Roles {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-   
-
-
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
 
 
 }
+

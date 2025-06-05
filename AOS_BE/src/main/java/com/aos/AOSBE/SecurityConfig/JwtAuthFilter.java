@@ -1,6 +1,8 @@
 package com.aos.AOSBE.SecurityConfig;
 
 import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,13 +16,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+    @Autowired
+	  JwtUtil jwtUtil;
+	@Autowired
+	 UserDetailService userDetailService;
 
-	  private final JwtUtil jwtUtil = new JwtUtil(); // This is fine as it's not Spring-managed
-	  private final UserDetailService userDetailService;
 
-	    public JwtAuthFilter(UserDetailService userDetailService) {
-	        this.userDetailService = userDetailService;
-	    }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -40,6 +41,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    // neu token het han hoac kh dung thong tin
+                }else{
+                    SecurityContextHolder.clearContext();
+//                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                	response.getWriter().write("Token is not valid");
+//                	return;
                 }
             }
         }
