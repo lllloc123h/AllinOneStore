@@ -26,6 +26,7 @@ public class JwtUtil {
     public String generateToken(String username) {
 //        get role cho token
         List<Authorities> auths = authorityRepository.findAllByEmail(username);
+        System.out.println("generate token "+auths);
         List<String> roles = new ArrayList<>();
         for (Authorities auth : auths) {
             roles.add(auth.getRoles().getName());
