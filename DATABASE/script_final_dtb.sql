@@ -496,7 +496,7 @@ INSERT INTO accounts(
 ) VALUES (
     'adminCUDE@gmail.com',
     '$2a$10$f1d6UJlXce9m0fNOUyoTRuIBb4Y9ETDjXZrdKdjRtGfLFrv5wvjSS',
-    'Nguyen Nhut Kha',
+    'admin',
     NULL,
     '0866843926',
     0.00,
