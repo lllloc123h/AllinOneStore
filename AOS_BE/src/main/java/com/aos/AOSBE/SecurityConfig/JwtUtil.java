@@ -26,17 +26,16 @@ public class JwtUtil {
     public String generateToken(String username) {
 //        get role cho token
         List<Authorities> auths = authorityRepository.findAllByEmail(username);
-        System.out.println("generate token "+auths);
+        System.err.println("generate token "+auths);
         List<String> roles = new ArrayList<>();
         for (Authorities auth : auths) {
             roles.add(auth.getRoles().getName());
         }
-    	System.out.println(username);
         return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(new Date())
                 .claim("roles",roles)
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 15)) // 30 min
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 30 * 60)) // 30 min
             .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)
             .compact();
     }

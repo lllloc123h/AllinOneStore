@@ -41,7 +41,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 System.err.println("đi qua extract token");
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailService.loadUserByUsername(username);
-
                     if (jwtUtil.isTokenValid(token, userDetails)) {
                         System.err.println("đi qua check token");
                         UsernamePasswordAuthenticationToken authToken =
@@ -65,6 +64,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 response.getWriter().write("Token đã hết hạn "+ e.getMessage());
                 return;
             } catch(MalformedJwtException e){
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("text/plain; charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Giả mạo format token : " + e.getMessage());
+                return;
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("text/plain; charset=UTF-8");

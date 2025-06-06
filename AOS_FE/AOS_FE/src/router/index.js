@@ -66,7 +66,8 @@ router.beforeEach((to,from,next) =>{
   if (requiresAuth) {
      localStorage.setItem('redirectTo',to.fullPath)
       if (token) {        
-        // kiem tra co dc phep vao hay kh
+        console.log('out of date ', authService.parseJwt(token).exp.toLocaleString());       
+              // kiem tra co dc phep vao hay kh
         const userRoles = authService.parseJwt(token)?.roles || [];
         const hasRole = requiresRoles.some(role => userRoles.includes(role))
         if (hasRole) {
@@ -77,6 +78,7 @@ router.beforeEach((to,from,next) =>{
           console.log('ko co role phu hop -- index.js');         
           return next('/403')
         }
+        
       }else{
        return next('/login')
       }
