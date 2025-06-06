@@ -37,7 +37,7 @@ public class UserLogs {
     @Column(name = "user_agent")
     private String userAgent;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	
     @Column(name = "module")

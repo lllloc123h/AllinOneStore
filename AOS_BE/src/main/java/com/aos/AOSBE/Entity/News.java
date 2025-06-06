@@ -31,7 +31,7 @@ public class News {
     @Column(name = "description")
     private String description;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
     @Column(name = "updated_at")

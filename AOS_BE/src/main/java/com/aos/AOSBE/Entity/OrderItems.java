@@ -43,7 +43,7 @@ public class OrderItems {
     @Column(name = "coupon_code")
     private int couponCode;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
     @Column(name = "updated_at")

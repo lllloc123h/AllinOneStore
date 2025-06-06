@@ -31,7 +31,7 @@ public class Reviews {
     @Column(name = "images")
     private String images;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
    
     @ManyToOne
