@@ -29,10 +29,14 @@
       <div class="collapse navbar-collapse row" id="navbarSupportedContent">
         <ul class="navbar-nav mb-2 mb-lg-0 col-3">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            <RouterLink class="nav-link active" aria-current="page" to="/"
+              >Home</RouterLink
+            >
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/products">Product</a>
+            <RouterLink class="nav-link active" aria-current="page" to="/products"
+              >Product</RouterLink
+            >
           </li>
         </ul>
         <ul class="col-6"></ul>
@@ -69,6 +73,7 @@
               </svg>
             </a>
           </li>
+
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -77,15 +82,20 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              Tài khoản
+              <i class="fa-solid fa-user"></i>
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item" href="/login" v-if="isLogged">Login</a>
-                <a class="dropdown-item" href="/login" v-else>Logout</a>
+                <button class="dropdown-item" @click="logout" v-if="isLogged">
+                  Logout
+                </button>
+                <RouterLink class="dropdown-item" to="/login" v-else>Login</RouterLink>
               </li>
-
-              <li><a class="dropdown-item" href="/register">Register</a></li>
+              <li>
+                <RouterLink class="dropdown-item" to="/register" v-if="!isLogged"
+                  >Register</RouterLink
+                >
+              </li>
             </ul>
           </li>
         </ul>
@@ -94,9 +104,15 @@
   </nav>
 </template>
 <script setup>
+import { computed, watch } from "vue";
 import authService from "../../api/header-injectable-JWT";
-
-const isLogged = !authService.getToken() != null;
+console.log(authService.isLogged());
+const isLogged = computed(() => {
+  return !!authService.isLogged();
+});
+const logout = () => {
+  authService.logout();
+};
 </script>
 <style scope>
 /* Footer */
