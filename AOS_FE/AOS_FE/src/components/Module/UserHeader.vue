@@ -64,7 +64,7 @@
     </nav>
 </template>
 <script setup>
-import authService from '../../services/header-injectable-JWT';
+import authService from '../../api/header-injectable-JWT';
 
 
 const isLogged = !authService.getToken() != null;
