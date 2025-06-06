@@ -16,14 +16,14 @@
 
                 </div>
                 <button type="submit" class="btn mt-3">Đăng Nhập</button>
-                <button class="btn btn-facebook mt-3">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"  style="height: 30px;" alt="Facebook">
+                <a class="btn btn-facebook mt-3" href="http://localhost:8080/oauth2/authorization/facebook">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"   style="height: 30px;" alt="Facebook">
       Đăng nhập bằng Facebook
-    </button>
-    <button class="btn btn-google mt-3">
-      <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" style="height: 30px;" alt="Google">
+    </a>
+    <a class="btn btn-google mt-3" href="http://localhost:8080/oauth2/authorization/google">
+      <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png"  style="height: 30px;" alt="Google">
       Đăng nhập bằng Google
-    </button>
+    </a>
                 <div class="quenMK mt-4">
                     <a href="#">Quên mật khẩu</a>
                 </div>
@@ -76,7 +76,7 @@ body {
     background-color: #FFF2EB;
     width: 100%;
     border-radius: 15px;
-    border: 1px solid black;
+    border: 1px solid #EDCDBB;
     padding: 10px;
     font-size: 1.1rem;
     transition: background-color 0.3s ease;
@@ -84,7 +84,7 @@ body {
 
 .btn:hover {
     background-color: #EDCDBB;
-    border-color: #EDCDBB;
+    border-color: gray;
 }
 
 form>.quenMK {

@@ -10,6 +10,8 @@ onMounted(() => {
   if (token) {
     localStorage.setItem('jwtToken',token)
     const redirect = localStorage.getItem('redirectTo')|| '/'
+    console.log('Đăng nhập thành công với với oauth2');
+    
     router.push(redirect)
   }
 })
