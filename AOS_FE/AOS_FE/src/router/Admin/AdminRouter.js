@@ -34,12 +34,14 @@ export default [
   	{
         path: '/Accounts',
         component: import('../../components/Admin/Accounts/index.vue'),
-        props: route => ({ TableName: 'Accounts'}), meta: { requiresAuth: true , requiresRoles : ['ADMIN']}
+        props: route => ({ TableName: 'Accounts'}),
+         meta: { requiresAuth: true , requiresRoles : ['ADMIN']}
     },
     {
         path: '/Accounts/create',
         component:  () => import('../../components/Admin/Accounts/Form.vue'),
-        props: route => ({ TableName: 'Accounts', action: 'create'}), meta: { requiresAuth: true , requiresRoles : ['ADMIN']}
+        props: route => ({ TableName: 'Accounts', action: 'create'}),
+         meta: { requiresAuth: true , requiresRoles : ['ADMIN']}
     },
     {
         path: '/Accounts/view/:id',

@@ -1,5 +1,5 @@
 <template>
-    <div class="login row mt-5">
+    <div class="container-fluid login row mt-5 mb-5">
         <div class="form col-sm-6">
             <h2 class="mx-3 mt-3">Đăng Nhập</h2>
             <div class="mx-3">
@@ -7,7 +7,7 @@
                 </p>
             </div>
             <form @submit.prevent="handleLogin">
-                <label for="emailInput" class="form-label mt-3">Nhập Email</label>
+                <label for="emailInput" class="form-label mt-3" >Nhập Email</label>
                 <input type="text" id="emailInput" class="form-control" v-model="formData.email" placeholder="Nhập Email tại đây">
 
                 <label for="passwordInput" class="form-label mt-3">Nhập Mật Khẩu</label>
@@ -16,12 +16,21 @@
 
                 </div>
                 <button type="submit" class="btn mt-3">Đăng Nhập</button>
+                <a class="btn btn-facebook mt-3" href="http://localhost:8080/oauth2/authorization/facebook">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"   style="height: 30px;" alt="Facebook">
+      Đăng nhập bằng Facebook
+    </a>
+    <a class="btn btn-google mt-3" href="http://localhost:8080/oauth2/authorization/google">
+      <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png"  style="height: 30px;" alt="Google">
+      Đăng nhập bằng Google
+    </a>
                 <div class="quenMK mt-4">
                     <a href="#">Quên mật khẩu</a>
                 </div>
             </form>
         </div>
-        <div class="col-sm-6 benphai" style="background-color: #EDCDBB;">
+        <div class="col-sm-6 benphai" style="padding :0px;">
+        <img style="width:100%;padding :0px;" src="d:\AllInStore_Customize_T-shirt\imgs\tải xuống.jpg" alt="">
         </div>
     </div>
 
@@ -30,13 +39,13 @@
 import { reactive, ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-import authService from '../../services/header-injectable-JWT'
+import authService from '../../api/header-injectable-JWT'
 import axios from 'axios'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 const formData = reactive({
-  			email: '',
-  			password: '',
+  			email: 'admin',
+  			password: '123',
   })
 async function handleLogin() {
     console.log(formData)
@@ -51,9 +60,9 @@ body {
 
 .login {
     padding: 0;
-    margin: auto;
     width: 700px;
     height: auto;
+    margin: auto;
 
     border-radius: 10px;
     overflow: hidden;
@@ -68,7 +77,7 @@ body {
     background-color: #FFF2EB;
     width: 100%;
     border-radius: 15px;
-    border: 1px solid black;
+    border: 1px solid #EDCDBB;
     padding: 10px;
     font-size: 1.1rem;
     transition: background-color 0.3s ease;
@@ -76,7 +85,7 @@ body {
 
 .btn:hover {
     background-color: #EDCDBB;
-    border-color: #EDCDBB;
+    border-color: gray;
 }
 
 form>.quenMK {

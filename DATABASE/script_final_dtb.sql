@@ -495,7 +495,7 @@ INSERT INTO accounts(
     updated_at
 ) VALUES (
     'adminCUDE@gmail.com',
-    '$2a$10$f1d6UJlXce9m0fNOUyoTRuIBb4Y9ETDjXZrdKdjRtGfLFrv5wvjSS',
+    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
     'admin',
     NULL,
     '0866843926',

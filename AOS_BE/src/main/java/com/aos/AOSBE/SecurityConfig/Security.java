@@ -54,9 +54,13 @@ public class Security {
 				.exceptionHandling(
 						exception -> exception.authenticationEntryPoint((request, response, authException) -> {
 							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+							response.setContentType("text/plain; charset=UTF-8");
+							response.setCharacterEncoding("UTF-8");
 							response.getWriter().write("401 - Chưa đăng nhập hoặc token lỗi");
 						}).accessDeniedHandler((request, response, accessDeniedException) -> {
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+							response.setContentType("text/plain; charset=UTF-8");
+							response.setCharacterEncoding("UTF-8");
 							response.getWriter().write("403 - Không có quyền truy cập");
 						}))
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
