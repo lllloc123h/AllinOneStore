@@ -107,7 +107,7 @@ create table accounts (
 	password varchar(100) not null,
 	fullname nvarchar(100) not null,
 	avatar varchar(255),
-	phone varchar(15) not null,
+	phone varchar(15) null,
 	average_order_value decimal(18,2) default 0,
 	user_rank nvarchar(20) default N'Đồng',
 	total_spent decimal(18,2) default 0,
