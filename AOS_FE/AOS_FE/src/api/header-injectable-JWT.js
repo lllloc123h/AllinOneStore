@@ -10,10 +10,18 @@ const api = axios.create({
   withCredentials: true // Nếu bạn dùng session hoặc OAuth2
 });
 
+const excludedPaths = [
+  'api/Accounts/login',
+  'api/Accounts/register',
+]
+
 // Automatically attach token to each request
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem('jwtToken');
-  if (token) {
+    const token = localStorage.getItem('jwtToken');
+  // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
+  const isExcluded = excludedPaths.some(path => config.url.includes(path));
+
+  if (token && !isExcluded) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -46,9 +54,9 @@ const authService = {
     .then(response => {
       localStorage.setItem('jwtToken', response.data.token);
       console.log('Đăng nhập thành công ',response.data)
+      console.log('out of date ', new Date(authService.parseJwt(response.data.token).exp* 1000).toLocaleString());       
       console.log('authService redirect: ',localStorage.getItem('redirectTo'));
       router.push(localStorage.getItem('redirectTo') || '/')
-
     })
     .catch(error => console.log('Đăng nhập thất bại ',error.response.data))
   }
