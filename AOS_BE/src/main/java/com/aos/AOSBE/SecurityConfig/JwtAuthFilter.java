@@ -3,6 +3,8 @@ package com.aos.AOSBE.SecurityConfig;
 import java.io.IOException;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,18 +49,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                    } else {
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getWriter().write("Token không hợp lệ");
-                        return;
                     }
+//                    } else {
+//                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                        response.setContentType("text/plain; charset=UTF-8");
+//                        response.setCharacterEncoding("UTF-8");
+//                        response.getWriter().write("Token không hợp lệ 1");
+//                        return;
+//                    }
                 }
             } catch (ExpiredJwtException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token đã hết hạn");
+                response.setContentType("text/plain; charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Token đã hết hạn "+ e.getMessage());
                 return;
+            } catch(MalformedJwtException e){
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("text/plain; charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("Token không hợp lệ hoặc lỗi: " + e.getMessage());
                 return;
             }

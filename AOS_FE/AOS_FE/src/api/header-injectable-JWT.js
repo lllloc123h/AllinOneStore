@@ -18,6 +18,7 @@ api.interceptors.request.use(config => {
   }
   return config;
 });
+
 api.interceptors.response.use(
     res => res,
     err => {
@@ -25,12 +26,13 @@ api.interceptors.response.use(
             const status = err.response.status
             if (status === 401) {
                 localStorage.removeItem('token')
-                alert('Het phien dang nhap, vui long dang nhap')
+                alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+                localStorage.removeItem('jwtToken')
                 router.push('/login')
             }else if (status === 403) {
                 router.push('/403')
             }else if (status === 400) {
-                alert('sai thong tin dang nhap ')
+                alert('Sai thông tin đăng nhập !')
             }
         }
         return Promise.reject(err)
@@ -48,7 +50,7 @@ const authService = {
       router.push(localStorage.getItem('redirectTo') || '/')
 
     })
-    .catch(error => console.log('Đăng nhập thất bại ',error))
+    .catch(error => console.log('Đăng nhập thất bại ',error.response.data))
   }
   ,
 

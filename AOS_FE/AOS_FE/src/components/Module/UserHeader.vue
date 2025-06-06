@@ -70,3 +70,136 @@ import authService from '../../api/header-injectable-JWT';
 const isLogged = !authService.getToken() != null;
 
 </script>
+<style scope>
+
+/* Footer */
+#footer {
+  padding: 60px 0;
+  background-color: #EDCDBB;
+}
+
+section .section-title {
+  text-align: center;
+  color: #007b5e;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+}
+
+
+
+#footer h5 {
+  padding-left: 10px;
+  border-left: 3px solid #eeeeee;
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+#footer a {
+  color: #ffffff;
+  text-decoration: none !important;
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+}
+
+#footer ul.social li {
+  padding: 3px 0;
+}
+
+#footer ul.social li a i {
+  margin-right: 5px;
+  font-size: 25px;
+  -webkit-transition: .5s all ease;
+  -moz-transition: .5s all ease;
+  transition: .5s all ease;
+}
+
+#footer ul.social li:hover a i {
+  font-size: 30px;
+  margin-top: -10px;
+}
+
+#footer ul.social li a,
+#footer ul.quick-links li a {
+  color: #ffffff;
+}
+
+#footer ul.social li a:hover {
+  color: #eeeeee;
+}
+
+#footer ul.quick-links li {
+  padding: 3px 0;
+  -webkit-transition: .5s all ease;
+  -moz-transition: .5s all ease;
+  transition: .5s all ease;
+}
+
+#footer ul.quick-links li:hover {
+  padding: 3px 0;
+  margin-left: 5px;
+  font-weight: 700;
+}
+
+#footer ul.quick-links li a i {
+  margin-right: 5px;
+}
+
+#footer ul.quick-links li:hover a i {
+  font-weight: 700;
+}
+
+@media (max-width:767px) {
+  #footer h5 {
+    padding-left: 0;
+    border-left: transparent;
+    padding-bottom: 0px;
+    margin-bottom: 10px;
+  }
+}/* From Uiverse.io by OnlyCodeChannel */ 
+.searchBox {
+  display: flex;
+  width: 530px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #CECCCC;
+  border-radius: 50px;
+  position: relative;
+}
+
+.searchButton {
+  color: white;
+  position: absolute;
+  right: 8px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--gradient-2, linear-gradient(90deg, #2AF598 0%, #009EFD 100%));
+  border: 0;
+  display: inline-block;
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+}
+/*hover effect*/
+.searchButton:hover {
+  color: #fff;
+  background-color: #1A1A1A;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 10px 20px;
+  transform: translateY(-3px);
+}
+/*button pressing effect*/
+.searchButton:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.searchInput {
+  border: none;
+  background: none;
+  outline: none;
+  color: white;
+  font-size: 15px;
+  padding: 24px 46px 24px 26px;
+}
+
+</style>

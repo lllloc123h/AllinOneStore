@@ -1,5 +1,5 @@
 <template>
-    <div class="login row mt-5">
+    <div class="container-fluid login row mt-5 mb-5">
         <div class="form col-sm-6">
             <h2 class="mx-3 mt-3">Đăng Nhập</h2>
             <div class="mx-3">
@@ -29,7 +29,8 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm-6 benphai" style="background-color: #EDCDBB;">
+        <div class="col-sm-6 benphai" style="padding :0px;">
+        <img style="width:100%;padding :0px;" src="d:\AllInStore_Customize_T-shirt\imgs\tải xuống.jpg" alt="">
         </div>
     </div>
 
@@ -59,9 +60,9 @@ body {
 
 .login {
     padding: 0;
-    margin: auto;
     width: 700px;
     height: auto;
+    margin: auto;
 
     border-radius: 10px;
     overflow: hidden;

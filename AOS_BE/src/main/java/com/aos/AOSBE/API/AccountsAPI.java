@@ -129,8 +129,8 @@ public class AccountsAPI {
 					.ok(Map.of("message", "Đăng nhập thành công", "token", token, "username", user.getAuthorities()));
 
 		} catch (AuthenticationException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Collections.singletonMap("mesage", "Sai thông tin đăng nhập"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST) // 400
+					.body(Collections.singletonMap("message", "Sai thông tin đăng nhập"));
 		}
 
 	}
