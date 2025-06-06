@@ -19,40 +19,40 @@ public class UserAddresses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id\&quot;)
+    @Column(name = "id")
     private int id;
 	
-    @Column(name = "recipient_name\&quot;)
+    @Column(name = "recipient_name")
     private String recipientName;
 	
-    @Column(name = "phone\&quot;)
+    @Column(name = "phone")
     private String phone;
 	
-    @Column(name = "province\&quot;)
+    @Column(name = "province")
     private String province;
 	
-    @Column(name = "district\&quot;)
+    @Column(name = "district")
     private String district;
 	
-    @Column(name = "ward\&quot;)
+    @Column(name = "ward")
     private String ward;
 	
-    @Column(name = "street\&quot;)
+    @Column(name = "street")
     private String street;
 	
-    @Column(name = "label\&quot;)
+    @Column(name = "label")
     private String label;
 	
-    @Column(name = "is_default\&quot;)
+    @Column(name = "is_default")
     private boolean isDefault;
 	
-    @Column(name = "note\&quot;)
+    @Column(name = "note")
     private String note;
 	@CreationTimestamp
-    @Column(name = "created_at\&quot;,updatable &#61; false)
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
-    @Column(name = "updated_at\&quot;)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
     @ManyToOne

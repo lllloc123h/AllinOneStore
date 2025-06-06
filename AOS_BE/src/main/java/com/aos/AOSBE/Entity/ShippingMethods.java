@@ -19,25 +19,25 @@ public class ShippingMethods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id\&quot;)
+    @Column(name = "id")
     private int id;
 	
-    @Column(name = "order_id\&quot;)
+    @Column(name = "order_id")
     private int orderId;
 	
-    @Column(name = "name\&quot;)
+    @Column(name = "name")
     private String name;
 	
-    @Column(name = "description\&quot;)
+    @Column(name = "description")
     private String description;
 	
-    @Column(name = "is_active\&quot;)
+    @Column(name = "is_active")
     private boolean isActive;
 	@CreationTimestamp
-    @Column(name = "created_at\&quot;,updatable &#61; false)
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
-    @Column(name = "updated_at\&quot;)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
 

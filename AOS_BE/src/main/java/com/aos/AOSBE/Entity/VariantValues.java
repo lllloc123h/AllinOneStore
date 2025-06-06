@@ -19,19 +19,19 @@ public class VariantValues {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id\&quot;)
+    @Column(name = "id")
     private int id;
 	
-    @Column(name = "signal_sku\&quot;)
+    @Column(name = "signal_sku")
     private String signalSku;
 	
-    @Column(name = "description\&quot;)
+    @Column(name = "description")
     private String description;
 	@CreationTimestamp
-    @Column(name = "created_at\&quot;,updatable &#61; false)
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
-    @Column(name = "updated_at\&quot;)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
     @ManyToOne

@@ -19,19 +19,19 @@ public class Reviews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id\&quot;)
+    @Column(name = "id")
     private int id;
 	
-    @Column(name = "rating\&quot;)
+    @Column(name = "rating")
     private int rating;
 	
-    @Column(name = "comment\&quot;)
+    @Column(name = "comment")
     private String comment;
 	
-    @Column(name = "images\&quot;)
+    @Column(name = "images")
     private String images;
 	@CreationTimestamp
-    @Column(name = "created_at\&quot;,updatable &#61; false)
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
    
     @ManyToOne

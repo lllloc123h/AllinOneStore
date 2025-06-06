@@ -19,34 +19,34 @@ public class Returns {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id\&quot;)
+    @Column(name = "id")
     private int id;
 	
-    @Column(name = "reason\&quot;)
+    @Column(name = "reason")
     private String reason;
 	
-    @Column(name = "image1\&quot;)
+    @Column(name = "image1")
     private String image1;
 	
-    @Column(name = "image2\&quot;)
+    @Column(name = "image2")
     private String image2;
 	
-    @Column(name = "image3\&quot;)
+    @Column(name = "image3")
     private String image3;
 	
-    @Column(name = "is_returned_money\&quot;)
+    @Column(name = "is_returned_money")
     private String isReturnedMoney;
 	
-    @Column(name = "is_returned_item\&quot;)
+    @Column(name = "is_returned_item")
     private String isReturnedItem;
 	
-    @Column(name = "status\&quot;)
+    @Column(name = "status")
     private String status;
 	@CreationTimestamp
-    @Column(name = "created_at\&quot;,updatable &#61; false)
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
-    @Column(name = "updated_at\&quot;)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
    
     @ManyToOne
