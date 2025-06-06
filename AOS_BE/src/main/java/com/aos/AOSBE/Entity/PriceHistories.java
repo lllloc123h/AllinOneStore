@@ -25,7 +25,7 @@ public class PriceHistories {
     @Column(name = "price")
     private double price;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
    
     @ManyToOne

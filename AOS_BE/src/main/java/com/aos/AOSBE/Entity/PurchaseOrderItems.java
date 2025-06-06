@@ -31,7 +31,7 @@ public class PurchaseOrderItems {
     @Column(name = "total_cost")
     private double totalCost;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
     @Column(name = "updated_at")

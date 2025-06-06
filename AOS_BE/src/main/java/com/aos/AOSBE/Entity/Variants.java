@@ -19,16 +19,16 @@ public class Variants {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id")
+    @Column(name = "id\&quot;)
     private int id;
 	
-    @Column(name = "name")
+    @Column(name = "name\&quot;)
     private String name;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at\&quot;,updatable &#61; false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at\&quot;)
     private LocalDateTime updatedAt;
    
 

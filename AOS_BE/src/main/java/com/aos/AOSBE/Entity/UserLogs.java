@@ -19,28 +19,28 @@ public class UserLogs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-    @Column(name = "id")
+    @Column(name = "id\&quot;)
     private int id;
 	
-    @Column(name = "user_id")
+    @Column(name = "user_id\&quot;)
     private int userId;
 	
-    @Column(name = "action")
+    @Column(name = "action\&quot;)
     private String action;
 	
-    @Column(name = "description")
+    @Column(name = "description\&quot;)
     private String description;
 	
-    @Column(name = "ip_address")
+    @Column(name = "ip_address\&quot;)
     private String ipAddress;
 	
-    @Column(name = "user_agent")
+    @Column(name = "user_agent\&quot;)
     private String userAgent;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at\&quot;,updatable &#61; false)
     private LocalDateTime createdAt;
 	
-    @Column(name = "module")
+    @Column(name = "module\&quot;)
     private String module;
    
 
