@@ -1,4 +1,6 @@
 ﻿--create database all_in_store;
+--drop database all_in_store
+-- use all_in_store
 GO
 -- Disable all constraints temporarily (optional safety)
 EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
