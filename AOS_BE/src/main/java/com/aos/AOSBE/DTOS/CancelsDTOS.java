@@ -16,7 +16,7 @@ public class CancelsDTOS {
     private String reason;
     private boolean isPaid;
     private String status;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int orders;
 }

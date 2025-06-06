@@ -1,6 +1,8 @@
 package com.aos.AOSBE.Entity;
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
 import java.math.*;
 import java.util.*;
@@ -16,18 +18,23 @@ import lombok.NoArgsConstructor;
 public class VariantValues {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
     @Column(name = "id")
     private int id;
+	
     @Column(name = "signal_sku")
     private String signalSku;
+	
     @Column(name = "description")
     private String description;
-    @Column(name = "created_at")
-    private LocalDate createdAt;
+	@CreationTimestamp
+    @Column(name = "created_at",updatable = false)
+    private LocalDateTime createdAt;
+	@UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "variant_id")
     private Variants variants;
 

@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class CartItemsDTOS {
     private int id;
     private int qty;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int accounts;
     private int productItems;
 }

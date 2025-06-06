@@ -20,9 +20,9 @@ public class PromotionsDTOS {
     private double discountValue;
     private double comboPrice;
     private int usageLimit;
-    private LocalDate startAt;
-    private LocalDate endAt;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
     private boolean isActive;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

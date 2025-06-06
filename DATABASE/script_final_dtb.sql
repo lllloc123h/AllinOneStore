@@ -109,7 +109,7 @@ create table accounts (
 	password varchar(100) not null,
 	fullname nvarchar(100) not null,
 	avatar varchar(255),
-	phone varchar(15) not null,
+	phone varchar(15) null,
 	average_order_value decimal(18,2) default 0,
 	user_rank nvarchar(20) default N'Đồng',
 	total_spent decimal(18,2) default 0,
@@ -482,4 +482,64 @@ create TABLE purchase_order_items (
 	FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
 );
 GO
+INSERT INTO accounts(
+    email,
+    password,
+    fullname,
+    avatar,
+    phone,
+    average_order_value,
+    user_rank,
+    total_spent,
+    total_order,
+    loyalty_point,
+    created_at,
+    updated_at
+) VALUES (
+    'adminCUDE@gmail.com',
+    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    'admin',
+    NULL,
+    '0866843926',
+    0.00,
+    'Bạc',
+    20.00,
+    20,
+    20,
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+);
+
+INSERT INTO roles (
+    name,
+    created_at,
+    updated_at
+) VALUES
+(
+    'GUEST',
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+),
+(
+    'USER',
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+),
+(
+    'ADMIN',
+    '2025-06-05 00:00:00.000',
+    '2025-06-05 00:00:00.000'
+);
+INSERT INTO authorities (
+    account_id,
+    role_id,
+    created_at,
+    updated_at
+) VALUES (
+    1,
+    1,
+    '1970-01-01 00:00:00.000',
+    '1970-01-01 00:00:00.000'
+);
+
 

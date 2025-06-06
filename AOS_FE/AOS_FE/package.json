@@ -12,6 +12,9 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
+    "bootstrap-icons": "^1.13.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "vue": "^3.5.13"
   },
   "devDependencies": {

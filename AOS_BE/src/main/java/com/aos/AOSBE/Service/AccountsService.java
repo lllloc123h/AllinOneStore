@@ -28,6 +28,6 @@ public class AccountsService {
         accountsRepository.deleteById(id);
     }
     public Accounts accountsFindByEmail(String email) {
-		return accountsRepository.findByEmail(email);
+		return accountsRepository.findByEmail(email).get();
     }
 }

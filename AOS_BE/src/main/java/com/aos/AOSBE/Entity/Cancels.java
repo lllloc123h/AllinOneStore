@@ -1,6 +1,8 @@
 package com.aos.AOSBE.Entity;
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
 import java.math.*;
 import java.util.*;
@@ -16,20 +18,26 @@ import lombok.NoArgsConstructor;
 public class Cancels {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
     @Column(name = "id")
     private int id;
+	
     @Column(name = "reason")
     private String reason;
+	
     @Column(name = "is_paid")
     private boolean isPaid;
+	
     @Column(name = "status")
     private String status;
-    @Column(name = "created_at")
-    private LocalDate createdAt;
+	@CreationTimestamp
+    @Column(name = "created_at",updatable = false)
+    private LocalDateTime createdAt;
+	@UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
 

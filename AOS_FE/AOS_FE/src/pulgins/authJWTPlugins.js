@@ -1,5 +1,5 @@
 // src/plugins/authPlugin.js
-import authService from '../services/header-injectable-JWT';
+import authService from '../api/header-injectable-JWT';
 
 export default {
   install(app) {

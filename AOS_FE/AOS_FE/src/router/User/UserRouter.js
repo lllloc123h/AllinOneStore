@@ -1,25 +1,28 @@
 
 import HomeView from '../../components/User/HomeView.vue'
+import ProductsView from '../../components/User/ProductsView.vue'
 export default [
     {
-        path: '/',
+        path: '',
         name: 'home',
         component: HomeView,
     },
     {
-        path: '/products',
-        name: 'products',
+        path: 'products',
         // route level code-splitting
         // this generates a separate chunk (About.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('../../components/User/ProductsView.vue'),
+        component: ProductsView
     },
     {
-        path: '/login',
+        path: 'login',
         name: 'login',
-        // route level code-splitting
-        // this generates a separate chunk (About.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import('../../components/Module/Login.vue'),
-    }
+        component: () => import('../../components/Module/Login.vue')
+    },
+    {
+        path: 'register',
+        name: 'register',
+        component: () => import('../../components/Module/Register.vue')
+    },
+    
 ]

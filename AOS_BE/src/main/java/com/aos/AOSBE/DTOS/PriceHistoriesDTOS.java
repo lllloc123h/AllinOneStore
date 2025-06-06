@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class PriceHistoriesDTOS {
     private int id;
     private double price;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     private int productItems;
 }

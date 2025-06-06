@@ -1,6 +1,8 @@
 package com.aos.AOSBE.Entity;
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
 import java.math.*;
 import java.util.*;
@@ -16,14 +18,18 @@ import lombok.NoArgsConstructor;
 public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
     @Column(name = "id")
     private int id;
+	
     @Column(name = "name")
     private String name;
-    @Column(name = "created_at")
-    private LocalDate createdAt;
+	@CreationTimestamp
+    @Column(name = "created_at",updatable = false)
+    private LocalDateTime createdAt;
+	@UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
 
 

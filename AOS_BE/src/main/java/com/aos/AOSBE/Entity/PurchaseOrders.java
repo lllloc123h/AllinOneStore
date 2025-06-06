@@ -1,6 +1,8 @@
 package com.aos.AOSBE.Entity;
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
 import java.math.*;
 import java.util.*;
@@ -16,24 +18,33 @@ import lombok.NoArgsConstructor;
 public class PurchaseOrders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
     @Column(name = "id")
     private int id;
+	
     @Column(name = "order_date")
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
+	
     @Column(name = "expected_date")
-    private LocalDate expectedDate;
+    private LocalDateTime expectedDate;
+	
     @Column(name = "received_date")
-    private LocalDate receivedDate;
+    private LocalDateTime receivedDate;
+	
     @Column(name = "total")
     private double total;
+	
     @Column(name = "status")
     private String status;
+	
     @Column(name = "note")
     private String note;
-    @Column(name = "created_at")
-    private LocalDate createdAt;
+	@CreationTimestamp
+    @Column(name = "created_at",updatable = false)
+    private LocalDateTime createdAt;
+	@UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
    
 
 
