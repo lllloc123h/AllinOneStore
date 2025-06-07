@@ -326,7 +326,6 @@ GO
 
 create TABLE payment_methods (
 	id INT identity(1,1) PRIMARY KEY,
-	order_id int not null,
 	name nVARCHAR(100) NOT NULL,
 	description nvarchar(max),
 	is_active bit DEFAULT 1,
@@ -337,7 +336,6 @@ GO
 
 CREATE TABLE shipping_methods (
 	id INT identity(1,1) primary key,
-	order_id int not null,
 	name nVARCHAR(100) NOT NULL,
 	description TEXT,
 	is_active bit DEFAULT 1,
