@@ -2,6 +2,7 @@
 import HomeView from '../../components/User/HomeView.vue'
 import ProductDetails from '../../components/User/ProductDetails.vue'
 import ProductsView from '../../components/User/ProductsView.vue'
+import Cart from '../../components/User/Cart.vue'
 export default [
     {
         path: '',
@@ -31,6 +32,11 @@ export default [
         path: 'register',
         name: 'register',
         component: () => import('../../components/Module/Register.vue')
+    },
+     {
+        path: 'cart',
+        name: 'cart',
+        component: Cart
     },
 
 ]
