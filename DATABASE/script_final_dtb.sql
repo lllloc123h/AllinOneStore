@@ -1,4 +1,6 @@
 ﻿--create database all_in_store;
+--drop database all_in_store
+-- use all_in_store
 GO
 -- Disable all constraints temporarily (optional safety)
 EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
@@ -324,7 +326,6 @@ GO
 
 create TABLE payment_methods (
 	id INT identity(1,1) PRIMARY KEY,
-	order_id int not null,
 	name nVARCHAR(100) NOT NULL,
 	description nvarchar(max),
 	is_active bit DEFAULT 1,
@@ -335,7 +336,6 @@ GO
 
 CREATE TABLE shipping_methods (
 	id INT identity(1,1) primary key,
-	order_id int not null,
 	name nVARCHAR(100) NOT NULL,
 	description TEXT,
 	is_active bit DEFAULT 1,

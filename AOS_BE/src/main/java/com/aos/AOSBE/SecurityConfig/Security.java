@@ -29,25 +29,21 @@ import jakarta.servlet.http.HttpServletResponse;
 public class Security {
 	@Autowired
 	private UserDetailService userDetailsService;
-
 	@Autowired
 	private JwtAuthFilter jwtAuthFilter;
-
 	@Autowired
 	private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
-
 	@Autowired
 	private CustomOAuth2UserService customOAuth2UserService;
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(
-						auth -> auth
-								.requestMatchers("/api/Accounts/login", "/api/Account/register", "/api/test").permitAll()
-								.requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-								.requestMatchers("/api/user/**").hasAnyAuthority("USER", "ADMIN")
-								.anyRequest().authenticated())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/Accounts/login", "/api/Account/register", "/api/test").permitAll()
+						.requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
+						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
 						.successHandler(customOAuth2SuccessHandler).failureUrl("/oauth2/failure")
 						.authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization")))
@@ -63,8 +59,7 @@ public class Security {
 							response.setCharacterEncoding("UTF-8");
 							response.getWriter().write("403 - Không có quyền truy cập");
 						}))
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-				.build();
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean
@@ -97,5 +92,4 @@ public class Security {
 		source.registerCorsConfiguration("/**", config);
 		return source;
 	}
-
 }

@@ -58,7 +58,7 @@ public class Orders {
     @Column(name = "order_infor")
     private String orderInfor;
 	@CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 	@UpdateTimestamp
     @Column(name = "updated_at")

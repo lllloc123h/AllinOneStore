@@ -1,5 +1,5 @@
 <template>
-    <div class="login row mt-5">
+    <div class="register  row mt-5">
         <div class="form col-sm-6">
             <h2 class="mx-3 mt-3">Đăng Ký</h2>
             <div class="mx-3">
@@ -39,7 +39,7 @@ body {
     background-color: #f0f2f5;
 }
 
-.login {
+.register {
     padding: 0;
     margin: auto;
     width: 700px;
@@ -50,7 +50,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.login .form {
+.register .form {
     padding: 30px;
 }
 
@@ -129,7 +129,7 @@ form > .quenMK > a {
 
 /* Điều chỉnh responsive cho màn hình nhỏ hơn */
 @media (max-width: 768px) {
-    .login {
+    .register {
         width: 95%;
         margin-top: 20px;
     }
