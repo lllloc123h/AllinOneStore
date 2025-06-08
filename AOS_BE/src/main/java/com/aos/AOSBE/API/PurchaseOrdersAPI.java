@@ -45,6 +45,10 @@ public class PurchaseOrdersAPI {
 
 	@GetMapping("/PurchaseOrders/{id}")
 	public ResponseEntity<PurchaseOrders> getPurchaseOrdersByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		PurchaseOrders purchaseOrders =(PurchaseOrders)purchaseOrdersService.purchaseOrdersFindById(id).orElse(new PurchaseOrders());
 		return ResponseEntity.ok(purchaseOrders);
 	}
@@ -54,7 +58,6 @@ public class PurchaseOrdersAPI {
 	    PurchaseOrders saved = purchaseOrdersService.purchaseOrdersSave(purchaseOrdersMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/PurchaseOrders")
 	public ResponseEntity<PurchaseOrders> updatePurchaseOrders(@RequestBody PurchaseOrders entity) {
 	    PurchaseOrders updated = purchaseOrdersService.purchaseOrdersSave(entity); 

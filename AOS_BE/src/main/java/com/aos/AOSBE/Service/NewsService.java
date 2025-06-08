@@ -9,6 +9,7 @@ import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NewsService {
 	@Autowired
@@ -18,12 +19,14 @@ public class NewsService {
     	Pageable pageable = PageRequest.of(page, size);
 		return newsRepository.findAll(pageable).getContent();
     }
+    @Transactional
     public News newsSave(News news) {
         return newsRepository.save(news);
     }
     public Optional<News> newsFindById(int id) {
         return newsRepository.findById(id);
     }
+    @Transactional
     public void newsDeleteById(int id) {
         newsRepository.deleteById(id);
     }

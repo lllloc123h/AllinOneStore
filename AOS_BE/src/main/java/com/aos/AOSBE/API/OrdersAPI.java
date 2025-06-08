@@ -45,6 +45,10 @@ public class OrdersAPI {
 
 	@GetMapping("/Orders/{id}")
 	public ResponseEntity<Orders> getOrdersByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Orders orders =(Orders)ordersService.ordersFindById(id).orElse(new Orders());
 		return ResponseEntity.ok(orders);
 	}
@@ -54,7 +58,6 @@ public class OrdersAPI {
 	    Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Orders")
 	public ResponseEntity<Orders> updateOrders(@RequestBody Orders entity) {
 	    Orders updated = ordersService.ordersSave(entity); 

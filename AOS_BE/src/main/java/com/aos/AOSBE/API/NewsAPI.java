@@ -45,6 +45,10 @@ public class NewsAPI {
 
 	@GetMapping("/News/{id}")
 	public ResponseEntity<News> getNewsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		News news =(News)newsService.newsFindById(id).orElse(new News());
 		return ResponseEntity.ok(news);
 	}
@@ -54,7 +58,6 @@ public class NewsAPI {
 	    News saved = newsService.newsSave(newsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/News")
 	public ResponseEntity<News> updateNews(@RequestBody News entity) {
 	    News updated = newsService.newsSave(entity); 

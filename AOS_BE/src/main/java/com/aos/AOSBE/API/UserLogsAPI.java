@@ -45,6 +45,10 @@ public class UserLogsAPI {
 
 	@GetMapping("/UserLogs/{id}")
 	public ResponseEntity<UserLogs> getUserLogsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		UserLogs userLogs =(UserLogs)userLogsService.userLogsFindById(id).orElse(new UserLogs());
 		return ResponseEntity.ok(userLogs);
 	}
@@ -54,7 +58,6 @@ public class UserLogsAPI {
 	    UserLogs saved = userLogsService.userLogsSave(userLogsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/UserLogs")
 	public ResponseEntity<UserLogs> updateUserLogs(@RequestBody UserLogs entity) {
 	    UserLogs updated = userLogsService.userLogsSave(entity); 

@@ -45,6 +45,10 @@ public class CustomAPI {
 
 	@GetMapping("/Custom/{id}")
 	public ResponseEntity<Custom> getCustomByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Custom custom =(Custom)customService.customFindById(id).orElse(new Custom());
 		return ResponseEntity.ok(custom);
 	}
@@ -54,7 +58,6 @@ public class CustomAPI {
 	    Custom saved = customService.customSave(customMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Custom")
 	public ResponseEntity<Custom> updateCustom(@RequestBody Custom entity) {
 	    Custom updated = customService.customSave(entity); 

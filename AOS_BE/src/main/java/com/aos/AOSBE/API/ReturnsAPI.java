@@ -45,6 +45,10 @@ public class ReturnsAPI {
 
 	@GetMapping("/Returns/{id}")
 	public ResponseEntity<Returns> getReturnsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Returns returns =(Returns)returnsService.returnsFindById(id).orElse(new Returns());
 		return ResponseEntity.ok(returns);
 	}
@@ -54,7 +58,6 @@ public class ReturnsAPI {
 	    Returns saved = returnsService.returnsSave(returnsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Returns")
 	public ResponseEntity<Returns> updateReturns(@RequestBody Returns entity) {
 	    Returns updated = returnsService.returnsSave(entity); 

@@ -45,6 +45,10 @@ public class PromotionsAPI {
 
 	@GetMapping("/Promotions/{id}")
 	public ResponseEntity<Promotions> getPromotionsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Promotions promotions =(Promotions)promotionsService.promotionsFindById(id).orElse(new Promotions());
 		return ResponseEntity.ok(promotions);
 	}
@@ -54,7 +58,6 @@ public class PromotionsAPI {
 	    Promotions saved = promotionsService.promotionsSave(promotionsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Promotions")
 	public ResponseEntity<Promotions> updatePromotions(@RequestBody Promotions entity) {
 	    Promotions updated = promotionsService.promotionsSave(entity); 
