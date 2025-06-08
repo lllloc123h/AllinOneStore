@@ -1,5 +1,6 @@
 
 import HomeView from '../../components/User/HomeView.vue'
+import ProductDetails from '../../components/User/ProductDetails.vue'
 import ProductsView from '../../components/User/ProductsView.vue'
 export default [
     {
@@ -15,6 +16,13 @@ export default [
         component: ProductsView
     },
     {
+        path: 'productdetail',
+        // route level code-splitting
+        // this generates a separate chunk (About.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: ProductDetails
+    },
+    {
         path: 'login',
         name: 'login',
         component: () => import('../../components/Module/Login.vue')
@@ -24,5 +32,5 @@ export default [
         name: 'register',
         component: () => import('../../components/Module/Register.vue')
     },
-    
+
 ]

@@ -116,7 +116,6 @@ public class AccountsAPI {
 	@PostMapping("/Accounts/login")
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
 		try {
-			System.out.println(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
 			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
