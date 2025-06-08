@@ -41,7 +41,7 @@ public class OrderItems {
 	@Column(name = "selling_price")
 	private double sellingPrice;
 
-	@Column(name = "total")
+	@Column(name = "total", insertable = false, updatable = false)
 	private double total;
 
 	@Column(name = "coupon_code")

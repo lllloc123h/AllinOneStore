@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,12 +57,20 @@ public class OrderItemsAPI {
 	}
 
 	@PostMapping("/OrderItems")
-	public ResponseEntity<List<OrderItems>> addNewOrderItems(@RequestBody List<OrderItemsDTOS> entity) {
-		List<OrderItems> OrderToOrderItem = new ArrayList<>();
-		entity.forEach(element -> {
-			OrderToOrderItem.add(orderItemsMapper.mapperToObject(element));
-		});
-		return ResponseEntity.ok(OrderToOrderItem);
+	public ResponseEntity<?> addNewOrderItems(@RequestBody List<OrderItemsDTOS> entity) {
+		try {
+			List<OrderItems> OrderToOrderItem = new ArrayList<>();
+			entity.forEach(element -> {
+				OrderToOrderItem.add(orderItemsMapper.mapperToObject(element));
+			});
+			System.out.println(OrderToOrderItem);
+			orderItemsService.orderItemsSaveAll(OrderToOrderItem);
+			return ResponseEntity.ok(Map.of("measage", "Order successfully", "OrderItems", OrderToOrderItem));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		}
+
 	}
 
 	@PutMapping("/admin/OrderItems")

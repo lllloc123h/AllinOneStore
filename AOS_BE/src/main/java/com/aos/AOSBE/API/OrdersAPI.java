@@ -1,41 +1,40 @@
 package com.aos.AOSBE.API;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.PageRequest;
-import com.aos.AOSBE.Entity.*;
-import com.aos.AOSBE.Service.*;
-import com.aos.AOSBE.DTOS.*;
-import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.OrdersDTOS;
+import com.aos.AOSBE.Entity.Orders;
+import com.aos.AOSBE.Mapper.OrdersMapper;
+import com.aos.AOSBE.Service.OrdersService;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class OrdersAPI {
 	@Autowired
 	private OrdersService ordersService;
-	
+
 	@Autowired
 	private OrdersMapper ordersMapper;
 
-	@GetMapping("/Orders")
-	public ResponseEntity<List<OrdersDTOS>> getAllOrdersApi(	
-			@RequestParam(defaultValue = "0") int page,
+	@GetMapping("/admin/Orders")
+	public ResponseEntity<List<OrdersDTOS>> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
-			
+
 		List<OrdersDTOS> orders = new ArrayList<OrdersDTOS>();
 		ordersService.ordersFindAll(page, size).forEach(e -> {
 			orders.add(ordersMapper.mapper(e));
@@ -43,32 +42,40 @@ public class OrdersAPI {
 		return ResponseEntity.ok(orders);
 	}
 
-	@GetMapping("/Orders/{id}")
+	@GetMapping("/admin/Orders/{id}")
 	public ResponseEntity<Orders> getOrdersByIdApi(@PathVariable int id) {
-		//try{
-		//}catch(Exception e){
-		//}
-		
-		Orders orders =(Orders)ordersService.ordersFindById(id).orElse(new Orders());
+		// try{
+		// }catch(Exception e){
+		// }
+
+		Orders orders = (Orders) ordersService.ordersFindById(id).orElse(new Orders());
 		return ResponseEntity.ok(orders);
 	}
-	@PostMapping("/Orders")
+
+	@PostMapping("/admin/Orders")
 	public ResponseEntity<Orders> addNewOrders(@RequestBody OrdersDTOS entity) {
-	    
-	    Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));	    
-	    return ResponseEntity.ok(saved);
+
+		Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+		return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Orders")
+
+	@PostMapping("/Orders")
+	public ResponseEntity<Orders> addNewOrdersByUser(@RequestBody OrdersDTOS entity) {
+
+		Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+		return ResponseEntity.ok(saved);
+	}
+
+	@PutMapping("/admin/Orders")
 	public ResponseEntity<Orders> updateOrders(@RequestBody Orders entity) {
-	    Orders updated = ordersService.ordersSave(entity); 
-	    return ResponseEntity.ok(updated);
+		Orders updated = ordersService.ordersSave(entity);
+		return ResponseEntity.ok(updated);
 	}
-	@DeleteMapping("/Orders/{id}")
+
+	@DeleteMapping("/admin/Orders/{id}")
 	public ResponseEntity<Void> deleteOrders(@PathVariable int id) {
-	    ordersService.ordersDeleteById(id); 
-	    return ResponseEntity.noContent().build(); 
+		ordersService.ordersDeleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 
-
-	
 }

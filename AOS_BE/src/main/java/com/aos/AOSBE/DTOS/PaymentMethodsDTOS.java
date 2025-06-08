@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PaymentMethodsDTOS {
     private int id;
-    private int orderId;
     private String name;
     private String description;
     private boolean isActive;

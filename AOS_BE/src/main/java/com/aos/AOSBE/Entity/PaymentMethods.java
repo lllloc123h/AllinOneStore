@@ -22,9 +22,6 @@ public class PaymentMethods {
     @Column(name = "id")
     private int id;
 	
-    @Column(name = "order_id")
-    private int orderId;
-	
     @Column(name = "name")
     private String name;
 	
