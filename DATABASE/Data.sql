@@ -9,7 +9,7 @@
 ('vothik@example.com', 'hashedpass8', N'Võ Thị K', 'avatar_k.jpg', '0908901234', 1600000.00, N'Vàng', 8000000.00, 5, 280),
 ('dangvank@example.com', 'hashedpass9', N'Đặng Văn K', 'avatar_k.jpg', '0909012345', 1400000.00, N'Đồng', 7000000.00, 5, 160),
 ('truongvant@example.com', 'hashedpass10', N'Trương Văn T', 'avatar_t.jpg', '0910123456', 2200000.00, N'Bạc', 11000000.00, 5, 350);
-
+-- chỉ có 2 role ADMIN, USER
 INSERT INTO roles (name) VALUES
 (N'Admin'),
 (N'Quản lý'),
