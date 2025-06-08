@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import router from '../router' // ✅ đúng, vì bạn đã export router ở router/index.js
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -46,13 +47,13 @@ api.interceptors.response.use(
       const status = err.response.status
       if (status === 401) {
         localStorage.removeItem('jwtToken')
-        alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+        toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
         localStorage.removeItem('jwtToken')
         router.push('/login')
       } else if (status === 403) {
         router.push('/403')
       } else if (status === 400) {
-        alert('Sai thông tin đăng nhập !')
+        toast.error('Sai thông tin đăng nhập !')
       }
     }
     return Promise.reject(err)

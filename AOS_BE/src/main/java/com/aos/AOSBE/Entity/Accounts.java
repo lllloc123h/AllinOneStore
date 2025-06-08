@@ -37,19 +37,19 @@ public class Accounts {
     @Column(name = "phone")
     private String phone;
 	
-    @Column(name = "average_order_value")
+    @Column(name = "average_order_value",insertable = false)
     private double averageOrderValue;
 	
-    @Column(name = "user_rank")
+    @Column(name = "user_rank",insertable = false)
     private String userRank;
 	
-    @Column(name = "total_spent")
+    @Column(name = "total_spent",insertable = false)
     private double totalSpent;
 	
-    @Column(name = "total_order")
+    @Column(name = "total_order",insertable = false)
     private int totalOrder;
 	
-    @Column(name = "loyalty_point")
+    @Column(name = "loyalty_point",insertable = false)
     private int loyaltyPoint;
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)

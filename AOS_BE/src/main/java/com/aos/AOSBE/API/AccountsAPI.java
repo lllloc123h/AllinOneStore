@@ -1,12 +1,11 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.aos.AOSBE.DTOS.OtpDTO;
+import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.Service.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,7 +43,8 @@ public class AccountsAPI {
 	HttpServletRequest request;
 	@Autowired
 	private AccountsService accountsService;
-
+	@Autowired
+	private OTPService otpService;
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	@Autowired
@@ -127,12 +127,37 @@ public class AccountsAPI {
 			String token = jwtUtil.generateToken(user.getUsername());
 			return ResponseEntity
 					.ok(Map.of("message", "Đăng nhập thành công", "token", token, "username", user.getAuthorities()));
-
 		} catch (AuthenticationException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST) // 400
-					.body(Collections.singletonMap("message", "Sai thông tin đăng nhập"));
+			return ResponseEntity
+					.badRequest()
+					.body(Map.of("message", "Sai thông tin đăng nhập"));
 		}
 
 	}
-
+	@PostMapping("/Accounts/register")
+	public ResponseEntity<?> register (@RequestBody RegisterRequestDTO registerRequestDTO){
+		if (accountsService.accountsFindByEmail(registerRequestDTO.getEmail()).isPresent()) {
+			return ResponseEntity
+					.badRequest()
+					.body(Map.of("message", "Email đã tồn tại !"));
+		}
+		return ResponseEntity.ok(Map.of("message","Vui lòng kiểm tra OTP trong email"
+		,"OTP",otpService.generateOtpToRegister(10000L,registerRequestDTO)));
+}
+	@PostMapping("/Accounts/verifyotp")
+	public ResponseEntity<?> verifyOtp(@RequestBody OtpDTO otp){
+        try {
+            if (otpService.checkOtpToRegister(otp.getOtp())) {
+                return ResponseEntity.ok(Map.of("message","Đăng ký thành công",
+						"user",accountsService.registerByEmail(otpService.getRegisterDTO())
+                ));
+            }
+			return ResponseEntity
+					.badRequest()
+					.body(Map.of("message", "OTP sai hoặc OTP hết hạn!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+					.body(Map.of("message", "Đã có lỗi xảy ra !"));
+        }
+	}
 }
