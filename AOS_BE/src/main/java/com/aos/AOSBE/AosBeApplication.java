@@ -23,6 +23,7 @@ public class AosBeApplication {
 
 		System.setProperty("MAIL_USERNAME", dotenv.get("MAIL_USERNAME"));
 		System.setProperty("MAIL_PASSWORD", dotenv.get("MAIL_PASSWORD"));
+		System.setProperty("JWT_SECRET_KEY", dotenv.get("JWT_SECRET_KEY"));
 		SpringApplication.run(AosBeApplication.class, args);
 	}
 
