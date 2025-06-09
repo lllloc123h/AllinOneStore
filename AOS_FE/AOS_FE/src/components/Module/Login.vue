@@ -5,52 +5,27 @@
       <div class="mx-3">
         <p style="font-size: small">
           Bạn đã có tài khoản.
-          <RouterLink to="/register" style="color: black"
-            >Tạo 1 tài khoản mới
+          <RouterLink to="/register" style="color: black">Tạo 1 tài khoản mới
           </RouterLink>
         </p>
       </div>
       <form @submit.prevent="handleLogin">
         <label for="emailInput" class="form-label mt-3">Nhập Email</label>
-        <input
-          type="text"
-          id="emailInput"
-          class="form-control"
-          v-model="formData.email"
-          placeholder="Nhập Email tại đây"
-        />
+        <input type="text" id="emailInput" class="form-control" v-model="formData.email"
+          placeholder="Nhập Email tại đây" />
 
         <label for="passwordInput" class="form-label mt-3">Nhập Mật Khẩu</label>
         <div class="password-input-container">
-          <input
-            type="password"
-            id="passwordInput"
-            v-model="formData.password"
-            class="form-control"
-            placeholder="......"
-          />
+          <input type="password" id="passwordInput" v-model="formData.password" class="form-control"
+            placeholder="......" />
         </div>
         <button type="submit" class="btn mt-3">Đăng Nhập</button>
-        <a
-          class="btn btn-facebook mt-3"
-          href="http://localhost:8080/oauth2/authorization/facebook"
-        >
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/733/733547.png"
-            style="height: 30px"
-            alt="Facebook"
-          />
+        <a class="btn btn-facebook mt-3" href="http://localhost:8080/oauth2/authorization/facebook">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" style="height: 30px" alt="Facebook" />
           Đăng nhập bằng Facebook
         </a>
-        <a
-          class="btn btn-google mt-3"
-          href="http://localhost:8080/oauth2/authorization/google"
-        >
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
-            style="height: 30px"
-            alt="Google"
-          />
+        <a class="btn btn-google mt-3" href="http://localhost:8080/oauth2/authorization/google">
+          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" style="height: 30px" alt="Google" />
           Đăng nhập bằng Google
         </a>
         <div class="quenMK mt-4">
@@ -59,11 +34,7 @@
       </form>
     </div>
     <div class="col-sm-6 benphai" style="padding: 0px">
-      <img
-        style="width: 100%; padding: 0px"
-        src="/src/assets/imgs/tải xuống.jpg"
-        alt=""
-      />
+      <img style="width: 100%; padding: 0px" src="/src/assets/imgs/tải xuống.jpg" alt="" />
     </div>
   </div>
 </template>
@@ -71,7 +42,7 @@
 import { reactive, ref, onMounted, watch } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 const router = useRouter();
-import api from "../../ConfigAPI/api";
+import { authService } from "../../ConfigAPI/api";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "vue3-toastify";
@@ -80,8 +51,7 @@ const formData = reactive({
   password: "123",
 });
 async function handleLogin() {
-  console.log(formData);
-  api.login(formData.email, formData.password);
+  authService.login(formData.email, formData.password);
   toast.success("Đăng nhập thành công !");
 }
 </script>
@@ -121,16 +91,16 @@ body {
   border-color: gray;
 }
 
-form > .quenMK {
+form>.quenMK {
   text-align: center;
 }
 
-form > .quenMK > a:hover {
+form>.quenMK>a:hover {
   color: #edcdbb;
   text-decoration: none;
 }
 
-form > .quenMK > a {
+form>.quenMK>a {
   color: #000;
   text-decoration: none;
 }

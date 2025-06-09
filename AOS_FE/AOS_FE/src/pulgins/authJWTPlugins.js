@@ -3,6 +3,8 @@ import api from '../ConfigAPI/api';
 
 export default {
   install(app) {
-    app.config.globalProperties.$auth = api;
+
+    console.log(api),
+      app.config.globalProperties.$auth = api;
   }
 };

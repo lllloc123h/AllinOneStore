@@ -1,5 +1,4 @@
-
-<template> 
+<template>
   <div class="container py-5">
     <div class="row">
       <!-- Giỏ hàng -->
@@ -64,7 +63,8 @@
               <span>{{ selectedTotal.toLocaleString() }}₫</span>
             </li>
           </ul>
-          <button class="btn btn-dark w-100" :disabled="selectedItems.length === 0" @click="checkout">Thanh toán</button>
+          <button class="btn btn-dark w-100" :disabled="selectedItems.length === 0" @click="checkout">Thanh
+            toán</button>
         </div>
       </div>
     </div>
@@ -73,11 +73,7 @@
     <div class="mt-5">
       <h5 class="mb-4">Bạn cũng có thể thích</h5>
       <div class="row">
-        <div
-          class="col-6 col-md-3"
-          v-for="(product, index) in suggestions"
-          :key="'suggestion-' + index"
-        >
+        <div class="col-6 col-md-3" v-for="(product, index) in suggestions" :key="'suggestion-' + index">
           <div class="text-center">
             <img :src="product.image" class="suggestion-img mb-2" />
             <div>{{ product.name }}</div>
@@ -94,6 +90,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { cartService } from '../../ConfigAPI/api'
 
 const router = useRouter()
 
@@ -106,10 +103,8 @@ const selectedItems = ref([])
 // Lấy giỏ hàng từ API
 async function loadCart() {
   try {
-    const response = await axios.get('http://localhost:8080/cart', {
-      withCredentials: true, // nếu dùng Spring Security
-    })
-
+    const response = await cartService.getCart()
+    console.log(response)
     // Ánh xạ dữ liệu cho UI
     cart.value = response.data.map(item => ({
       id: item.id,
@@ -182,6 +177,7 @@ onMounted(() => {
 img.img-thumbnail {
   object-fit: cover;
 }
+
 .suggestion-img {
   width: 100%;
   height: 300px;
