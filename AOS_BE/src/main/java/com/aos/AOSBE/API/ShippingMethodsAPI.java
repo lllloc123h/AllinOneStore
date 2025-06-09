@@ -45,6 +45,10 @@ public class ShippingMethodsAPI {
 
 	@GetMapping("/ShippingMethods/{id}")
 	public ResponseEntity<ShippingMethods> getShippingMethodsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		ShippingMethods shippingMethods =(ShippingMethods)shippingMethodsService.shippingMethodsFindById(id).orElse(new ShippingMethods());
 		return ResponseEntity.ok(shippingMethods);
 	}
@@ -54,7 +58,6 @@ public class ShippingMethodsAPI {
 	    ShippingMethods saved = shippingMethodsService.shippingMethodsSave(shippingMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/ShippingMethods")
 	public ResponseEntity<ShippingMethods> updateShippingMethods(@RequestBody ShippingMethods entity) {
 	    ShippingMethods updated = shippingMethodsService.shippingMethodsSave(entity); 

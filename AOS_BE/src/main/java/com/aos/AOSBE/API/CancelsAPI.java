@@ -45,6 +45,10 @@ public class CancelsAPI {
 
 	@GetMapping("/Cancels/{id}")
 	public ResponseEntity<Cancels> getCancelsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Cancels cancels =(Cancels)cancelsService.cancelsFindById(id).orElse(new Cancels());
 		return ResponseEntity.ok(cancels);
 	}
@@ -54,7 +58,6 @@ public class CancelsAPI {
 	    Cancels saved = cancelsService.cancelsSave(cancelsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Cancels")
 	public ResponseEntity<Cancels> updateCancels(@RequestBody Cancels entity) {
 	    Cancels updated = cancelsService.cancelsSave(entity); 

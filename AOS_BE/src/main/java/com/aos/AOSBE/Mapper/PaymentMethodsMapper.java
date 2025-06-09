@@ -12,7 +12,6 @@ public class PaymentMethodsMapper {
 	public PaymentMethodsDTOS mapper(PaymentMethods entity) {
 		return new PaymentMethodsDTOS(
 				    entity.getId(),
-				    entity.getOrderId(),
 				    entity.getName(),
 				    entity.getDescription(),
 				    entity.isActive(),
@@ -23,7 +22,6 @@ public class PaymentMethodsMapper {
 	public PaymentMethods mapperToObject(PaymentMethodsDTOS entity) {
 		return new PaymentMethods(
 					entity.getId(),
-					entity.getOrderId(),
 					entity.getName(),
 					entity.getDescription(),
 					entity.isActive(),

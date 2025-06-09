@@ -9,6 +9,7 @@ import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ReturnsService {
 	@Autowired
@@ -18,12 +19,14 @@ public class ReturnsService {
     	Pageable pageable = PageRequest.of(page, size);
 		return returnsRepository.findAll(pageable).getContent();
     }
+    @Transactional
     public Returns returnsSave(Returns returns) {
         return returnsRepository.save(returns);
     }
     public Optional<Returns> returnsFindById(int id) {
         return returnsRepository.findById(id);
     }
+    @Transactional
     public void returnsDeleteById(int id) {
         returnsRepository.deleteById(id);
     }

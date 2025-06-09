@@ -9,6 +9,7 @@ import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 @Service
 public class CancelsService {
 	@Autowired
@@ -18,12 +19,14 @@ public class CancelsService {
     	Pageable pageable = PageRequest.of(page, size);
 		return cancelsRepository.findAll(pageable).getContent();
     }
+    @Transactional
     public Cancels cancelsSave(Cancels cancels) {
         return cancelsRepository.save(cancels);
     }
     public Optional<Cancels> cancelsFindById(int id) {
         return cancelsRepository.findById(id);
     }
+    @Transactional
     public void cancelsDeleteById(int id) {
         cancelsRepository.deleteById(id);
     }

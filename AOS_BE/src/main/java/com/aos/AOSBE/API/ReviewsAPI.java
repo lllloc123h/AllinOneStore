@@ -45,6 +45,10 @@ public class ReviewsAPI {
 
 	@GetMapping("/Reviews/{id}")
 	public ResponseEntity<Reviews> getReviewsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Reviews reviews =(Reviews)reviewsService.reviewsFindById(id).orElse(new Reviews());
 		return ResponseEntity.ok(reviews);
 	}
@@ -54,7 +58,6 @@ public class ReviewsAPI {
 	    Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Reviews")
 	public ResponseEntity<Reviews> updateReviews(@RequestBody Reviews entity) {
 	    Reviews updated = reviewsService.reviewsSave(entity); 

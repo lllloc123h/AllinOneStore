@@ -45,6 +45,10 @@ public class CouponsAPI {
 
 	@GetMapping("/Coupons/{id}")
 	public ResponseEntity<Coupons> getCouponsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Coupons coupons =(Coupons)couponsService.couponsFindById(id).orElse(new Coupons());
 		return ResponseEntity.ok(coupons);
 	}
@@ -54,7 +58,6 @@ public class CouponsAPI {
 	    Coupons saved = couponsService.couponsSave(couponsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Coupons")
 	public ResponseEntity<Coupons> updateCoupons(@RequestBody Coupons entity) {
 	    Coupons updated = couponsService.couponsSave(entity); 

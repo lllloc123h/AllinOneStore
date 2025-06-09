@@ -45,6 +45,10 @@ public class PaymentMethodsAPI {
 
 	@GetMapping("/PaymentMethods/{id}")
 	public ResponseEntity<PaymentMethods> getPaymentMethodsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		PaymentMethods paymentMethods =(PaymentMethods)paymentMethodsService.paymentMethodsFindById(id).orElse(new PaymentMethods());
 		return ResponseEntity.ok(paymentMethods);
 	}
@@ -54,7 +58,6 @@ public class PaymentMethodsAPI {
 	    PaymentMethods saved = paymentMethodsService.paymentMethodsSave(paymentMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/PaymentMethods")
 	public ResponseEntity<PaymentMethods> updatePaymentMethods(@RequestBody PaymentMethods entity) {
 	    PaymentMethods updated = paymentMethodsService.paymentMethodsSave(entity); 

@@ -45,6 +45,10 @@ public class CostHistoriesAPI {
 
 	@GetMapping("/CostHistories/{id}")
 	public ResponseEntity<CostHistories> getCostHistoriesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		CostHistories costHistories =(CostHistories)costHistoriesService.costHistoriesFindById(id).orElse(new CostHistories());
 		return ResponseEntity.ok(costHistories);
 	}
@@ -54,7 +58,6 @@ public class CostHistoriesAPI {
 	    CostHistories saved = costHistoriesService.costHistoriesSave(costHistoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/CostHistories")
 	public ResponseEntity<CostHistories> updateCostHistories(@RequestBody CostHistories entity) {
 	    CostHistories updated = costHistoriesService.costHistoriesSave(entity); 

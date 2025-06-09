@@ -12,7 +12,6 @@ public class ShippingMethodsMapper {
 	public ShippingMethodsDTOS mapper(ShippingMethods entity) {
 		return new ShippingMethodsDTOS(
 				    entity.getId(),
-				    entity.getOrderId(),
 				    entity.getName(),
 				    entity.getDescription(),
 				    entity.isActive(),
@@ -23,7 +22,6 @@ public class ShippingMethodsMapper {
 	public ShippingMethods mapperToObject(ShippingMethodsDTOS entity) {
 		return new ShippingMethods(
 					entity.getId(),
-					entity.getOrderId(),
 					entity.getName(),
 					entity.getDescription(),
 					entity.isActive(),

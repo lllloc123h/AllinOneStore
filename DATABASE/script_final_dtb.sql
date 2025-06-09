@@ -395,7 +395,8 @@ create table order_items (
 	created_at datetime default getdate(),
 	updated_at datetime default getdate(),
 	foreign key (order_id) references orders(id),
-	foreign key (product_item_id) references product_items(id)
+	foreign key (product_item_id) references product_items(id),
+	foreign key (promotion_id) references promotions(id)
 );
 GO
 

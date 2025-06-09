@@ -45,6 +45,10 @@ public class UserAddressesAPI {
 
 	@GetMapping("/UserAddresses/{id}")
 	public ResponseEntity<UserAddresses> getUserAddressesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		UserAddresses userAddresses =(UserAddresses)userAddressesService.userAddressesFindById(id).orElse(new UserAddresses());
 		return ResponseEntity.ok(userAddresses);
 	}
@@ -54,7 +58,6 @@ public class UserAddressesAPI {
 	    UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/UserAddresses")
 	public ResponseEntity<UserAddresses> updateUserAddresses(@RequestBody UserAddresses entity) {
 	    UserAddresses updated = userAddressesService.userAddressesSave(entity); 

@@ -45,6 +45,10 @@ public class VariantValuesAPI {
 
 	@GetMapping("/VariantValues/{id}")
 	public ResponseEntity<VariantValues> getVariantValuesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		VariantValues variantValues =(VariantValues)variantValuesService.variantValuesFindById(id).orElse(new VariantValues());
 		return ResponseEntity.ok(variantValues);
 	}
@@ -54,7 +58,6 @@ public class VariantValuesAPI {
 	    VariantValues saved = variantValuesService.variantValuesSave(variantValuesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/VariantValues")
 	public ResponseEntity<VariantValues> updateVariantValues(@RequestBody VariantValues entity) {
 	    VariantValues updated = variantValuesService.variantValuesSave(entity); 

@@ -9,6 +9,7 @@ import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CouponsService {
 	@Autowired
@@ -18,12 +19,14 @@ public class CouponsService {
     	Pageable pageable = PageRequest.of(page, size);
 		return couponsRepository.findAll(pageable).getContent();
     }
+    @Transactional
     public Coupons couponsSave(Coupons coupons) {
         return couponsRepository.save(coupons);
     }
     public Optional<Coupons> couponsFindById(int id) {
         return couponsRepository.findById(id);
     }
+    @Transactional
     public void couponsDeleteById(int id) {
         couponsRepository.deleteById(id);
     }

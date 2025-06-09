@@ -45,6 +45,10 @@ public class RolesAPI {
 
 	@GetMapping("/Roles/{id}")
 	public ResponseEntity<Roles> getRolesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Roles roles =(Roles)rolesService.rolesFindById(id).orElse(new Roles());
 		return ResponseEntity.ok(roles);
 	}
@@ -54,7 +58,6 @@ public class RolesAPI {
 	    Roles saved = rolesService.rolesSave(rolesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Roles")
 	public ResponseEntity<Roles> updateRoles(@RequestBody Roles entity) {
 	    Roles updated = rolesService.rolesSave(entity); 

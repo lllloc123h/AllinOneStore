@@ -45,6 +45,10 @@ public class ProductImagesAPI {
 
 	@GetMapping("/ProductImages/{id}")
 	public ResponseEntity<ProductImages> getProductImagesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		ProductImages productImages =(ProductImages)productImagesService.productImagesFindById(id).orElse(new ProductImages());
 		return ResponseEntity.ok(productImages);
 	}
@@ -54,7 +58,6 @@ public class ProductImagesAPI {
 	    ProductImages saved = productImagesService.productImagesSave(productImagesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/ProductImages")
 	public ResponseEntity<ProductImages> updateProductImages(@RequestBody ProductImages entity) {
 	    ProductImages updated = productImagesService.productImagesSave(entity); 

@@ -9,6 +9,7 @@ import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VariantValuesService {
 	@Autowired
@@ -18,12 +19,14 @@ public class VariantValuesService {
     	Pageable pageable = PageRequest.of(page, size);
 		return variantValuesRepository.findAll(pageable).getContent();
     }
+    @Transactional
     public VariantValues variantValuesSave(VariantValues variantValues) {
         return variantValuesRepository.save(variantValues);
     }
     public Optional<VariantValues> variantValuesFindById(int id) {
         return variantValuesRepository.findById(id);
     }
+    @Transactional
     public void variantValuesDeleteById(int id) {
         variantValuesRepository.deleteById(id);
     }

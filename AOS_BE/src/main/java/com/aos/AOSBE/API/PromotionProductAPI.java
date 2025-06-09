@@ -45,6 +45,10 @@ public class PromotionProductAPI {
 
 	@GetMapping("/PromotionProduct/{id}")
 	public ResponseEntity<PromotionProduct> getPromotionProductByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		PromotionProduct promotionProduct =(PromotionProduct)promotionProductService.promotionProductFindById(id).orElse(new PromotionProduct());
 		return ResponseEntity.ok(promotionProduct);
 	}
@@ -54,7 +58,6 @@ public class PromotionProductAPI {
 	    PromotionProduct saved = promotionProductService.promotionProductSave(promotionProductMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/PromotionProduct")
 	public ResponseEntity<PromotionProduct> updatePromotionProduct(@RequestBody PromotionProduct entity) {
 	    PromotionProduct updated = promotionProductService.promotionProductSave(entity); 

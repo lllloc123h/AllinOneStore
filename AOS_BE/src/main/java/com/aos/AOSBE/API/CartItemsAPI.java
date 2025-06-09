@@ -45,6 +45,10 @@ public class CartItemsAPI {
 
 	@GetMapping("/CartItems/{id}")
 	public ResponseEntity<CartItems> getCartItemsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		CartItems cartItems =(CartItems)cartItemsService.cartItemsFindById(id).orElse(new CartItems());
 		return ResponseEntity.ok(cartItems);
 	}
@@ -54,7 +58,6 @@ public class CartItemsAPI {
 	    CartItems saved = cartItemsService.cartItemsSave(cartItemsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/CartItems")
 	public ResponseEntity<CartItems> updateCartItems(@RequestBody CartItems entity) {
 	    CartItems updated = cartItemsService.cartItemsSave(entity); 

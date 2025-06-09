@@ -45,6 +45,10 @@ public class CatalogsAPI {
 
 	@GetMapping("/Catalogs/{id}")
 	public ResponseEntity<Catalogs> getCatalogsByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Catalogs catalogs =(Catalogs)catalogsService.catalogsFindById(id).orElse(new Catalogs());
 		return ResponseEntity.ok(catalogs);
 	}
@@ -54,7 +58,6 @@ public class CatalogsAPI {
 	    Catalogs saved = catalogsService.catalogsSave(catalogsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Catalogs")
 	public ResponseEntity<Catalogs> updateCatalogs(@RequestBody Catalogs entity) {
 	    Catalogs updated = catalogsService.catalogsSave(entity); 

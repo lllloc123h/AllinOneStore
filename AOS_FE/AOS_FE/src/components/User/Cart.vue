@@ -91,73 +91,92 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-
-// Import ảnh từ assets
-import aoTrang from '@/assets/imgs/ao-thun-trang.jpg'
-import aoXanh from '@/assets/imgs/ao-thun-xanh.jpg'
-import aoHong from '@/assets/imgs/ao-thun-hong.jpg'
-import aoDen from '@/assets/imgs/ao-thun-den.webp'
-import aoDo from '@/assets/imgs/ao-thun-do.jpeg'
-
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 
-function checkout() {
-  const selectedProducts = cart.value.filter(item => selectedItems.value.includes(item.id))
+// Giỏ hàng từ server
+const cart = ref([])
 
-  // Chuyển đến trang Checkout và truyền state
-  router.push({
-    name: 'CheckoutPage',
-    state: {
-      selectedProducts: selectedProducts
-    }
-  })
+// ID sản phẩm đã chọn
+const selectedItems = ref([])
+
+// Lấy giỏ hàng từ API
+async function loadCart() {
+  try {
+    const response = await axios.get('http://localhost:8080/cart', {
+      withCredentials: true, // nếu dùng Spring Security
+    })
+
+    // Ánh xạ dữ liệu cho UI
+    cart.value = response.data.map(item => ({
+      id: item.id,
+      name: item.productItems.name,
+      price: item.productItems.price,
+      quantity: item.qty,
+      image: item.productItems.image
+    }))
+
+    // Mặc định chọn tất cả
+    selectedItems.value = cart.value.map(item => item.id)
+  } catch (error) {
+    console.error('Lỗi tải giỏ hàng:', error)
+  }
 }
 
-// Giỏ hàng
-const cart = ref([
-  { id: 1, name: 'Áo Thun Phông Trắng', price: 50000, quantity: 1, image: aoTrang },
-  { id: 2, name: 'Áo Thun Phông Xanh', price: 50000, quantity: 1, image: aoXanh },
-  { id: 3, name: 'Áo Thun Phông Hồng', price: 50000, quantity: 1, image: aoHong },
-  { id: 4, name: 'Áo Thun Phông Đen', price: 50000, quantity: 1, image: aoDen }
-])
-
-// Mảng chứa id sản phẩm được chọn để thanh toán
-const selectedItems = ref(cart.value.map(item => item.id)) // Mặc định chọn hết
-
-// Gợi ý
-const suggestions = ref([
-  { name: 'Áo thun phông đen', price: 50000, image: aoDen },
-  { name: 'Áo thun phông xanh', price: 50000, image: aoXanh },
-  { name: 'Áo thun phông đỏ', price: 50000, image: aoDo },
-  { name: 'Áo thun phông hồng', price: 50000, image: aoHong }
-])
-
-// Xử lý
+// Xóa sản phẩm
 function removeItem(item) {
   cart.value = cart.value.filter(i => i.id !== item.id)
-  // Nếu xóa, cũng bỏ chọn luôn
   selectedItems.value = selectedItems.value.filter(id => id !== item.id)
+
+  // TODO: Gọi API xóa nếu backend hỗ trợ
+  // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`)
 }
 
+// Tăng số lượng
 function increaseQty(item) {
   item.quantity++
+  // TODO: Gọi API cập nhật nếu backend hỗ trợ
 }
 
+// Giảm số lượng hoặc xóa
 function decreaseQty(item) {
-  if (item.quantity > 1) item.quantity--
-  else removeItem(item)
+  if (item.quantity > 1) {
+    item.quantity--
+    // TODO: Gọi API cập nhật nếu backend hỗ trợ
+  } else {
+    removeItem(item)
+  }
 }
 
-// Tính tổng chỉ với sản phẩm được chọn
+// Tính tổng tiền sản phẩm được chọn
 const selectedTotal = computed(() => {
   return cart.value
     .filter(item => selectedItems.value.includes(item.id))
     .reduce((sum, item) => sum + item.price * item.quantity, 0)
 })
 
+// Gửi dữ liệu thanh toán
+function checkout() {
+  const selectedProducts = cart.value.filter(item =>
+    selectedItems.value.includes(item.id)
+  )
+  router.push({
+    name: 'CheckoutPage',
+    state: {
+      selectedProducts
+    }
+  })
+}
+
+// Tải giỏ hàng khi trang được mount
+onMounted(() => {
+  loadCart()
+})
 </script>
+
 
 <style scoped>
 img.img-thumbnail {

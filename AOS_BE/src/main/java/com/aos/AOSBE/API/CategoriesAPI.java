@@ -45,6 +45,10 @@ public class CategoriesAPI {
 
 	@GetMapping("/Categories/{id}")
 	public ResponseEntity<Categories> getCategoriesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Categories categories =(Categories)categoriesService.categoriesFindById(id).orElse(new Categories());
 		return ResponseEntity.ok(categories);
 	}
@@ -54,7 +58,6 @@ public class CategoriesAPI {
 	    Categories saved = categoriesService.categoriesSave(categoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
 	@PutMapping("/Categories")
 	public ResponseEntity<Categories> updateCategories(@RequestBody Categories entity) {
 	    Categories updated = categoriesService.categoriesSave(entity); 
