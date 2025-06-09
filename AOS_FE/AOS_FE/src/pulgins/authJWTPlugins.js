@@ -1,8 +1,8 @@
 // src/plugins/authPlugin.js
-import authService from '../api/header-injectable-JWT';
+import api from '../ConfigAPI/api';
 
 export default {
   install(app) {
-    app.config.globalProperties.$auth = authService;
+    app.config.globalProperties.$auth = api;
   }
 };

@@ -8,7 +8,7 @@
           <RouterLink to="/login" style="color: black">Đăng nhập ngay </RouterLink>
         </p>
       </div>
-      <form @submit.prevent="confirmPass()">
+      <form @submit.prevent="handleLogin()">
         <label for="emailInput" class="form-label mt-3"> Email</label>
         <input
           type="email"
@@ -69,20 +69,22 @@
 <script setup>
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
+import api from "../../ConfigAPI/api";
 
 const userRegister = ref({
-  email: "tranhuuloc123dmx@gmail.com",
+  email: "tranhuuloc12344dmx@gmail.com",
   fullname: "Tran Huu Loc",
   phone: "0901234567",
   password: "123456",
   confirmPassword: "123456",
 });
 
-const confirmPass = () => {
+const handleLogin = () => {
   if (userRegister.value.password !== userRegister.value.confirmPassword) {
     toast.warning("Password xác nhận không khớp !");
     return;
   }
+
   toast.success("Đăng ký thành công !");
 };
 </script>

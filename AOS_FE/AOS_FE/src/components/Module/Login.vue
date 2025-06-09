@@ -71,16 +71,18 @@
 import { reactive, ref, onMounted, watch } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 const router = useRouter();
-import authService from "../../api/header-injectable-JWT";
+import api from "../../ConfigAPI/api";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { toast } from "vue3-toastify";
 const formData = reactive({
   email: "admin",
   password: "123",
 });
 async function handleLogin() {
   console.log(formData);
-  authService.login(formData.email, formData.password);
+  api.login(formData.email, formData.password);
+  toast.success("Đăng nhập thành công !");
 }
 </script>
 <style scoped>

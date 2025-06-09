@@ -105,13 +105,13 @@
 </template>
 <script setup>
 import { computed, watch } from "vue";
-import authService from "../../api/header-injectable-JWT";
-console.log(authService.isLogged());
+import api from "../../ConfigAPI/api";
+console.log("trang thai logged ", !!api.isLogged());
 const isLogged = computed(() => {
-  return !!authService.isLogged();
+  return !!api.isLogged();
 });
 const logout = () => {
-  authService.logout();
+  api.logout();
 };
 </script>
 <style scope>

@@ -15,6 +15,7 @@ const api = axios.create({
 const excludedPaths = [
   '/Accounts/login',
   '/Accounts/register',
+  '/Accounts/verify-otp'
 ]
 
 // Automatically attach token to each request
@@ -28,7 +29,7 @@ api.interceptors.request.use(config => {
   if (!isExcluded) {
     console.log('url ko ngoai le');
     config.headers.Authorization = `Bearer ${token}`;
-    const isExpirate = new Date(authService.parseJwt(response.data.token).exp * 1000).toLocaleString();
+    const isExpirate = new Date(api.parseJwt(response.data.token).exp * 1000).toLocaleString();
      if (token && isExpirate >= new Date().toLocaleString()) {
         alert('Đăng nhập hết hạn 1')
         localStorage.removeItem('jwtToken')
@@ -45,15 +46,16 @@ api.interceptors.response.use(
   err => {
     if (err.response) {
       const status = err.response.status
-      if (status === 401) {
-        localStorage.removeItem('jwtToken')
-        toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
-        localStorage.removeItem('jwtToken')
-        router.push('/login')
-      } else if (status === 403) {
-        router.push('/403')
-      } else if (status === 400) {
-        toast.error('Sai thông tin đăng nhập !')
+      // if (status === 401) {
+      //   localStorage.removeItem('jwtToken')
+      //   toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+      //   localStorage.removeItem('jwtToken')
+      //   router.push('/login')
+      // } else if (status === 403) {
+      //   router.push('/403')
+      // } else 
+      if (status === 403) {
+         router.push('/403')
       }
     }
     return Promise.reject(err)
@@ -66,7 +68,7 @@ const authService = {
     return api.post('/Accounts/login', { email, password })
       .then(response => {
         localStorage.setItem('jwtToken', response.data.token);
-        console.log('Đăng nhập thành công ', response.data)
+        console.log('Đăng nhập thành công ', response.data);
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         tokenRef.value = '1';
         router.push(localStorage.getItem('redirectTo') || '/')
@@ -74,13 +76,14 @@ const authService = {
       .catch(error => console.log('Đăng nhập thất bại ', error.response))
   }
   ,
+  
   isLogged(){
-    return tokenRef.value == '1';
+    return tokenRef.value != null ;
   }
   ,
   logout() {
     localStorage.removeItem('jwtToken');
-    tokenRef.value = '';
+    tokenRef.value = null;
     console.log('User logged out');
   },
 

@@ -142,9 +142,10 @@ public class AccountsAPI {
 					.body(Map.of("message", "Email đã tồn tại !"));
 		}
 		return ResponseEntity.ok(Map.of("message","Vui lòng kiểm tra OTP trong email"
-		,"OTP",otpService.generateOtpToRegister(10000L,registerRequestDTO)));
+		,"OTP",otpService.generateOtpToRegister(30000L,registerRequestDTO)));
 }
-	@PostMapping("/Accounts/verifyotp")
+
+	@PostMapping("/Accounts/verify-otp")
 	public ResponseEntity<?> verifyOtp(@RequestBody OtpDTO otp){
         try {
             if (otpService.checkOtpToRegister(otp.getOtp())) {

@@ -27,6 +27,4 @@ app.use(Vue3Toastify, {
     backgroundImage: 'linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)',
     }
 })
-
-
 app.mount('#app')

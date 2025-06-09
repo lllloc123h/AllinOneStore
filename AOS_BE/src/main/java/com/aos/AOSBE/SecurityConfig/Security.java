@@ -44,7 +44,7 @@ public class Security {
 						.requestMatchers("/api/Accounts/login",
 								"/api/Accounts/register",
 								"/api/test",
-								"/api/Accounts/verifyotp").permitAll()
+								"/api/Accounts/verify-otp").permitAll()
 						.requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
