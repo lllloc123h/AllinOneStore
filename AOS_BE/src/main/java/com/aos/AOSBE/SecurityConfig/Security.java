@@ -40,12 +40,10 @@ public class Security {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/Accounts/login",
-								"/api/Accounts/register",
-								"/api/test",
-								"/api/Accounts/verify-otp").permitAll()
-						.requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
+						"/api/test", "/api/Accounts/verify-otp"
+//								, "/api/cart"
+				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
 						.successHandler(customOAuth2SuccessHandler).failureUrl("/oauth2/failure")

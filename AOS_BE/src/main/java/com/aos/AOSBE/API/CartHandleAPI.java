@@ -47,8 +47,6 @@ public class CartHandleAPI {
 	@GetMapping("/cart")
 	public ResponseEntity<List<CartItems>> cart() {
 		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-		System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
-
 		List<CartItems> cartListByAcount = cartItemsService.cartItemsFindAccounts(userEmail);
 		return ResponseEntity.ok(cartListByAcount);
 	}

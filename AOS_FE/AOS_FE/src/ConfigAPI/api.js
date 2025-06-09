@@ -23,21 +23,20 @@ api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwtToken');
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
   const isExcluded = excludedPaths.some(path => config.url.includes(path));
-  console.log(config.url);
-  
+  console.log('Request URL:', config.url, '| Excluded:', isExcluded);
+
   // neu url ngoai le 
   if (!isExcluded) {
-    console.log('url ko ngoai le');
+    const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
+    console.log('url ko ngoai le' + isExpirate + new Date().toLocaleString());
     config.headers.Authorization = `Bearer ${token}`;
-    const isExpirate = new Date(api.parseJwt(response.data.token).exp * 1000).toLocaleString();
-     if (token && isExpirate >= new Date().toLocaleString()) {
-        alert('Đăng nhập hết hạn 1')
-        localStorage.removeItem('jwtToken')
-        router.push('/login')
+    if (token && !isExpirate >= new Date().toLocaleString()) {
+      alert('Đăng nhập hết hạn 1')
+      localStorage.removeItem('jwtToken')
+      router.push('/login')
+    }
   }
-  }
-  
-   
+
   return config;
 });
 
@@ -55,7 +54,7 @@ api.interceptors.response.use(
       //   router.push('/403')
       // } else 
       if (status === 403) {
-         router.push('/403')
+        router.push('/403')
       }
     }
     return Promise.reject(err)
@@ -76,9 +75,9 @@ const authService = {
       .catch(error => console.log('Đăng nhập thất bại ', error.response))
   }
   ,
-  
-  isLogged(){
-    return tokenRef.value != null ;
+
+  isLogged() {
+    return tokenRef.value != null;
   }
   ,
   logout() {
@@ -102,5 +101,11 @@ const authService = {
     }
   }
 };
+const cartService = {
+  getCart() {
+    return api.get('/cart')
+  }
+};
 
-export default authService;
+export default api;
+export { authService, cartService };
