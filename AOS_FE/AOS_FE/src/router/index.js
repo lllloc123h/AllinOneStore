@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Import modular route arrays
 import adminRoutes from './Admin/AdminRouter.js'
 import userRoutes from './User/UserRouter.js'
-import authService from '../api/header-injectable-JWT.js'
+import api from '../ConfigAPI/api.js'
 import adminLayout from '../Layouts/AdminLayout.vue'
 import UserLayout from '../Layouts/UserLayout.vue'
 import Oauth2 from '../components/Module/Oauth2Success.vue'
@@ -66,9 +66,9 @@ router.beforeEach((to,from,next) =>{
   if (requiresAuth) {
      localStorage.setItem('redirectTo',to.fullPath)
       if (token) {        
-        console.log('out of date ', authService.parseJwt(token).exp.toLocaleString());       
+        console.log('out of date ', api.parseJwt(token).exp.toLocaleString());       
               // kiem tra co dc phep vao hay kh
-        const userRoles = authService.parseJwt(token)?.roles || [];
+        const userRoles = api.parseJwt(token)?.roles || [];
         const hasRole = requiresRoles.some(role => userRoles.includes(role))
         if (hasRole) {
           localStorage.setItem('email',parseJwt(token)?.sub);

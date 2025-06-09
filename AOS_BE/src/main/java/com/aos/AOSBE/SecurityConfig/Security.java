@@ -41,7 +41,10 @@ public class Security {
 		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/Accounts/login", "/api/Account/register", "/api/test").permitAll()
+						.requestMatchers("/api/Accounts/login",
+								"/api/Accounts/register",
+								"/api/test",
+								"/api/Accounts/verify-otp").permitAll()
 						.requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
@@ -52,7 +55,7 @@ public class Security {
 							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 							response.setContentType("text/plain; charset=UTF-8");
 							response.setCharacterEncoding("UTF-8");
-							response.getWriter().write("401 - Chưa đăng nhập hoặc token lỗi");
+							response.getWriter().write("401 - Chưa đăng nhập hoặc token lỗi - Security config");
 						}).accessDeniedHandler((request, response, accessDeniedException) -> {
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 							response.setContentType("text/plain; charset=UTF-8");

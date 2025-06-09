@@ -15,6 +15,7 @@ import com.aos.AOSBE.Service.AccountsService;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -27,8 +28,8 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     	System.out.println(username);
-        Accounts user = accountsService.accountsFindByEmail(username);
-        if (user == null) {
+        Optional<Accounts> user = accountsService.accountsFindByEmail(username);
+        if (!user.isPresent()) {
             throw new UsernameNotFoundException("Không tìm thấy Username: " + username);
         }
         List<Authorities> authorities = authoritiesRepository.findAllByEmail(username);
@@ -36,6 +37,6 @@ public class UserDetailService implements UserDetailsService {
         for (Authorities authority : authorities) {
             grantedAuthoritySet.add(new SimpleGrantedAuthority(authority.getRoles().getName()));
         }
-        return new CustomUserDetails(user,grantedAuthoritySet);
+        return new CustomUserDetails(user.get(),grantedAuthoritySet);
     }
 }
