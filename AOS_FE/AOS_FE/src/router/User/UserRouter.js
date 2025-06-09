@@ -17,12 +17,17 @@ export default [
     {
         path: 'login',
         name: 'login',
-        component: () => import('../../components/Module/Login.vue')
+        component: () => import('../../components/Module/LoginView.vue')
     },
     {
         path: 'register',
         name: 'register',
-        component: () => import('../../components/Module/Register.vue')
+        component: () => import('../../components/Module/RegisterView.vue')
+    },  {
+        path: 'otp',
+        name: 'otp',
+        component: () => import('../../components/Module/OTPView.vue')
     },
+    
     
 ]

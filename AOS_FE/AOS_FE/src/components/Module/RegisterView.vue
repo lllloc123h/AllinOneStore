@@ -62,9 +62,53 @@
       </form>
     </div>
     <div class="col-sm-6 benphai" style="padding: 0px">
-      <img style="width: 100%; padding: 0px" src="/src/assets/imgs/komi.jpg" alt="" />
+      <img
+        style="width: 100%; padding: 0px"
+        src="/src/assets/imgs/tải xuống.jpg"
+        alt=""
+      />
     </div>
   </div>
+  <!-- From Uiverse.io by vinodjangid07 -->
+  <form class="otp-Form">
+    <span class="mainHeading">Enter OTP</span>
+    <p class="otpSubheading">We have sent a verification code to your mobile number</p>
+    <div class="inputContainer">
+      <input
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        id="otp-input1"
+      />
+      <input
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        id="otp-input2"
+      />
+      <input
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        id="otp-input3"
+      />
+      <input
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        id="otp-input4"
+      />
+    </div>
+    <button class="verifyButton" type="submit">Verify</button>
+    <button class="exitBtn">×</button>
+    <p class="resendNote">
+      Didn't receive the code? <button class="resendBtn">Resend Code</button>
+    </p>
+  </form>
 </template>
 <script setup>
 import { ref } from "vue";
