@@ -69,67 +69,60 @@
       />
     </div>
   </div>
-  <!-- From Uiverse.io by vinodjangid07 -->
-  <form class="otp-Form">
-    <span class="mainHeading">Enter OTP</span>
-    <p class="otpSubheading">We have sent a verification code to your mobile number</p>
-    <div class="inputContainer">
-      <input
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        id="otp-input1"
-      />
-      <input
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        id="otp-input2"
-      />
-      <input
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        id="otp-input3"
-      />
-      <input
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        id="otp-input4"
-      />
-    </div>
-    <button class="verifyButton" type="submit">Verify</button>
-    <button class="exitBtn">×</button>
-    <p class="resendNote">
-      Didn't receive the code? <button class="resendBtn">Resend Code</button>
-    </p>
-  </form>
+  <OTPView
+    :show="showOption"
+    @verified="verified"
+    @resend="sendOTP"
+    @close="closeModal"
+  ></OTPView>
 </template>
 <script setup>
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
-import api from "../../Configs/api";
-
+import api, { authService } from "../../Configs/api";
+import OTPView from "./OTPView.vue";
 const userRegister = ref({
-  email: "tranhuuloc12344dmx@gmail.com",
+  email: "tranhuuloc123@gmail.com",
   fullname: "Tran Huu Loc",
   phone: "0901234567",
-  password: "123456",
-  confirmPassword: "123456",
+  password: "123",
+  confirmPassword: "123",
 });
-
+const showOption = ref(false);
 const handleLogin = () => {
   if (userRegister.value.password !== userRegister.value.confirmPassword) {
     toast.warning("Password xác nhận không khớp !");
     return;
   }
+  // gui OTP o day
+  sendOTP();
+  // neu dung thi push di, ch thi o lai
+};
 
-  toast.success("Đăng ký thành công !");
+const closeModal = () => {
+  showOption.value = false;
+};
+const sendOTP = () => {
+  api
+    .post("/Accounts/register", {
+      email: userRegister.value.email,
+      password: userRegister.value.password,
+      fullname: userRegister.value.fullname,
+      phone: userRegister.value.phone,
+    })
+    .then((resp) => {
+      toast.success(resp.data.OTP);
+      showOption.value = true;
+    })
+    .catch((erorr) => toast.error(erorr.response?.data?.message));
+};
+const verified = () => {
+  toast.success("Đăng ký thành công!");
+  authService.login(userRegister.value.email, userRegister.value.password);
+  userRegister.value.email = "";
+  userRegister.value.password = "";
+  userRegister.value.fullname = "";
+  userRegister.value.confirmPassword = "";
 };
 </script>
 <style scoped>

@@ -3,16 +3,17 @@
   <transition name="fade">
     <div v-if="show" class="modal-overlay">
       <div class="modal-content">
+        <button class="close-btn" @click="closeModal">×</button>
         <form @submit.prevent="submitOtp" class="form">
-          <div class="title">OTP Verification</div>
-          <p class="message">We’ve sent a verification code to your phone</p>
+          <div class="title">Xác minh OTP</div>
+          <p class="message">Chúng tôi vừa gửi 1 mã OTP tới mail của bạn</p>
           <div class="inputs">
             <input
               v-for="(digit, index) in otp"
               :key="index"
               v-model="otp[index]"
               maxlength="1"
-              type="text"
+              type="number"
               class="otp-input"
               :ref="(el) => (otpRefs[index] = el)"
               @input="onInput(index)"
@@ -22,8 +23,15 @@
           </div>
           <button class="action">Verify</button>
           <p class="resend-note">
-            Didn’t receive the code?
-            <button type="button" class="resend-btn" @click="resendOtp">Resend</button>
+            Không nhận được mail?
+            <button
+              type="button"
+              class="resend-btn"
+              @click="resendOtp"
+              :disabled="countdown > 0"
+            >
+              {{ countdown > 0 ? `Gửi lại (${countdown}s)` : "Gửi lại" }}
+            </button>
           </p>
         </form>
       </div>
@@ -35,6 +43,34 @@
 import { ref, nextTick, watch } from "vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import api from "../../Configs/api";
+import router from "../../router";
+
+// countdown
+
+const countdown = ref(0);
+let timer = null;
+const countdownTime = () => {
+  countdown.value = 30;
+
+  if (timer) clearInterval(timer);
+
+  timer = setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--;
+    } else {
+      clearInterval(timer);
+    }
+  }, 1000);
+};
+countdownTime();
+
+const resendOtp = () => {
+  // Gửi lại OTP logic ở đây
+  toast.success("OTP đã được gửi lại");
+  emit("resend");
+  countdownTime();
+};
 
 const props = defineProps({
   show: Boolean,
@@ -42,7 +78,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "verified", "resend"]);
 
-const otp = ref(["", "", "", "", ""]);
+const otp = ref(["", "", "", "", "", ""]);
 const otpRefs = [];
 
 // Focus input[0] when modal shows
@@ -52,7 +88,7 @@ watch(
     if (val) {
       nextTick(() => otpRefs[0]?.focus());
     } else {
-      otp.value = ["", "", "", "", ""];
+      otp.value = ["", "", "", "", "", ""];
     }
   }
 );
@@ -74,32 +110,55 @@ const onBackspace = (index, e) => {
 
 const onPaste = (e) => {
   const paste = e.clipboardData.getData("text").trim();
-  if (/^\d{5}$/.test(paste)) {
-    for (let i = 0; i < 5; i++) {
+  if (/^\d{6}$/.test(paste)) {
+    for (let i = 0; i < 6; i++) {
       otp.value[i] = paste[i];
     }
-    nextTick(() => otpRefs[4]?.focus());
+    nextTick(() => otpRefs[5]?.focus());
   }
   e.preventDefault();
 };
 
 const submitOtp = () => {
   const code = otp.value.join("");
-  if (code.length < 5) {
-    toast.error("OTP phải gồm 5 chữ số");
+  if (code.length < 6) {
+    toast.error("OTP phải gồm 6 chữ số");
     return;
   }
-  toast.success("OTP xác thực thành công!");
-  emit("verified", code);
+  api
+    .post("/Accounts/verify-otp", { otp: code })
+    .then((resp) => {
+      toast.success(resp.data.message);
+      emit("verified");
+    })
+    .catch((error) => toast.error(error.response.data.message));
 };
 
-const resendOtp = () => {
-  toast.info("OTP mới đã được gửi!");
-  emit("resend");
+const closeModal = () => {
+  emit("close");
 };
 </script>
 
 <style scoped>
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: #eee;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -182,13 +241,16 @@ const resendOtp = () => {
 
 .action {
   padding: 10px;
-  background: royalblue;
-  color: white;
-  border: none;
+  background-color: #fff2eb;
+  color: black;
+  border: 1px solid black;
   border-radius: 8px;
   cursor: pointer;
 }
-
+.action:hover {
+  background-color: #edcdbb;
+  border-color: #edcdbb;
+}
 .resend-note {
   font-size: 13px;
 }

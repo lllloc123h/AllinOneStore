@@ -11,6 +11,7 @@ import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountsService {
 	@Autowired
     private AccountsRepository accountsRepository;
+    @Autowired
+    private AuthoritiesRepository authorityRepository;
+    @Autowired
+    private RolesRepository rolesRepository;
 
     public List<Accounts> accountsFindAll(int page, int size) {
     	Pageable pageable = PageRequest.of(page, size);
@@ -39,8 +44,14 @@ public class AccountsService {
     public Accounts registerByEmail(RegisterRequestDTO registerRequestDTO) {
         Accounts accounts = new Accounts();
         accounts.setEmail(registerRequestDTO.getEmail());
-        accounts.setPassword(registerRequestDTO.getPassword());
+        accounts.setPassword(new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword()));
+        accounts.setPhone(registerRequestDTO.getPhone());
         accounts.setFullname(registerRequestDTO.getFullname());
+        Authorities authority = new Authorities();
+        accounts = accountsRepository.save(accounts);
+        authority.setAccounts(accounts);
+        authority.setRoles(rolesRepository.findByName("USER").get());
+        authorityRepository.save(authority);
         return accountsRepository.save(accounts);
     }
 
