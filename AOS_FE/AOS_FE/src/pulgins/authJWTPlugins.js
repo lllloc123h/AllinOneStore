@@ -1,5 +1,5 @@
 // src/plugins/authPlugin.js
-import api from '../ConfigAPI/api';
+import api from '../Configs/api';
 
 export default {
   install(app) {

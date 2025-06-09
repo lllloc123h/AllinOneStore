@@ -64,7 +64,7 @@
 </template>
 <script setup>
 import { computed, watch } from "vue";
-import { authService } from "../../ConfigAPI/api";
+import { authService } from "../../Configs/api";
 console.log("trang thai logged ", !!authService.isLogged());
 const isLogged = computed(() => {
   return !!authService.isLogged();

@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Import modular route arrays
 import adminRoutes from './Admin/AdminRouter.js'
 import userRoutes from './User/UserRouter.js'
-import api from '../ConfigAPI/api.js'
+import api from '../Configs/api.js'
 import adminLayout from '../Layouts/AdminLayout.vue'
 import UserLayout from '../Layouts/UserLayout.vue'
 import Oauth2 from '../components/Module/Oauth2Success.vue'
@@ -35,6 +35,7 @@ const routes = [
     name: '403',
     component: Unauthorized,
   }
+
 
 ]
 

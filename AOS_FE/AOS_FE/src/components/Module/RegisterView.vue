@@ -113,7 +113,7 @@
 <script setup>
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
-import api from "../../ConfigAPI/api";
+import api from "../../Configs/api";
 
 const userRegister = ref({
   email: "tranhuuloc12344dmx@gmail.com",

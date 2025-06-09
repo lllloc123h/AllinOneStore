@@ -90,7 +90,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import { cartService } from '../../ConfigAPI/api'
+import { cartService } from '../../Configs/api'
 
 const router = useRouter()
 

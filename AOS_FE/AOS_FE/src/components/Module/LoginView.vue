@@ -42,7 +42,7 @@
 import { reactive, ref, onMounted, watch } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 const router = useRouter();
-import { authService } from "../../ConfigAPI/api";
+import { authService } from "../../Configs/api";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "vue3-toastify";
