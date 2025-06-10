@@ -7,8 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import com.aos.AOSBE.Entity.ProductItems;
+
 @Repository
 public interface ProductItemsRepository extends JpaRepository<ProductItems, Integer> {
+	@Query("SELECT a FROM ProductItems a WHERE a.sku like  ?1 ")
+	List<ProductItems> findBySkuLike(String skuLike);
     // Add custom query methods here if needed
     @Query("SELECT MIN(p.price),MAX(p.price) FROM ProductItems p WHERE p.baseProducts.id = ?1")
     List<Double> findMinAndMaxPriceByBaseId(int id);

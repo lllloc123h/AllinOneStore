@@ -2,8 +2,8 @@ import api from './api';
 
 export default function createCrudService(resource) {
     return {
-        getAll() {
-            return api.get(`/admin/${resource}`);
+        getAll(page, size) {
+            return api.get(`/admin/${resource}` + "?page=" + page + "&size=" + size);
         },
 
         getById(id) {

@@ -74,8 +74,10 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import createCrudService from '../../Configs/reusableCRUDService'
 const router = useRouter()
 import 'bootstrap/dist/css/bootstrap.min.css'
+
 const currentPage = ref(0);
 const currentSize = ref(5);
 function updatePageSize(size) {
@@ -91,6 +93,9 @@ const props = defineProps({
         required: true
     }
 })
+
+const indexTableService = createCrudService(props.TableName);
+
 function goToView(id) {
     router.push(`/Admin/${props.TableName}/view/${id}`)
 }
@@ -107,12 +112,14 @@ const fetchData = async () => {
     loading.value = true
     error.value = null
     try {
-        const response = await fetch("http://localhost:8080/api/admin/" + props.TableName + "?page=" + currentPage.value + "&size=" + currentSize.value)
-        if (!response.ok) throw new Error('Failed to fetch data')
-        const json = await response.json()
+        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value)
+        // const response = await fetch("http://localhost:8080/api/admin/" + props.TableName + "?page=" + currentPage.value + "&size=" + currentSize.value)
+        // if (!response.ok) throw new Error('Failed to fetch data')
+        const json = responseIndexTable.data
         data.value = Array.isArray(json) ? json : [json]
         columns.value = data.value.length ? Object.keys(data.value[0]) : []
     } catch (err) {
+        console.log(error.value)
         error.value = err.message
         data.value = []
         columns.value = []

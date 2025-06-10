@@ -478,6 +478,26 @@ create TABLE purchase_order_items (
 	FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
 );
 GO
+CREATE TABLE e_wallets (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    account_id INT NOT NULL UNIQUE,
+    balance DECIMAL(18,2) DEFAULT 0 CHECK (balance >= 0),
+    wallet_type NVARCHAR(10) CHECK (wallet_type IN ('REAL', 'VIRTUAL')),
+    is_active BIT DEFAULT 1,
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
+CREATE TABLE e_wallet_transactions (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    wallet_id INT NOT NULL,
+    amount DECIMAL(18,2) NOT NULL,
+    transaction_type NVARCHAR(50) CHECK (transaction_type IN ('TOP_UP', 'PURCHASE', 'WITHDRAW', 'RECEIVE')),
+    related_wallet_id INT NULL,
+    description NVARCHAR(255),
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (wallet_id) REFERENCES e_wallets(id)
+);
+
 INSERT INTO accounts(
     email,
     password,

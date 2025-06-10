@@ -3,13 +3,12 @@
         <div class="row h-100">
             <nav class="col-12 bg-dark text-white p-3 d-flex flex-column justify-content-start">
                 <div class="mb-12">
-
-                    <div v-for="(items, index) in props.listDashBoard"  class="mb-3">
+                    <div v-for="(items, index) in props.listDashBoard" class="mb-3">
                         <button @click="goToView(items)" class="nav-link text-white">
-                            {{items}}
+                            {{ items }}
                         </button>
 
-                       
+
                     </div>
                 </div>
             </nav>
