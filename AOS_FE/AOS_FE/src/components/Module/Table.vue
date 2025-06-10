@@ -93,7 +93,9 @@ const props = defineProps({
         required: true
     }
 })
+
 const indexTableService = createCrudService(props.TableName);
+
 function goToView(id) {
     router.push(`/Admin/${props.TableName}/view/${id}`)
 }

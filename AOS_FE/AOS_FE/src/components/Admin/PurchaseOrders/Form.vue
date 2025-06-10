@@ -130,6 +130,7 @@
   import { reactive, ref, onMounted, watch } from 'vue'
   import { formatDate } from '../../Module/CommonsFunctions.js'
   import Dashboard from '../../Module/Dashboard.vue'
+  import createCrudService from '../../../Configs/reusableCRUDService.js'
   import { useRouter } from 'vue-router'
 	const router = useRouter()
   import axios from 'axios'
@@ -149,6 +150,7 @@
           required: true
       }
   })
+  const formTableService = createCrudService(props.TableName);
 
   const formData = reactive({
   			id: '',
@@ -197,7 +199,7 @@
   async function submitUpdateForm() {
   	console.log(formData)
   	try {
-  		const response = await axios.put(`http://localhost:8080/api/admin/${props.TableName}`, formData)
+  		const response = await formTableService.put(`http://localhost:8080/api/admin/${props.TableName}`, formData)
   		console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   	} catch (error) {
@@ -209,7 +211,7 @@
   async function submitForm() {
   	console.log(formData)
   	try {
-  		const response = await axios.post(`http://localhost:8080/api/admin/${props.TableName}`, formData)
+  		const response = await formTableService.post(`http://localhost:8080/api/admin/${props.TableName}`, formData)
   		console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   	} catch (error) {
@@ -217,11 +219,9 @@
   	}
   }
   const fetchData = async () => {
-
-  	console.log(props.TableName + props.action)
   	if (!props.TableName) return
   	try {
-  		const response = await axios.get(`http://localhost:8080/api/admin/${props.TableName}/${props.id}`)
+  		const response = await formTableService.get(`http://localhost:8080/api/admin/${props.TableName}/${props.id}`)
   		response.data.createdAt = formatDate(response.data.createdAt)
   		response.data.updatedAt = formatDate(response.data.updatedAt)
   		Object.assign(formData, response.data)
