@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aos.AOSBE.DTOS.SkuLikeDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Repository.ProductItemsRepository;
 
@@ -23,9 +22,11 @@ public class ProductItemsService {
 		return productItemsRepository.findAll(pageable).getContent();
 	}
 
-	public List<ProductItems> productItemsFindAllHaveSkuLike(SkuLikeDTOS skuLike) {
+	public List<ProductItems> productItemsFindAllHaveSkuLike(String skuLike) {
 
-		String skuLikeConvert = "%" + skuLike.getLoai() + "%" + skuLike.getMau() + "%" + skuLike.getSize();
+		String skuLikeSplit[] = skuLike.split("-");
+		System.out.println(skuLikeSplit);
+		String skuLikeConvert = "%" + skuLikeSplit[0] + "%" + skuLikeSplit[1];
 		return productItemsRepository.findBySkuLike(skuLikeConvert);
 	}
 

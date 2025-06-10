@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.ProductItemsDTOS;
-import com.aos.AOSBE.DTOS.SkuLikeDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Service.ProductItemsService;
@@ -74,9 +73,10 @@ public class ProductItemsAPI {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/ProductItemsHaveSkuLike/{sku}")
+	@GetMapping("/Product/{sku}")
 	public ResponseEntity<?> getAllProductItemsHaveSkuLikeApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @PathVariable SkuLikeDTOS sku) {
+			@RequestParam(defaultValue = "5") int size, @PathVariable String sku) {
+
 		try {
 			List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
 			productItemsService.productItemsFindAllHaveSkuLike(sku).forEach(e -> {

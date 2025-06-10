@@ -1,7 +1,10 @@
 package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -73,14 +76,17 @@ public class VariantValuesAPI {
 	}
 
 	@GetMapping("/VariantValues")
-	public ResponseEntity<List<VariantValuesDTOS>> getAllVariantValuesApiToQuery(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
+	public ResponseEntity<?> getAllVariantValuesApiToQuery(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "100") int size) {
+
+		Map<String, List<VariantValuesDTOS>> variantValuesForList = new HashMap<>();
 
 		List<VariantValuesDTOS> variantValues = new ArrayList<VariantValuesDTOS>();
 		variantValuesService.variantValuesFindAll(page, size).forEach(e -> {
 			variantValues.add(variantValuesMapper.mapper(e));
 		});
-		return ResponseEntity.ok(variantValues);
+		variantValuesForList = variantValues.stream().collect(Collectors.groupingBy(VariantValuesDTOS::getName));
+		return ResponseEntity.ok(variantValuesForList);
 	}
 
 }
