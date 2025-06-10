@@ -47,6 +47,10 @@
             </a>
             <ul class="dropdown-menu">
               <li>
+                <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="isAdmin">Admin
+                </RouterLink>
+              </li>
+              <li>
                 <button class="dropdown-item" @click="logout" v-if="isLogged">
                   Logout
                 </button>
@@ -66,8 +70,13 @@
 import { computed, watch } from "vue";
 import { authService } from "../../Configs/api";
 console.log("trang thai logged ", !!authService.isLogged());
+console.log("trang thai logged ", !!authService.isAdmin());
 const isLogged = computed(() => {
   return !!authService.isLogged();
+});
+const isAdmin = computed(() => {
+  console.log(authService.isAdmin())
+  return !!authService.isAdmin();
 });
 const logout = () => {
   authService.logout();

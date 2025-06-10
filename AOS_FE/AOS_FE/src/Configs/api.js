@@ -67,7 +67,6 @@ const authService = {
     return api.post('/Accounts/login', { email, password })
       .then(response => {
         localStorage.setItem('jwtToken', response.data.token);
-        console.log('Đăng nhập thành công ', response.data);
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         tokenRef.value = '1';
         router.push(localStorage.getItem('redirectTo') || '/')
@@ -78,6 +77,16 @@ const authService = {
 
   isLogged() {
     return tokenRef.value != null;
+  }
+  ,
+  isAdmin() {
+    try {
+      const roles = authService.parseJwt(tokenRef.value).roles
+      return Array.isArray(roles) && roles.includes('ADMIN');
+    } catch (error) {
+      console.error('Invalid payload:', error);
+      return false;
+    }
   }
   ,
   logout() {
