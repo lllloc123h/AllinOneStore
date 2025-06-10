@@ -30,6 +30,13 @@ public class ProductItemsService {
 		return productItemsRepository.findBySkuLike(skuLikeConvert);
 	}
 
+	public List<ProductItems> productItemsFilterItemsByColorAndSize(String skuColorLike, String skuSizeLike) {
+		int isSkuColorLikeEmty = skuColorLike.isEmpty() ? 1 : 0;
+		int isSkuSizeLikeEmty = skuSizeLike.isEmpty() ? 1 : 0;
+		return productItemsRepository.filterItemsByColorAndSize(isSkuColorLikeEmty, skuColorLike, isSkuSizeLikeEmty,
+				skuSizeLike);
+	}
+
 	@Transactional
 	public ProductItems productItemsSave(ProductItems productItems) {
 		return productItemsRepository.save(productItems);

@@ -90,4 +90,44 @@ public class ProductItemsAPI {
 
 	}
 
+//	@GetMapping("/Product/MultiplrFilter/{sku}")
+//	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "5") int size, @PathVariable String sku, @RequestParam String skuColorLikeReq,
+//			@RequestParam String skuSizeLikeReq) {
+//		String skuColorLike = sku.split(",")[0];
+//		String skuSizeLike = sku.split(",")[1];
+//		System.out.println(sku);
+//		System.out.println(skuColorLike);
+//		System.out.println(skuSizeLike);
+//		try {
+//			List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
+//
+//			productItemsService.productItemsFilterItemsByColorAndSize(skuColorLike, skuSizeLike).forEach(e -> {
+//				productItems.add(productItemsMapper.mapper(e));
+//			});
+//			return ResponseEntity.ok(productItems);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+//		}
+//
+//	}
+	@GetMapping("/Product/MultiplrFilter")
+	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
+			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq) {
+		try {
+			List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
+
+			productItemsService.productItemsFilterItemsByColorAndSize(skuColorLikeReq, skuSizeLikeReq).forEach(e -> {
+				productItems.add(productItemsMapper.mapper(e));
+			});
+			return ResponseEntity.ok(productItems);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		}
+
+	}
+
 }

@@ -20,7 +20,7 @@
                 <ul class="filter-list">
                   <li v-for="item in items" :key="item.id">
                     <label>
-                      <input type="radio" :name="groupName" :value="item.signalSku" v-model="selected[groupName]" />
+                      <input type="checkbox" :name="groupName" :value="item.signalSku" v-model="selected[groupName]" />
                       {{ item.description }}
                     </label>
                   </li>
@@ -585,12 +585,14 @@ import axios from 'axios'
 const mapVarriants = ref({})
 const selected = ref({
 })
+const skuColorLike = ref("")
+const skuSizeLike = ref("")
 onMounted(async () => {
   try {
     const response = await axios.get('http://localhost:8080/api/VariantValues')
     mapVarriants.value = response.data
     for (const groupName in response.data) {
-      selected.value[groupName] = ''
+      selected.value[groupName] = []
     }
   } catch (error) {
     console.error('Error fetching variants:', error)
@@ -598,8 +600,9 @@ onMounted(async () => {
 })
 const fetchData = async () => {
   try {
-    console.log(selected.value)
-    const response = await axios.get(`http://localhost:8080/api/Product/${selected.value['Màu sắc']}-${selected.value['Kích thước']}`)
+    skuColorLike.value = (selected.value['Màu sắc']).join('-')
+    skuSizeLike.value = (selected.value['Kích thước']).join('-')
+    const response = await axios.get(`http://localhost:8080/api/Product/MultiplrFilter?skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}`)
 
     console.log(response.data)
   } catch (error) {
