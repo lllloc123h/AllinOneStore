@@ -1,6 +1,6 @@
-﻿--create database all_in_store;
+﻿create database all_in_store;
 --drop database all_in_store
--- use all_in_store
+ use all_in_store
 GO
 -- Disable all constraints temporarily (optional safety)
 EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
@@ -182,7 +182,6 @@ create table base_products(
 	is_custom bit default 0,
 	turn_buy int default 0,
 	rating int default 0,
-	is_promote bit default 0,
 	is_active bit default 1,
 	created_at datetime default getdate(),
 	updated_at datetime default getdate(),
@@ -193,10 +192,8 @@ GO
 create table product_items(
 	id int identity(1,1) primary key,
 	base_id int not null,
-	name nvarchar(100) not null,
 	cost decimal(18,2) not null,
 	price decimal(18,2) not null,
-	is_promote bit default 0,
 	turn_buy int default 0,
 	description nvarchar(max),
 	sku varchar(100),

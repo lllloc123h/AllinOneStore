@@ -156,6 +156,7 @@ public class AccountsAPI {
 					.badRequest()
 					.body(Map.of("message", "OTP sai hoặc OTP hết hạn!"));
         } catch (Exception e) {
+			e.printStackTrace();
             return ResponseEntity.badRequest()
 					.body(Map.of("message", "Đã có lỗi xảy ra !"));
         }

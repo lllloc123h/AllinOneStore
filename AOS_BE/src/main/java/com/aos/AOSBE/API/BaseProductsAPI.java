@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class BaseProductsAPI {
 	@Autowired
@@ -31,17 +31,15 @@ public class BaseProductsAPI {
 	@Autowired
 	private BaseProductsMapper baseProductsMapper;
 
-	@GetMapping("/BaseProducts")
-	public ResponseEntity<List<BaseProductsDTOS>> getAllBaseProductsApi(	
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-			
-		List<BaseProductsDTOS> baseProducts = new ArrayList<BaseProductsDTOS>();
-		baseProductsService.baseProductsFindAll(page, size).forEach(e -> {
-			baseProducts.add(baseProductsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(baseProducts);
-	}
+//	@GetMapping("/BaseProducts")
+//	public ResponseEntity<List<BaseProductsDTOS>> getAllBaseProductsApi(
+//			@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "5") int size,
+//			@RequestParam(defaultValue = "") String search) {
+//
+//		List<BaseProductsDTOS> baseProducts = baseProductsService.baseProductsFindByIsActiveTrue(page, size,search);
+//		return ResponseEntity.ok(baseProducts);
+//	}
 
 	@GetMapping("/BaseProducts/{id}")
 	public ResponseEntity<BaseProducts> getBaseProductsByIdApi(@PathVariable int id) {

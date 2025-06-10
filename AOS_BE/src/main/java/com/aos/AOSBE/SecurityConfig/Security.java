@@ -41,7 +41,7 @@ public class Security {
 		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
-						"/api/test", "/api/Accounts/verify-otp"
+						"/api/test", "/api/Accounts/verify-otp","/api/BaseProducts/**"
 //								, "/api/cart"
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

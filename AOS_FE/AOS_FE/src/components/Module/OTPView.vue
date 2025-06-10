@@ -7,21 +7,26 @@
         <form @submit.prevent="submitOtp" class="form">
           <div class="title">Xác minh OTP</div>
           <p class="message">Chúng tôi vừa gửi 1 mã OTP tới mail của bạn</p>
+
           <div class="inputs">
             <input
               v-for="(digit, index) in otp"
               :key="index"
               v-model="otp[index]"
               maxlength="1"
-              type="number"
+              type="text"
               class="otp-input"
+              inputmode="numeric"
+              pattern="\d*"
               :ref="(el) => (otpRefs[index] = el)"
-              @input="onInput(index)"
-              @keydown.backspace="onBackspace(index, $event)"
-              @paste="onPaste($event)"
+              @input="onInput(index, $event)"
+              @keydown="onKeyDown(index, $event)"
+              @paste="onPaste"
             />
           </div>
+
           <button class="action">Verify</button>
+
           <p class="resend-note">
             Không nhận được mail?
             <button
@@ -40,21 +45,25 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import api from "../../Configs/api";
-import router from "../../router";
 
-// countdown
+const props = defineProps({
+  show: Boolean,
+});
+const emit = defineEmits(["close", "verified", "resend"]);
+
+const otp = ref(["", "", "", "", "", ""]);
+const otpRefs = [];
 
 const countdown = ref(0);
 let timer = null;
+
 const countdownTime = () => {
   countdown.value = 30;
-
   if (timer) clearInterval(timer);
-
   timer = setInterval(() => {
     if (countdown.value > 0) {
       countdown.value--;
@@ -66,57 +75,59 @@ const countdownTime = () => {
 countdownTime();
 
 const resendOtp = () => {
-  // Gửi lại OTP logic ở đây
   toast.success("OTP đã được gửi lại");
   emit("resend");
   countdownTime();
 };
 
-const props = defineProps({
-  show: Boolean,
-});
-
-const emit = defineEmits(["close", "verified", "resend"]);
-
-const otp = ref(["", "", "", "", "", ""]);
-const otpRefs = [];
-
-// Focus input[0] when modal shows
 watch(
   () => props.show,
   (val) => {
     if (val) {
-      nextTick(() => otpRefs[0]?.focus());
-    } else {
       otp.value = ["", "", "", "", "", ""];
+      nextTick(() => otpRefs[0]?.focus());
     }
   }
 );
 
-const onInput = (index) => {
-  if (otp.value[index].length > 1) {
-    otp.value[index] = otp.value[index][0];
+const onInput = (index, event) => {
+  const value = event.target.value;
+  if (!/^\d$/.test(value)) {
+    otp.value[index] = "";
+    return;
   }
-  if (otp.value[index] && index < otp.value.length - 1) {
+
+  otp.value[index] = value;
+  if (index < otp.value.length - 1) {
     otpRefs[index + 1]?.focus();
   }
 };
 
-const onBackspace = (index, e) => {
-  if (otp.value[index] === "" && index > 0) {
-    otpRefs[index - 1]?.focus();
+const onKeyDown = (index, event) => {
+  const key = event.key;
+
+  if (key === "Backspace") {
+    if (otp.value[index] === "") {
+      if (index > 0) {
+        otp.value[index - 1] = "";
+        otpRefs[index - 1]?.focus();
+      }
+    } else {
+      otp.value[index] = "";
+    }
+    event.preventDefault();
   }
 };
 
-const onPaste = (e) => {
-  const paste = e.clipboardData.getData("text").trim();
+const onPaste = (event) => {
+  const paste = event.clipboardData.getData("text").trim();
   if (/^\d{6}$/.test(paste)) {
     for (let i = 0; i < 6; i++) {
       otp.value[i] = paste[i];
     }
     nextTick(() => otpRefs[5]?.focus());
   }
-  e.preventDefault();
+  event.preventDefault();
 };
 
 const submitOtp = () => {
@@ -125,19 +136,90 @@ const submitOtp = () => {
     toast.error("OTP phải gồm 6 chữ số");
     return;
   }
+
   api
     .post("/Accounts/verify-otp", { otp: code })
     .then((resp) => {
       toast.success(resp.data.message);
       emit("verified");
     })
-    .catch((error) => toast.error(error.response.data.message));
+    .catch((err) => {
+      toast.error(err.response?.data?.message || "Xác minh thất bại");
+    });
 };
 
 const closeModal = () => {
   emit("close");
 };
 </script>
+
+<style scoped>
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+}
+.close-btn {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+}
+.inputs {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+.otp-input {
+  width: 40px;
+  height: 50px;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.action {
+  width: 100%;
+  padding: 0.75rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.resend-note {
+  margin-top: 1rem;
+  text-align: center;
+}
+.resend-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
 
 <style scoped>
 .close-btn {

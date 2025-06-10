@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,6 +26,7 @@ import com.aos.AOSBE.Service.OrderItemsService;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
+@Log4j2
 public class OrderItemsAPI {
 	@Autowired
 	private OrderItemsService orderItemsService;
@@ -63,7 +65,7 @@ public class OrderItemsAPI {
 			entity.forEach(element -> {
 				OrderToOrderItem.add(orderItemsMapper.mapperToObject(element));
 			});
-			System.out.println(OrderToOrderItem);
+			log.info(OrderToOrderItem);
 			orderItemsService.orderItemsSaveAll(OrderToOrderItem);
 			return ResponseEntity.ok(Map.of("measage", "Order successfully", "OrderItems", OrderToOrderItem));
 		} catch (Exception e) {

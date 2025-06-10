@@ -61,7 +61,6 @@ public class OrdersAPI {
 
 	@PostMapping("/Orders")
 	public ResponseEntity<Orders> addNewOrdersByUser(@RequestBody OrdersDTOS entity) {
-
 		Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
 	}
