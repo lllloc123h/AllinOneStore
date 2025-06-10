@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "vue-router": "^4.5.1"
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "vue-router": "^4.5.1",
+    "vue3-toastify": "^0.2.8"
   }
 }

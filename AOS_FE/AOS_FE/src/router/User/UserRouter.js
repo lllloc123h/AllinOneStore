@@ -2,6 +2,7 @@
 import HomeView from '../../components/User/HomeView.vue'
 import ProductsView from '../../components/User/ProductsView.vue'
 import ProductDetails from '../../components/User/ProductDetails.vue'
+import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
 export default [
     {
@@ -46,6 +47,11 @@ export default [
         name: 'load',
         component: () => import('../../components/Module/ImageUpload.vue')
     },
+    {
+        path: '/UserInfo',
+        name: 'UserInfo',
+        component: UserInfo
+    }
 
 
 ]

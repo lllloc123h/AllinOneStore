@@ -19,6 +19,9 @@
           <li class="nav-item">
             <RouterLink class="nav-link active" aria-current="page" to="/products">Product</RouterLink>
           </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link active" aria-current="page" to="/UserInfo">User Info</RouterLink>
+          </li>
         </ul>
         <ul class="col-6"></ul>
         <ul class="navbar-nav mb-2 mb-lg-0 col-3">
