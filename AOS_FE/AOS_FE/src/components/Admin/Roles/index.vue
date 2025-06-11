@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid row">
-    <div class="aside col-3">
+    <div class="aside col-2">
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     
-    <div class="article col-9">
+    <div class="article col-10">
       <Table class="table" :TableName="props.TableName"></Table>
     </div>
   </div>
