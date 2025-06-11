@@ -22,17 +22,11 @@ public class ProductItems {
     @Column(name = "id")
     private int id;
 	
-    @Column(name = "name")
-    private String name;
-	
     @Column(name = "cost")
     private double cost;
 	
     @Column(name = "price")
     private double price;
-	
-    @Column(name = "is_promote")
-    private boolean isPromote;
 	
     @Column(name = "turn_buy")
     private int turnBuy;
