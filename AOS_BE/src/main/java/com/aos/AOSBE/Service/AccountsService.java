@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpSessionData;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,20 @@ public class AccountsService {
         authority.setRoles(rolesRepository.findByName("USER").get());
         authorityRepository.save(authority);
         return accountsRepository.save(accounts);
+    }
+    @Transactional
+    public void changePassword(ChangePasswordDTOS dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Accounts account = accountsRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+            throw new RuntimeException("Mật khẩu mới và xác nhận không khớp");
+        }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        account.setPassword(encoder.encode(dto.getNewPassword()));
+        accountsRepository.save(account);
     }
 
 
