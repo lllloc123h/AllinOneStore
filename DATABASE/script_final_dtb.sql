@@ -72,6 +72,12 @@ IF OBJECT_ID('authorities', 'U') IS NOT NULL
 IF OBJECT_ID('user_addresses', 'U') IS NOT NULL
     DROP TABLE user_addresses
 	go
+IF OBJECT_ID('e_wallet_transactions', 'U') IS NOT NULL
+    DROP TABLE e_wallet_transactions
+	go
+IF OBJECT_ID('e_wallets', 'U') IS NOT NULL
+    DROP TABLE e_wallets
+	go
 IF OBJECT_ID('accounts', 'U') IS NOT NULL
     DROP TABLE accounts
 	go
@@ -553,7 +559,7 @@ INSERT INTO authorities (
     updated_at
 ) VALUES (
     1,
-    1,
+    5,
     '1970-01-01 00:00:00.000',
     '1970-01-01 00:00:00.000'
 );

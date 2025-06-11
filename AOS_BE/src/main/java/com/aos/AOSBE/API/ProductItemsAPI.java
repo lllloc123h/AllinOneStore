@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.DTOS.filterAdvanceDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Service.ProductItemsService;
@@ -112,16 +113,31 @@ public class ProductItemsAPI {
 //		}
 //
 //	}
+
 	@GetMapping("/Product/MultiplrFilter")
 	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
-			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq) {
+			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq, @RequestParam("minPriceReq") String minPriceReq,
+			@RequestParam("maxPriceReq") String maxPriceReq) {
 		try {
-			List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
-
-			productItemsService.productItemsFilterItemsByColorAndSize(skuColorLikeReq, skuSizeLikeReq).forEach(e -> {
-				productItems.add(productItemsMapper.mapper(e));
-			});
+			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
+			productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(skuColorLikeReq,
+					skuSizeLikeReq, minPriceReq, maxPriceReq).forEach(e -> {
+						filterAdvanceDTOS item = new filterAdvanceDTOS();
+						item.setId((int) e[0]);
+						item.setName((String) e[1]);
+						item.setMaterial((String) e[2]);
+						item.setCategoryId((int) e[3]);
+						item.setMainImage((String) e[4]);
+						item.setCustom((boolean) e[5]);
+						item.setTurnBuy((int) e[6]);
+						item.setSku((String) e[7]);
+						item.setRating((int) e[8]);
+						item.setActive((boolean) e[9]);
+						item.setQty((int) e[10]);
+						item.setPrice(((Number) e[11]).doubleValue());
+						productItems.add(item);
+					});
 			return ResponseEntity.ok(productItems);
 		} catch (Exception e) {
 			e.printStackTrace();
