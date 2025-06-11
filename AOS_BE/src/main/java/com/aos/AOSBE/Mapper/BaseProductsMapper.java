@@ -3,7 +3,6 @@ package com.aos.AOSBE.Mapper;
 import java.time.LocalDateTime;
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
-import com.aos.AOSBE.Repository.ProductItemsRepository;
 import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Component;
 public class BaseProductsMapper {
 	@Autowired
 	private CategoriesService categoriesService;
-	@Autowired
-	private ProductItemsRepository productItemsRepository;
 	
 	public BaseProductsDTOS mapper(BaseProducts entity) {
 		return new BaseProductsDTOS(
@@ -23,9 +20,10 @@ public class BaseProductsMapper {
 				    entity.isCustom(),
 				    entity.getTurnBuy(),
 				    entity.getRating(),
-				    entity.isPromote(),
 				    entity.isActive(),
-				    productItemsRepository.findMinAndMaxPriceByBaseId(entity.getId())
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    entity.getCategories().getId()
 			);
 	}
 	public BaseProducts mapperToObject(BaseProductsDTOS entity) {
@@ -37,9 +35,10 @@ public class BaseProductsMapper {
 					entity.isCustom(),
 					entity.getTurnBuy(),
 					entity.getRating(),
-					entity.isPromote(),
 					entity.isActive(),
-				null,null,null
+					entity.getCreatedAt(),
+					entity.getUpdatedAt(),
+					categoriesService.categoriesFindById(entity.getCategories()).orElse(null)
 			);
 	}
 	

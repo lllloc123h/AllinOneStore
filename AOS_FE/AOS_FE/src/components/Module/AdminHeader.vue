@@ -49,7 +49,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="!isAdmin">Admin
+                                <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="isAdmin">Admin
                                 </RouterLink>
                             </li>
                             <li>
