@@ -4,6 +4,8 @@ import ProductsView from '../../components/User/ProductsView.vue'
 import ProductDetails from '../../components/User/ProductDetails.vue'
 import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
+import OrderStatus from '../../components/User/OrderStatus.vue'
+
 export default [
     {
         path: '',
@@ -51,7 +53,12 @@ export default [
         path: '/UserInfo',
         name: 'UserInfo',
         component: UserInfo
-    }
+    },
 
+    {
+        path: '/OrderStatus',
+        name: 'OrderStatus',
+        component: OrderStatus
+    }
 
 ]

@@ -36,94 +36,95 @@ INSERT INTO categories (catalog_id, name) VALUES
 ((SELECT id FROM catalogs WHERE name = N'Thời trang Nữ'), N'Áo Nữ'),
 ((SELECT id FROM catalogs WHERE name = N'Trẻ em'), N'Quần áo bé trai'),
 ((SELECT id FROM catalogs WHERE name = N'Trẻ em'), N'Quần áo bé gái');
-
-INSERT INTO base_products (name, material, category_id, main_image, is_custom, turn_buy, rating, is_promote, is_active) VALUES
+INSERT INTO base_products 
+(name, material, category_id, main_image, is_custom, turn_buy, rating, is_active)
+VALUES
 -- Áo Nam (Áo Nam)
-(N'Áo Polo Nam Cotton Pha', N'Cotton pha', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_polo_nam.webp', 0, 100, 4, 1, 1),
-(N'Áo Khoác Bomber Nam', N'Polyester chống nước', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_khoac_bomber.webp', 0, 75, 5, 0, 1),
-(N'Áo Thun Dài Tay Nam', N'Thun Gân', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_thun_dai_tay_nam.webp', 0, 90, 4, 0, 1),
-(N'Áo Vest Công Sở Nam', N'Vải Tweed', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_vest_nam.webp', 0, 30, 5, 1, 1),
-(N'Áo Hoodie Nỉ Nam', N'Nỉ Bông', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_hoodie_nam.webp', 0, 110, 4, 0, 1),
+(N'Áo Polo Nam Cotton Pha', N'Cotton pha', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_polo_nam.webp', 0, 100, 4, 1),
+(N'Áo Khoác Bomber Nam', N'Polyester chống nước', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_khoac_bomber.webp', 0, 75, 5, 1),
+(N'Áo Thun Dài Tay Nam', N'Thun Gân', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_thun_dai_tay_nam.webp', 0, 90, 4, 1),
+(N'Áo Vest Công Sở Nam', N'Vải Tweed', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_vest_nam.webp', 0, 30, 5, 1),
+(N'Áo Hoodie Nỉ Nam', N'Nỉ Bông', (SELECT id FROM categories WHERE name = N'Áo Nam'), 'ao_hoodie_nam.webp', 0, 110, 4, 1),
 
 -- Quần Nam (Quần Nam)
-(N'Quần Kaki Nam Dáng Thẳng', N'Kaki Cotton', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_kaki_nam.webp', 0, 85, 4, 1, 1),
-(N'Quần Short Thể Thao Nam', N'Vải Dù', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_short_nam_the_thao.webp', 0, 130, 4, 0, 1),
-(N'Quần Âu Nam Slimfit', N'Vải Tuyết Mưa', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_au_nam_slimfit.webp', 0, 60, 5, 0, 1),
-(N'Quần Jogger Nam Phối Túi', N'Nỉ Da Cá', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_jogger_nam.webp', 0, 95, 4, 1, 1),
-(N'Quần Jean Rách Gối Nam', N'Jean Bền', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_jean_rach.webp', 0, 50, 3, 0, 1),
+(N'Quần Kaki Nam Dáng Thẳng', N'Kaki Cotton', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_kaki_nam.webp', 0, 85, 4, 1),
+(N'Quần Short Thể Thao Nam', N'Vải Dù', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_short_nam_the_thao.webp', 0, 130, 4, 1),
+(N'Quần Âu Nam Slimfit', N'Vải Tuyết Mưa', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_au_nam_slimfit.webp', 0, 60, 5, 1),
+(N'Quần Jogger Nam Phối Túi', N'Nỉ Da Cá', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_jogger_nam.webp', 0, 95, 4, 1),
+(N'Quần Jean Rách Gối Nam', N'Jean Bền', (SELECT id FROM categories WHERE name = N'Quần Nam'), 'quan_jean_rach.webp', 0, 50, 3, 1),
 
 -- Áo Nữ (Áo Nữ)
-(N'Áo Thun Croptop Nữ', N'Cotton 2 chiều', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_thun_croptop.webp', 0, 160, 4, 1, 1),
-(N'Áo Len Cổ Lọ Nữ', N'Len Cashmere', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_len_nu.webp', 0, 70, 5, 0, 1),
-(N'Áo Khoác Cardigan Nữ', N'Len mỏng', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_cardigan_nu.webp', 0, 80, 4, 0, 1),
-(N'Áo Kiểu Sơ Mi Nữ', N'Lụa Satin', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_kieu_nu.webp', 0, 105, 4, 1, 1),
-(N'Áo Bomber Nữ Phối Tay', N'Da PU', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_bomber_nu.webp', 0, 45, 4, 0, 1),
+(N'Áo Thun Croptop Nữ', N'Cotton 2 chiều', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_thun_croptop.webp', 0, 160, 4, 1),
+(N'Áo Len Cổ Lọ Nữ', N'Len Cashmere', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_len_nu.webp', 0, 70, 5, 1),
+(N'Áo Khoác Cardigan Nữ', N'Len mỏng', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_cardigan_nu.webp', 0, 80, 4, 1),
+(N'Áo Kiểu Sơ Mi Nữ', N'Lụa Satin', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_kieu_nu.webp', 0, 105, 4, 1),
+(N'Áo Bomber Nữ Phối Tay', N'Da PU', (SELECT id FROM categories WHERE name = N'Áo Nữ'), 'ao_bomber_nu.webp', 0, 45, 4, 1),
 
 -- Váy Nữ (Váy Nữ)
-(N'Váy Đầm Suông Caro', N'Vải Linen', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'vay_dam_suong.webp', 0, 90, 4, 1, 1),
-(N'Váy Chữ A Dáng Ngắn', N'Vải Tuyết Sa', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'vay_chu_a_ngan.webp', 0, 115, 4, 0, 1),
-(N'Chân Váy Xếp Ly Dài', N'Vải Voan', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'chan_vay_xep_ly.webp', 0, 70, 5, 0, 1),
-(N'Đầm Dự Tiệc Hai Dây', N'Phi Bóng', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'dam_du_tiec.webp', 0, 55, 5, 1, 1),
-(N'Váy Yếm Jean Nữ', N'Jean Mềm', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'vay_yem_jean.webp', 0, 80, 4, 0, 1),
+(N'Váy Đầm Suông Caro', N'Vải Linen', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'vay_dam_suong.webp', 0, 90, 4, 1),
+(N'Váy Chữ A Dáng Ngắn', N'Vải Tuyết Sa', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'vay_chu_a_ngan.webp', 0, 115, 4, 1),
+(N'Chân Váy Xếp Ly Dài', N'Vải Voan', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'chan_vay_xep_ly.webp', 0, 70, 5, 1),
+(N'Đầm Dự Tiệc Hai Dây', N'Phi Bóng', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'dam_du_tiec.webp', 0, 55, 5, 1),
+(N'Váy Yếm Jean Nữ', N'Jean Mềm', (SELECT id FROM categories WHERE name = N'Váy Nữ'), 'vay_yem_jean.webp', 0, 80, 4, 1),
 
 -- Quần áo bé trai (Quần áo bé trai)
-(N'Bộ Quần Áo Bé Trai Năng Động', N'Thun Cotton', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'bo_be_trai_nang_dong.webp', 0, 120, 4, 1, 1),
-(N'Áo Thun Tay Ngắn Bé Trai', N'Cotton 4 chiều', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'ao_thun_be_trai_ngan_tay.webp', 0, 140, 4, 0, 1),
-(N'Quần Jean Phối Rách Bé Trai', N'Jean Mềm', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'quan_jean_rach_be_trai.webp', 0, 70, 4, 0, 1),
-(N'Áo Khoác Nỉ Bé Trai', N'Nỉ Cao Cấp', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'ao_khoac_ni_be_trai.webp', 0, 60, 5, 1, 1),
-(N'Bộ Đồ Thể Thao Bé Trai', N'Vải Poly', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'bo_the_thao_be_trai.webp', 0, 90, 4, 0, 1),
+(N'Bộ Quần Áo Bé Trai Năng Động', N'Thun Cotton', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'bo_be_trai_nang_dong.webp', 0, 120, 4, 1),
+(N'Áo Thun Tay Ngắn Bé Trai', N'Cotton 4 chiều', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'ao_thun_be_trai_ngan_tay.webp', 0, 140, 4, 1),
+(N'Quần Jean Phối Rách Bé Trai', N'Jean Mềm', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'quan_jean_rach_be_trai.webp', 0, 70, 4, 1),
+(N'Áo Khoác Nỉ Bé Trai', N'Nỉ Cao Cấp', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'ao_khoac_ni_be_trai.webp', 0, 60, 5, 1),
+(N'Bộ Đồ Thể Thao Bé Trai', N'Vải Poly', (SELECT id FROM categories WHERE name = N'Quần áo bé trai'), 'bo_the_thao_be_trai.webp', 0, 90, 4, 1),
 
 -- Quần áo bé gái (Quần áo bé gái)
-(N'Váy Bé Gái Xòe Hoa', N'Cotton Lụa', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'vay_be_gai_xoe_hoa.webp', 0, 110, 5, 1, 1),
-(N'Bộ Quần Áo Bé Gái Dễ Thương', N'Thun Lạnh', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'bo_be_gai_de_thuong.webp', 0, 130, 4, 0, 1),
-(N'Áo Khoác Jean Bé Gái', N'Jean Co Giãn', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'ao_khoac_jean_be_gai.webp', 0, 50, 4, 0, 1),
-(N'Đầm Công Chúa Ren Bé Gái', N'Voan + Ren', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'dam_cong_chua_be_gai.webp', 0, 65, 5, 1, 1),
-(N'Quần Legging Bé Gái', N'Thun Cotton', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'quan_legging_be_gai.webp', 0, 150, 4, 0, 1);
+(N'Váy Bé Gái Xòe Hoa', N'Cotton Lụa', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'vay_be_gai_xoe_hoa.webp', 0, 110, 5, 1),
+(N'Bộ Quần Áo Bé Gái Dễ Thương', N'Thun Lạnh', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'bo_be_gai_de_thuong.webp', 0, 130, 4, 1),
+(N'Áo Khoác Jean Bé Gái', N'Jean Co Giãn', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'ao_khoac_jean_be_gai.webp', 0, 50, 4, 1),
+(N'Đầm Công Chúa Ren Bé Gái', N'Voan + Ren', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'dam_cong_chua_be_gai.webp', 0, 65, 5, 1),
+(N'Quần Legging Bé Gái', N'Thun Cotton', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'quan_legging_be_gai.webp', 0, 150, 4, 1);
 
 
-INSERT INTO product_items (base_id, name, cost, price, is_promote, turn_buy, description, sku, safety_stock, qty, sell_start, sell_end) VALUES
+INSERT INTO product_items (base_id, cost, price, turn_buy, description, sku, safety_stock, qty, sell_start, sell_end) VALUES
 -- Áo Polo Nam Cotton Pha (ID: 151)
-((SELECT id FROM base_products WHERE name = N'Áo Polo Nam Cotton Pha' COLLATE DATABASE_DEFAULT), N'Áo Polo Nam Trắng Size M', 80000.00, 159000.00, 1, 30, N'Áo polo nam cotton pha cao cấp, màu trắng, size M.', 'PN-TR-M', 10, 50, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Áo Polo Nam Cotton Pha' COLLATE DATABASE_DEFAULT), N'Áo Polo Nam Đen Size L', 80000.00, 159000.00, 0, 25, N'Áo polo nam cotton pha cao cấp, màu đen, size L.', 'PN-DEN-L', 10, 45, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Áo Polo Nam Cotton Pha' COLLATE DATABASE_DEFAULT), 80000.00, 159000.00, 30, N'Áo polo nam cotton pha cao cấp, màu trắng, size M.', 'PN-TR-M', 10, 50, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Áo Polo Nam Cotton Pha' COLLATE DATABASE_DEFAULT), 80000.00, 159000.00, 25, N'Áo polo nam cotton pha cao cấp, màu đen, size L.', 'PN-DEN-L', 10, 45, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Áo Khoác Bomber Nam (ID: 152)
-((SELECT id FROM base_products WHERE name = N'Áo Khoác Bomber Nam' COLLATE DATABASE_DEFAULT), N'Áo Bomber Nam Đen Size M', 200000.00, 399000.00, 1, 10, N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.', 'BOM-DEN-M', 5, 15, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Áo Khoác Bomber Nam' COLLATE DATABASE_DEFAULT), 200000.00, 399000.00, 10, N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.', 'BOM-DEN-M', 5, 15, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Thay thế 'Áo Sơ Mi Linen Nam' bằng 'Áo Thun Dài Tay Nam' (ID: 153)
-((SELECT id FROM base_products WHERE name = N'Áo Thun Dài Tay Nam' COLLATE DATABASE_DEFAULT), N'Áo Thun Dài Tay Nam Xám Size M', 120000.00, 239000.00, 0, 15, N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.', 'SM-LX-M', 5, 25, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Áo Thun Dài Tay Nam' COLLATE DATABASE_DEFAULT), 120000.00, 239000.00, 15, N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.', 'SM-LX-M', 5, 25, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Quần Kaki Nam Dáng Thẳng (ID: 156)
-((SELECT id FROM base_products WHERE name = N'Quần Kaki Nam Dáng Thẳng' COLLATE DATABASE_DEFAULT), N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30', 180000.00, 349000.00, 1, 20, N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.', 'QK-XD-30', 5, 30, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Quần Kaki Nam Dáng Thẳng' COLLATE DATABASE_DEFAULT), N'Quần Kaki Nam Dáng Thẳng Đen Size 32', 180000.00, 349000.00, 0, 18, N'Quần kaki nam dáng thẳng, màu đen, size 32.', 'QK-DEN-32', 5, 28, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Quần Kaki Nam Dáng Thẳng' COLLATE DATABASE_DEFAULT), 180000.00, 349000.00, 20, N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.', 'QK-XD-30', 5, 30, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Quần Kaki Nam Dáng Thẳng' COLLATE DATABASE_DEFAULT), 180000.00, 349000.00, 18, N'Quần kaki nam dáng thẳng, màu đen, size 32.', 'QK-DEN-32', 5, 28, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Váy Đầm Suông Caro (ID: 166)
-((SELECT id FROM base_products WHERE name = N'Váy Đầm Suông Caro' COLLATE DATABASE_DEFAULT), N'Váy Đầm Suông Caro Trắng FreeSize', 250000.00, 499000.00, 1, 12, N'Váy đầm suông caro dáng dài, màu trắng, freesize.', 'VSC-TR-FS', 3, 20, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Váy Đầm Suông Caro' COLLATE DATABASE_DEFAULT), N'Váy Đầm Suông Caro Xanh Ngọc FreeSize', 250000.00, 499000.00, 0, 10, N'Váy đầm suông caro dáng dài, màu xanh ngọc, freesize.', 'VSC-XN-FS', 3, 18, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Váy Đầm Suông Caro' COLLATE DATABASE_DEFAULT), 250000.00, 499000.00, 12, N'Váy đầm suông caro dáng dài, màu trắng, freesize.', 'VSC-TR-FS', 3, 20, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Váy Đầm Suông Caro' COLLATE DATABASE_DEFAULT), 250000.00, 499000.00, 10, N'Váy đầm suông caro dáng dài, màu xanh ngọc, freesize.', 'VSC-XN-FS', 3, 18, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Áo Kiểu Sơ Mi Nữ (ID: 164) (Đã thay đổi từ Áo Blouse Nữ Công Sở để khớp với base_products)
-((SELECT id FROM base_products WHERE name = N'Áo Kiểu Sơ Mi Nữ' COLLATE DATABASE_DEFAULT), N'Áo Kiểu Sơ Mi Nữ Trắng Size S', 90000.00, 189000.00, 1, 22, N'Áo kiểu sơ mi nữ thanh lịch, màu trắng, size S.', 'AB-TR-S', 8, 40, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Áo Kiểu Sơ Mi Nữ' COLLATE DATABASE_DEFAULT), N'Áo Kiểu Sơ Mi Nữ Hồng Size M', 90000.00, 189000.00, 0, 19, N'Áo kiểu sơ mi nữ thanh lịch, màu hồng pastel, size M.', 'AB-H-M', 8, 35, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Áo Kiểu Sơ Mi Nữ' COLLATE DATABASE_DEFAULT), 90000.00, 189000.00, 22, N'Áo kiểu sơ mi nữ thanh lịch, màu trắng, size S.', 'AB-TR-S', 8, 40, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Áo Kiểu Sơ Mi Nữ' COLLATE DATABASE_DEFAULT), 90000.00, 189000.00, 19, N'Áo kiểu sơ mi nữ thanh lịch, màu hồng pastel, size M.', 'AB-H-M', 8, 35, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Váy Chữ A Dáng Ngắn (ID: 167)
-((SELECT id FROM base_products WHERE name = N'Váy Chữ A Dáng Ngắn' COLLATE DATABASE_DEFAULT), N'Chân Váy Chữ A Đen Size M', 70000.00, 139000.00, 0, 14, N'Chân váy chữ A nữ dáng ngắn, màu đen, size M.', 'CV-A-DEN-M', 5, 25, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Váy Chữ A Dáng Ngắn' COLLATE DATABASE_DEFAULT), 70000.00, 139000.00, 14, N'Chân váy chữ A nữ dáng ngắn, màu đen, size M.', 'CV-A-DEN-M', 5, 25, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Bộ Quần Áo Bé Trai Năng Động (ID: 171)
-((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Trai Năng Động' COLLATE DATABASE_DEFAULT), N'Bộ Đồ Bé Trai Xanh Họa Tiết Size 3T', 100000.00, 199000.00, 1, 28, N'Bộ quần áo bé trai cotton, màu xanh, họa tiết ngộ nghĩnh, size 3 tuổi.', 'BBT-XH-3T', 10, 60, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Trai Năng Động' COLLATE DATABASE_DEFAULT), N'Bộ Đồ Bé Trai Vàng Họa Tiết Size 4T', 100000.00, 199000.00, 0, 25, N'Bộ quần áo bé trai cotton, màu vàng, họa tiết ngộ nghĩnh, size 4 tuổi.', 'BBT-VH-4T', 10, 55, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Trai Năng Động' COLLATE DATABASE_DEFAULT), 100000.00, 199000.00, 28, N'Bộ quần áo bé trai cotton, màu xanh, họa tiết ngộ nghĩnh, size 3 tuổi.', 'BBT-XH-3T', 10, 60, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Trai Năng Động' COLLATE DATABASE_DEFAULT), 100000.00, 199000.00, 25, N'Bộ quần áo bé trai cotton, màu vàng, họa tiết ngộ nghĩnh, size 4 tuổi.', 'BBT-VH-4T', 10, 55, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Váy Bé Gái Xòe Hoa (ID: 176)
-((SELECT id FROM base_products WHERE name = N'Váy Bé Gái Xòe Hoa' COLLATE DATABASE_DEFAULT), N'Váy Bé Gái Hồng Xòe Hoa Size 5T', 150000.00, 299000.00, 1, 15, N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.', 'VBG-HX-5T', 5, 30, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Váy Bé Gái Xòe Hoa' COLLATE DATABASE_DEFAULT), N'Váy Bé Gái Trắng Xòe Hoa Size 6T', 150000.00, 299000.00, 0, 13, N'Váy bé gái dáng xòe hoa, màu trắng, phù hợp cho bé 6 tuổi.', 'VBG-TX-6T', 5, 28, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Váy Bé Gái Xòe Hoa' COLLATE DATABASE_DEFAULT), 150000.00, 299000.00, 15, N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.', 'VBG-HX-5T', 5, 30, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Váy Bé Gái Xòe Hoa' COLLATE DATABASE_DEFAULT), 150000.00, 299000.00, 13, N'Váy bé gái dáng xòe hoa, màu trắng, phù hợp cho bé 6 tuổi.', 'VBG-TX-6T', 5, 28, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Quần Jean Phối Rách Bé Trai (ID: 173)
-((SELECT id FROM base_products WHERE name = N'Quần Jean Phối Rách Bé Trai' COLLATE DATABASE_DEFAULT), N'Quần Short Jean Bé Trai Xanh Nhạt Size 7T', 60000.00, 119000.00, 0, 10, N'Quần short jean bé trai màu xanh nhạt, chất liệu mềm mại, size 7 tuổi.', 'QSJ-XN-7T', 5, 20, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Quần Jean Phối Rách Bé Trai' COLLATE DATABASE_DEFAULT), 60000.00, 119000.00, 10, N'Quần short jean bé trai màu xanh nhạt, chất liệu mềm mại, size 7 tuổi.', 'QSJ-XN-7T', 5, 20, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Bộ Quần Áo Bé Gái Dễ Thương (ID: 177)
-((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Gái Dễ Thương' COLLATE DATABASE_DEFAULT), N'Set Đồ Mùa Hè Bé Gái Hồng Size 2T', 80000.00, 169000.00, 1, 20, N'Set đồ mùa hè cho bé gái, màu hồng, chất thun cotton, size 2 tuổi.', 'SDMH-H-2T', 8, 40, GETDATE(), DATEADD(month, 6, GETDATE())),
-((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Gái Dễ Thương' COLLATE DATABASE_DEFAULT), N'Set Đồ Mùa Hè Bé Gái Tím Size 3T', 80000.00, 169000.00, 0, 18, N'Set đồ mùa hè cho bé gái, màu tím, chất thun cotton, size 3 tuổi.', 'SDMH-T-3T', 8, 35, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Gái Dễ Thương' COLLATE DATABASE_DEFAULT), 80000.00, 169000.00, 20, N'Set đồ mùa hè cho bé gái, màu hồng, chất thun cotton, size 2 tuổi.', 'SDMH-H-2T', 8, 40, GETDATE(), DATEADD(month, 6, GETDATE())),
+((SELECT id FROM base_products WHERE name = N'Bộ Quần Áo Bé Gái Dễ Thương' COLLATE DATABASE_DEFAULT), 80000.00, 169000.00, 18, N'Set đồ mùa hè cho bé gái, màu tím, chất thun cotton, size 3 tuổi.', 'SDMH-T-3T', 8, 35, GETDATE(), DATEADD(month, 6, GETDATE())),
 
 -- Áo Thun Croptop Nữ (ID: 161)
-((SELECT id FROM base_products WHERE name = N'Áo Thun Croptop Nữ' COLLATE DATABASE_DEFAULT), N'Áo Croptop Nữ Trắng Freesize', 60000.00, 119000.00, 1, 35, N'Áo thun croptop nữ năng động, màu trắng, freesize.', 'CR-TR-FS', 10, 50, GETDATE(), DATEADD(month, 6, GETDATE()));
+((SELECT id FROM base_products WHERE name = N'Áo Thun Croptop Nữ' COLLATE DATABASE_DEFAULT), 60000.00, 119000.00, 35, N'Áo thun croptop nữ năng động, màu trắng, freesize.', 'CR-TR-FS', 10, 50, GETDATE(), DATEADD(month, 6, GETDATE()));
 
 INSERT INTO product_images (product_item_id, image) VALUES
 -- Áo Polo Nam Trắng Size M

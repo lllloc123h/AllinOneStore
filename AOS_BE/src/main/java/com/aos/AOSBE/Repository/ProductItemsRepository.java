@@ -19,20 +19,44 @@ public interface ProductItemsRepository extends JpaRepository<ProductItems, Inte
 	List<Double> findMinAndMaxPriceByBaseId(int id);
 
 	@Query(value = """
-			SELECT * FROM product_items
-			WHERE
-			    (:colorsIsEmpty = 1 OR EXISTS (
-			        SELECT 1 FROM STRING_SPLIT(:colorsJoined, '-') c
-			        WHERE sku LIKE '%' + c.value + '%'
-			    ))
-			AND
-			    (:sizesIsEmpty = 1 OR EXISTS (
-			        SELECT 1 FROM STRING_SPLIT(:sizesJoined, '-') s
-			        WHERE sku LIKE '%' + s.value + '%'
-			    ))
+				SELECT  bp.id,
+						bp.name,
+				        bp.material,
+				        bp.category_id,
+				        bp.main_image,
+				        bp.is_custom,
+				        pit.turn_buy,
+				        pit.sku,
+				        bp.rating,
+				        bp.is_active,
+				        pit.qty,
+				        pit.price
+				FROM base_products bp
+				JOIN product_items pit ON bp.id = pit.base_id
+				WHERE
+				    (:colorsIsEmpty = 1 OR EXISTS (
+				        SELECT 1 FROM STRING_SPLIT(:colorsJoined, '-') c
+				        WHERE pit.sku LIKE '%' + c.value + '%'
+				    ))
+				AND
+				    (:sizesIsEmpty = 1 OR EXISTS (
+				        SELECT 1 FROM STRING_SPLIT(:sizesJoined, '-') s
+				        WHERE pit.sku LIKE '%' + s.value + '%'
+				    ))
+				AND
+				    (:minPriceIsEmpty = 1 OR EXISTS (
+				        SELECT 1 FROM STRING_SPLIT(:minPriceJoined, '-') p
+				        WHERE pit.price > TRY_CAST(p.value AS FLOAT)
+				    ))
+				AND
+				    (:maxPriceIsEmpty = 1 OR EXISTS (
+				        SELECT 1 FROM STRING_SPLIT(:maxPriceJoined, '-') p
+				        WHERE pit.price < TRY_CAST(p.value AS FLOAT)
+				    ))
 			""", nativeQuery = true)
-	List<ProductItems> filterItemsByColorAndSize(@Param("colorsIsEmpty") int colorsIsEmpty,
-			@Param("colorsJoined") String colorsJoined, @Param("sizesIsEmpty") int sizesIsEmpty,
-			@Param("sizesJoined") String sizesJoined);
+	List<Object[]> filterItems(@Param("colorsIsEmpty") int colorsIsEmpty, @Param("colorsJoined") String colorsJoined,
+			@Param("sizesIsEmpty") int sizesIsEmpty, @Param("sizesJoined") String sizesJoined,
+			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPriceJoined") String minPriceJoined,
+			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPriceJoined") String maxPriceJoined);
 
 }

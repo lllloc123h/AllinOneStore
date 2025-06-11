@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +31,34 @@ public class ProductItemsService {
 		return productItemsRepository.findBySkuLike(skuLikeConvert);
 	}
 
-	public List<ProductItems> productItemsFilterItemsByColorAndSize(String skuColorLike, String skuSizeLike) {
-		int isSkuColorLikeEmty = skuColorLike.isEmpty() ? 1 : 0;
-		int isSkuSizeLikeEmty = skuSizeLike.isEmpty() ? 1 : 0;
-		return productItemsRepository.filterItemsByColorAndSize(isSkuColorLikeEmty, skuColorLike, isSkuSizeLikeEmty,
-				skuSizeLike);
+	public List<Object[]> productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(String skuColorLike,
+			String skuSizeLike, String minPrice, String maxPrice) {
+		int isSkuColorLikeEmpty = (skuColorLike == null || skuColorLike.isEmpty()) ? 0 : 1;
+		int isSkuSizeLikeEmpty = (skuSizeLike == null || skuSizeLike.isEmpty()) ? 0 : 1;
+		int isMinPriceEmpty = (minPrice == null || minPrice.isEmpty()) ? 0 : 1;
+		int isMaxPriceEmpty = (maxPrice == null || maxPrice.isEmpty()) ? 0 : 1;
+
+		skuColorLike = (skuColorLike == null) ? "" : skuColorLike;
+		skuSizeLike = (skuSizeLike == null) ? "" : skuSizeLike;
+		minPrice = (minPrice == null) ? "" : minPrice;
+		maxPrice = (maxPrice == null) ? "" : maxPrice;
+		System.out.println(isSkuColorLikeEmpty);
+		System.out.println(isSkuSizeLikeEmpty);
+		System.out.println(isMinPriceEmpty);
+		System.out.println(isMaxPriceEmpty);
+		System.out.println(skuColorLike);
+		System.out.println(skuSizeLike);
+		System.out.println(minPrice);
+		System.out.println(maxPrice);
+		List<Object[]> objectList = new ArrayList<Object[]>();
+		try {
+			objectList = productItemsRepository.filterItems(isSkuColorLikeEmpty, skuColorLike, isSkuSizeLikeEmpty,
+					skuSizeLike, isMinPriceEmpty, minPrice, isMaxPriceEmpty, maxPrice);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return objectList;
 	}
 
 	@Transactional
