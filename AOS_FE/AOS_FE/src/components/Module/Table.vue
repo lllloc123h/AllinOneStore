@@ -2,6 +2,7 @@
     <div class="container-fluid">
         <h1 class=" fw-bold mb-4">{{ props.TableName }}</h1>
 
+        <FilterDropDown :FilterList="props.FilterList"></FilterDropDown>
         <div v-if="loading" class="text-primary">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -142,6 +143,7 @@ import { useRouter } from 'vue-router'
 import createCrudService from '../../Configs/reusableCRUDService'
 const router = useRouter()
 import 'bootstrap/dist/css/bootstrap.min.css'
+import FilterDropDown from './FilterDropDown.vue'
 
 const currentPage = ref(0);
 const currentSize = ref(5);
@@ -156,6 +158,10 @@ const props = defineProps({
     TableName: {
         type: String,
         required: true
+    },
+    FilterList: {
+        type: Array,
+        required: false
     }
 })
 
@@ -171,7 +177,6 @@ const data = ref([])
 const columns = ref([])
 const loading = ref(false)
 const error = ref(null)
-
 const fetchData = async () => {
     if (!props.TableName) return
     loading.value = true
