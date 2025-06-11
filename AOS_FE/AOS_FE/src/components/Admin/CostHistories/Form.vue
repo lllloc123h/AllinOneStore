@@ -33,17 +33,6 @@
           />
         </div>
 
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
 
         <button
           type="submit"

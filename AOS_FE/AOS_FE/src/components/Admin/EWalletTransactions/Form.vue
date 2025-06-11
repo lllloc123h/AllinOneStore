@@ -23,68 +23,46 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="orderDate" class="form-label text-capitalize">orderDate</label>
+          <label :for="amount" class="form-label text-capitalize">amount</label>
           <input
-            :id="orderDate"
-            v-model="formData.orderDate"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter orderDate`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="expectedDate" class="form-label text-capitalize">expectedDate</label>
-          <input
-            :id="expectedDate"
-            v-model="formData.expectedDate"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter expectedDate`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="receivedDate" class="form-label text-capitalize">receivedDate</label>
-          <input
-            :id="receivedDate"
-            v-model="formData.receivedDate"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter receivedDate`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="total" class="form-label text-capitalize">total</label>
-          <input
-            :id="total"
-            v-model="formData.total"
+            :id="amount"
+            v-model="formData.amount"
             type="number"
             class="form-control"
-            :placeholder="`Enter total`"
+            :placeholder="`Enter amount`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="status" class="form-label text-capitalize">status</label>
+          <label :for="transactionType" class="form-label text-capitalize">transactionType</label>
           <input
-            :id="status"
-            v-model="formData.status"
+            :id="transactionType"
+            v-model="formData.transactionType"
             type="text"
             class="form-control"
-            :placeholder="`Enter status`"
+            :placeholder="`Enter transactionType`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="note" class="form-label text-capitalize">note</label>
+          <label :for="relatedWalletId" class="form-label text-capitalize">relatedWalletId</label>
           <input
-            :id="note"
-            v-model="formData.note"
+            :id="relatedWalletId"
+            v-model="formData.relatedWalletId"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter relatedWalletId`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="description" class="form-label text-capitalize">description</label>
+          <input
+            :id="description"
+            v-model="formData.description"
             type="text"
             class="form-control"
-            :placeholder="`Enter note`"
+            :placeholder="`Enter description`"
           />
         </div>
 
@@ -132,14 +110,11 @@
 
   const formData = reactive({
   			id: '',
-  			orderDate: '',
-  			expectedDate: '',
-  			receivedDate: '',
-  			total: '',
-  			status: '',
-  			note: '',
+  			amount: '',
+  			transactionType: '',
+  			relatedWalletId: '',
+  			description: '',
   			createdAt: '',
-  			updatedAt: '',
   })
 
   const listDashBoard = [

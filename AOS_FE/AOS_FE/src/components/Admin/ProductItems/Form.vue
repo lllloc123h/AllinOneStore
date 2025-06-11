@@ -23,17 +23,6 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="name" class="form-label text-capitalize">name</label>
-          <input
-            :id="name"
-            v-model="formData.name"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter name`"
-          />
-        </div>
-
-        <div class="mb-3">
           <label :for="cost" class="form-label text-capitalize">cost</label>
           <input
             :id="cost"
@@ -52,17 +41,6 @@
             type="number"
             class="form-control"
             :placeholder="`Enter price`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="isPromote" class="form-label text-capitalize">isPromote</label>
-          <input
-            :id="isPromote"
-            v-model="formData.isPromote"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter isPromote`"
           />
         </div>
 
@@ -143,28 +121,6 @@
           />
         </div>
 
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
-          <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter updatedAt`"
-          />
-        </div>
-
 
         <button
           type="submit"
@@ -209,10 +165,8 @@
 
   const formData = reactive({
   			id: '',
-  			name: '',
   			cost: '',
   			price: '',
-  			isPromote: '',
   			turnBuy: '',
   			description: '',
   			sku: '',

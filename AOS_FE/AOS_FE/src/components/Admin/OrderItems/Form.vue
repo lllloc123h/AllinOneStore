@@ -23,39 +23,6 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="orderId" class="form-label text-capitalize">orderId</label>
-          <input
-            :id="orderId"
-            v-model="formData.orderId"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter orderId`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="productItemId" class="form-label text-capitalize">productItemId</label>
-          <input
-            :id="productItemId"
-            v-model="formData.productItemId"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter productItemId`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="promotionId" class="form-label text-capitalize">promotionId</label>
-          <input
-            :id="promotionId"
-            v-model="formData.promotionId"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter promotionId`"
-          />
-        </div>
-
-        <div class="mb-3">
           <label :for="qty" class="form-label text-capitalize">qty</label>
           <input
             :id="qty"
@@ -121,28 +88,6 @@
           />
         </div>
 
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
-          <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter updatedAt`"
-          />
-        </div>
-
 
         <button
           type="submit"
@@ -187,9 +132,6 @@
 
   const formData = reactive({
   			id: '',
-  			orderId: '',
-  			productItemId: '',
-  			promotionId: '',
   			qty: '',
   			cost: '',
   			isGift: '',

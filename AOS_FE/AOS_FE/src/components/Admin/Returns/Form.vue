@@ -23,17 +23,6 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="orderProductItemId" class="form-label text-capitalize">orderProductItemId</label>
-          <input
-            :id="orderProductItemId"
-            v-model="formData.orderProductItemId"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter orderProductItemId`"
-          />
-        </div>
-
-        <div class="mb-3">
           <label :for="reason" class="form-label text-capitalize">reason</label>
           <input
             :id="reason"
@@ -110,28 +99,6 @@
           />
         </div>
 
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
-          <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter updatedAt`"
-          />
-        </div>
-
 
         <button
           type="submit"
@@ -176,7 +143,6 @@
 
   const formData = reactive({
   			id: '',
-  			orderProductItemId: '',
   			reason: '',
   			image1: '',
   			image2: '',

@@ -22,28 +22,6 @@
             :placeholder="`Enter id`"
           />
         </div>
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
-          <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter updatedAt`"
-          />
-        </div>
-
 
         <button
           type="submit"

@@ -89,17 +89,6 @@
         </div>
 
         <div class="mb-3">
-          <label :for="isPromote" class="form-label text-capitalize">isPromote</label>
-          <input
-            :id="isPromote"
-            v-model="formData.isPromote"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter isPromote`"
-          />
-        </div>
-
-        <div class="mb-3">
           <label :for="isActive" class="form-label text-capitalize">isActive</label>
           <input
             :id="isActive"
@@ -107,28 +96,6 @@
             type="text"
             class="form-control"
             :placeholder="`Enter isActive`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
-          <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter updatedAt`"
           />
         </div>
 
@@ -182,7 +149,6 @@
   			isCustom: '',
   			turnBuy: '',
   			rating: '',
-  			isPromote: '',
   			isActive: '',
   			createdAt: '',
   			updatedAt: '',

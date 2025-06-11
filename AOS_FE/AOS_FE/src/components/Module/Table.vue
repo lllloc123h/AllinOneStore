@@ -70,6 +70,67 @@
 .pageselect>select#pageSize {
     width: 50px;
 }
+
+/* Add some margin to the table */
+.table {
+    margin-top: 20px;
+}
+
+/* Make header text bold and centered */
+.table thead th {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Center all cell content */
+.table tbody td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table td,
+.table th {
+    max-width: 150px;
+    /* Set your desired max width */
+    white-space: normal;
+    /* Allow text to wrap */
+    word-wrap: break-word;
+    /* Break long words */
+    overflow-wrap: break-word;
+}
+
+/* Space between buttons in action column */
+/* .table .btn {
+    min-width: 60px;
+    font-size: 0.9rem;
+} */
+
+.btn {
+    min-width: 80px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Responsive improvement for small screens */
+@media (max-width: 768px) {
+    .table {
+        font-size: 14px;
+    }
+
+    .btn {
+        margin-bottom: 5px;
+        width: 100%;
+    }
+}
 </style>
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
