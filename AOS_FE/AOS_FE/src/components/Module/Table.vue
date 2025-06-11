@@ -1,8 +1,5 @@
 <template>
     <div class="container-fluid">
-        <h1 class=" fw-bold mb-4">{{ props.TableName }}</h1>
-
-        <FilterDropDown :FilterList="props.FilterList"></FilterDropDown>
         <div v-if="loading" class="text-primary">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -138,7 +135,7 @@
 }
 </style>
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import createCrudService from '../../Configs/reusableCRUDService'
 const router = useRouter()
@@ -159,11 +156,9 @@ const props = defineProps({
         type: String,
         required: true
     },
-    FilterList: {
-        type: Array,
-        required: false
-    }
+    FilterList: Object
 })
+
 
 const indexTableService = createCrudService(props.TableName);
 
@@ -182,14 +177,12 @@ const fetchData = async () => {
     loading.value = true
     error.value = null
     try {
-        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value)
-        // const response = await fetch("http://localhost:8080/api/admin/" + props.TableName + "?page=" + currentPage.value + "&size=" + currentSize.value)
-        // if (!response.ok) throw new Error('Failed to fetch data')
+        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
         const json = responseIndexTable.data
         data.value = Array.isArray(json) ? json : [json]
         columns.value = data.value.length ? Object.keys(data.value[0]) : []
     } catch (err) {
-        console.log(error.value)
+        console.log(error)
         error.value = err.message
         data.value = []
         columns.value = []
@@ -205,6 +198,13 @@ onMounted(fetchData)
 watch(() => props.TableName, fetchData)
 watch(() => currentSize.value, fetchData)
 watch(() => currentPage.value, fetchData)
+watch(
+    () => props.FilterList,
+    () => {
+        fetchData();
+    },
+    { deep: true }
+);
 </script>
 
 <style scoped>

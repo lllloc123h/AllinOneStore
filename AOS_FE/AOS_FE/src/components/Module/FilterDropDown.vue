@@ -12,7 +12,7 @@
                 data-bs-parent="#accordionFlushExample">
                 <div class="accordion-body">
                     <div class="row p-3">
-                        <div class="col-md-4" v-for="field in FilterList" :key="field.name">
+                        <div class="col-md-4" v-for="field in props.FilterList" :key="field.name">
                             <BaseInput v-model="filters[field.name]"
                                 :label="field.name.charAt(0).toUpperCase() + field.name.slice(1)"
                                 :placeholder="`Enter ${field.name}`" :type="field.type" :id="field.name" />
@@ -25,35 +25,31 @@
 </template>
 
 
+
 <script setup>
-import { reactive, watch } from 'vue'
+import { ref, watch } from 'vue'
 import BaseInput from './BaseInput.vue'
 
 const props = defineProps({
-    FilterList: {
-        type: Array,
-        required: false
-    }
+    modelValue: Object,
+    FilterList: Array
 })
-console.log(props.FilterList)
-
-// Create a reactive object for the filters
-const filters = reactive({})
-
-// Initialize filter fields
-watch(
-    () => props.FilterList,
-    (newList) => {
-        if (newList) {
-            newList.forEach(field => {
-                filters[field.name] = ''
-            })
-        }
-    },
-    { immediate: true }
-)
-
+const filters = ref({ ...props.modelValue })
+const emit = defineEmits(['update:modelValue'])
+watch(filters, (newVal) => {
+    emit('update:modelValue', { ...newVal })
+}, { deep: true })
+watch(() => props.FilterList, (newList) => {
+    if (newList) {
+        newList.forEach(field => {
+            if (!(field.name in filters.value)) {
+                filters.value[field.name] = ''
+            }
+        })
+    }
+}, { immediate: true })
 </script>
+
 
 <style scoped>
 .filter-item {

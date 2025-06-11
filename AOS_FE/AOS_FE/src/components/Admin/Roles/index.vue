@@ -4,7 +4,12 @@
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     
+    
     <div class="article col-10">
+      <h1>
+        Roles
+      </h1>
+      <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
       <Table class="table" :TableName="props.TableName"></Table>
     </div>
   </div>
@@ -15,9 +20,11 @@
   }
 </style>
 <script setup>
-  import Table from "../../Module/Table.vue";
-  import Dashboard from "../../Module/Dashboard.vue";
+import Table from "../../Module/Table.vue";
+import Dashboard from "../../Module/Dashboard.vue";
 import { useRouter } from 'vue-router'
+import { ref, reactive, watch } from 'vue'
+import FilterDropDown from "../../Module/FilterDropDown.vue";
 const router = useRouter()
   const props = defineProps({
     TableName: {
@@ -54,4 +61,18 @@ const router = useRouter()
     "VariantValues",
     "Variants",
   ];
+ 
+  const FilterList = [
+          	{ name: 'name', type: 'text' },
+ 
+]
+
+const filters = ref({
+  			id: '',
+  			name: '',
+  			createdAt: '',
+  			updatedAt: '',
+})
+  
+  
 </script>
