@@ -4,25 +4,16 @@
     <div id="carouselExampleFade" class="carousel slide carousel-fade">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img
-            src="../../assets/imgs/slider_1 - Copy.png"
-            class="d-block w-100"
-            alt="..."
-          />
+          <img src="../../assets/imgs/banner1.png" class="d-block w-100" alt="..." />
         </div>
         <div class="carousel-item">
-          <img
-            src="../../assets/imgs/slider_2 - Copy.png"
-            class="d-block w-100"
-            alt="..."
-          />
+          <img src="../../assets/imgs/banner2.png" class="d-block w-100" alt="..." />
         </div>
         <div class="carousel-item">
-          <img
-            src="../../assets/imgs/slider_3 - Copy.png"
-            class="d-block w-100"
-            alt="..."
-          />
+          <img src="../../assets/imgs/banner3.png" class="d-block w-100" alt="..." />
+        </div>
+        <div class="carousel-item">
+          <img src="../../assets/imgs/banner4.png" class="d-block w-100" alt="..." />
         </div>
       </div>
       <button
