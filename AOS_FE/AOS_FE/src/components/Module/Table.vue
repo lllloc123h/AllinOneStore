@@ -24,7 +24,7 @@
                     <td v-for="key in columns" :key="key">
                         {{ item[key] }}
                     </td>
-                    <td class="row">
+                    <td class="row btn-holder">
 
                         <button type="button" @click="goToView(item.id)"
                             class="btn btn-primary me-2 row-6">View</button>
@@ -105,6 +105,10 @@
     min-width: 60px;
     font-size: 0.9rem;
 } */
+.btn-holder {
+    margin: 0 auto;
+    border: 0px;
+}
 
 .btn {
     min-width: 80px;

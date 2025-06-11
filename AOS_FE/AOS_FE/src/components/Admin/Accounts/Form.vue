@@ -223,38 +223,38 @@
 
 
   async function submitUpdateForm() {
-  	console.log(formData)
-  	try {
-  		const response = await formTableService.put(`http://localhost:8080/api/admin/${props.TableName}`, formData)
-  		console.log('Insert successful:', response.data)
+  console.log(formData)
+  try {
+    const response = await formTableService.update(props.id, formData)
+    console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
-  	} catch (error) {
-  		console.error('Insert failed:', error)
-  	}
+  } catch (error) {
+    console.error('Insert failed:', error)
   }
+}
 
 
-  async function submitForm() {
-  	console.log(formData)
-  	try {
-  		const response = await formTableService.post(`http://localhost:8080/api/admin/${props.TableName}`, formData)
-  		console.log('Insert successful:', response.data)
+async function submitForm() {
+  console.log(formData)
+  try {
+    const response = await formTableService.post(formData)
+    console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
-  	} catch (error) {
-  		console.error('Insert failed:', error)
-  	}
+  } catch (error) {
+    console.error('Insert failed:', error)
   }
-  const fetchData = async () => {
-  	if (!props.TableName) return
-  	try {
-  		const response = await formTableService.get(`http://localhost:8080/api/admin/${props.TableName}/${props.id}`)
-  		response.data.createdAt = formatDate(response.data.createdAt)
-  		response.data.updatedAt = formatDate(response.data.updatedAt)
-  		Object.assign(formData, response.data)
-  	} catch (err) {
-  		console.error('Get failed:', err)
-  	}
+}
+const fetchData = async () => {
+  if (!props.TableName) return
+  try {
+    const response = await formTableService.getById(props.id)
+    response.data.createdAt = formatDate(response.data.createdAt)
+    response.data.updatedAt = formatDate(response.data.updatedAt)
+    Object.assign(formData, response.data)
+  } catch (err) {
+    console.error('Get failed:', err)
   }
+}
 
   onMounted(fetchData)
   watch(() => props.id, fetchData)
