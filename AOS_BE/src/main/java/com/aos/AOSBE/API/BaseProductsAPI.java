@@ -46,6 +46,17 @@ public class BaseProductsAPI {
 		return ResponseEntity.ok(baseProducts);
 	}
 
+	@GetMapping("/admin/BaseProducts/{id}")
+	public ResponseEntity<BaseProducts> getAllBaseProductsByIdAdminRoleApi(@PathVariable int id) {
+		// try{
+		// }catch(Exception e){
+		// }
+
+		BaseProducts baseProducts = (BaseProducts) baseProductsService.baseProductsFindById(id)
+				.orElse(new BaseProducts());
+		return ResponseEntity.ok(baseProducts);
+	}
+
 	@GetMapping("/BaseProducts/{id}")
 	public ResponseEntity<BaseProducts> getBaseProductsByIdApi(@PathVariable int id) {
 		// try{

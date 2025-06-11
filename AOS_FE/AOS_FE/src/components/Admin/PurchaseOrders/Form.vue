@@ -27,7 +27,7 @@
           <input
             :id="orderDate"
             v-model="formData.orderDate"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter orderDate`"
           />
@@ -38,7 +38,7 @@
           <input
             :id="expectedDate"
             v-model="formData.expectedDate"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter expectedDate`"
           />
@@ -49,7 +49,7 @@
           <input
             :id="receivedDate"
             v-model="formData.receivedDate"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter receivedDate`"
           />

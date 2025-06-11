@@ -148,7 +148,7 @@
           <input
             :id="startAt"
             v-model="formData.startAt"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter startAt`"
           />
@@ -159,7 +159,7 @@
           <input
             :id="endAt"
             v-model="formData.endAt"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter endAt`"
           />

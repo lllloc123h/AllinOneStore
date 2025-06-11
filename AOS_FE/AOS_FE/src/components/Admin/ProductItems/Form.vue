@@ -104,7 +104,7 @@
           <input
             :id="sellStart"
             v-model="formData.sellStart"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter sellStart`"
           />
@@ -115,7 +115,7 @@
           <input
             :id="sellEnd"
             v-model="formData.sellEnd"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter sellEnd`"
           />

@@ -93,7 +93,7 @@
           <input
             :id="shippedDate"
             v-model="formData.shippedDate"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter shippedDate`"
           />
