@@ -23,17 +23,6 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="name" class="form-label text-capitalize">name</label>
-          <input
-            :id="name"
-            v-model="formData.name"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter name`"
-          />
-        </div>
-
-        <div class="mb-3">
           <label :for="cost" class="form-label text-capitalize">cost</label>
           <input
             :id="cost"
@@ -52,17 +41,6 @@
             type="number"
             class="form-control"
             :placeholder="`Enter price`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="isPromote" class="form-label text-capitalize">isPromote</label>
-          <input
-            :id="isPromote"
-            v-model="formData.isPromote"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter isPromote`"
           />
         </div>
 
@@ -126,7 +104,7 @@
           <input
             :id="sellStart"
             v-model="formData.sellStart"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter sellStart`"
           />
@@ -137,31 +115,9 @@
           <input
             :id="sellEnd"
             v-model="formData.sellEnd"
-            type="date"
+            type="datetime"
             class="form-control"
             :placeholder="`Enter sellEnd`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="createdAt" class="form-label text-capitalize">createdAt</label>
-          <input
-            :id="createdAt"
-            v-model="formData.createdAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter createdAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="updatedAt" class="form-label text-capitalize">updatedAt</label>
-          <input
-            :id="updatedAt"
-            v-model="formData.updatedAt"
-            type="date"
-            class="form-control"
-            :placeholder="`Enter updatedAt`"
           />
         </div>
 
@@ -209,10 +165,8 @@
 
   const formData = reactive({
   			id: '',
-  			name: '',
   			cost: '',
   			price: '',
-  			isPromote: '',
   			turnBuy: '',
   			description: '',
   			sku: '',
@@ -257,38 +211,38 @@
 
 
   async function submitUpdateForm() {
-  	console.log(formData)
-  	try {
-  		const response = await formTableService.put(`http://localhost:8080/api/admin/${props.TableName}`, formData)
-  		console.log('Insert successful:', response.data)
+  console.log(formData)
+  try {
+    const response = await formTableService.update(props.id, formData)
+    console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
-  	} catch (error) {
-  		console.error('Insert failed:', error)
-  	}
+  } catch (error) {
+    console.error('Insert failed:', error)
   }
+}
 
 
-  async function submitForm() {
-  	console.log(formData)
-  	try {
-  		const response = await formTableService.post(`http://localhost:8080/api/admin/${props.TableName}`, formData)
-  		console.log('Insert successful:', response.data)
+async function submitForm() {
+  console.log(formData)
+  try {
+    const response = await formTableService.post(formData)
+    console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
-  	} catch (error) {
-  		console.error('Insert failed:', error)
-  	}
+  } catch (error) {
+    console.error('Insert failed:', error)
   }
-  const fetchData = async () => {
-  	if (!props.TableName) return
-  	try {
-  		const response = await formTableService.get(`http://localhost:8080/api/admin/${props.TableName}/${props.id}`)
-  		response.data.createdAt = formatDate(response.data.createdAt)
-  		response.data.updatedAt = formatDate(response.data.updatedAt)
-  		Object.assign(formData, response.data)
-  	} catch (err) {
-  		console.error('Get failed:', err)
-  	}
+}
+const fetchData = async () => {
+  if (!props.TableName) return
+  try {
+    const response = await formTableService.getById(props.id)
+    response.data.createdAt = formatDate(response.data.createdAt)
+    response.data.updatedAt = formatDate(response.data.updatedAt)
+    Object.assign(formData, response.data)
+  } catch (err) {
+    console.error('Get failed:', err)
   }
+}
 
   onMounted(fetchData)
   watch(() => props.id, fetchData)

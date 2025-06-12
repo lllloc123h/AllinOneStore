@@ -19,7 +19,8 @@ public class BaseProductsDTOS {
     private boolean isCustom;
     private int turnBuy;
     private int rating;
-    private boolean isPromote;
     private boolean isActive;
-    private List<Double> listPrice;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private int categories;
 }
