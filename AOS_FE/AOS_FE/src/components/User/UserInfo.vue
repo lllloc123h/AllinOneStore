@@ -84,7 +84,7 @@
       <textarea class="form-control input-address" v-model="user.Address" readonly></textarea>
 
       <div class="div-input">
-        <button class="btn my-4" type="button">Cập Nhật</button>
+    <button class="btn my-4" type="button" @click="updateProfile">Cập Nhật</button>
       </div>
     </form>
   </div>
@@ -173,6 +173,30 @@ watch([selectedProvinceName, selectedDistrictName, selectedWard], () => {
   const parts = [selectedWard.value, selectedDistrictName.value, selectedProvinceName.value]
   user.Address = parts.filter(Boolean).join(', ')
 })
+
+const updateProfile = async () => {
+  try {
+    const dto = {
+      name: user.Name,
+      email: user.Email,
+      phone: user.Phone,
+      avarta: user.Avarta,
+      address: user.Address
+    }
+    const token = localStorage.getItem("token"); // nếu bạn dùng JWT lưu trong localStorage
+
+    const res = await axios.put("http://localhost:8080/api/Accounts/profile", dto, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    alert(res.data.message || "Cập nhật thành công");
+  } catch (err) {
+    alert(err.response?.data?.message || "Đã xảy ra lỗi khi cập nhật");
+  }
+}
+
 </script>
 
 <style scoped>

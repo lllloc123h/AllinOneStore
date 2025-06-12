@@ -191,4 +191,16 @@ public class AccountsAPI {
 	    System.out.println("User logout: " + email);
 	    return ResponseEntity.ok("Đã đăng xuất thành công");
 	}
+	@PutMapping("/Accounts/profile")
+	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
+    try {
+        accountsService.updateProfile(dto);
+        return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
+    }
+}
+
 }
