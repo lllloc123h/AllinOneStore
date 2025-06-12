@@ -23,68 +23,35 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="qty" class="form-label text-capitalize">qty</label>
+          <label :for="balance" class="form-label text-capitalize">balance</label>
           <input
-            :id="qty"
-            v-model="formData.qty"
+            :id="balance"
+            v-model="formData.balance"
             type="number"
             class="form-control"
-            :placeholder="`Enter qty`"
+            :placeholder="`Enter balance`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="cost" class="form-label text-capitalize">cost</label>
+          <label :for="walletType" class="form-label text-capitalize">walletType</label>
           <input
-            :id="cost"
-            v-model="formData.cost"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter cost`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="isGift" class="form-label text-capitalize">isGift</label>
-          <input
-            :id="isGift"
-            v-model="formData.isGift"
+            :id="walletType"
+            v-model="formData.walletType"
             type="text"
             class="form-control"
-            :placeholder="`Enter isGift`"
+            :placeholder="`Enter walletType`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="sellingPrice" class="form-label text-capitalize">sellingPrice</label>
+          <label :for="isActive" class="form-label text-capitalize">isActive</label>
           <input
-            :id="sellingPrice"
-            v-model="formData.sellingPrice"
-            type="number"
+            :id="isActive"
+            v-model="formData.isActive"
+            type="text"
             class="form-control"
-            :placeholder="`Enter sellingPrice`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="total" class="form-label text-capitalize">total</label>
-          <input
-            :id="total"
-            v-model="formData.total"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter total`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="couponCode" class="form-label text-capitalize">couponCode</label>
-          <input
-            :id="couponCode"
-            v-model="formData.couponCode"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter couponCode`"
+            :placeholder="`Enter isActive`"
           />
         </div>
 
@@ -132,14 +99,10 @@
 
   const formData = reactive({
   			id: '',
-  			qty: '',
-  			cost: '',
-  			isGift: '',
-  			sellingPrice: '',
-  			total: '',
-  			couponCode: '',
+  			balance: '',
+  			walletType: '',
+  			isActive: '',
   			createdAt: '',
-  			updatedAt: '',
   })
 
   const listDashBoard = [

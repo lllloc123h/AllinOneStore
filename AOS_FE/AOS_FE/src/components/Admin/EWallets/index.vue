@@ -7,7 +7,7 @@
     
     <div class="article col-10">
       <h1>
-        OrderItems
+        EWallets
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
       <Table class="table" :TableName="props.TableName"></Table>
@@ -63,25 +63,18 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'qty', type: 'number' },
-          	{ name: 'cost', type: 'number' },
-          	{ name: 'isGift', type: 'text' },
-          	{ name: 'sellingPrice', type: 'number' },
-          	{ name: 'total', type: 'number' },
-          	{ name: 'couponCode', type: 'number' },
+          	{ name: 'balance', type: 'number' },
+          	{ name: 'walletType', type: 'text' },
+          	{ name: 'isActive', type: 'text' },
  
 ]
 
 const filters = ref({
   			id: '',
-  			qty: '',
-  			cost: '',
-  			isGift: '',
-  			sellingPrice: '',
-  			total: '',
-  			couponCode: '',
+  			balance: '',
+  			walletType: '',
+  			isActive: '',
   			createdAt: '',
-  			updatedAt: '',
 })
   
   

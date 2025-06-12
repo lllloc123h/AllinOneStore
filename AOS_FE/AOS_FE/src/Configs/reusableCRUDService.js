@@ -2,7 +2,15 @@ import api from './api';
 
 export default function createCrudService(resource) {
     return {
-        getAll(page, size) {
+        getAll(page, size, FilterObject) {
+            let query = ''
+            if (FilterObject != null) {
+                const keyQuery = Object.keys(FilterObject);
+                query = keyQuery.map(key => `${key}=${encodeURIComponent(FilterObject[key])}`).join('&');
+                console.log(query);
+                console.log(query)
+            }
+            console
             return api.get(`/admin/${resource}` + "?page=" + page + "&size=" + size);
         },
 

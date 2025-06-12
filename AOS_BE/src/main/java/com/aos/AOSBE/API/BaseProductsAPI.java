@@ -38,6 +38,25 @@ public class BaseProductsAPI {
 		return ResponseEntity.ok(baseProducts);
 	}
 
+	@GetMapping("/admin/BaseProducts")
+	public ResponseEntity<List<FilterResponseDTOS>> getAllBaseProductsAdminRoleApi(
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "") String search) {
+		List<FilterResponseDTOS> baseProducts = baseProductsService.baseProductsFindAllAsDto(page, size);
+		return ResponseEntity.ok(baseProducts);
+	}
+
+	@GetMapping("/admin/BaseProducts/{id}")
+	public ResponseEntity<BaseProducts> getAllBaseProductsByIdAdminRoleApi(@PathVariable int id) {
+		// try{
+		// }catch(Exception e){
+		// }
+
+		BaseProducts baseProducts = (BaseProducts) baseProductsService.baseProductsFindById(id)
+				.orElse(new BaseProducts());
+		return ResponseEntity.ok(baseProducts);
+	}
+
 	@GetMapping("/BaseProducts/{id}")
 	public ResponseEntity<BaseProducts> getBaseProductsByIdApi(@PathVariable int id) {
 		// try{

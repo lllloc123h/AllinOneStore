@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.AccountsDTOS;
+import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpDTO;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
 import com.aos.AOSBE.DTOS.loginRequestDTOS;
@@ -170,5 +171,24 @@ public class AccountsAPI {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra !"));
 		}
+	}
+	
+	@PutMapping("/Accounts/change-password")
+	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTOS dto) {
+	    try {
+	        accountsService.changePassword(dto);
+	        return ResponseEntity.ok("Đổi mật khẩu thành công");
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(e.getMessage());
+	    } catch (Exception e) {
+	        return ResponseEntity.internalServerError().body("Lỗi hệ thống");
+	    }
+	}
+	
+	@PostMapping("/Accounts/logout")
+	public ResponseEntity<?> logout(HttpServletRequest request) {
+	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	    System.out.println("User logout: " + email);
+	    return ResponseEntity.ok("Đã đăng xuất thành công");
 	}
 }

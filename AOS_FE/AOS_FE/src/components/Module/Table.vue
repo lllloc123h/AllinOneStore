@@ -1,7 +1,5 @@
 <template>
     <div class="container-fluid">
-        <h1 class=" fw-bold mb-4">{{ props.TableName }}</h1>
-
         <div v-if="loading" class="text-primary">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -24,7 +22,7 @@
                     <td v-for="key in columns" :key="key">
                         {{ item[key] }}
                     </td>
-                    <td class="row">
+                    <td class="row btn-holder">
 
                         <button type="button" @click="goToView(item.id)"
                             class="btn btn-primary me-2 row-6">View</button>
@@ -70,13 +68,79 @@
 .pageselect>select#pageSize {
     width: 50px;
 }
+
+/* Add some margin to the table */
+.table {
+    margin-top: 20px;
+}
+
+/* Make header text bold and centered */
+.table thead th {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Center all cell content */
+.table tbody td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table td,
+.table th {
+    max-width: 150px;
+    /* Set your desired max width */
+    white-space: normal;
+    /* Allow text to wrap */
+    word-wrap: break-word;
+    /* Break long words */
+    overflow-wrap: break-word;
+}
+
+/* Space between buttons in action column */
+/* .table .btn {
+    min-width: 60px;
+    font-size: 0.9rem;
+} */
+.btn-holder {
+    margin: 0 auto;
+    border: 0px;
+}
+
+.btn {
+    min-width: 80px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Responsive improvement for small screens */
+@media (max-width: 768px) {
+    .table {
+        font-size: 14px;
+    }
+
+    .btn {
+        margin-bottom: 5px;
+        width: 100%;
+    }
+}
 </style>
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import createCrudService from '../../Configs/reusableCRUDService'
 const router = useRouter()
 import 'bootstrap/dist/css/bootstrap.min.css'
+import FilterDropDown from './FilterDropDown.vue'
 
 const currentPage = ref(0);
 const currentSize = ref(5);
@@ -91,8 +155,10 @@ const props = defineProps({
     TableName: {
         type: String,
         required: true
-    }
+    },
+    FilterList: Object
 })
+
 
 const indexTableService = createCrudService(props.TableName);
 
@@ -106,20 +172,17 @@ const data = ref([])
 const columns = ref([])
 const loading = ref(false)
 const error = ref(null)
-
 const fetchData = async () => {
     if (!props.TableName) return
     loading.value = true
     error.value = null
     try {
-        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value)
-        // const response = await fetch("http://localhost:8080/api/admin/" + props.TableName + "?page=" + currentPage.value + "&size=" + currentSize.value)
-        // if (!response.ok) throw new Error('Failed to fetch data')
+        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
         const json = responseIndexTable.data
         data.value = Array.isArray(json) ? json : [json]
         columns.value = data.value.length ? Object.keys(data.value[0]) : []
     } catch (err) {
-        console.log(error.value)
+        console.log(error)
         error.value = err.message
         data.value = []
         columns.value = []
@@ -135,6 +198,13 @@ onMounted(fetchData)
 watch(() => props.TableName, fetchData)
 watch(() => currentSize.value, fetchData)
 watch(() => currentPage.value, fetchData)
+watch(
+    () => props.FilterList,
+    () => {
+        fetchData();
+    },
+    { deep: true }
+);
 </script>
 
 <style scoped>

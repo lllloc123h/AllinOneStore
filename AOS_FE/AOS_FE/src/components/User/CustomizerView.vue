@@ -123,7 +123,9 @@
           aria-labelledby="profile-tab"
           tabindex="0"
         >
-          <button @click="startDrawingMode">➕ Vẽ</button>
+          <button @click="startDrawingMode">
+            {{ canvas?.isDrawingMode ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
+          </button>
           <span>Chế độ vẽ </span>
           <select name="" v-model="drawingMode" id="drawing-mode">
             <option value="Circle">Circle</option>
@@ -223,16 +225,23 @@ watch(
 function mode() {
   const brushName = drawingMode.value;
   const patternBrushMap = {
-    hline: vLinePatternBrush,
-    vline: hLinePatternBrush,
+    hline: hLinePatternBrush,
+    vline: vLinePatternBrush,
     square: squarePatternBrush,
     diamond: diamondPatternBrush,
     texture: texturePatternBrush,
   };
 
-  canvas.freeDrawingBrush = patternBrushMap[brushName]
-    ? patternBrushMap[brushName]
-    : new fabric[`${brushName}Brush`](canvas);
+  if (patternBrushMap[brushName]) {
+    canvas.freeDrawingBrush = patternBrushMap[brushName];
+  } else {
+    const BrushClass = fabric[`${brushName}Brush`];
+    if (BrushClass) {
+      canvas.freeDrawingBrush = new BrushClass(canvas);
+    } else {
+      canvas.freeDrawingBrush = new fabric.PencilBrush(canvas); // fallback
+    }
+  }
 
   const brush = canvas.freeDrawingBrush;
   if (brush) {
