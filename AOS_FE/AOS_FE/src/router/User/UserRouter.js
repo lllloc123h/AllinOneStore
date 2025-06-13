@@ -65,6 +65,12 @@ export default [
         path: '/Customizer',
         name: 'Customizer',
         component: () => import ('../../components/User/CustomizerView.vue')
+    },
+
+    {
+        path: '/Crop',
+        name: 'CropCrop',
+        component: () => import ('../../components/User/CropImage.vue')
     }
 
 ]

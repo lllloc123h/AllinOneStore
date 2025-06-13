@@ -99,7 +99,7 @@
                 v-model.number="fontSize"
                 min="10"
                 max="120"
-                @input="updateActiveTextbox"
+                @blur="updateActiveTextbox"
               />
             </label>
 
@@ -184,7 +184,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { fabric } from "fabric";
-import komiImage from "../../assets/imgs/komi.jpg";
+import komiImage from "../../assets/imgs/logo.png";
 
 // Canvas
 const canvasRef = ref();
@@ -196,8 +196,6 @@ let vLinePatternBrush,
   texturePatternBrush,
   patternBrush;
 
-// const $ = (id) => document.getElementById();
-
 // Control values
 const textColor = ref("#000000");
 const fontFamily = ref("Helvetica");
@@ -207,7 +205,7 @@ const exportedJson = ref("");
 
 const drawingMode = ref("Pencil");
 const drawingColor = ref("#000000");
-const drawingLineWidth = ref(5);
+const drawingLineWidth = ref(15);
 const drawingShadowWidth = ref(0);
 const drawingShadowColor = ref("#000000");
 const btnDraw = ref(false);
@@ -216,9 +214,7 @@ function startDrawingMode() {
   btnDraw.value = canvas.isDrawingMode;
   mode();
 }
-watch(drawingMode, (val) => {
-  console.log("🖌️ Brush mode:", val);
-});
+
 watch(
   [
     btnDraw,
@@ -268,10 +264,13 @@ function mode() {
     affectStroke: true,
     color: drawingShadowColor.value,
   });
-  console.log("test 2", brush);
 
   canvas.freeDrawingBrush = brush;
-  patternBrushMap[brushName].source = patternBrushMap[brushName].getPatternSrcFunction();
+  if (!patternBrushMap[texture]) {
+    patternBrushMap[brushName].source = patternBrushMap[
+      brushName
+    ].getPatternSrcFunction();
+  }
 }
 
 onMounted(() => {
@@ -413,19 +412,32 @@ onBeforeUnmount(() => {
 });
 
 function handleDeleteKey(e) {
+  // Không xử lý nếu đang focus trong input hoặc textarea (HTML)
+  const tag = document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+  // Nếu đang sửa văn bản trong fabric.Textbox (đang focus)
+  const activeObj = canvas.getActiveObject();
+  if (
+    activeObj &&
+    activeObj.isEditing && // đang sửa nội dung textbox
+    activeObj.type === "textbox"
+  ) {
+    return;
+  }
+
   if (e.key === "Delete" || e.key === "Backspace") {
-    const activeObj = canvas.getActiveObject();
     if (activeObj) {
-      // Nếu là nhóm object
       if (activeObj.type === "activeSelection") {
         activeObj.forEachObject((obj) => canvas.remove(obj));
       } else {
         canvas.remove(activeObj);
       }
-      canvas.discardActiveObject().renderAll();
+      canvas.discardActiveObject().requestRenderAll();
     }
   }
 }
+
 // Thêm textbox
 function addTextbox() {
   const textbox = new fabric.Textbox("Nhập chữ ở đây", {
@@ -442,16 +454,36 @@ function addTextbox() {
 
 // Cập nhật textbox đang chọn
 function updateActiveTextbox() {
-  const obj = canvas.getActiveObject();
-  if (obj && obj.type === "textbox") {
-    obj.set({
-      fill: textColor.value,
-      fontFamily: fontFamily.value,
-      fontSize: fontSize.value,
-      textAlign: textAlign.value,
-    });
-    canvas.renderAll();
+  const activeObj = canvas.getActiveObject();
+  if (!activeObj || activeObj.type !== "textbox") return;
+
+  const start = activeObj.selectionStart;
+  const end = activeObj.selectionEnd;
+  for (let i = start; i < end; i++) {
+    activeObj.setSelectionStyles(
+      {
+        // fontWeight:  "bold" ,
+        // fontStyle:"italic",
+        // underline: isUnderline.value,
+        // stroke: strokeColor.value,
+        // strokeWidth: strokeWidth.value,
+        // shadow: new fabric.Shadow({
+        //   color: shadowColor.value,
+        //   blur: shadowBlur.value,
+        //   offsetX: 0,
+        //   offsetY: 0,
+        // }),
+        fill: textColor.value,
+        fontFamily: fontFamily.value,
+        fontSize: fontSize.value,
+        textAlign: textAlign.value,
+      },
+      i,
+      i + 1
+    );
   }
+
+  canvas.renderAll();
 }
 
 // Khi chọn object thì cập nhật form control
