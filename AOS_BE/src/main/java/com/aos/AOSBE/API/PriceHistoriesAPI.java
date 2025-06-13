@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,8 +59,8 @@ public class PriceHistoriesAPI {
 	    PriceHistories saved = priceHistoriesService.priceHistoriesSave(priceHistoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/PriceHistories")
-	public ResponseEntity<?> updatePriceHistories(@RequestBody PriceHistories entity) {
+	@PutMapping("/admin/PriceHistories/{id}")
+	public ResponseEntity<?> updatePriceHistories( @PathVariable int id,@RequestBody PriceHistoriesDTOS entity) {
 			try {
 			PriceHistories  isExist = priceHistoriesService.priceHistoriesFindById(id).orElse(null);
 			if (isExist != null) {

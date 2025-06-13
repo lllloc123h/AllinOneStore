@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,8 +59,8 @@ public class EWalletTransactionsAPI {
 	    EWalletTransactions saved = eWalletTransactionsService.eWalletTransactionsSave(eWalletTransactionsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/EWalletTransactions")
-	public ResponseEntity<?> updateEWalletTransactions(@RequestBody EWalletTransactions entity) {
+	@PutMapping("/admin/EWalletTransactions/{id}")
+	public ResponseEntity<?> updateEWalletTransactions( @PathVariable int id,@RequestBody EWalletTransactionsDTOS entity) {
 			try {
 			EWalletTransactions  isExist = eWalletTransactionsService.eWalletTransactionsFindById(id).orElse(null);
 			if (isExist != null) {

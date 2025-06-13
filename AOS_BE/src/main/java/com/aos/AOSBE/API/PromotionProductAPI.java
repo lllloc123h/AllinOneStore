@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,8 +59,8 @@ public class PromotionProductAPI {
 	    PromotionProduct saved = promotionProductService.promotionProductSave(promotionProductMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/PromotionProduct")
-	public ResponseEntity<?> updatePromotionProduct(@RequestBody PromotionProduct entity) {
+	@PutMapping("/admin/PromotionProduct/{id}")
+	public ResponseEntity<?> updatePromotionProduct( @PathVariable int id,@RequestBody PromotionProductDTOS entity) {
 			try {
 			PromotionProduct  isExist = promotionProductService.promotionProductFindById(id).orElse(null);
 			if (isExist != null) {

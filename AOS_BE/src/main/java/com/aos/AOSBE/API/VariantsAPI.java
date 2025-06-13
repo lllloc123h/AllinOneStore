@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,8 +59,8 @@ public class VariantsAPI {
 	    Variants saved = variantsService.variantsSave(variantsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/Variants")
-	public ResponseEntity<?> updateVariants(@RequestBody Variants entity) {
+	@PutMapping("/admin/Variants/{id}")
+	public ResponseEntity<?> updateVariants( @PathVariable int id,@RequestBody VariantsDTOS entity) {
 			try {
 			Variants  isExist = variantsService.variantsFindById(id).orElse(null);
 			if (isExist != null) {

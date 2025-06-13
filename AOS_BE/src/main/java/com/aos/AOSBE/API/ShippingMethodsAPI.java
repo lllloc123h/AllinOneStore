@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,8 +59,8 @@ public class ShippingMethodsAPI {
 	    ShippingMethods saved = shippingMethodsService.shippingMethodsSave(shippingMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/ShippingMethods")
-	public ResponseEntity<?> updateShippingMethods(@RequestBody ShippingMethods entity) {
+	@PutMapping("/admin/ShippingMethods/{id}")
+	public ResponseEntity<?> updateShippingMethods( @PathVariable int id,@RequestBody ShippingMethodsDTOS entity) {
 			try {
 			ShippingMethods  isExist = shippingMethodsService.shippingMethodsFindById(id).orElse(null);
 			if (isExist != null) {

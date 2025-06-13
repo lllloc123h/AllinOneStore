@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,8 +59,8 @@ public class CartItemsAPI {
 	    CartItems saved = cartItemsService.cartItemsSave(cartItemsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/CartItems")
-	public ResponseEntity<?> updateCartItems(@RequestBody CartItems entity) {
+	@PutMapping("/admin/CartItems/{id}")
+	public ResponseEntity<?> updateCartItems( @PathVariable int id,@RequestBody CartItemsDTOS entity) {
 			try {
 			CartItems  isExist = cartItemsService.cartItemsFindById(id).orElse(null);
 			if (isExist != null) {
