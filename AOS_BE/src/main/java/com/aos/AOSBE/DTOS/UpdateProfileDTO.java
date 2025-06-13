@@ -4,9 +4,13 @@ import lombok.Data;
 
 @Data
 public class UpdateProfileDTO {
-    private String name;
+    private String fullname;
     private String email;
     private String phone;
-    private String avarta;
+    private String avatar;
     private String address;
+
+    private Integer provinceName;
+    private Integer districtName;
+    private String wardName;
 }

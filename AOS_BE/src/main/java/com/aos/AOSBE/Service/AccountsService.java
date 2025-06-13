@@ -25,6 +25,9 @@ public class AccountsService {
     private AuthoritiesRepository authorityRepository;
     @Autowired
     private RolesRepository rolesRepository;
+    @Autowired
+    private UserAddressRepository addressRepository;
+
 
     public List<Accounts> accountsFindAll(int page, int size) {
     	Pageable pageable = PageRequest.of(page, size);
@@ -70,20 +73,33 @@ public class AccountsService {
         account.setPassword(encoder.encode(dto.getNewPassword()));
         accountsRepository.save(account);
     }
-    @Transactional
+   @Transactional
     public void updateProfile(UpdateProfileDTO dto) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
     Accounts account = accountsRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-
-    account.setName(dto.getName());
+    account.setFullname(dto.getFullname());
     account.setEmail(dto.getEmail());
     account.setPhone(dto.getPhone());
-    account.setAvarta(dto.getAvarta());
-    account.setAddress(dto.getAddress());
-
+    account.setAvatar(dto.getAvatar());
     accountsRepository.save(account);
+    Optional<UserAddresses> optionalAddress = addressRepository.findByAccountsIdAndIsDefaultTrue(account.getId());
+    UserAddresses address = optionalAddress.orElse(new UserAddresses());
+
+    address.setRecipientName(dto.getFullname());
+    address.setPhone(dto.getPhone());
+    address.setProvince(dto.provinceName()); 
+    address.setDistrict(dto.districtName());
+    address.setWard(dto.getWardName());
+    address.setStreet(dto.getAddress());
+    address.setLabel("Nhà riêng");
+    address.setIsDefault(true);
+    address.setAccounts(account);
+
+    addressRepository.save(address);
 }
+
+
 
 
 

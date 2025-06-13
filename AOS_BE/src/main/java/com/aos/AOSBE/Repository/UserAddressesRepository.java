@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserAddressesRepository extends JpaRepository<UserAddresses, Integer> {
-    // Add custom query methods here if needed
+    Optional<UserAddresses> findByAccountsIdAndIsDefaultTrue(int accountId);
 }
+
