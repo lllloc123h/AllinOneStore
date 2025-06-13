@@ -7,6 +7,7 @@ import java.util.Random;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpSessionData;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.DTOS.UpdateProfileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
@@ -70,20 +71,20 @@ public class AccountsService {
         account.setPassword(encoder.encode(dto.getNewPassword()));
         accountsRepository.save(account);
     }
-    @Transactional
-    public void updateProfile(UpdateProfileDTO dto) {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    Accounts account = accountsRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-
-    account.setName(dto.getName());
-    account.setEmail(dto.getEmail());
-    account.setPhone(dto.getPhone());
-    account.setAvarta(dto.getAvarta());
-    account.setAddress(dto.getAddress());
-
-    accountsRepository.save(account);
-}
+//    @Transactional
+//    public void updateProfile(UpdateProfileDTO dto) {
+//    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//    Accounts account = accountsRepository.findByEmail(email)
+//            .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+//
+//    account.setName(dto.getName());
+//    account.setEmail(dto.getEmail());
+//    account.setPhone(dto.getPhone());
+//    account.setAvarta(dto.getAvarta());
+//    account.setAddress(dto.getAddress());
+//
+//    accountsRepository.save(account);
+//}
 
 
 
