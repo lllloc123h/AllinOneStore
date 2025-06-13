@@ -70,6 +70,21 @@ public class AccountsService {
         account.setPassword(encoder.encode(dto.getNewPassword()));
         accountsRepository.save(account);
     }
+    @Transactional
+    public void updateProfile(UpdateProfileDTO dto) {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    Accounts account = accountsRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+
+    account.setName(dto.getName());
+    account.setEmail(dto.getEmail());
+    account.setPhone(dto.getPhone());
+    account.setAvarta(dto.getAvarta());
+    account.setAddress(dto.getAddress());
+
+    accountsRepository.save(account);
+}
+
 
 
 }

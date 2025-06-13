@@ -3,21 +3,44 @@
     <div class="form-container">
       <h3>Thêm địa chỉ</h3>
       <div class="input-group">
-        <input type="text" placeholder="Họ và tên" />
-        <input type="text" placeholder="Số điện thoại" />
+        <input type="text" placeholder="Họ và tên" v-model="name" />
+        <input type="text" placeholder="Số điện thoại" v-model="phone" />
       </div>
-      <select>
-        <option selected disabled>Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã</option>
+
+      <!-- Dropdowns địa chỉ -->
+      <select v-model="selectedProvince" @change="loadDistricts">
+        <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
+        <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
+          {{ prov.name }}
+        </option>
       </select>
-      <input type="text" placeholder="Địa chỉ cụ thể" />
+
+      <select v-model="selectedDistrict" @change="loadWards" :disabled="!districts.length">
+        <option value="" disabled selected>Chọn Quận/Huyện</option>
+        <option v-for="dist in districts" :key="dist.code" :value="dist.code">
+          {{ dist.name }}
+        </option>
+      </select>
+
+      <select v-model="selectedWard" :disabled="!wards.length">
+        <option value="" disabled selected>Chọn Phường/Xã</option>
+        <option v-for="ward in wards" :key="ward.code" :value="ward.code">
+          {{ ward.name }}
+        </option>
+      </select>
+
+      <input type="text" placeholder="Địa chỉ cụ thể" v-model="detailAddress" />
+
       <div class="map-box">
         <button class="add-location">+ Thêm vị trí</button>
       </div>
+
       <div class="address-type">
         <label>Loại địa chỉ:</label>
         <button class="type-btn">Nhà Riêng</button>
         <button class="type-btn">Nơi làm việc</button>
       </div>
+
       <div class="actions">
         <button class="cancel-btn">Quay lại</button>
         <button class="submit-btn">Xác nhận</button>
@@ -25,6 +48,54 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: "",
+      phone: "",
+      detailAddress: "",
+      provinces: [],
+      districts: [],
+      wards: [],
+      selectedProvince: "",
+      selectedDistrict: "",
+      selectedWard: ""
+    };
+  },
+  mounted() {
+    this.loadProvinces();
+  },
+  methods: {
+    async loadProvinces() {
+      const res = await fetch("https://provinces.open-api.vn/api/p/");
+      this.provinces = await res.json();
+    },
+    async loadDistricts() {
+      this.selectedDistrict = "";
+      this.selectedWard = "";
+      this.districts = [];
+      this.wards = [];
+      if (this.selectedProvince) {
+        const res = await fetch(`https://provinces.open-api.vn/api/p/${this.selectedProvince}?depth=2`);
+        const data = await res.json();
+        this.districts = data.districts;
+      }
+    },
+    async loadWards() {
+      this.selectedWard = "";
+      this.wards = [];
+      if (this.selectedDistrict) {
+        const res = await fetch(`https://provinces.open-api.vn/api/d/${this.selectedDistrict}?depth=2`);
+        const data = await res.json();
+        this.wards = data.wards;
+      }
+    }
+  }
+};
+</script>
+
 
 <style scoped>
 .overlay {
