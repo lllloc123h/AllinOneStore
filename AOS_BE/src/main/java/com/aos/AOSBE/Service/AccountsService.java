@@ -7,6 +7,7 @@ import java.util.Random;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpSessionData;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.DTOS.UpdateProfileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Repository.*;
@@ -98,8 +99,6 @@ public class AccountsService {
 
     addressRepository.save(address);
 }
-
-
 
 
 

@@ -81,7 +81,7 @@ VALUES
 (N'Đầm Công Chúa Ren Bé Gái', N'Voan + Ren', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'dam_cong_chua_be_gai.webp', 0, 65, 5, 1),
 (N'Quần Legging Bé Gái', N'Thun Cotton', (SELECT id FROM categories WHERE name = N'Quần áo bé gái'), 'quan_legging_be_gai.webp', 0, 150, 4, 1);
 
-
+--delete from product_items
 INSERT INTO product_items (base_id, cost, price, turn_buy, description, sku, safety_stock, qty, sell_start, sell_end) VALUES
 -- Áo Polo Nam Cotton Pha (ID: 151)
 ((SELECT id FROM base_products WHERE name = N'Áo Polo Nam Cotton Pha' COLLATE DATABASE_DEFAULT), 80000.00, 159000.00, 30, N'Áo polo nam cotton pha cao cấp, màu trắng, size M.', 'PN-TR-M', 10, 50, GETDATE(), DATEADD(month, 6, GETDATE())),
@@ -126,47 +126,87 @@ INSERT INTO product_items (base_id, cost, price, turn_buy, description, sku, saf
 -- Áo Thun Croptop Nữ (ID: 161)
 ((SELECT id FROM base_products WHERE name = N'Áo Thun Croptop Nữ' COLLATE DATABASE_DEFAULT), 60000.00, 119000.00, 35, N'Áo thun croptop nữ năng động, màu trắng, freesize.', 'CR-TR-FS', 10, 50, GETDATE(), DATEADD(month, 6, GETDATE()));
 
-INSERT INTO product_images (product_item_id, image) VALUES
--- Áo Polo Nam Trắng Size M
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 'ao_polo_nam_trang_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 'ao_polo_nam_trang_2.webp'),
-
--- Áo Polo Nam Đen Size L
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Đen Size L'), 'ao_polo_nam_den_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Đen Size L'), 'ao_polo_nam_den_2.webp'),
-
--- Áo Bomber Nam Đen Size M
-((SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 'ao_bomber_nam_den_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 'ao_bomber_nam_den_2.webp'),
-
--- Áo Thun Dài Tay Nam Xám Size M
-((SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'), 'ao_thun_dai_tay_nam_xam_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'), 'ao_thun_dai_tay_nam_xam_2.webp'),
-
--- Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 'quan_kaki_nam_xanh_dam_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 'quan_kaki_nam_xanh_dam_2.webp'),
-
--- Váy Đầm Suông Caro Trắng FreeSize
-((SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'), 'vay_suong_caro_trang_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'), 'vay_suong_caro_trang_2.webp'),
-
--- Áo Kiểu Sơ Mi Nữ Trắng Size S
-((SELECT id FROM product_items WHERE name = N'Áo Kiểu Sơ Mi Nữ Trắng Size S'), 'ao_kieu_so_mi_nu_trang_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Kiểu Sơ Mi Nữ Trắng Size S'), 'ao_kieu_so_mi_nu_trang_2.webp'),
-
--- Bộ Đồ Bé Trai Xanh Họa Tiết Size 3T
-((SELECT id FROM product_items WHERE name = N'Bộ Đồ Bé Trai Xanh Họa Tiết Size 3T'), 'bo_be_trai_xanh_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Bộ Đồ Bé Trai Xanh Họa Tiết Size 3T'), 'bo_be_trai_xanh_2.webp'),
-
--- Váy Bé Gái Hồng Xòe Hoa Size 5T
-((SELECT id FROM product_items WHERE name = N'Váy Bé Gái Hồng Xòe Hoa Size 5T'), 'vay_be_gai_hong_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Váy Bé Gái Hồng Xòe Hoa Size 5T'), 'vay_be_gai_hong_2.webp'),
-
--- Áo Croptop Nữ Trắng Freesize
-((SELECT id FROM product_items WHERE name = N'Áo Croptop Nữ Trắng Freesize'), 'ao_croptop_nu_trang_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Croptop Nữ Trắng Freesize'), 'ao_croptop_nu_trang_2.webp');
-
+INSERT INTO product_images (product_item_id, image)
+SELECT id, 'ao_polo_nam_trang_1.webp'
+FROM product_items
+WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
+UNION ALL
+SELECT id, 'ao_polo_nam_trang_2.webp'
+FROM product_items
+WHERE description = N'Áo polo nam cotton pha cao cấp, màu đen, size M.'
+UNION ALL
+SELECT id, 'ao_polo_nam_den_1.webp'
+FROM product_items
+WHERE description = N'Áo polo nam cotton pha cao cấp, màu đen, size L.'
+UNION ALL
+SELECT id, 'ao_polo_nam_den_2.webp'
+FROM product_items
+WHERE description = N'Áo polo nam cotton pha cao cấp, màu đen, size L.'
+UNION ALL
+SELECT id, 'ao_bomber_nam_den_1.webp'
+FROM product_items
+WHERE description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
+UNION ALL
+SELECT id, 'ao_bomber_nam_den_2.webp'
+FROM product_items
+WHERE description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
+UNION ALL
+SELECT id, 'ao_thun_dai_tay_nam_xam_1.webp'
+FROM product_items
+WHERE description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.'
+UNION ALL
+SELECT id, 'ao_thun_dai_tay_nam_xam_2.webp'
+FROM product_items
+WHERE description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.'
+UNION ALL
+SELECT id, 'quan_kaki_nam_xanh_dam_1.webp'
+FROM product_items
+WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
+UNION ALL
+SELECT id, 'quan_kaki_nam_xanh_dam_2.webp'
+FROM product_items
+WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
+UNION ALL
+SELECT id, 'vay_suong_caro_trang_1.webp'
+FROM product_items
+WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'
+UNION ALL
+SELECT id, 'vay_suong_caro_trang_2.webp'
+FROM product_items
+WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'
+UNION ALL
+SELECT id, 'ao_kieu_so_mi_nu_trang_1.webp'
+FROM product_items
+WHERE description = N'Bộ quần áo bé trai cotton, màu xanh, họa tiết ngộ nghĩnh, size 3 tuổi.'
+UNION ALL
+SELECT id, 'ao_kieu_so_mi_nu_trang_2.webp'
+FROM product_items
+WHERE description = N'Bộ quần áo bé trai cotton, màu xanh, họa tiết ngộ nghĩnh, size 3 tuổi.'
+UNION ALL
+SELECT id, 'bo_be_trai_xanh_1.webp'
+FROM product_items
+WHERE description = N'Bộ quần áo bé trai cotton, màu xanh, họa tiết ngộ nghĩnh, size 3 tuổi.'
+UNION ALL
+SELECT id, 'bo_be_trai_xanh_2.webp'
+FROM product_items
+WHERE description = N'Bộ quần áo bé trai cotton, màu xanh, họa tiết ngộ nghĩnh, size 3 tuổi.'
+UNION ALL
+SELECT id, 'vay_be_gai_hong_1.webp'
+FROM product_items
+WHERE description = N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.'
+UNION ALL
+SELECT id, 'vay_be_gai_hong_2.webp'
+FROM product_items
+WHERE description = N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.'
+UNION ALL
+SELECT id, 'ao_croptop_nu_trang_1.webp'
+FROM product_items
+WHERE description = N'Áo thun croptop nữ năng động, màu trắng, freesize.'
+UNION ALL
+SELECT id, 'ao_croptop_nu_trang_2.webp'
+FROM product_items
+WHERE description = N'Áo thun croptop nữ năng động, màu trắng, freesize.';
+--không lỗi
 INSERT INTO user_addresses (account_id, recipient_name, phone, province, district, ward, street, label, is_default, note) VALUES
 -- Địa chỉ mặc định cho Admin
 ((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), N'Nguyễn Văn A', '0901234567', N'Hồ Chí Minh', N'Quận 1', N'Phường Bến Nghé', N'123 Đường ABC', N'Nhà Riêng', 1, N'Giao hàng ngoài giờ hành chính'),
@@ -205,90 +245,143 @@ INSERT INTO user_addresses (account_id, recipient_name, phone, province, distric
 
 -- Địa chỉ cho truongvant@example.com
 ((SELECT id FROM accounts WHERE email = 'truongvant@example.com'), N'Trương Văn T', '0910123456', N'Gia Lai', N'Thành phố Pleiku', N'Phường Diên Hồng', N'808 Đường Wừu', N'Nhà Riêng', 1, NULL);
-
+--delete from promotions
 INSERT INTO promotions (name, description, type, discount_type, discount_value, combo_price, usage_limit, start_at, end_at, is_active) VALUES
 (N'Giảm giá mùa hè', N'Giảm giá 15% cho toàn bộ sản phẩm hè', 'DISCOUNT', 'PERCENT', 15.00, NULL, 500, GETDATE(), DATEADD(month, 2, GETDATE()), 1),
 (N'Combo áo đôi', N'Mua áo polo nam và áo croptop nữ với giá ưu đãi', 'COMBO', NULL, NULL, 250000.00, 100, GETDATE(), DATEADD(month, 1, GETDATE()), 1),
 (N'Khuyến mãi Flash Sale', N'Giảm giá sốc 20% cho một số sản phẩm chọn lọc trong 24 giờ', 'DISCOUNT', 'PERCENT', 20.00, NULL, 200, GETDATE(), DATEADD(day, 1, GETDATE()), 1),
 (N'Mua 2 tặng 1', N'Mua 2 quần short thể thao tặng 1 áo thun tay ngắn bé trai', 'COMBO', NULL, NULL, NULL, 50, GETDATE(), DATEADD(month, 1, GETDATE()), 1),
 (N'Ưu đãi thành viên mới', N'Giảm 100k cho đơn hàng đầu tiên từ 500k', 'DISCOUNT', 'AMOUNT', 100000.00, NULL, 1000, GETDATE(), DATEADD(year, 1, GETDATE()), 1);
-INSERT INTO PromotionProduct (id, promotion_id, product_item_id, require_qty, is_gift, cost_share) VALUES
--- Khuyến mãi 'Giảm giá mùa hè' (DISCOUNT) - áp dụng cho Áo Polo Nam Trắng Size M
-(1, (SELECT id FROM promotions WHERE name = N'Giảm giá mùa hè'), (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), NULL, 0, NULL),
--- Khuyến mãi 'Giảm giá mùa hè' (DISCOUNT) - áp dụng cho Váy Đầm Suông Caro Trắng FreeSize
-(2, (SELECT id FROM promotions WHERE name = N'Giảm giá mùa hè'), (SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'), NULL, 0, NULL),
+INSERT INTO PromotionProduct (id, promotion_id, product_item_id, require_qty, is_gift, cost_share)
+SELECT 1, p.id, pi.id, NULL, 0, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Giảm giá mùa hè'
+  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
 
--- Khuyến mãi 'Combo áo đôi' (COMBO) - Áo Polo Nam Đen Size L
-(3, (SELECT id FROM promotions WHERE name = N'Combo áo đôi'), (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Đen Size L'), 1, 0, NULL),
--- Khuyến mãi 'Combo áo đôi' (COMBO) - Áo Croptop Nữ Trắng Freesize
-(4, (SELECT id FROM promotions WHERE name = N'Combo áo đôi'), (SELECT id FROM product_items WHERE name = N'Áo Croptop Nữ Trắng Freesize'), 1, 0, NULL),
+UNION ALL
 
--- Khuyến mãi 'Khuyến mãi Flash Sale' (DISCOUNT) - áp dụng cho Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30
-(5, (SELECT id FROM promotions WHERE name = N'Khuyến mãi Flash Sale'), (SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), NULL, 0, NULL),
+SELECT 2, p.id, pi.id, NULL, 0, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Giảm giá mùa hè'
+  AND pi.description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'
 
--- Khuyến mãi 'Mua 2 tặng 1' (COMBO) - Quần Short Thể Thao Nam (sản phẩm cần mua)
--- Lưu ý: Sản phẩm 'Quần Short Thể Thao Nam' không có trong product_items ở dữ liệu mẫu trước đó
--- Chúng ta cần tìm một sản phẩm khác trong base_products và tạo một product_item mới cho nó,
--- HOẶC sửa lại promotion này thành một sản phẩm hiện có.
--- Để đơn giản, tôi sẽ giả định 'Quần Short Thể Thao Nam' là một product_item của base_product có ID 157
--- Để bản ghi này hoạt động, bạn sẽ cần thêm ProductItem cho 'Quần Short Thể Thao Nam' trước đó.
--- Hoặc, để dữ liệu mẫu chạy được, tôi sẽ liên kết nó với 'Áo Polo Nam Trắng Size M'
--- VUI LÒNG CHÚ Ý ĐIỂM NÀY, NẾU CẦN TÔI CÓ THỂ TẠO ProductItem MỚI CHO 'Quần Short Thể Thao Nam'
-(6, (SELECT id FROM promotions WHERE name = N'Mua 2 tặng 1'), (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 2, 0, NULL), -- Sản phẩm cần mua (ví dụ)
--- Khuyến mãi 'Mua 2 tặng 1' (COMBO) - Áo Thun Dài Tay Nam Xám Size M (sản phẩm được tặng)
-(7, (SELECT id FROM promotions WHERE name = N'Mua 2 tặng 1'), (SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'), 1, 1, NULL); -- Sản phẩm được tặng
+UNION ALL
 
-INSERT INTO cost_histories (product_item_id, cost) VALUES
--- Áo Polo Nam Trắng Size M
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 75000.00), -- Giá vốn cũ
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 80000.00), -- Giá vốn hiện tại
+SELECT 3, p.id, pi.id, 1, 0, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Combo áo đôi'
+  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu đen, size L.'
 
--- Áo Bomber Nam Đen Size M
-((SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 180000.00), -- Giá vốn cũ
-((SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 200000.00), -- Giá vốn hiện tại
+UNION ALL
 
--- Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 170000.00), -- Giá vốn cũ
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 180000.00); -- Giá vốn hiện tại
+SELECT 4, p.id, pi.id, 1, 0, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Combo áo đôi'
+  AND pi.description = N'Áo thun croptop nữ năng động, màu trắng, freesize.'
+
+UNION ALL
+
+SELECT 5, p.id, pi.id, NULL, 0, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Khuyến mãi Flash Sale'
+  AND pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
+
+UNION ALL
+
+SELECT 6, p.id, pi.id, 2, 0, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Mua 2 tặng 1'
+  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
+
+UNION ALL
+
+SELECT 7, p.id, pi.id, 1, 1, NULL
+FROM promotions p, product_items pi
+WHERE p.name = N'Mua 2 tặng 1'
+  AND pi.description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.';
+
+INSERT INTO cost_histories (product_item_id, cost)
+SELECT pi.id, 75000.00
+FROM product_items pi
+WHERE pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
+
+UNION ALL
+
+SELECT pi.id, 80000.00
+FROM product_items pi
+WHERE pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
+
+UNION ALL
+
+SELECT pi.id, 180000.00
+FROM product_items pi
+WHERE pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
+
+UNION ALL
+
+SELECT pi.id, 200000.00
+FROM product_items pi
+WHERE pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
+
+UNION ALL
+
+SELECT pi.id, 170000.00
+FROM product_items pi
+WHERE pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
+
+UNION ALL
+
+SELECT pi.id, 180000.00
+FROM product_items pi
+WHERE pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.';
 
 INSERT INTO price_histories (product_item_id, price) VALUES
 -- Áo Polo Nam Trắng Size M
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 149000.00), -- Giá bán cũ
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 159000.00), -- Giá bán hiện tại
+((SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'), 149000.00), -- Giá bán cũ
+((SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'), 159000.00), -- Giá bán hiện tại
 
 -- Áo Bomber Nam Đen Size M
-((SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 350000.00), -- Giá bán cũ
-((SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 399000.00), -- Giá bán hiện tại
+((SELECT id FROM product_items WHERE description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'), 350000.00), -- Giá bán cũ
+((SELECT id FROM product_items WHERE description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'), 399000.00), -- Giá bán hiện tại
 
 -- Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 329000.00), -- Giá bán cũ
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 349000.00); -- Giá bán hiện tại
+((SELECT id FROM product_items WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'), 329000.00), -- Giá bán cũ
+((SELECT id FROM product_items WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'), 349000.00); -- Giá bán hiện tại
+-- select description from  product_items
+INSERT INTO price_histories (product_item_id, price)
+SELECT pi.id, 149000.00
+FROM product_items pi
+WHERE pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
 
-INSERT INTO reviews (product_item_id, account_id, rating, comment, images) VALUES
--- Thêm review cho Áo Polo Nam Đen Size L
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Đen Size L'), (SELECT id FROM accounts WHERE email = 'phamvand@example.com'), 5, N'Màu đen cực ngầu, mặc lên rất tôn dáng. Giao hàng nhanh!', 'review_polo_den_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Đen Size L'), (SELECT id FROM accounts WHERE email = 'buitranh@example.com'), 4, N'Chất vải ổn, không quá dày cũng không quá mỏng. Phù hợp mặc hàng ngày.', NULL),
+UNION ALL
 
--- Thêm review cho Áo Thun Dài Tay Nam Xám Size M
-((SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'), (SELECT id FROM accounts WHERE email = 'dangvank@example.com'), 3, N'Áo hơi mỏng so với mong đợi. Nhưng form áo đẹp.', NULL),
-((SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'), (SELECT id FROM accounts WHERE email = 'truongvant@example.com'), 5, N'Rất thích chiếc áo này, mặc ấm áp và thoải mái. Màu xám dễ phối đồ.', 'review_thun_xam_1.webp'),
+SELECT pi.id, 159000.00
+FROM product_items pi
+WHERE pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
 
--- Thêm review cho Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), (SELECT id FROM accounts WHERE email = 'hoangthie@example.com'), 5, N'Quần kaki rất đứng form, màu xanh đậm sang trọng. Vải dày dặn.', 'review_kaki_xanh_1.webp,review_kaki_xanh_2.webp'),
-((SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), (SELECT id FROM accounts WHERE email = 'vothik@example.com'), 4, N'Chất vải tốt, nhưng size 30 hơi rộng so với mình một chút.', NULL),
+UNION ALL
 
--- Thêm review cho Váy Đầm Suông Caro Xanh Ngọc FreeSize
-((SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Xanh Ngọc FreeSize'), (SELECT id FROM accounts WHERE email = 'lethic@example.com'), 5, N'Váy màu xanh ngọc rất tôn da, thiết kế suông thoải mái. Mặc đi chơi hay đi làm đều được.', 'review_vay_xanh_ngoc_1.webp'),
-((SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Xanh Ngọc FreeSize'), (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), 4, N'Đầm đẹp, nhưng chất vải hơi nhăn một chút. Tổng thể vẫn rất hài lòng.', NULL),
+SELECT pi.id, 350000.00
+FROM product_items pi
+WHERE pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
 
--- Thêm review cho Áo Kiểu Sơ Mi Nữ Hồng Size M
-((SELECT id FROM product_items WHERE name = N'Áo Kiểu Sơ Mi Nữ Hồng Size M'), (SELECT id FROM accounts WHERE email = 'vothik@example.com'), 5, N'Màu hồng pastel siêu dễ thương, áo nhẹ nhàng, nữ tính. Rất phù hợp với dân công sở.', 'review_somi_hong_1.webp'),
+UNION ALL
 
--- Thêm review cho Bộ Đồ Bé Trai Vàng Họa Tiết Size 4T
-((SELECT id FROM product_items WHERE name = N'Bộ Đồ Bé Trai Vàng Họa Tiết Size 4T'), (SELECT id FROM accounts WHERE email = 'buitranh@example.com'), 4, N'Bộ đồ màu vàng đáng yêu, vải mát. Bé mặc thoải mái vận động.', NULL),
+SELECT pi.id, 399000.00
+FROM product_items pi
+WHERE pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
 
--- Thêm review cho Váy Bé Gái Trắng Xòe Hoa Size 6T
-((SELECT id FROM product_items WHERE name = N'Váy Bé Gái Trắng Xòe Hoa Size 6T'), (SELECT id FROM accounts WHERE email = 'phamvand@example.com'), 5, N'Váy công chúa cho bé gái nhà mình, rất lộng lẫy và đáng yêu. Bé thích mê!', 'review_vay_trang_be_gai_1.webp');
+UNION ALL
+
+SELECT pi.id, 329000.00
+FROM product_items pi
+WHERE pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
+
+UNION ALL
+
+SELECT pi.id, 349000.00
+FROM product_items pi
+WHERE pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.';
 
 INSERT INTO coupons (code, description, discount_type, discount_value, min_order_amount, max_discount_amount, usage_limit, usage_per_customer, is_allow_voucher, is_active, customer_group, start_at, end_at) VALUES
 (N'FREESHIP25K', N'Miễn phí vận chuyển cho đơn hàng từ 250K', 'FREESHIP', 25000.00, 250000.00, 25000.00, 500, 1, 0, 1, NULL, GETDATE(), DATEADD(month, 3, GETDATE())),
@@ -332,25 +425,47 @@ INSERT INTO purchase_orders (order_date, expected_date, received_date, total, st
 (GETDATE(), DATEADD(day, 7, GETDATE()), NULL, 5000000.00, N'Đang xử lý', N'Đơn nhập hàng định kỳ quần áo nam'),
 (DATEADD(month, -1, GETDATE()), DATEADD(day, -20, GETDATE()), DATEADD(day, -15, GETDATE()), 7500000.00, N'Đã hoàn thành', N'Đơn nhập hàng váy đầm và đồ trẻ em'),
 (GETDATE(), DATEADD(day, 10, GETDATE()), NULL, 3000000.00, N'Chờ xác nhận', N'Đơn nhập bổ sung áo croptop');
+--delete from purchase_order_items
+INSERT INTO purchase_order_items (purchase_order_id, product_item_id, qty, cost)
+SELECT po.id, pi.id, 100, 80000.00
+FROM purchase_orders po, product_items pi
+WHERE po.note = N'Đơn nhập hàng định kỳ quần áo nam'
+  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
 
-INSERT INTO purchase_order_items (purchase_order_id, product_item_id, qty, cost) VALUES
--- Cho đơn hàng nhập kho đầu tiên (Đang xử lý)
-((SELECT id FROM purchase_orders WHERE note = N'Đơn nhập hàng định kỳ quần áo nam'), (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 100, 80000.00),
-((SELECT id FROM purchase_orders WHERE note = N'Đơn nhập hàng định kỳ quần áo nam'), (SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Đen Size 32'), 50, 180000.00),
+UNION ALL
 
--- Cho đơn hàng nhập kho thứ hai (Đã hoàn thành)
-((SELECT id FROM purchase_orders WHERE note = N'Đơn nhập hàng váy đầm và đồ trẻ em'), (SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'), 30, 250000.00),
-((SELECT id FROM purchase_orders WHERE note = N'Đơn nhập hàng váy đầm và đồ trẻ em'), (SELECT id FROM product_items WHERE name = N'Váy Bé Gái Hồng Xòe Hoa Size 5T'), 40, 150000.00),
+SELECT po.id, pi.id, 50, 180000.00
+FROM purchase_orders po, product_items pi
+WHERE po.note = N'Đơn nhập hàng định kỳ quần áo nam'
+  AND pi.description = N'Quần kaki nam dáng thẳng, màu đen, size 32.'
 
--- Cho đơn hàng nhập kho thứ ba (Chờ xác nhận)
-((SELECT id FROM purchase_orders WHERE note = N'Đơn nhập bổ sung áo croptop'), (SELECT id FROM product_items WHERE name = N'Áo Croptop Nữ Trắng Freesize'), 80, 60000.00);
+UNION ALL
 
+SELECT po.id, pi.id, 30, 250000.00
+FROM purchase_orders po, product_items pi
+WHERE po.note = N'Đơn nhập hàng váy đầm và đồ trẻ em'
+  AND pi.description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'
+
+UNION ALL
+
+SELECT po.id, pi.id, 40, 150000.00
+FROM purchase_orders po, product_items pi
+WHERE po.note = N'Đơn nhập hàng váy đầm và đồ trẻ em'
+  AND pi.description = N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.'
+
+UNION ALL
+
+SELECT po.id, pi.id, 80, 60000.00
+FROM purchase_orders po, product_items pi
+WHERE po.note = N'Đơn nhập bổ sung áo croptop'
+  AND pi.description = N'Áo thun croptop nữ năng động, màu trắng, freesize.';
+--delete from payment_methods
 INSERT INTO payment_methods (name, description, is_active) VALUES
 (N'Thanh toán khi nhận hàng (COD)', N'Thanh toán tiền mặt khi đơn hàng được giao đến', 1),
 (N'Thanh toán chuyển khoản ngân hàng', N'Thanh toán qua chuyển khoản ngân hàng trực tiếp', 1),
 (N'Thanh toán bằng thẻ tín dụng/ghi nợ', N'Thanh toán trực tuyến qua cổng thanh toán thẻ', 1),
 (N'Ví điện tử MoMo', N'Thanh toán qua ứng dụng ví điện tử MoMo', 1);
-
+--delete from shipping_methods
 INSERT INTO shipping_methods (name, description, is_active) VALUES
 (N'Giao hàng tiêu chuẩn', N'Thời gian giao hàng từ 3-5 ngày làm việc', 1),
 (N'Giao hàng nhanh', N'Thời gian giao hàng từ 1-2 ngày làm việc', 1),
@@ -387,118 +502,195 @@ INSERT INTO orders (account_id, payment_method_id, shipping_method_id, shipping_
  (SELECT id FROM shipping_methods WHERE name = N'Giao hàng tiêu chuẩn'),
  N'Chờ xác nhận', 30000.00, NULL, 30000.00, NULL, 0.00, NULL, N'Chưa thanh toán', N'Gọi điện trước khi giao', 50, 250000.00, N'Địa chỉ giao: 789 Đường ABC, Phường Hòa Thuận Đông, Quận Hải Châu, Đà Nẵng. SĐT: 0902345678');
 
+-- CART ITEMS
+INSERT INTO cart_items (account_id, product_item_id, qty) VALUES
+-- Giỏ hàng của Nguyễn Văn A
+((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), (SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'), 1),
+((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), (SELECT id FROM product_items WHERE description = N'Quần kaki nam ống đứng, màu xanh đậm, size 30.'), 1),
+
+-- Giỏ hàng của Trần Văn B
+((SELECT id FROM accounts WHERE email = 'tranvanb@example.com'), (SELECT id FROM product_items WHERE description = N'Áo thun nam dài tay, chất vải co giãn, màu xám, size M.'), 2),
+
+-- Giỏ hàng của Lê Thị C
+((SELECT id FROM accounts WHERE email = 'lethic@example.com'), (SELECT id FROM product_items WHERE description = N'Váy đầm suông nữ caro trắng, freesize.'), 1),
+((SELECT id FROM accounts WHERE email = 'lethic@example.com'), (SELECT id FROM product_items WHERE description = N'Áo kiểu sơ mi nữ màu trắng, size S.'), 1),
+
+-- Giỏ hàng của Admin
+((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), (SELECT id FROM product_items WHERE description = N'Áo bomber nam vải dày, màu đen, size M.'), 1),
+((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), (SELECT id FROM product_items WHERE description = N'Bộ đồ bé trai chất liệu cotton, màu xanh, họa tiết ngộ nghĩnh, size 3T.'), 1);
+
+-- ORDER ITEMS
+INSERT INTO order_items (order_id, product_item_id, promotion_id, qty, cost, is_gift, selling_price) VALUES
+
+-- Đơn hàng 1 - adminCUDE@gmail.com
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'),
+ NULL, 1, 80000.00, 0, 159000.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.'),
+ NULL, 1, 90000.00, 0, 180000.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
+ (SELECT id FROM product_items WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'),
+ NULL, 1, 180000.00, 0, 349000.00),
+
+-- Đơn hàng 2 - nguyenvana@example.com
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K'),
+ (SELECT id FROM product_items WHERE description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'),
+ NULL, 2, 200000.00, 0, 399000.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K'),
+ (SELECT id FROM product_items WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'),
+ (SELECT id FROM promotions WHERE name = N'Giảm giá mùa hè'), 1, 250000.00, 0, 424150.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K'),
+ (SELECT id FROM product_items WHERE description = N'Áo thun croptop nữ năng động, màu trắng, freesize.'),
+ NULL, 3, 60000.00, 0, 119000.00),
+
+-- Đơn hàng 3 - lethic@example.com
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'lethic@example.com') AND final_total = 850000.00),
+ (SELECT id FROM product_items WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'),
+ NULL, 1, 250000.00, 0, 499000.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'lethic@example.com') AND final_total = 850000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo kiểu sơ mi nữ thanh lịch, màu trắng, size S.'),
+ NULL, 1, 120000.00, 0, 239000.00),
+
+-- Đơn hàng 4 - hoangthie@example.com
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'hoangthie@example.com') AND final_total = 1500000.00),
+ (SELECT id FROM product_items WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'),
+ (SELECT id FROM promotions WHERE name = N'Khuyến mãi Flash Sale'), 2, 180000.00, 0, 279200.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'hoangthie@example.com') AND final_total = 1500000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu đen, size L.'),
+ NULL, 2, 80000.00, 0, 169000.00),
+
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'hoangthie@example.com') AND final_total = 1500000.00),
+ (SELECT id FROM product_items WHERE description = N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.'),
+ NULL, 1, 150000.00, 0, 299000.00),
+
+-- Đơn hàng 5 - tranvanb@example.com
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'tranvanb@example.com') AND final_total = 250000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.'),
+ NULL, 1, 90000.00, 0, 180000.00);
+ --select * from product_items
+
  INSERT INTO cart_items (account_id, product_item_id, qty) VALUES
+
 -- Giỏ hàng của Nguyễn Văn A (email: nguyenvana@example.com)
-((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'), 1),
-((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), (SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'), 1),
+((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), 
+ (SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'), 1),
+((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), 
+ (SELECT id FROM product_items WHERE description = N'Quần kaki nam ống đứng, màu xanh đậm, size 30.'), 1),
 
 -- Giỏ hàng của Trần Văn B (email: tranvanb@example.com)
-((SELECT id FROM accounts WHERE email = 'tranvanb@example.com'), (SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'), 2),
+((SELECT id FROM accounts WHERE email = 'tranvanb@example.com'), 
+ (SELECT id FROM product_items WHERE description = N'Áo thun nam dài tay, chất vải co giãn, màu xám, size M.'), 2),
 
 -- Giỏ hàng của Lê Thị C (email: lethic@example.com)
-((SELECT id FROM accounts WHERE email = 'lethic@example.com'), (SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'), 1),
-((SELECT id FROM accounts WHERE email = 'lethic@example.com'), (SELECT id FROM product_items WHERE name = N'Áo Kiểu Sơ Mi Nữ Trắng Size S'), 1),
+((SELECT id FROM accounts WHERE email = 'lethic@example.com'), 
+ (SELECT id FROM product_items WHERE description = N'Váy đầm suông nữ caro trắng, freesize.'), 1),
+((SELECT id FROM accounts WHERE email = 'lethic@example.com'), 
+ (SELECT id FROM product_items WHERE description = N'Áo kiểu sơ mi nữ màu trắng, size S.'), 1),
 
 -- Giỏ hàng của Admin (email: adminCUDE@gmail.com)
-((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), (SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'), 1),
-((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), (SELECT id FROM product_items WHERE name = N'Bộ Đồ Bé Trai Xanh Họa Tiết Size 3T'), 1);
+((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), 
+ (SELECT id FROM product_items WHERE description = N'Áo bomber nam vải dày, màu đen, size M.'), 1),
+((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), 
+ (SELECT id FROM product_items WHERE description = N'Bộ đồ bé trai màu xanh, họa tiết dễ thương, size 3T.'), 1);
 
 INSERT INTO order_items (order_id, product_item_id, promotion_id, qty, cost, is_gift, selling_price) VALUES
 -- Cho Đơn hàng 1 (adminCUDE@gmail.com, tổng 500k)
-((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00), -- Sử dụng final_total để phân biệt nếu có nhiều đơn của admin
- (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'),
- NULL, -- Không khuyến mãi
- 1, 80000.00, 0, 159000.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
- (SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'),
- NULL,
- 1, 90000.00, 0, 180000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'),
+ NULL, 1, 80000.00, 0, 159000.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
- (SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'),
- NULL,
- 1, 180000.00, 0, 349000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.'),
+ NULL, 1, 90000.00, 0, 180000.00),
+((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
+ (SELECT id FROM product_items WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'),
+ NULL, 1, 180000.00, 0, 349000.00),
 
 -- Cho Đơn hàng 2 (nguyenvana@example.com, tổng 1200k, có mã GIAM100K)
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K'),
- (SELECT id FROM product_items WHERE name = N'Áo Bomber Nam Đen Size M'),
- NULL,
- 2, 200000.00, 0, 399000.00), -- 2 * 399k = 798k
+ (SELECT id FROM product_items WHERE description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'),
+ NULL, 2, 200000.00, 0, 399000.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K'),
- (SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'),
- (SELECT id FROM promotions WHERE name = N'Giảm giá mùa hè'), -- Sản phẩm này có trong khuyến mãi
- 1, 250000.00, 0, 424150.00), -- Giá gốc 499k, giảm 15% = 424.15k
+ (SELECT id FROM product_items WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'),
+ (SELECT id FROM promotions WHERE name = N'Giảm giá mùa hè'),
+ 1, 250000.00, 0, 424150.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K'),
- (SELECT id FROM product_items WHERE name = N'Áo Croptop Nữ Trắng Freesize'),
- NULL,
- 3, 60000.00, 0, 119000.00), -- 3 * 119k = 357k
--- Tổng: 798k + 424.15k + 357k = 1579.15k. Sau khi trừ 100k coupon = 1479.15k. (final_total 1200k là ví dụ, sẽ không khớp chính xác với tính toán này nếu không có các yếu tố khác như thuế/phí/làm tròn)
+ (SELECT id FROM product_items WHERE description = N'Quần short jean bé trai màu xanh nhạt, chất liệu mềm mại, size 7 tuổi.'),
+ NULL, 3, 60000.00, 0, 119000.00),
 
 -- Cho Đơn hàng 3 (lethic@example.com, tổng 850k)
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'lethic@example.com') AND final_total = 850000.00),
- (SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize'),
- NULL,
- 1, 250000.00, 0, 499000.00),
+ (SELECT id FROM product_items WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'),
+ NULL, 1, 250000.00, 0, 499000.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'lethic@example.com') AND final_total = 850000.00),
- (SELECT id FROM product_items WHERE name = N'Áo Kiểu Sơ Mi Nữ Trắng Size S'),
- NULL,
- 1, 120000.00, 0, 239000.00),
+ (SELECT id FROM product_items WHERE description = N'Áo kiểu sơ mi nữ thanh lịch, màu trắng, size S.'),
+ NULL, 1, 120000.00, 0, 239000.00),
 
 -- Cho Đơn hàng 4 (hoangthie@example.com, tổng 1500k)
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'hoangthie@example.com') AND final_total = 1500000.00),
- (SELECT id FROM product_items WHERE name = N'Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30'),
- (SELECT id FROM promotions WHERE name = N'Khuyến mãi Flash Sale'), -- Sản phẩm này có trong khuyến mãi
- 2, 180000.00, 0, 279200.00), -- Giá gốc 349k, giảm 20% = 279.2k. 2 * 279.2k = 558.4k
+ (SELECT id FROM product_items WHERE description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'),
+ (SELECT id FROM promotions WHERE name = N'Khuyến mãi Flash Sale'),
+ 2, 180000.00, 0, 279200.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'hoangthie@example.com') AND final_total = 1500000.00),
- (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Đen Size L'),
- NULL,
- 2, 80000.00, 0, 169000.00), -- 2 * 169k = 338k
+ (SELECT id FROM product_items WHERE description = N'Set đồ mùa hè cho bé gái, màu hồng, chất thun cotton, size 2 tuổi.'),
+ NULL, 2, 80000.00, 0, 169000.00),
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'hoangthie@example.com') AND final_total = 1500000.00),
- (SELECT id FROM product_items WHERE name = N'Váy Bé Gái Hồng Xòe Hoa Size 5T'),
- NULL,
- 1, 150000.00, 0, 299000.00),
+ (SELECT id FROM product_items WHERE description = N'Váy bé gái dáng xòe hoa, màu hồng, phù hợp cho bé 5 tuổi.'),
+ NULL, 1, 150000.00, 0, 299000.00),
 
 -- Cho Đơn hàng 5 (tranvanb@example.com, tổng 250k)
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'tranvanb@example.com') AND final_total = 250000.00),
- (SELECT id FROM product_items WHERE name = N'Áo Thun Dài Tay Nam Xám Size M'),
- NULL,
- 1, 90000.00, 0, 180000.00);
+ (SELECT id FROM product_items WHERE description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.'),
+ NULL, 1, 90000.00, 0, 180000.00);
 
- INSERT INTO cancels (order_id, reason, is_paid, status) VALUES
--- Hủy Đơn hàng 5 (của Trần Văn B, tổng 250k, payment_status 'Chưa thanh toán')
+
+-- Hủy đơn hàng
+INSERT INTO cancels (order_id, reason, is_paid, status) VALUES
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'tranvanb@example.com') AND final_total = 250000.00),
  N'Không còn nhu cầu mua sản phẩm', 0, N'Đã hủy'),
-
--- Hủy một đơn hàng khác (ví dụ: Đơn hàng 1 của Admin, nếu bạn muốn hủy)
--- Lưu ý: Nếu đơn hàng đã được giao hoặc thanh toán thì lý do hủy và trạng thái is_paid sẽ khác.
--- Tôi sẽ tạo một đơn hàng mới và hủy nó để minh họa rõ hơn.
--- HOẶC, nếu bạn muốn hủy đơn hàng 1 của Admin, hãy đảm bảo các trạng thái hợp lý.
--- Với mục đích chèn dữ liệu mẫu, tôi sẽ tạo một bản hủy cho Đơn hàng 1 (Admin) mặc dù trạng thái của nó là "Đang xử lý".
 ((SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00),
  N'Thay đổi ý định mua hàng', 0, N'Đã hủy');
 
- INSERT INTO returns (order_product_item_id, reason, image1, image2, image3, is_returned_money, is_returned_item, status) VALUES
--- Trả lại Áo Polo Nam Trắng Size M từ Đơn hàng 1 (Admin)
-((SELECT TOP 1 id FROM order_items WHERE order_id = (SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com') AND final_total = 500000.00) AND product_item_id = (SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M')),
- N'Sản phẩm bị lỗi nhỏ ở đường may', 'return_polo_loi_1.webp', NULL, NULL, N'Đã hoàn tiền', N'Đã nhận hàng', N'Đã xử lý'),
+-- Trả hàng
+INSERT INTO returns (order_product_item_id, reason, image1, image2, image3, is_returned_money, is_returned_item, status) VALUES
+((SELECT TOP 1 id FROM order_items WHERE order_id = (
+    SELECT id FROM orders WHERE account_id = (
+        SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'
+    ) AND final_total = 500000.00)
+  AND product_item_id = (
+    SELECT id FROM product_items 
+    WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
+)),
+ N'Sản phẩm bị lỗi nhỏ ở đường may', 'return_polo_loi_1.webp', NULL, NULL, 
+ N'Đã hoàn tiền', N'Đã nhận hàng', N'Đã xử lý'),
 
--- Trả lại Váy Đầm Suông Caro Trắng FreeSize từ Đơn hàng 2 (Nguyễn Văn A)
-((SELECT TOP 1 id FROM order_items WHERE order_id = (SELECT id FROM orders WHERE account_id = (SELECT id FROM accounts WHERE email = 'nguyenvana@example.com') AND discount_coupon_code = N'GIAM100K') AND product_item_id = (SELECT id FROM product_items WHERE name = N'Váy Đầm Suông Caro Trắng FreeSize')),
- N'Kích thước không phù hợp', 'return_vay_sai_size_1.webp', 'return_vay_sai_size_2.webp', NULL, N'Đang chờ hoàn tiền', N'Đang chờ nhận hàng', N'Đang xử lý');
+((SELECT TOP 1 id FROM order_items WHERE order_id = (
+    SELECT id FROM orders WHERE account_id = (
+        SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'
+    ) AND discount_coupon_code = N'GIAM100K')
+  AND product_item_id = (
+    SELECT id FROM product_items 
+    WHERE description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'
+)),
+ N'Kích thước không phù hợp', 'return_vay_sai_size_1.webp', 'return_vay_sai_size_2.webp', NULL, 
+ N'Đang chờ hoàn tiền', N'Đang chờ nhận hàng', N'Đang xử lý');
 
- INSERT INTO UserLogs (user_id, action, description, ip_address, user_agent, module) VALUES
--- Admin đăng nhập
+-- Nhật ký người dùng
+INSERT INTO UserLogs (user_id, action, description, ip_address, user_agent, module) VALUES
 ((SELECT id FROM accounts WHERE email = 'adminCUDE@gmail.com'), N'Đăng nhập', N'Đăng nhập thành công vào hệ thống quản trị', '192.168.1.1', N'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36', N'Authentication'),
--- Nguyễn Văn A đặt hàng
 ((SELECT id FROM accounts WHERE email = 'nguyenvana@example.com'), N'Đặt hàng', N'Đặt hàng thành công đơn hàng #20250607002', '203.0.113.45', N'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1', N'Order Management'),
--- Lê Thị C cập nhật địa chỉ
 ((SELECT id FROM accounts WHERE email = 'lethic@example.com'), N'Cập nhật thông tin', N'Cập nhật địa chỉ nhận hàng', '10.0.0.10', N'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36', N'User Profile'),
--- Trần Văn B thêm sản phẩm vào giỏ hàng
 ((SELECT id FROM accounts WHERE email = 'tranvanb@example.com'), N'Thêm vào giỏ hàng', N'Thêm Áo Thun Dài Tay Nam Xám Size M vào giỏ hàng', '172.16.0.20', N'Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36', N'Shopping Cart'),
--- Hoàng Thị E xem chi tiết sản phẩm
 ((SELECT id FROM accounts WHERE email = 'hoangthie@example.com'), N'Xem sản phẩm', N'Xem chi tiết sản phẩm: Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30', '192.168.1.50', N'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/123.0.0.0', N'Product Browse');
 
+-- Thông tin tùy chỉnh
 INSERT INTO custom (product_item_id, infor) VALUES
-((SELECT id FROM product_items WHERE name = N'Áo Polo Nam Trắng Size M'),
-N'{"custom_text": "Bùi Hữu Lộc", "font_style": "Bold Italic", "font_color": "Blue", "logo_placement": "Ngực trái"}');
+((SELECT id FROM product_items WHERE description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'),
+ N'{"custom_text": "Bùi Hữu Lộc", "font_style": "Bold Italic", "font_color": "Blue", "logo_placement": "Ngực trái"}');
 GO
-

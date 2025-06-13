@@ -2,8 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.*;
 
-import com.aos.AOSBE.DTOS.OtpDTO;
-import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Service.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aos.AOSBE.DTOS.AccountsDTOS;
-import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpDTO;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
-import com.aos.AOSBE.DTOS.loginRequestDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.SecurityConfig.JwtUtil;
@@ -185,22 +181,17 @@ public class AccountsAPI {
 	    }
 	}
 	
-	@PostMapping("/Accounts/logout")
-	public ResponseEntity<?> logout(HttpServletRequest request) {
-	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	    System.out.println("User logout: " + email);
-	    return ResponseEntity.ok("Đã đăng xuất thành công");
-	}
-	@PutMapping("/Accounts/profile")
-	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
-    try {
-        accountsService.updateProfile(dto);
-        return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
-    } catch (RuntimeException e) {
-        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-    } catch (Exception e) {
-        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
-    }
-}
+
+//	@PutMapping("/Accounts/profile")
+//	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
+//    try {
+//        accountsService.updateProfile(dto);
+//        return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
+//    } catch (RuntimeException e) {
+//        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+//    } catch (Exception e) {
+//        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
+//    }
+//}
 
 }
