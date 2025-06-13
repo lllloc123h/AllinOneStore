@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserAddressesAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class UserAddressesAPI {
 	@Autowired
 	private UserAddressesMapper userAddressesMapper;
 
-	@GetMapping("/UserAddresses")
+	@GetMapping("/admin/UserAddresses")
 	public ResponseEntity<List<UserAddressesDTOS>> getAllUserAddressesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class UserAddressesAPI {
 		return ResponseEntity.ok(userAddresses);
 	}
 
-	@GetMapping("/UserAddresses/{id}")
+	@GetMapping("/admin/UserAddresses/{id}")
 	public ResponseEntity<UserAddresses> getUserAddressesByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class UserAddressesAPI {
 		UserAddresses userAddresses =(UserAddresses)userAddressesService.userAddressesFindById(id).orElse(new UserAddresses());
 		return ResponseEntity.ok(userAddresses);
 	}
-	@PostMapping("/UserAddresses")
+	@PostMapping("/admin/UserAddresses")
 	public ResponseEntity<UserAddresses> addNewUserAddresses(@RequestBody UserAddressesDTOS entity) {
 	    
 	    UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/UserAddresses")
-	public ResponseEntity<UserAddresses> updateUserAddresses(@RequestBody UserAddresses entity) {
-	    UserAddresses updated = userAddressesService.userAddressesSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/UserAddresses")
+	public ResponseEntity<?> updateUserAddresses(@RequestBody UserAddresses entity) {
+			try {
+			UserAddresses  isExist = userAddressesService.userAddressesFindById(id).orElse(null);
+			if (isExist != null) {
+				UserAddresses  update = userAddressesMapper.mapperToObject(entity);
+				userAddressesService.userAddressesSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/UserAddresses/{id}")
+	@DeleteMapping("/admin/UserAddresses/{id}")
 	public ResponseEntity<Void> deleteUserAddresses(@PathVariable int id) {
 	    userAddressesService.userAddressesDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

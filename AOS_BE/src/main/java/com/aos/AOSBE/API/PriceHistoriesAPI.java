@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PriceHistoriesAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class PriceHistoriesAPI {
 	@Autowired
 	private PriceHistoriesMapper priceHistoriesMapper;
 
-	@GetMapping("/PriceHistories")
+	@GetMapping("/admin/PriceHistories")
 	public ResponseEntity<List<PriceHistoriesDTOS>> getAllPriceHistoriesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class PriceHistoriesAPI {
 		return ResponseEntity.ok(priceHistories);
 	}
 
-	@GetMapping("/PriceHistories/{id}")
+	@GetMapping("/admin/PriceHistories/{id}")
 	public ResponseEntity<PriceHistories> getPriceHistoriesByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class PriceHistoriesAPI {
 		PriceHistories priceHistories =(PriceHistories)priceHistoriesService.priceHistoriesFindById(id).orElse(new PriceHistories());
 		return ResponseEntity.ok(priceHistories);
 	}
-	@PostMapping("/PriceHistories")
+	@PostMapping("/admin/PriceHistories")
 	public ResponseEntity<PriceHistories> addNewPriceHistories(@RequestBody PriceHistoriesDTOS entity) {
 	    
 	    PriceHistories saved = priceHistoriesService.priceHistoriesSave(priceHistoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/PriceHistories")
-	public ResponseEntity<PriceHistories> updatePriceHistories(@RequestBody PriceHistories entity) {
-	    PriceHistories updated = priceHistoriesService.priceHistoriesSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/PriceHistories")
+	public ResponseEntity<?> updatePriceHistories(@RequestBody PriceHistories entity) {
+			try {
+			PriceHistories  isExist = priceHistoriesService.priceHistoriesFindById(id).orElse(null);
+			if (isExist != null) {
+				PriceHistories  update = priceHistoriesMapper.mapperToObject(entity);
+				priceHistoriesService.priceHistoriesSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/PriceHistories/{id}")
+	@DeleteMapping("/admin/PriceHistories/{id}")
 	public ResponseEntity<Void> deletePriceHistories(@PathVariable int id) {
 	    priceHistoriesService.priceHistoriesDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

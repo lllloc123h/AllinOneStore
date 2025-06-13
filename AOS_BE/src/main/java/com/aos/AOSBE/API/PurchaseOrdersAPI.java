@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PurchaseOrdersAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class PurchaseOrdersAPI {
 	@Autowired
 	private PurchaseOrdersMapper purchaseOrdersMapper;
 
-	@GetMapping("/PurchaseOrders")
+	@GetMapping("/admin/PurchaseOrders")
 	public ResponseEntity<List<PurchaseOrdersDTOS>> getAllPurchaseOrdersApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class PurchaseOrdersAPI {
 		return ResponseEntity.ok(purchaseOrders);
 	}
 
-	@GetMapping("/PurchaseOrders/{id}")
+	@GetMapping("/admin/PurchaseOrders/{id}")
 	public ResponseEntity<PurchaseOrders> getPurchaseOrdersByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class PurchaseOrdersAPI {
 		PurchaseOrders purchaseOrders =(PurchaseOrders)purchaseOrdersService.purchaseOrdersFindById(id).orElse(new PurchaseOrders());
 		return ResponseEntity.ok(purchaseOrders);
 	}
-	@PostMapping("/PurchaseOrders")
+	@PostMapping("/admin/PurchaseOrders")
 	public ResponseEntity<PurchaseOrders> addNewPurchaseOrders(@RequestBody PurchaseOrdersDTOS entity) {
 	    
 	    PurchaseOrders saved = purchaseOrdersService.purchaseOrdersSave(purchaseOrdersMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/PurchaseOrders")
-	public ResponseEntity<PurchaseOrders> updatePurchaseOrders(@RequestBody PurchaseOrders entity) {
-	    PurchaseOrders updated = purchaseOrdersService.purchaseOrdersSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/PurchaseOrders")
+	public ResponseEntity<?> updatePurchaseOrders(@RequestBody PurchaseOrders entity) {
+			try {
+			PurchaseOrders  isExist = purchaseOrdersService.purchaseOrdersFindById(id).orElse(null);
+			if (isExist != null) {
+				PurchaseOrders  update = purchaseOrdersMapper.mapperToObject(entity);
+				purchaseOrdersService.purchaseOrdersSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/PurchaseOrders/{id}")
+	@DeleteMapping("/admin/PurchaseOrders/{id}")
 	public ResponseEntity<Void> deletePurchaseOrders(@PathVariable int id) {
 	    purchaseOrdersService.purchaseOrdersDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

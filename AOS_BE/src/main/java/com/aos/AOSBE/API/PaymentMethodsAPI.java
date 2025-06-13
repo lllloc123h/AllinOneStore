@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PaymentMethodsAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class PaymentMethodsAPI {
 	@Autowired
 	private PaymentMethodsMapper paymentMethodsMapper;
 
-	@GetMapping("/PaymentMethods")
+	@GetMapping("/admin/PaymentMethods")
 	public ResponseEntity<List<PaymentMethodsDTOS>> getAllPaymentMethodsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class PaymentMethodsAPI {
 		return ResponseEntity.ok(paymentMethods);
 	}
 
-	@GetMapping("/PaymentMethods/{id}")
+	@GetMapping("/admin/PaymentMethods/{id}")
 	public ResponseEntity<PaymentMethods> getPaymentMethodsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class PaymentMethodsAPI {
 		PaymentMethods paymentMethods =(PaymentMethods)paymentMethodsService.paymentMethodsFindById(id).orElse(new PaymentMethods());
 		return ResponseEntity.ok(paymentMethods);
 	}
-	@PostMapping("/PaymentMethods")
+	@PostMapping("/admin/PaymentMethods")
 	public ResponseEntity<PaymentMethods> addNewPaymentMethods(@RequestBody PaymentMethodsDTOS entity) {
 	    
 	    PaymentMethods saved = paymentMethodsService.paymentMethodsSave(paymentMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/PaymentMethods")
-	public ResponseEntity<PaymentMethods> updatePaymentMethods(@RequestBody PaymentMethods entity) {
-	    PaymentMethods updated = paymentMethodsService.paymentMethodsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/PaymentMethods")
+	public ResponseEntity<?> updatePaymentMethods(@RequestBody PaymentMethods entity) {
+			try {
+			PaymentMethods  isExist = paymentMethodsService.paymentMethodsFindById(id).orElse(null);
+			if (isExist != null) {
+				PaymentMethods  update = paymentMethodsMapper.mapperToObject(entity);
+				paymentMethodsService.paymentMethodsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/PaymentMethods/{id}")
+	@DeleteMapping("/admin/PaymentMethods/{id}")
 	public ResponseEntity<Void> deletePaymentMethods(@PathVariable int id) {
 	    paymentMethodsService.paymentMethodsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

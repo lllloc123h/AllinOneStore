@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CostHistoriesAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class CostHistoriesAPI {
 	@Autowired
 	private CostHistoriesMapper costHistoriesMapper;
 
-	@GetMapping("/CostHistories")
+	@GetMapping("/admin/CostHistories")
 	public ResponseEntity<List<CostHistoriesDTOS>> getAllCostHistoriesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class CostHistoriesAPI {
 		return ResponseEntity.ok(costHistories);
 	}
 
-	@GetMapping("/CostHistories/{id}")
+	@GetMapping("/admin/CostHistories/{id}")
 	public ResponseEntity<CostHistories> getCostHistoriesByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class CostHistoriesAPI {
 		CostHistories costHistories =(CostHistories)costHistoriesService.costHistoriesFindById(id).orElse(new CostHistories());
 		return ResponseEntity.ok(costHistories);
 	}
-	@PostMapping("/CostHistories")
+	@PostMapping("/admin/CostHistories")
 	public ResponseEntity<CostHistories> addNewCostHistories(@RequestBody CostHistoriesDTOS entity) {
 	    
 	    CostHistories saved = costHistoriesService.costHistoriesSave(costHistoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/CostHistories")
-	public ResponseEntity<CostHistories> updateCostHistories(@RequestBody CostHistories entity) {
-	    CostHistories updated = costHistoriesService.costHistoriesSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/CostHistories")
+	public ResponseEntity<?> updateCostHistories(@RequestBody CostHistories entity) {
+			try {
+			CostHistories  isExist = costHistoriesService.costHistoriesFindById(id).orElse(null);
+			if (isExist != null) {
+				CostHistories  update = costHistoriesMapper.mapperToObject(entity);
+				costHistoriesService.costHistoriesSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/CostHistories/{id}")
+	@DeleteMapping("/admin/CostHistories/{id}")
 	public ResponseEntity<Void> deleteCostHistories(@PathVariable int id) {
 	    costHistoriesService.costHistoriesDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

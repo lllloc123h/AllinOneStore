@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ReturnsAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class ReturnsAPI {
 	@Autowired
 	private ReturnsMapper returnsMapper;
 
-	@GetMapping("/Returns")
+	@GetMapping("/admin/Returns")
 	public ResponseEntity<List<ReturnsDTOS>> getAllReturnsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class ReturnsAPI {
 		return ResponseEntity.ok(returns);
 	}
 
-	@GetMapping("/Returns/{id}")
+	@GetMapping("/admin/Returns/{id}")
 	public ResponseEntity<Returns> getReturnsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class ReturnsAPI {
 		Returns returns =(Returns)returnsService.returnsFindById(id).orElse(new Returns());
 		return ResponseEntity.ok(returns);
 	}
-	@PostMapping("/Returns")
+	@PostMapping("/admin/Returns")
 	public ResponseEntity<Returns> addNewReturns(@RequestBody ReturnsDTOS entity) {
 	    
 	    Returns saved = returnsService.returnsSave(returnsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Returns")
-	public ResponseEntity<Returns> updateReturns(@RequestBody Returns entity) {
-	    Returns updated = returnsService.returnsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Returns")
+	public ResponseEntity<?> updateReturns(@RequestBody Returns entity) {
+			try {
+			Returns  isExist = returnsService.returnsFindById(id).orElse(null);
+			if (isExist != null) {
+				Returns  update = returnsMapper.mapperToObject(entity);
+				returnsService.returnsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Returns/{id}")
+	@DeleteMapping("/admin/Returns/{id}")
 	public ResponseEntity<Void> deleteReturns(@PathVariable int id) {
 	    returnsService.returnsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

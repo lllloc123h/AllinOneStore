@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PromotionsAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class PromotionsAPI {
 	@Autowired
 	private PromotionsMapper promotionsMapper;
 
-	@GetMapping("/Promotions")
+	@GetMapping("/admin/Promotions")
 	public ResponseEntity<List<PromotionsDTOS>> getAllPromotionsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class PromotionsAPI {
 		return ResponseEntity.ok(promotions);
 	}
 
-	@GetMapping("/Promotions/{id}")
+	@GetMapping("/admin/Promotions/{id}")
 	public ResponseEntity<Promotions> getPromotionsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class PromotionsAPI {
 		Promotions promotions =(Promotions)promotionsService.promotionsFindById(id).orElse(new Promotions());
 		return ResponseEntity.ok(promotions);
 	}
-	@PostMapping("/Promotions")
+	@PostMapping("/admin/Promotions")
 	public ResponseEntity<Promotions> addNewPromotions(@RequestBody PromotionsDTOS entity) {
 	    
 	    Promotions saved = promotionsService.promotionsSave(promotionsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Promotions")
-	public ResponseEntity<Promotions> updatePromotions(@RequestBody Promotions entity) {
-	    Promotions updated = promotionsService.promotionsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Promotions")
+	public ResponseEntity<?> updatePromotions(@RequestBody Promotions entity) {
+			try {
+			Promotions  isExist = promotionsService.promotionsFindById(id).orElse(null);
+			if (isExist != null) {
+				Promotions  update = promotionsMapper.mapperToObject(entity);
+				promotionsService.promotionsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Promotions/{id}")
+	@DeleteMapping("/admin/Promotions/{id}")
 	public ResponseEntity<Void> deletePromotions(@PathVariable int id) {
 	    promotionsService.promotionsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

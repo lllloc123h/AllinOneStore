@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CartItemsAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class CartItemsAPI {
 	@Autowired
 	private CartItemsMapper cartItemsMapper;
 
-	@GetMapping("/CartItems")
+	@GetMapping("/admin/CartItems")
 	public ResponseEntity<List<CartItemsDTOS>> getAllCartItemsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class CartItemsAPI {
 		return ResponseEntity.ok(cartItems);
 	}
 
-	@GetMapping("/CartItems/{id}")
+	@GetMapping("/admin/CartItems/{id}")
 	public ResponseEntity<CartItems> getCartItemsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class CartItemsAPI {
 		CartItems cartItems =(CartItems)cartItemsService.cartItemsFindById(id).orElse(new CartItems());
 		return ResponseEntity.ok(cartItems);
 	}
-	@PostMapping("/CartItems")
+	@PostMapping("/admin/CartItems")
 	public ResponseEntity<CartItems> addNewCartItems(@RequestBody CartItemsDTOS entity) {
 	    
 	    CartItems saved = cartItemsService.cartItemsSave(cartItemsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/CartItems")
-	public ResponseEntity<CartItems> updateCartItems(@RequestBody CartItems entity) {
-	    CartItems updated = cartItemsService.cartItemsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/CartItems")
+	public ResponseEntity<?> updateCartItems(@RequestBody CartItems entity) {
+			try {
+			CartItems  isExist = cartItemsService.cartItemsFindById(id).orElse(null);
+			if (isExist != null) {
+				CartItems  update = cartItemsMapper.mapperToObject(entity);
+				cartItemsService.cartItemsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/CartItems/{id}")
+	@DeleteMapping("/admin/CartItems/{id}")
 	public ResponseEntity<Void> deleteCartItems(@PathVariable int id) {
 	    cartItemsService.cartItemsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

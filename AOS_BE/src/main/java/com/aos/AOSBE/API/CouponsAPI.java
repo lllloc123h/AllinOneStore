@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CouponsAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class CouponsAPI {
 	@Autowired
 	private CouponsMapper couponsMapper;
 
-	@GetMapping("/Coupons")
+	@GetMapping("/admin/Coupons")
 	public ResponseEntity<List<CouponsDTOS>> getAllCouponsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class CouponsAPI {
 		return ResponseEntity.ok(coupons);
 	}
 
-	@GetMapping("/Coupons/{id}")
+	@GetMapping("/admin/Coupons/{id}")
 	public ResponseEntity<Coupons> getCouponsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class CouponsAPI {
 		Coupons coupons =(Coupons)couponsService.couponsFindById(id).orElse(new Coupons());
 		return ResponseEntity.ok(coupons);
 	}
-	@PostMapping("/Coupons")
+	@PostMapping("/admin/Coupons")
 	public ResponseEntity<Coupons> addNewCoupons(@RequestBody CouponsDTOS entity) {
 	    
 	    Coupons saved = couponsService.couponsSave(couponsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Coupons")
-	public ResponseEntity<Coupons> updateCoupons(@RequestBody Coupons entity) {
-	    Coupons updated = couponsService.couponsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Coupons")
+	public ResponseEntity<?> updateCoupons(@RequestBody Coupons entity) {
+			try {
+			Coupons  isExist = couponsService.couponsFindById(id).orElse(null);
+			if (isExist != null) {
+				Coupons  update = couponsMapper.mapperToObject(entity);
+				couponsService.couponsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Coupons/{id}")
+	@DeleteMapping("/admin/Coupons/{id}")
 	public ResponseEntity<Void> deleteCoupons(@PathVariable int id) {
 	    couponsService.couponsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

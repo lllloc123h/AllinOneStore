@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CategoriesAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class CategoriesAPI {
 	@Autowired
 	private CategoriesMapper categoriesMapper;
 
-	@GetMapping("/Categories")
+	@GetMapping("/admin/Categories")
 	public ResponseEntity<List<CategoriesDTOS>> getAllCategoriesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class CategoriesAPI {
 		return ResponseEntity.ok(categories);
 	}
 
-	@GetMapping("/Categories/{id}")
+	@GetMapping("/admin/Categories/{id}")
 	public ResponseEntity<Categories> getCategoriesByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class CategoriesAPI {
 		Categories categories =(Categories)categoriesService.categoriesFindById(id).orElse(new Categories());
 		return ResponseEntity.ok(categories);
 	}
-	@PostMapping("/Categories")
+	@PostMapping("/admin/Categories")
 	public ResponseEntity<Categories> addNewCategories(@RequestBody CategoriesDTOS entity) {
 	    
 	    Categories saved = categoriesService.categoriesSave(categoriesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Categories")
-	public ResponseEntity<Categories> updateCategories(@RequestBody Categories entity) {
-	    Categories updated = categoriesService.categoriesSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Categories")
+	public ResponseEntity<?> updateCategories(@RequestBody Categories entity) {
+			try {
+			Categories  isExist = categoriesService.categoriesFindById(id).orElse(null);
+			if (isExist != null) {
+				Categories  update = categoriesMapper.mapperToObject(entity);
+				categoriesService.categoriesSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Categories/{id}")
+	@DeleteMapping("/admin/Categories/{id}")
 	public ResponseEntity<Void> deleteCategories(@PathVariable int id) {
 	    categoriesService.categoriesDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

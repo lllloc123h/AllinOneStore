@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PromotionProductAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class PromotionProductAPI {
 	@Autowired
 	private PromotionProductMapper promotionProductMapper;
 
-	@GetMapping("/PromotionProduct")
+	@GetMapping("/admin/PromotionProduct")
 	public ResponseEntity<List<PromotionProductDTOS>> getAllPromotionProductApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class PromotionProductAPI {
 		return ResponseEntity.ok(promotionProduct);
 	}
 
-	@GetMapping("/PromotionProduct/{id}")
+	@GetMapping("/admin/PromotionProduct/{id}")
 	public ResponseEntity<PromotionProduct> getPromotionProductByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class PromotionProductAPI {
 		PromotionProduct promotionProduct =(PromotionProduct)promotionProductService.promotionProductFindById(id).orElse(new PromotionProduct());
 		return ResponseEntity.ok(promotionProduct);
 	}
-	@PostMapping("/PromotionProduct")
+	@PostMapping("/admin/PromotionProduct")
 	public ResponseEntity<PromotionProduct> addNewPromotionProduct(@RequestBody PromotionProductDTOS entity) {
 	    
 	    PromotionProduct saved = promotionProductService.promotionProductSave(promotionProductMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/PromotionProduct")
-	public ResponseEntity<PromotionProduct> updatePromotionProduct(@RequestBody PromotionProduct entity) {
-	    PromotionProduct updated = promotionProductService.promotionProductSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/PromotionProduct")
+	public ResponseEntity<?> updatePromotionProduct(@RequestBody PromotionProduct entity) {
+			try {
+			PromotionProduct  isExist = promotionProductService.promotionProductFindById(id).orElse(null);
+			if (isExist != null) {
+				PromotionProduct  update = promotionProductMapper.mapperToObject(entity);
+				promotionProductService.promotionProductSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/PromotionProduct/{id}")
+	@DeleteMapping("/admin/PromotionProduct/{id}")
 	public ResponseEntity<Void> deletePromotionProduct(@PathVariable int id) {
 	    promotionProductService.promotionProductDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

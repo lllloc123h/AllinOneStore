@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class VariantsAPI {
 	@Autowired
@@ -31,7 +31,7 @@ public class VariantsAPI {
 	@Autowired
 	private VariantsMapper variantsMapper;
 
-	@GetMapping("/Variants")
+	@GetMapping("/admin/Variants")
 	public ResponseEntity<List<VariantsDTOS>> getAllVariantsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +43,7 @@ public class VariantsAPI {
 		return ResponseEntity.ok(variants);
 	}
 
-	@GetMapping("/Variants/{id}")
+	@GetMapping("/admin/Variants/{id}")
 	public ResponseEntity<Variants> getVariantsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +52,29 @@ public class VariantsAPI {
 		Variants variants =(Variants)variantsService.variantsFindById(id).orElse(new Variants());
 		return ResponseEntity.ok(variants);
 	}
-	@PostMapping("/Variants")
+	@PostMapping("/admin/Variants")
 	public ResponseEntity<Variants> addNewVariants(@RequestBody VariantsDTOS entity) {
 	    
 	    Variants saved = variantsService.variantsSave(variantsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Variants")
-	public ResponseEntity<Variants> updateVariants(@RequestBody Variants entity) {
-	    Variants updated = variantsService.variantsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Variants")
+	public ResponseEntity<?> updateVariants(@RequestBody Variants entity) {
+			try {
+			Variants  isExist = variantsService.variantsFindById(id).orElse(null);
+			if (isExist != null) {
+				Variants  update = variantsMapper.mapperToObject(entity);
+				variantsService.variantsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Variants/{id}")
+	@DeleteMapping("/admin/Variants/{id}")
 	public ResponseEntity<Void> deleteVariants(@PathVariable int id) {
 	    variantsService.variantsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 
