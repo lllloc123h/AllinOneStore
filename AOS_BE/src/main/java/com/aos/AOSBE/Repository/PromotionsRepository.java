@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PromotionsRepository extends JpaRepository<Promotions, Integer> {
-    // Add custom query methods here if needed
+   Optional<Promotions> findByNameAndTypeAndIsActive(String name, String type, boolean isActive);
+    List<Promotions> findAllByTypeAndIsActive(String type, boolean isActive);
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PromotionProductRepository extends JpaRepository<PromotionProduct, Integer> {
-    // Add custom query methods here if needed
+    List<PromotionProduct> findByPromotions(Promotions promotions);
 }

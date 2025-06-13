@@ -17,6 +17,7 @@ public class ProductItemsService {
     public List<ProductItems> productItemsFindAll(int page, int size) {
     	Pageable pageable = PageRequest.of(page, size);
 		return productItemsRepository.findAll(pageable).getContent();
+<<<<<<< Updated upstream
     }
     public ProductItems productItemsSave(ProductItems productItems) {
         return productItemsRepository.save(productItems);
@@ -26,5 +27,81 @@ public class ProductItemsService {
     }
     public void productItemsDeleteById(int id) {
         productItemsRepository.deleteById(id);
+=======
+	}
+
+	public List<ProductItems> productItemsFindAllHaveSkuLike(String skuLike) {
+
+		String skuLikeSplit[] = skuLike.split("-");
+		System.out.println(skuLikeSplit);
+		String skuLikeConvert = "%" + skuLikeSplit[0] + "%" + skuLikeSplit[1];
+		return productItemsRepository.findBySkuLike(skuLikeConvert);
+	}
+
+	public List<Object[]> productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(String skuColorLike,
+			String skuSizeLike, String minPrice, String maxPrice) {
+		int isSkuColorLikeEmpty = (skuColorLike == null || skuColorLike.isEmpty()) ? 0 : 1;
+		int isSkuSizeLikeEmpty = (skuSizeLike == null || skuSizeLike.isEmpty()) ? 0 : 1;
+		int isMinPriceEmpty = (minPrice == null || minPrice.isEmpty()) ? 0 : 1;
+		int isMaxPriceEmpty = (maxPrice == null || maxPrice.isEmpty()) ? 0 : 1;
+
+		skuColorLike = (skuColorLike == null) ? "" : skuColorLike;
+		skuSizeLike = (skuSizeLike == null) ? "" : skuSizeLike;
+		minPrice = (minPrice == null) ? "" : minPrice;
+		maxPrice = (maxPrice == null) ? "" : maxPrice;
+		System.out.println(isSkuColorLikeEmpty);
+		System.out.println(isSkuSizeLikeEmpty);
+		System.out.println(isMinPriceEmpty);
+		System.out.println(isMaxPriceEmpty);
+		System.out.println(skuColorLike);
+		System.out.println(skuSizeLike);
+		System.out.println(minPrice);
+		System.out.println(maxPrice);
+		List<Object[]> objectList = new ArrayList<Object[]>();
+		try {
+			objectList = productItemsRepository.filterItems(isSkuColorLikeEmpty, skuColorLike, isSkuSizeLikeEmpty,
+					skuSizeLike, isMinPriceEmpty, minPrice, isMaxPriceEmpty, maxPrice);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return objectList;
+	}
+
+	@Transactional
+	public ProductItems productItemsSave(ProductItems productItems) {
+		return productItemsRepository.save(productItems);
+	}
+
+	public Optional<ProductItems> productItemsFindById(int id) {
+		return productItemsRepository.findById(id);
+	}
+
+	@Transactional
+	public void productItemsDeleteById(int id) {
+		productItemsRepository.deleteById(id);
+	}
+
+	public double calculateTotal(List<Long> productItemIds, List<Integer> quantities) {
+        double total = 0.0;
+
+        for (int i = 0; i < productItemIds.size(); i++) {
+            Long productId = productItemIds.get(i);
+            int qty = quantities.get(i);
+
+            Optional<ProductItems> productOpt = productItemRepository.findById(productId.intValue());
+            if (productOpt.isEmpty()) continue;
+
+            ProductItems product = productOpt.get();
+
+            LocalDateTime now = LocalDateTime.now();
+            if (product.getSellStart() != null && product.getSellStart().isAfter(now)) continue;
+            if (product.getSellEnd() != null && product.getSellEnd().isBefore(now)) continue;
+
+            total += product.getPrice() * qty;
+        }
+
+        return total;
+>>>>>>> Stashed changes
     }
 }
