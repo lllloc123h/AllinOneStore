@@ -59,6 +59,18 @@ export default [
         path: '/OrderStatus',
         name: 'OrderStatus',
         component: OrderStatus
+    },
+
+    {
+        path: '/Customizer',
+        name: 'Customizer',
+        component: () => import ('../../components/User/CustomizerView.vue')
+    },
+
+    {
+        path: '/Crop',
+        name: 'CropCrop',
+        component: () => import ('../../components/User/CropImage.vue')
     }
 
 ]

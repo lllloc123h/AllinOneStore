@@ -99,7 +99,7 @@
                 v-model.number="fontSize"
                 min="10"
                 max="120"
-                @input="updateActiveTextbox"
+                @blur="updateActiveTextbox"
               />
             </label>
 
@@ -124,7 +124,7 @@
           tabindex="0"
         >
           <button @click="startDrawingMode">
-            {{ canvas?.isDrawingMode ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
+            {{ btnDraw ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
           </button>
           <span>Chế độ vẽ </span>
           <select name="" v-model="drawingMode" id="drawing-mode">
@@ -132,8 +132,8 @@
             <option value="Pencil">Pencil</option>
             <option value="Spray">Spray</option>
             <option value="Pattern">Pattern</option>
-            <option value="hline">hline</option>
-            <option value="vline">vline</option>
+            <option value="hLine">hline</option>
+            <option value="vLine">vline</option>
             <option value="square">Square</option>
             <option value="diamond">Diamond</option>
             <option value="texture">Texture</option>
@@ -184,7 +184,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { fabric } from "fabric";
-import komiImage from "../../assets/imgs/komi.jpg";
+import komiImage from "../../assets/imgs/logo.png";
 
 // Canvas
 const canvasRef = ref();
@@ -193,9 +193,8 @@ let vLinePatternBrush,
   hLinePatternBrush,
   squarePatternBrush,
   diamondPatternBrush,
-  texturePatternBrush;
-
-// const $ = (id) => document.getElementById();
+  texturePatternBrush,
+  patternBrush;
 
 // Control values
 const textColor = ref("#000000");
@@ -206,16 +205,25 @@ const exportedJson = ref("");
 
 const drawingMode = ref("Pencil");
 const drawingColor = ref("#000000");
-const drawingLineWidth = ref(5);
+const drawingLineWidth = ref(15);
 const drawingShadowWidth = ref(0);
 const drawingShadowColor = ref("#000000");
-
+const btnDraw = ref(false);
 function startDrawingMode() {
   canvas.isDrawingMode = !canvas.isDrawingMode;
+  btnDraw.value = canvas.isDrawingMode;
   mode();
 }
+
 watch(
-  [drawingMode, drawingColor, drawingLineWidth, drawingShadowWidth, drawingShadowColor],
+  [
+    btnDraw,
+    drawingMode,
+    drawingColor,
+    drawingLineWidth,
+    drawingShadowWidth,
+    drawingShadowColor,
+  ],
   () => {
     if (canvas.isDrawingMode) {
       mode();
@@ -225,35 +233,43 @@ watch(
 function mode() {
   const brushName = drawingMode.value;
   const patternBrushMap = {
-    hline: hLinePatternBrush,
-    vline: vLinePatternBrush,
+    Pattern: patternBrush, // 👈 Thêm dòng này
+    hLine: hLinePatternBrush,
+    vLine: vLinePatternBrush,
     square: squarePatternBrush,
     diamond: diamondPatternBrush,
     texture: texturePatternBrush,
   };
 
+  let brush;
+
   if (patternBrushMap[brushName]) {
-    canvas.freeDrawingBrush = patternBrushMap[brushName];
+    console.log("test ", patternBrushMap[brushName]);
+
+    brush = patternBrushMap[brushName];
+  } else if (fabric[`${brushName}Brush`]) {
+    brush = new fabric[`${brushName}Brush`](canvas);
   } else {
-    const BrushClass = fabric[`${brushName}Brush`];
-    if (BrushClass) {
-      canvas.freeDrawingBrush = new BrushClass(canvas);
-    } else {
-      canvas.freeDrawingBrush = new fabric.PencilBrush(canvas); // fallback
-    }
+    // Nếu không tìm được brush phù hợp thì không thay đổi brush hiện tại
+    console.warn(`Không tìm thấy brush phù hợp cho: ${brushName}`);
+    return;
   }
 
-  const brush = canvas.freeDrawingBrush;
-  if (brush) {
-    brush.color = drawingColor.value;
-    brush.width = drawingLineWidth.value;
-    brush.shadow = new fabric.Shadow({
-      blur: drawingShadowWidth.value,
-      offsetX: 0,
-      offsetY: 0,
-      affectStroke: true,
-      color: drawingShadowColor.value,
-    });
+  brush.color = drawingColor.value;
+  brush.width = drawingLineWidth.value;
+  brush.shadow = new fabric.Shadow({
+    blur: drawingShadowWidth.value,
+    offsetX: 0,
+    offsetY: 0,
+    affectStroke: true,
+    color: drawingShadowColor.value,
+  });
+
+  canvas.freeDrawingBrush = brush;
+  if (!patternBrushMap[texture]) {
+    patternBrushMap[brushName].source = patternBrushMap[
+      brushName
+    ].getPatternSrcFunction();
   }
 }
 
@@ -270,13 +286,28 @@ onMounted(() => {
     borderColor: "#3f51b5",
     rotatingPointOffset: 30,
   });
-
+  fabric.Object.prototype.setControlsVisibility({});
   // PatternBrushes
   if (fabric.PatternBrush) {
+    patternBrush = new fabric.PatternBrush(canvas);
+    patternBrush.getPatternSrcFunction = function () {
+      const dotWidth = 20;
+      const dotDistance = 5;
+      const patternCanvas = fabric.util.createCanvasElement();
+      const patternCtx = patternCanvas.getContext("2d");
+
+      patternCanvas.width = patternCanvas.height = dotWidth + dotDistance;
+      patternCtx.fillStyle = this.color;
+      patternCtx.beginPath();
+      patternCtx.arc(dotWidth / 2, dotWidth / 2, dotWidth / 2, 0, Math.PI * 2, false);
+      patternCtx.closePath();
+      patternCtx.fill();
+      return patternCanvas;
+    };
     // HORIZONTAL LINE (hline)
     hLinePatternBrush = new fabric.PatternBrush(canvas);
-    hLinePatternBrush.getPatternSrc = function () {
-      const patternCanvas = fabric.getEnv().document.createElement("canvas");
+    hLinePatternBrush.getPatternSrcFunction = function () {
+      const patternCanvas = document.createElement("canvas");
       patternCanvas.width = patternCanvas.height = 10;
       const ctx = patternCanvas.getContext("2d");
       ctx.strokeStyle = this.color;
@@ -290,8 +321,8 @@ onMounted(() => {
 
     // VERTICAL LINE (vline)
     vLinePatternBrush = new fabric.PatternBrush(canvas);
-    vLinePatternBrush.getPatternSrc = function () {
-      const patternCanvas = fabric.getEnv().document.createElement("canvas");
+    vLinePatternBrush.getPatternSrcFunction = function () {
+      const patternCanvas = document.createElement("canvas");
       patternCanvas.width = patternCanvas.height = 10;
       const ctx = patternCanvas.getContext("2d");
       ctx.strokeStyle = this.color;
@@ -305,10 +336,10 @@ onMounted(() => {
 
     // SQUARE
     squarePatternBrush = new fabric.PatternBrush(canvas);
-    squarePatternBrush.getPatternSrc = function () {
+    squarePatternBrush.getPatternSrcFunction = function () {
       const squareWidth = 10;
       const squareDistance = 2;
-      const patternCanvas = fabric.getEnv().document.createElement("canvas");
+      const patternCanvas = document.createElement("canvas");
       patternCanvas.width = patternCanvas.height = squareWidth + squareDistance;
       const ctx = patternCanvas.getContext("2d");
       ctx.fillStyle = this.color;
@@ -318,7 +349,7 @@ onMounted(() => {
 
     // DIAMOND
     diamondPatternBrush = new fabric.PatternBrush(canvas);
-    diamondPatternBrush.getPatternSrc = function () {
+    diamondPatternBrush.getPatternSrcFunction = function () {
       const squareWidth = 10;
       const squareDistance = 5;
       const rect = new fabric.Rect({
@@ -328,7 +359,7 @@ onMounted(() => {
         fill: this.color,
       });
       const canvasWidth = rect.getBoundingRect().width;
-      const patternCanvas = fabric.getEnv().document.createElement("canvas");
+      const patternCanvas = document.createElement("canvas");
       patternCanvas.width = patternCanvas.height = canvasWidth + squareDistance;
       rect.set({
         left: canvasWidth / 2,
@@ -352,6 +383,10 @@ onMounted(() => {
     img.onload = () => {
       texturePatternBrush = new fabric.PatternBrush(canvas);
       texturePatternBrush.source = img;
+      // Nếu đang chọn texture thì update lại
+      if (drawingMode.value === "texture") {
+        mode();
+      }
     };
     img.src = komiImage;
   }
@@ -377,19 +412,32 @@ onBeforeUnmount(() => {
 });
 
 function handleDeleteKey(e) {
+  // Không xử lý nếu đang focus trong input hoặc textarea (HTML)
+  const tag = document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+  // Nếu đang sửa văn bản trong fabric.Textbox (đang focus)
+  const activeObj = canvas.getActiveObject();
+  if (
+    activeObj &&
+    activeObj.isEditing && // đang sửa nội dung textbox
+    activeObj.type === "textbox"
+  ) {
+    return;
+  }
+
   if (e.key === "Delete" || e.key === "Backspace") {
-    const activeObj = canvas.getActiveObject();
     if (activeObj) {
-      // Nếu là nhóm object
       if (activeObj.type === "activeSelection") {
         activeObj.forEachObject((obj) => canvas.remove(obj));
       } else {
         canvas.remove(activeObj);
       }
-      canvas.discardActiveObject().renderAll();
+      canvas.discardActiveObject().requestRenderAll();
     }
   }
 }
+
 // Thêm textbox
 function addTextbox() {
   const textbox = new fabric.Textbox("Nhập chữ ở đây", {
@@ -406,16 +454,36 @@ function addTextbox() {
 
 // Cập nhật textbox đang chọn
 function updateActiveTextbox() {
-  const obj = canvas.getActiveObject();
-  if (obj && obj.type === "textbox") {
-    obj.set({
-      fill: textColor.value,
-      fontFamily: fontFamily.value,
-      fontSize: fontSize.value,
-      textAlign: textAlign.value,
-    });
-    canvas.renderAll();
+  const activeObj = canvas.getActiveObject();
+  if (!activeObj || activeObj.type !== "textbox") return;
+
+  const start = activeObj.selectionStart;
+  const end = activeObj.selectionEnd;
+  for (let i = start; i < end; i++) {
+    activeObj.setSelectionStyles(
+      {
+        // fontWeight:  "bold" ,
+        // fontStyle:"italic",
+        // underline: isUnderline.value,
+        // stroke: strokeColor.value,
+        // strokeWidth: strokeWidth.value,
+        // shadow: new fabric.Shadow({
+        //   color: shadowColor.value,
+        //   blur: shadowBlur.value,
+        //   offsetX: 0,
+        //   offsetY: 0,
+        // }),
+        fill: textColor.value,
+        fontFamily: fontFamily.value,
+        fontSize: fontSize.value,
+        textAlign: textAlign.value,
+      },
+      i,
+      i + 1
+    );
   }
+
+  canvas.renderAll();
 }
 
 // Khi chọn object thì cập nhật form control
