@@ -6,9 +6,9 @@
 
   <div>
     <form>
-      <!-- Avarta -->
+      <!-- Avatar -->
       <div class="card" style="width: 240px; height: 320px; margin: auto;">
-        <img :src="user.Avarta" alt="" id="avarta" class="card-img" width="100%" height="100%">
+        <img :src="user.Avatar" alt="" id="avatar" class="card-img" width="100%" height="100%">
       </div>
 
       <!-- Thông tin khách hàng -->
@@ -84,7 +84,7 @@
       <textarea class="form-control input-address" v-model="user.Address" readonly></textarea>
 
       <div class="div-input">
-    <button class="btn my-4" type="button" @click="updateProfile">Cập Nhật</button>
+        <button class="btn my-4" type="button" @click="updateProfile">Cập Nhật</button>
       </div>
     </form>
   </div>
@@ -93,14 +93,14 @@
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
 import axios from 'axios'
-import avarta from '../../assets/imgs/avarta_Kha.png'
+import avatar from '../../assets/imgs/avarta_Kha.png'
 
 const GHN_TOKEN = '86a66676-4794-11f0-8342-3e24ae01a77c'
 
 const user = reactive({
   Name: 'Nguyễn Nhật Khả',
   Phone: '0494953535',
-  Avarta: avarta,
+  Avatar: avatar,
   Email: 'KhaDepTraiNhatVuTru@gmail.com',
   Password: '123123',
   Address: 'Cà Mau'
@@ -180,23 +180,26 @@ const updateProfile = async () => {
       name: user.Name,
       email: user.Email,
       phone: user.Phone,
-      avarta: user.Avarta,
-      address: user.Address
+      avatar: user.Avatar,
+      address: user.Address,
+      provinceId: selectedProvinceId.value,
+      districtId: selectedDistrictId.value,
+      wardName: selectedWard.value
     }
-    const token = localStorage.getItem("token"); // nếu bạn dùng JWT lưu trong localStorage
+
+    const token = localStorage.getItem("token")
 
     const res = await axios.put("http://localhost:8080/api/Accounts/profile", dto, {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    })
 
-    alert(res.data.message || "Cập nhật thành công");
+    alert(res.data.message || "Cập nhật thành công")
   } catch (err) {
-    alert(err.response?.data?.message || "Đã xảy ra lỗi khi cập nhật");
+    alert(err.response?.data?.message || "Đã xảy ra lỗi khi cập nhật")
   }
 }
-
 </script>
 
 <style scoped>

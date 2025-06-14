@@ -15,7 +15,8 @@ const api = axios.create({
 const excludedPaths = [
   '/Accounts/login',
   '/Accounts/register',
-  '/Accounts/verify-otp'
+  '/Accounts/verify-otp',
+  '/BaseProducts'
 ]
 
 // Automatically attach token to each request
@@ -80,13 +81,15 @@ const authService = {
   }
   ,
   isAdmin() {
-    try {
+if (localStorage.getItem("jwtToken")) {
+      try {
       const roles = authService.parseJwt(tokenRef.value).roles
       return Array.isArray(roles) && roles.includes('ADMIN');
     } catch (error) {
       console.error('Invalid payload:', error);
       return false;
     }
+}
   }
   ,
   logout() {
