@@ -23,8 +23,9 @@ const excludedPaths = [
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwtToken');
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
-  const isExcluded = excludedPaths.some(path => config.url.includes(path));
+  const isExcluded = excludedPaths.some(path => config.url.includes(path) && !config.url.includes("/admin"));
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
+
 
   // neu url ngoai le 
   if (!isExcluded) {
@@ -81,15 +82,15 @@ const authService = {
   }
   ,
   isAdmin() {
-if (localStorage.getItem("jwtToken")) {
+    if (localStorage.getItem("jwtToken")) {
       try {
-      const roles = authService.parseJwt(tokenRef.value).roles
-      return Array.isArray(roles) && roles.includes('ADMIN');
-    } catch (error) {
-      console.error('Invalid payload:', error);
-      return false;
+        const roles = authService.parseJwt(tokenRef.value).roles
+        return Array.isArray(roles) && roles.includes('ADMIN');
+      } catch (error) {
+        console.error('Invalid payload:', error);
+        return false;
+      }
     }
-}
   }
   ,
   logout() {
