@@ -1,60 +1,33 @@
 <template>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <div class="container">
+  <div v-if="order" class="container">
     <h2>Trạng thái đơn hàng</h2>
 
     <div class="section">
       <h3>Thông tin đơn hàng</h3>
-      <p><strong>Mã đơn:</strong> ALLINONE123</p>
-      <p><strong>Ngày đặt:</strong> 10/06/2025</p>
-      <p><strong>Khách hàng:</strong> Nguyễn Văn A</p>
+      <p><strong>Mã đơn:</strong> {{ order.maDon }}</p>
+      <p><strong>Ngày đặt:</strong> {{ formatDate(order.ngayDat) }}</p>
+      <p><strong>Khách hàng:</strong> {{ order.khachHang.ten }}</p>
     </div>
 
     <div class="section order-status">
-      <div class="step done">
-        <div class="circle"><i class="fa-solid fa-receipt"></i></div>
-        <div>Đã đặt</div>
-      </div>
-      <div class="step done">
-        <div class="circle"><i class="fas fa-cogs"></i></div>
-        <div>Đang xử lý</div>
-      </div>
-      <div class="step active">
-        <div class="circle"><i class="fas fa-truck"></i></div>
-        <div>Đang giao</div>
-      </div>
-      <div class="step">
-        <div class="circle"><i class="fas fa-box-open"></i></div>
-        <div>Hoàn tất</div>
+      <div v-for="(step, idx) in steps" :key="idx"
+           :class="['step', { done: idx < statusIndex, active: idx === statusIndex }]">
+        <div class="circle"><i :class="step.icon"></i></div>
+        <div>{{ step.label }}</div>
       </div>
     </div>
 
     <div class="section products">
       <h3>Danh sách sản phẩm</h3>
       <table>
-        <thead>
-          <tr>
-            <th>Ảnh</th>
-            <th>Tên sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Đơn giá</th>
-            <th>Tổng</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Ảnh</th><th>Tên</th><th>Số lượng</th><th>Đơn giá</th><th>Tổng</th></tr></thead>
         <tbody>
-          <tr>
-            <td><img src="https://via.placeholder.com/50/CCCCCC/FFFFFF?text=Shirt" alt="Product Image"></td>
-            <td>Áo thun trắng</td>
-            <td>2</td>
-            <td>150.000đ</td>
-            <td>300.000đ</td>
-          </tr>
-          <tr>
-            <td><img src="https://via.placeholder.com/50/CCCCCC/FFFFFF?text=Short" alt="Product Image"></td>
-            <td>Quần short kaki</td>
-            <td>1</td>
-            <td>250.000đ</td>
-            <td>250.000đ</td>
+          <tr v-for="(sp, i) in order.sanPham" :key="i">
+            <td><img :src="sp.anh"/></td>
+            <td>{{ sp.ten }}</td>
+            <td>{{ sp.soLuong }}</td>
+            <td>{{ formatMoney(sp.gia) }}</td>
+            <td>{{ formatMoney(sp.gia * sp.soLuong) }}</td>
           </tr>
         </tbody>
       </table>
@@ -62,46 +35,33 @@
 
     <div class="section">
       <h3>Thông tin giao hàng</h3>
-      <p><strong>Người nhận:</strong> Nguyễn Văn A</p>
-      <p><strong>Địa chỉ:</strong> 123 Lê Lợi, Q.1, TP.HCM</p>
-      <p><strong>Điện thoại:</strong> 0909 123 456</p>
-      <p><strong>Đơn vị vận chuyển:</strong> Giao Hàng Nhanh</p>
-      <p><strong>Mã vận đơn:</strong> GHN123456789 - <a href="#">Tra cứu</a></p>
+      <p><strong>Người nhận:</strong> {{ order.khachHang.ten }}</p>
+      <p><strong>Địa chỉ:</strong> {{ order.khachHang.diaChi }}</p>
+      <p><strong>Điện thoại:</strong> {{ order.khachHang.sdt }}</p>
+      <p><strong>Đơn vị vận chuyển:</strong> {{ order.vanChuyen.ten }}</p>
+      <p><strong>Mã vận đơn:</strong> {{ order.vanChuyen.maVanDon }}</p>
     </div>
 
     <div class="section">
       <h3>Thông tin thanh toán</h3>
-      <p><strong>Phương thức:</strong> COD</p>
-      <p><strong>Trạng thái:</strong> Chưa thanh toán</p>
-      <p><strong>Tổng cộng:</strong> 550.000đ</p>
+      <p><strong>PT:</strong> {{ order.thanhToan.phuongThuc }}</p>
+      <p><strong>TT:</strong> {{ order.thanhToan.trangThai }}</p>
+      <p><strong>Tổng:</strong> {{ formatMoney(order.tongTien) }}</p>
     </div>
 
-    <div class="section">
-      <h3>Ghi chú đơn hàng</h3>
-      <textarea readonly class="note">Khách hàng yêu cầu giao sau 17h.</textarea>
+    <div class="section" v-if="order.ghiChu">
+      <h3>Ghi chú</h3>
+      <textarea readonly class="note">{{ order.ghiChu }}</textarea>
     </div>
 
     <div class="section">
       <h3>Lịch sử xử lý</h3>
       <table class="history-table">
-        <thead>
-          <tr>
-            <th>Thời gian</th>
-            <th>Nội dung</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Thời gian</th><th>Nội dung</th></tr></thead>
         <tbody>
-          <tr>
-            <td>10/06/2025 08:15</td>
-            <td>Đơn hàng được tạo</td>
-          </tr>
-          <tr>
-            <td>10/06/2025 10:00</td>
-            <td>Đã xác nhận và đang xử lý</td>
-          </tr>
-          <tr>
-            <td>10/06/2025 15:30</td>
-            <td>Đã bàn giao cho đơn vị vận chuyển</td>
+          <tr v-for="(log,i) in order.lichSu" :key="i">
+            <td>{{ formatDateTime(log.thoiGian) }}</td>
+            <td>{{ log.noiDung }}</td>
           </tr>
         </tbody>
       </table>
@@ -114,7 +74,46 @@
       <button>In hóa đơn</button>
     </div>
   </div>
+  <div v-else class="container"><p>Đang tải...</p></div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import fakeOrder from '../../assets/fakeOrder.json'
+
+
+const order = ref(null)
+const statusIndex = ref(0)
+const steps = [
+  { label: 'Đã đặt', icon: 'fa-solid fa-receipt' },
+  { label: 'Đang xử lý', icon: 'fas fa-cogs' },
+  { label: 'Đang giao', icon: 'fas fa-truck' },
+  { label: 'Hoàn tất', icon: 'fas fa-box-open' }
+]
+const statusMap = { 'Đã đặt': 0, 'Đang xử lý': 1, 'Đang giao': 2, 'Hoàn tất': 3 }
+
+onMounted(async () => {
+  try {
+    // Tạm dùng fakeOrder thay vì gọi API
+    // const { data } = await axios.get('/api/orders/ALLINONE123')
+    // order.value = data
+    // statusIndex.value = statusMap[data.trangThai] ?? 0
+
+    order.value = fakeOrder
+    statusIndex.value = statusMap[fakeOrder.trangThai] ?? 0
+  } catch (e) {
+    console.error('Lỗi tải:', e)
+  }
+})
+
+const formatDate = d => new Date(d).toLocaleDateString('vi-VN')
+const formatDateTime = d => new Date(d).toLocaleString('vi-VN')
+const formatMoney = v => Number(v).toLocaleString('vi-VN') + 'đ'
+</script>
+
+
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
@@ -374,5 +373,9 @@ textarea.note {
     margin: 20px auto;
     padding: 20px;
   }
+
+  .order-status .step .circle i {
+  color: white !important;
+}
 }
 </style>

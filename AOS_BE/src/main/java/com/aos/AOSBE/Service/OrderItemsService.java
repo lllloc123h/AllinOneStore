@@ -40,4 +40,9 @@ public class OrderItemsService {
 	public void orderItemsSaveAll(List<OrderItems> listToSave) {
 		orderItemsRepository.saveAll(listToSave);
 	}
+
+	@Transactional
+	public List<OrderItems> findByOrderId(int orderId) {
+    return orderItemsRepository.findByOrdersId(orderId);
+}
 }

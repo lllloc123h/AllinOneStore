@@ -1,0 +1,29 @@
+{
+  "maDon": "FAKE123",
+  "ngayDat": "2025-06-01T10:00:00",
+  "trangThai": "Đang giao",
+  "tongTien": 1200000,
+  "ghiChu": "Giao trước 18h",
+  "khachHang": {
+    "ten": "Nguyễn Văn A",
+    "diaChi": "123 Lê Lợi, Q.1, TP.HCM",
+    "sdt": "0909123456"
+  },
+  "sanPham": [
+    { "ten": "Áo thun trắng", "soLuong": 2, "gia": 150000, "anh": "https://via.placeholder.com/60" },
+    { "ten": "Quần jeans", "soLuong": 1, "gia": 300000, "anh": "https://via.placeholder.com/60" }
+  ],
+  "vanChuyen": {
+    "ten": "Giao hàng nhanh",
+    "maVanDon": "GHN123456"
+  },
+  "thanhToan": {
+    "phuongThuc": "Thanh toán khi nhận hàng",
+    "trangThai": "Chưa thanh toán"
+  },
+  "lichSu": [
+    { "thoiGian": "2025-06-01T10:00:00", "noiDung": "Đơn hàng được tạo" },
+    { "thoiGian": "2025-06-01T12:00:00", "noiDung": "Đơn hàng đang được xử lý" },
+    { "thoiGian": "2025-06-02T08:00:00", "noiDung": "Đơn hàng đang giao" }
+  ]
+}
