@@ -231,7 +231,6 @@ const btnDraw = ref(false);
 function startDrawingMode() {
   canvas.isDrawingMode = !canvas.isDrawingMode;
   btnDraw.value = canvas.isDrawingMode;
-  mode();
 }
 
 watch(
@@ -262,14 +261,17 @@ function mode() {
 
   let brush;
 
-  if (patternBrushMap[brushName]) {
-    console.log("test ", patternBrushMap[brushName]);
-
+  if (brushName === "texture" && texturePatternBrush) {
+    brush = texturePatternBrush;
+  } else if (patternBrushMap[brushName]) {
     brush = patternBrushMap[brushName];
+
+    if (brushName !== "texture" && typeof brush.getPatternSrcFunction === "function") {
+      brush.source = brush.getPatternSrcFunction();
+    }
   } else if (fabric[`${brushName}Brush`]) {
     brush = new fabric[`${brushName}Brush`](canvas);
   } else {
-    // Nếu không tìm được brush phù hợp thì không thay đổi brush hiện tại
     console.warn(`Không tìm thấy brush phù hợp cho: ${brushName}`);
     return;
   }
