@@ -89,7 +89,7 @@
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
 import { formatDate } from '../../Module/CommonsFunctions.js'
-import Dashboard from '../../Module/Dashboard.vue'
+import Dashboard from '../../Module/DashBoard.vue'
 import createCrudService from '../../../Configs/reusableCRUDService.js'
 import { useRouter } from 'vue-router'
 import ImageUpload from '../../Module/ImageUpload.vue'
