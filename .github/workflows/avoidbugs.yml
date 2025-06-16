@@ -5,16 +5,27 @@ on:
     branches:
       - main
       - KHAPS39199
+      - HAUPS39056
+      - HUYSP39177
+      - KHOAPS39175
+      - LOCPS39108
+      - LOCPS39267
   push:
     branches:
       - main
       - KHAPS39199
+      - HAUPS39056
+      - HUYSP39177
+      - KHOAPS39175
+      - LOCPS39108
+      - LOCPS39267
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
+      # BACKEND Secrets
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
@@ -22,6 +33,7 @@ jobs:
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      # FRONTEND Secrets
       VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
       VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
       VITE_FIREBASE_DATABASE_URL: ${{ secrets.VITE_FIREBASE_DATABASE_URL }}
@@ -57,10 +69,11 @@ jobs:
           java-version: "23"
           distribution: "temurin"
 
-      - name: 🔧 Build backend with Maven
+      - name: 🔧 Build backend with Maven (skip tests)
         working-directory: ./AOS_BE
         run: mvn clean install -DskipTests=true
 
+      # Uncomment to run tests if needed
       # - name: ✅ Run backend tests using H2
       #   working-directory: ./AOS_BE
       #   run: mvn test -Dspring.profiles.active=test
