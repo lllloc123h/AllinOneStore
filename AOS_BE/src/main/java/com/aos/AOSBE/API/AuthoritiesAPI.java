@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AuthoritiesAPI {
 	@Autowired
@@ -31,7 +32,7 @@ public class AuthoritiesAPI {
 	@Autowired
 	private AuthoritiesMapper authoritiesMapper;
 
-	@GetMapping("/Authorities")
+	@GetMapping("/admin/Authorities")
 	public ResponseEntity<List<AuthoritiesDTOS>> getAllAuthoritiesApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,24 +44,38 @@ public class AuthoritiesAPI {
 		return ResponseEntity.ok(authorities);
 	}
 
-	@GetMapping("/Authorities/{id}")
+	@GetMapping("/admin/Authorities/{id}")
 	public ResponseEntity<Authorities> getAuthoritiesByIdApi(@PathVariable int id) {
+		//try{
+		//}catch(Exception e){
+		//}
+		
 		Authorities authorities =(Authorities)authoritiesService.authoritiesFindById(id).orElse(new Authorities());
 		return ResponseEntity.ok(authorities);
 	}
-	@PostMapping("/Authorities")
+	@PostMapping("/admin/Authorities")
 	public ResponseEntity<Authorities> addNewAuthorities(@RequestBody AuthoritiesDTOS entity) {
 	    
 	    Authorities saved = authoritiesService.authoritiesSave(authoritiesMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-
-	@PutMapping("/Authorities")
-	public ResponseEntity<Authorities> updateAuthorities(@RequestBody Authorities entity) {
-	    Authorities updated = authoritiesService.authoritiesSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Authorities/{id}")
+	public ResponseEntity<?> updateAuthorities( @PathVariable int id,@RequestBody AuthoritiesDTOS entity) {
+			try {
+			Authorities  isExist = authoritiesService.authoritiesFindById(id).orElse(null);
+			if (isExist != null) {
+				Authorities  update = authoritiesMapper.mapperToObject(entity);
+				authoritiesService.authoritiesSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Authorities/{id}")
+	@DeleteMapping("/admin/Authorities/{id}")
 	public ResponseEntity<Void> deleteAuthorities(@PathVariable int id) {
 	    authoritiesService.authoritiesDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

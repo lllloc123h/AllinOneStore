@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CustomAPI {
 	@Autowired
@@ -31,7 +32,7 @@ public class CustomAPI {
 	@Autowired
 	private CustomMapper customMapper;
 
-	@GetMapping("/Custom")
+	@GetMapping("/admin/Custom")
 	public ResponseEntity<List<CustomDTOS>> getAllCustomApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +44,7 @@ public class CustomAPI {
 		return ResponseEntity.ok(custom);
 	}
 
-	@GetMapping("/Custom/{id}")
+	@GetMapping("/admin/Custom/{id}")
 	public ResponseEntity<Custom> getCustomByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +53,29 @@ public class CustomAPI {
 		Custom custom =(Custom)customService.customFindById(id).orElse(new Custom());
 		return ResponseEntity.ok(custom);
 	}
-	@PostMapping("/Custom")
+	@PostMapping("/admin/Custom")
 	public ResponseEntity<Custom> addNewCustom(@RequestBody CustomDTOS entity) {
 	    
 	    Custom saved = customService.customSave(customMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Custom")
-	public ResponseEntity<Custom> updateCustom(@RequestBody Custom entity) {
-	    Custom updated = customService.customSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Custom/{id}")
+	public ResponseEntity<?> updateCustom( @PathVariable int id,@RequestBody CustomDTOS entity) {
+			try {
+			Custom  isExist = customService.customFindById(id).orElse(null);
+			if (isExist != null) {
+				Custom  update = customMapper.mapperToObject(entity);
+				customService.customSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Custom/{id}")
+	@DeleteMapping("/admin/Custom/{id}")
 	public ResponseEntity<Void> deleteCustom(@PathVariable int id) {
 	    customService.customDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

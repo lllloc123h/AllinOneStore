@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class NewsAPI {
 	@Autowired
@@ -31,7 +32,7 @@ public class NewsAPI {
 	@Autowired
 	private NewsMapper newsMapper;
 
-	@GetMapping("/News")
+	@GetMapping("/admin/News")
 	public ResponseEntity<List<NewsDTOS>> getAllNewsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +44,7 @@ public class NewsAPI {
 		return ResponseEntity.ok(news);
 	}
 
-	@GetMapping("/News/{id}")
+	@GetMapping("/admin/News/{id}")
 	public ResponseEntity<News> getNewsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +53,29 @@ public class NewsAPI {
 		News news =(News)newsService.newsFindById(id).orElse(new News());
 		return ResponseEntity.ok(news);
 	}
-	@PostMapping("/News")
+	@PostMapping("/admin/News")
 	public ResponseEntity<News> addNewNews(@RequestBody NewsDTOS entity) {
 	    
 	    News saved = newsService.newsSave(newsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/News")
-	public ResponseEntity<News> updateNews(@RequestBody News entity) {
-	    News updated = newsService.newsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/News/{id}")
+	public ResponseEntity<?> updateNews( @PathVariable int id,@RequestBody NewsDTOS entity) {
+			try {
+			News  isExist = newsService.newsFindById(id).orElse(null);
+			if (isExist != null) {
+				News  update = newsMapper.mapperToObject(entity);
+				newsService.newsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/News/{id}")
+	@DeleteMapping("/admin/News/{id}")
 	public ResponseEntity<Void> deleteNews(@PathVariable int id) {
 	    newsService.newsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

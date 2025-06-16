@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class PurchaseOrderItemsAPI {
 	@Autowired
@@ -31,7 +32,7 @@ public class PurchaseOrderItemsAPI {
 	@Autowired
 	private PurchaseOrderItemsMapper purchaseOrderItemsMapper;
 
-	@GetMapping("/PurchaseOrderItems")
+	@GetMapping("/admin/PurchaseOrderItems")
 	public ResponseEntity<List<PurchaseOrderItemsDTOS>> getAllPurchaseOrderItemsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +44,7 @@ public class PurchaseOrderItemsAPI {
 		return ResponseEntity.ok(purchaseOrderItems);
 	}
 
-	@GetMapping("/PurchaseOrderItems/{id}")
+	@GetMapping("/admin/PurchaseOrderItems/{id}")
 	public ResponseEntity<PurchaseOrderItems> getPurchaseOrderItemsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +53,29 @@ public class PurchaseOrderItemsAPI {
 		PurchaseOrderItems purchaseOrderItems =(PurchaseOrderItems)purchaseOrderItemsService.purchaseOrderItemsFindById(id).orElse(new PurchaseOrderItems());
 		return ResponseEntity.ok(purchaseOrderItems);
 	}
-	@PostMapping("/PurchaseOrderItems")
+	@PostMapping("/admin/PurchaseOrderItems")
 	public ResponseEntity<PurchaseOrderItems> addNewPurchaseOrderItems(@RequestBody PurchaseOrderItemsDTOS entity) {
 	    
 	    PurchaseOrderItems saved = purchaseOrderItemsService.purchaseOrderItemsSave(purchaseOrderItemsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/PurchaseOrderItems")
-	public ResponseEntity<PurchaseOrderItems> updatePurchaseOrderItems(@RequestBody PurchaseOrderItems entity) {
-	    PurchaseOrderItems updated = purchaseOrderItemsService.purchaseOrderItemsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/PurchaseOrderItems/{id}")
+	public ResponseEntity<?> updatePurchaseOrderItems( @PathVariable int id,@RequestBody PurchaseOrderItemsDTOS entity) {
+			try {
+			PurchaseOrderItems  isExist = purchaseOrderItemsService.purchaseOrderItemsFindById(id).orElse(null);
+			if (isExist != null) {
+				PurchaseOrderItems  update = purchaseOrderItemsMapper.mapperToObject(entity);
+				purchaseOrderItemsService.purchaseOrderItemsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/PurchaseOrderItems/{id}")
+	@DeleteMapping("/admin/PurchaseOrderItems/{id}")
 	public ResponseEntity<Void> deletePurchaseOrderItems(@PathVariable int id) {
 	    purchaseOrderItemsService.purchaseOrderItemsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

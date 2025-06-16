@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CatalogsAPI {
 	@Autowired
@@ -31,7 +32,7 @@ public class CatalogsAPI {
 	@Autowired
 	private CatalogsMapper catalogsMapper;
 
-	@GetMapping("/Catalogs")
+	@GetMapping("/admin/Catalogs")
 	public ResponseEntity<List<CatalogsDTOS>> getAllCatalogsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +44,7 @@ public class CatalogsAPI {
 		return ResponseEntity.ok(catalogs);
 	}
 
-	@GetMapping("/Catalogs/{id}")
+	@GetMapping("/admin/Catalogs/{id}")
 	public ResponseEntity<Catalogs> getCatalogsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +53,29 @@ public class CatalogsAPI {
 		Catalogs catalogs =(Catalogs)catalogsService.catalogsFindById(id).orElse(new Catalogs());
 		return ResponseEntity.ok(catalogs);
 	}
-	@PostMapping("/Catalogs")
+	@PostMapping("/admin/Catalogs")
 	public ResponseEntity<Catalogs> addNewCatalogs(@RequestBody CatalogsDTOS entity) {
 	    
 	    Catalogs saved = catalogsService.catalogsSave(catalogsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/Catalogs")
-	public ResponseEntity<Catalogs> updateCatalogs(@RequestBody Catalogs entity) {
-	    Catalogs updated = catalogsService.catalogsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/Catalogs/{id}")
+	public ResponseEntity<?> updateCatalogs( @PathVariable int id,@RequestBody CatalogsDTOS entity) {
+			try {
+			Catalogs  isExist = catalogsService.catalogsFindById(id).orElse(null);
+			if (isExist != null) {
+				Catalogs  update = catalogsMapper.mapperToObject(entity);
+				catalogsService.catalogsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/Catalogs/{id}")
+	@DeleteMapping("/admin/Catalogs/{id}")
 	public ResponseEntity<Void> deleteCatalogs(@PathVariable int id) {
 	    catalogsService.catalogsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 
