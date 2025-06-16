@@ -78,6 +78,12 @@
               🎨 Màu chữ:
               <input type="color" v-model="textColor" @input="updateActiveTextbox" />
             </label>
+            <label>
+              Căn chỉnh :
+              <input type="checkbox" v-model="bold" @change="updateActiveTextbox" />B
+              <input type="checkbox" v-model="italic" @change="updateActiveTextbox" />I
+              <input type="checkbox" v-model="underline" @change="updateActiveTextbox" />U
+            </label>
 
             <label>
               🔠 Font:
@@ -99,7 +105,7 @@
                 v-model.number="fontSize"
                 min="10"
                 max="120"
-                @blur="updateActiveTextbox"
+                @input="updateActiveTextbox"
               />
             </label>
 
@@ -184,7 +190,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { fabric } from "fabric";
-import komiImage from "../../assets/imgs/logo.png";
+import komiImage from "../../assets/imgs/komi.jpg";
 
 // Canvas
 const canvasRef = ref();
@@ -202,6 +208,9 @@ const fontFamily = ref("Helvetica");
 const fontSize = ref(24);
 const textAlign = ref("left");
 const exportedJson = ref("");
+const bold = ref(false);
+const italic = ref(false);
+const underline = ref(false);
 
 const drawingMode = ref("Pencil");
 const drawingColor = ref("#000000");
@@ -264,6 +273,7 @@ function mode() {
     affectStroke: true,
     color: drawingShadowColor.value,
   });
+  console.log("test 2", brush);
 
   canvas.freeDrawingBrush = brush;
   if (!patternBrushMap[texture]) {
@@ -402,8 +412,10 @@ onMounted(() => {
   canvas.add(rect);
 
   // Events
-  canvas.on("selection:created", updateFormFromObject);
-  canvas.on("selection:updated", updateFormFromObject);
+  canvas.on("text:changed", updateFormFromObject);
+  canvas.on("text:selection:changed", updateFormFromObject);
+  // canvas.on("selection:updated", updateFormFromObject); // 👈 Thêm dòng này
+
   window.addEventListener("keydown", handleDeleteKey);
 });
 
@@ -448,53 +460,115 @@ function addTextbox() {
     fontFamily: fontFamily.value,
     fontSize: fontSize.value,
     textAlign: textAlign.value,
+    fontWeight: bold.value ? "bold" : "",
+    fontStyle: italic.value ? "italic" : "normal",
+    underline: underline.value,
   });
   canvas.add(textbox).setActiveObject(textbox);
+  console.log("bold ", bold.value);
+  console.log("fontStyle ", italic.value);
+  console.log("under ", underline.value);
 }
 
 // Cập nhật textbox đang chọn
 function updateActiveTextbox() {
-  const activeObj = canvas.getActiveObject();
-  if (!activeObj || activeObj.type !== "textbox") return;
+  const obj = canvas.getActiveObject();
+  if (obj && obj.type === "textbox") {
+    const start = obj.selectionStart;
+    const end = obj.selectionEnd;
 
-  const start = activeObj.selectionStart;
-  const end = activeObj.selectionEnd;
-  for (let i = start; i < end; i++) {
-    activeObj.setSelectionStyles(
-      {
-        // fontWeight:  "bold" ,
-        // fontStyle:"italic",
-        // underline: isUnderline.value,
-        // stroke: strokeColor.value,
-        // strokeWidth: strokeWidth.value,
-        // shadow: new fabric.Shadow({
-        //   color: shadowColor.value,
-        //   blur: shadowBlur.value,
-        //   offsetX: 0,
-        //   offsetY: 0,
-        // }),
-        fill: textColor.value,
-        fontFamily: fontFamily.value,
-        fontSize: fontSize.value,
-        textAlign: textAlign.value,
-      },
-      i,
-      i + 1
-    );
+    const newStyle = {
+      fill: textColor.value,
+      fontFamily: fontFamily.value,
+      fontSize: fontSize.value,
+      fontWeight: bold.value ? "bold" : "",
+      fontStyle: italic.value ? "italic" : "",
+      underline: underline.value,
+    };
+
+    if (start === end) {
+      // Không có vùng chọn → cập nhật từng ký tự + style mặc định
+      const fullLength = obj.text.length;
+      for (let i = 0; i < fullLength; i++) {
+        obj.setSelectionStyles(newStyle, i, i + 1);
+      }
+
+      // 🔥 Cập nhật style mặc định cho ký tự mới gõ vào
+      obj.set({
+        fill: newStyle.fill,
+        fontFamily: newStyle.fontFamily,
+        fontSize: newStyle.fontSize,
+        fontWeight: newStyle.fontWeight,
+        fontStyle: newStyle.fontStyle,
+        underline: newStyle.underline,
+      });
+
+      canvas.requestRenderAll();
+    } else {
+      for (let i = start; i < end; i++) {
+        obj.setSelectionStyles(newStyle, i, i + 1);
+      }
+    }
+
+    canvas.requestRenderAll();
   }
-
-  canvas.renderAll();
 }
 
 // Khi chọn object thì cập nhật form control
-function updateFormFromObject(e) {
+function updateFormFromObject() {
   const obj = canvas.getActiveObject();
-  if (obj && obj.type === "textbox") {
-    textColor.value = obj.fill || "#000000";
-    fontFamily.value = obj.fontFamily || "Helvetica";
-    fontSize.value = obj.fontSize || 24;
-    textAlign.value = obj.textAlign || "left";
+  if (!obj || obj.type !== "textbox") return;
+
+  const start = obj.selectionStart ?? 0;
+  const end = obj.selectionEnd ?? start;
+
+  let styles;
+  console.log("color ", textColor.value);
+  console.log("family ", fontFamily.value);
+  console.log("size ", fontSize.value);
+  console.log("align ", textAlign.value);
+  console.log("bold ", bold.value);
+  console.log("updateFormFromObject styles", styles);
+  if (start !== end) {
+    // Trường hợp có vùng chọn
+    const selectedStyles = obj.getSelectionStyles(start, end);
+    console.log("start != end");
+
+    styles = selectedStyles[0]; // lấy style của ký tự đầu tiên
+  } else if (start > 0) {
+    // Không có vùng chọn, nhưng con trỏ > 0
+    styles = obj.getSelectionStyles(start - 1, start)[0];
+    console.log("start > 0");
+    console.error("kh co vung chon");
+  } else {
+    console.log("start = 0");
+
+    // Nếu không có style riêng → fallback style toàn textbox
+    styles = styles || {
+      fill: obj.fill,
+      fontFamily: obj.fontFamily,
+      fontSize: obj.fontSize,
+      fontWeight: obj.fontWeight,
+      fontStyle: obj.fontStyle,
+      underline: obj.underline,
+    };
   }
+  console.log("start ", start);
+
+  // Cập nhật UI
+  textColor.value = styles.fill || "#000000";
+  fontFamily.value = styles.fontFamily || "Helvetica";
+  fontSize.value = styles.fontSize || 24;
+  textAlign.value = obj.textAlign || "left";
+  bold.value = styles.fontWeight === "bold";
+  italic.value = styles.fontStyle === "italic";
+  underline.value = !!styles.underline;
+  console.error("color ", textColor.value);
+  console.error("family ", fontFamily.value);
+  console.error("size ", fontSize.value);
+  console.error("align ", textAlign.value);
+  console.error("bold ", bold.value);
+  console.error("updateFormFromObject styles", styles);
 }
 
 // Xuất JSON
