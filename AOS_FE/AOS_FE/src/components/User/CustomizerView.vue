@@ -1,201 +1,203 @@
 <template>
-  <div>
-    <!-- Canvas -->
-    <canvas ref="canvasRef" width="800" height="600"></canvas>
-    <div class="controls">
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link active"
-            id="home-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#home-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="home-tab-pane"
-            aria-selected="true"
-          >
-            Văn bản
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="profile-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#profile-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="profile-tab-pane"
-            aria-selected="false"
-          >
-            Vẽ
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="contact-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#contact-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="contact-tab-pane"
-            aria-selected="false"
-          >
-            Contact
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="disabled-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#disabled-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="disabled-tab-pane"
-            aria-selected="false"
-            disabled
-          >
-            Disabled
-          </button>
-        </li>
-      </ul>
-      <div class="tab-content" id="myTabContent">
-        <div
-          class="tab-pane fade show active"
-          id="home-tab-pane"
-          role="tabpanel"
-          aria-labelledby="home-tab"
-          tabindex="0"
-        >
-          <!-- Tool panel -->
-          <div class="controls">
-            <button @click="addTextbox">➕ Thêm textbox</button>
-
-            <label>
-              🎨 Màu chữ:
-              <input type="color" v-model="textColor" @input="updateActiveTextbox" />
-            </label>
-            <label>
-              🎨 Background :
-              <input type="color" v-model="bgColor" @input="updateActiveTextbox" />
-              <input
-                type="checkbox"
-                v-model="isTransparent"
-                @input="updateActiveTextbox"
-              />
-            </label>
-            <label>
-              Căn chỉnh :
-              <input type="checkbox" v-model="bold" @change="updateActiveTextbox" />B
-              <input type="checkbox" v-model="italic" @change="updateActiveTextbox" />I
-              <input type="checkbox" v-model="underline" @change="updateActiveTextbox" />U
-            </label>
-
-            <label>
-              🔠 Font:
-              <select v-model="fontFamily" @change="updateActiveTextbox">
-                <option>Helvetica</option>
-                <option>Arial</option>
-                <option>Courier</option>
-                <option>Georgia</option>
-                <option>Verdana</option>
-                <option>Impact</option>
-                <option>VT323</option>
-              </select>
-            </label>
-
-            <label>
-              🔡 Cỡ chữ:
-              <input
-                type="number"
-                v-model.number="fontSize"
-                min="10"
-                max="120"
-                @input="updateActiveTextbox"
-              />
-            </label>
-
-            <label>
-              🧭 Căn lề:
-              <select v-model="textAlign" @change="updateActiveTextbox">
-                <option value="left">Trái</option>
-                <option value="center">Giữa</option>
-                <option value="right">Phải</option>
-                <option value="justify">Canh đều</option>
-              </select>
-            </label>
-
-            <button @click="exportJSON">💾 Xuất JSON</button>
-          </div>
-        </div>
-        <div
-          class="tab-pane fade"
-          id="profile-tab-pane"
-          role="tabpanel"
-          aria-labelledby="profile-tab"
-          tabindex="0"
-        >
-          <button @click="startDrawingMode">
-            {{ btnDraw ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
-          </button>
-          <span>Chế độ vẽ </span>
-          <select name="" v-model="drawingMode" id="drawing-mode">
-            <option value="Circle">Circle</option>
-            <option value="Pencil">Pencil</option>
-            <option value="Spray">Spray</option>
-            <option value="Pattern">Pattern</option>
-            <option value="hLine">hline</option>
-            <option value="vLine">vline</option>
-            <option value="square">Square</option>
-            <option value="diamond">Diamond</option>
-            <option value="texture">Texture</option>
-          </select>
-          <label>
-            Màu vẽ:
-            <input type="color" v-model="drawingColor" />
-          </label>
-          <label>
-            Độ dày:
-            <input type="number" v-model="drawingLineWidth" min="1" max="50" />
-          </label>
-          <label>
-            Đổ bóng:
-            <input type="number" v-model="drawingShadowWidth" min="0" max="50" />
-          </label>
-          <label>
-            Màu bóng:
-            <input type="color" v-model="drawingShadowColor" />
-          </label>
-        </div>
-        <div
-          class="tab-pane fade"
-          id="contact-tab-pane"
-          role="tabpanel"
-          aria-labelledby="contact-tab"
-          tabindex="0"
-        >
-          <input type="file" @change="handleImageUpload" />
-          <button @click="exportImage">Xuất ảnh</button>
-          <button @click="saveCanvas">💾 Lưu tạm</button>
-          <button @click="loadCanvas">🔁 Tải lại</button>
-          <img
-            v-if="exportedImage"
-            :src="exportedImage"
-            alt="Ảnh xuất"
-            style="margin-top: 1rem; border: 1px solid #ccc; width: 200px; height: 200px"
+  <div class="container-fluid px-4">
+    <div class="row g-4 mt-4 mb-4">
+      <!-- Canvas wrapper -->
+      <div class="col-6">
+        <div class="border rounded h-100">
+          <canvas
+            ref="canvasRef"
+            width="810"
+            height="500"
+            class="w-100 rounded-2"
+            style="display: block"
           />
         </div>
-        <div
-          class="tab-pane fade"
-          id="disabled-tab-pane"
-          role="tabpanel"
-          aria-labelledby="disabled-tab"
-          tabindex="0"
-        >
-          ...
+      </div>
+
+      <!-- Control panel -->
+      <div class="col-6">
+        <div class="d-flex flex-column h-100">
+          <!-- Tabs -->
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="home-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#home-tab-pane"
+                type="button"
+                role="tab"
+              >
+                Văn bản
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="profile-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#profile-tab-pane"
+                type="button"
+                role="tab"
+              >
+                Vẽ
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="contact-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#contact-tab-pane"
+                type="button"
+                role="tab"
+              >
+                Contact
+              </button>
+            </li>
+          </ul>
+
+          <!-- Tab content -->
+          <div class="tab-content border rounded-bottom p-3 flex-grow-1 overflow-auto">
+            <!-- Tab: Văn bản -->
+            <div
+              class="tab-pane fade show active"
+              id="home-tab-pane"
+              role="tabpanel"
+              tabindex="0"
+            >
+              <button @click="addTextbox">➕ Thêm textbox</button>
+              <div class="form-group mt-2">
+                <label
+                  >Màu chữ:
+                  <input type="color" v-model="textColor" @input="updateActiveTextbox"
+                /></label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Background:
+                  <input type="color" v-model="bgColor" @input="updateActiveTextbox" />
+                  <input
+                    type="checkbox"
+                    v-model="isTransparent"
+                    @input="updateActiveTextbox"
+                  />
+                  Trong suốt
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label>Căn chỉnh:</label><br />
+                <input type="checkbox" v-model="bold" @change="updateActiveTextbox" /> B
+                <input type="checkbox" v-model="italic" @change="updateActiveTextbox" /> I
+                <input
+                  type="checkbox"
+                  v-model="underline"
+                  @change="updateActiveTextbox"
+                />
+                U
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Font:
+                  <select v-model="fontFamily" @change="updateActiveTextbox">
+                    <option>Helvetica</option>
+                    <option>Arial</option>
+                    <option>Courier</option>
+                    <option>Georgia</option>
+                    <option>Verdana</option>
+                    <option>Impact</option>
+                    <option>VT323</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Cỡ chữ:
+                  <input
+                    type="number"
+                    v-model.number="fontSize"
+                    min="10"
+                    max="120"
+                    @input="updateActiveTextbox"
+                  />
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Căn lề:
+                  <select v-model="textAlign" @change="updateActiveTextbox">
+                    <option value="left">Trái</option>
+                    <option value="center">Giữa</option>
+                    <option value="right">Phải</option>
+                    <option value="justify">Canh đều</option>
+                  </select>
+                </label>
+              </div>
+              <button class="mt-2" @click="exportJSON">💾 Xuất JSON</button>
+            </div>
+
+            <!-- Tab: Vẽ -->
+            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" tabindex="0">
+              <button @click="startDrawingMode">
+                {{ btnDraw ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
+              </button>
+              <div class="form-group mt-2">
+                <label
+                  >Chế độ vẽ:
+                  <select v-model="drawingMode">
+                    <option value="Circle">Circle</option>
+                    <option value="Pencil">Pencil</option>
+                    <option value="Spray">Spray</option>
+                    <option value="Pattern">Pattern</option>
+                    <option value="hLine">hline</option>
+                    <option value="vLine">vline</option>
+                    <option value="square">Square</option>
+                    <option value="diamond">Diamond</option>
+                    <option value="texture">Texture</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Màu vẽ:
+                  <input type="color" v-model="drawingColor" />
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Độ dày:
+                  <input type="number" v-model="drawingLineWidth" min="1" max="50" />
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Đổ bóng:
+                  <input type="number" v-model="drawingShadowWidth" min="0" max="50" />
+                </label>
+              </div>
+              <div class="form-group mt-2">
+                <label
+                  >Màu bóng:
+                  <input type="color" v-model="drawingShadowColor" />
+                </label>
+              </div>
+            </div>
+
+            <!-- Tab: Contact -->
+            <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" tabindex="0">
+              <input type="file" @change="handleImageUpload" />
+              <button class="mt-2" @click="exportImage">Xuất ảnh</button>
+              <button class="mt-2" @click="saveCanvas">💾 Lưu tạm</button>
+              <button class="mt-2" @click="loadCanvas">🔁 Tải lại</button>
+              <img
+                v-if="exportedImage"
+                :src="exportedImage"
+                alt="Ảnh xuất"
+                class="mt-3 border"
+                style="width: 410px; height: 250px"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -408,7 +410,6 @@ onMounted(() => {
       ctx.drawImage(tempCanvas.lowerCanvasEl, 0, 0);
       return patternCanvas;
     };
-
     // TEXTURE
     const img = new Image();
     img.onload = () => {
@@ -699,24 +700,5 @@ function exportJSON() {
 canvas {
   border: 1px solid #ccc;
   margin-bottom: 1rem;
-}
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.controls label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-pre {
-  background: #f4f4f4;
-  padding: 10px;
-  border-radius: 6px;
-  max-height: 300px;
-  overflow: auto;
 }
 </style>
