@@ -34,10 +34,6 @@ jobs:
         working-directory: ./AOS_FE
         run: cat package.json
 
-      - name: 🔍 List available npm scripts (debug)
-        working-directory: ./AOS_FE
-        run: npm run
-
       - name: 🛠️ Build frontend
         working-directory: ./AOS_FE
         run: npm run build
