@@ -15,9 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
@@ -34,6 +31,7 @@ jobs:
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
       VITE_FIREBASE_MEASUREMENTID: ${{ secrets.VITE_FIREBASE_MEASUREMENTID }}
       VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+
     steps:
       - name: 📥 Checkout source code
         uses: actions/checkout@v3
@@ -48,30 +46,21 @@ jobs:
         working-directory: ./AOS_FE/AOS_FE
         run: npm install
 
-      - name: 🧾 Show files in AOS_FE folder (debug)
-        working-directory: ./AOS_FE/AOS_FE
-        run: ls -la
-
-      - name: 🐛 Show package.json content (debug)
-        working-directory: ./AOS_FE/AOS_FE
-        run: cat package.json
-
       - name: 🛠️ Build frontend
         working-directory: ./AOS_FE/AOS_FE
         run: npm run build
 
       ### --- BACKEND --- ###
-
-      - name: ☕ Set up Java
+      - name: ☕ Set up Java 23
         uses: actions/setup-java@v3
         with:
-          java-version: "23" # or "17" if needed
+          java-version: "23"
           distribution: "temurin"
 
       - name: 🔧 Build backend with Maven
         working-directory: ./AOS_BE
-        run: mvn clean install -DskipTests=false
+        run: mvn clean install -DskipTests=true
 
-      - name: ✅ Run backend tests
+      - name: ✅ Run backend tests using H2
         working-directory: ./AOS_BE
         run: mvn test -Dspring.profiles.active=test
