@@ -233,21 +233,19 @@ function startDrawingMode() {
   btnDraw.value = canvas.isDrawingMode;
 }
 
+watch(btnDraw, (val) => {
+  canvas.isDrawingMode = val;
+  if (val) mode();
+});
 watch(
-  [
-    btnDraw,
-    drawingMode,
-    drawingColor,
-    drawingLineWidth,
-    drawingShadowWidth,
-    drawingShadowColor,
-  ],
+  [drawingMode, drawingColor, drawingLineWidth, drawingShadowWidth, drawingShadowColor],
   () => {
     if (canvas.isDrawingMode) {
       mode();
     }
   }
 );
+
 function mode() {
   const brushName = drawingMode.value;
   const patternBrushMap = {
@@ -288,7 +286,11 @@ function mode() {
   console.log("test 2", brush);
 
   canvas.freeDrawingBrush = brush;
-  if (!patternBrushMap[texture]) {
+  if (
+    drawingMode.value !== "texture" &&
+    patternBrushMap[brushName] &&
+    typeof patternBrushMap[brushName].getPatternSrcFunction === "function"
+  ) {
     patternBrushMap[brushName].source = patternBrushMap[
       brushName
     ].getPatternSrcFunction();
@@ -405,11 +407,11 @@ onMounted(() => {
     img.onload = () => {
       texturePatternBrush = new fabric.PatternBrush(canvas);
       texturePatternBrush.source = img;
-      // Nếu đang chọn texture thì update lại
-      if (drawingMode.value === "texture") {
+      if (drawingMode.value === "texture" && canvas.isDrawingMode) {
         mode();
       }
     };
+
     img.src = komiImage;
   }
 
