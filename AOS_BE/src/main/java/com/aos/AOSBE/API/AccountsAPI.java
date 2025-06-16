@@ -181,12 +181,7 @@ public class AccountsAPI {
 	    }
 	}
 	
-	@PostMapping("/Accounts/logout")
-	public ResponseEntity<?> logout(HttpServletRequest request) {
-	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	    System.out.println("User logout: " + email);
-	    return ResponseEntity.ok("Đã đăng xuất thành công");
-	}
+
 //	@PutMapping("/Accounts/profile")
 //	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
 //    try {
