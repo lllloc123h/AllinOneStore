@@ -25,19 +25,19 @@ jobs:
           node-version: "18"
 
       - name: 📦 Install frontend dependencies
-        working-directory: ./AOS_FE
+        working-directory: ./AOS_FE/AOS_FE
         run: npm install
 
       - name: 🧾 Show files in AOS_FE folder (debug)
-        working-directory: ./AOS_FE
+        working-directory: ./AOS_FE/AOS_FE
         run: ls -la
 
       - name: 🐛 Show package.json content (debug)
-        working-directory: ./AOS_FE
+        working-directory: ./AOS_FE/AOS_FE
         run: cat package.json
 
       - name: 🛠️ Build frontend
-        working-directory: ./AOS_FE
+        working-directory: ./AOS_FE/AOS_FE
         run: npm run build
 
       ### --- BACKEND --- ###
