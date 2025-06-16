@@ -1,24 +1,58 @@
-- name: 🌐 Set up Node.js
-  uses: actions/setup-node@v3
-  with:
-    node-version: "18"
+name: CI Build for FE + BE
 
-- name: 📦 Install frontend dependencies
-  working-directory: ./AOS_FE
-  run: npm install
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
-- name: 🧾 Show files in AOS_FE folder (debug)
-  run: ls -la
-  working-directory: ./AOS_FE
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-- name: 🐛 Show package.json content (debug)
-  run: cat package.json
-  working-directory: ./AOS_FE
+    steps:
+      - name: 📥 Checkout source code
+        uses: actions/checkout@v3
 
-- name: 🔍 List available npm scripts
-  working-directory: ./AOS_FE
-  run: npm run
+      ### --- FRONTEND --- ###
+      - name: 🌐 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
-- name: 🛠️ Build frontend
-  working-directory: ./AOS_FE
-  run: npm run build
+      - name: 📦 Install frontend dependencies
+        working-directory: ./AOS_FE
+        run: npm install
+
+      - name: 🧾 Show files in AOS_FE folder (debug)
+        working-directory: ./AOS_FE
+        run: ls -la
+
+      - name: 🐛 Show package.json content (debug)
+        working-directory: ./AOS_FE
+        run: cat package.json
+
+      - name: 🔍 List available npm scripts (debug)
+        working-directory: ./AOS_FE
+        run: npm run
+
+      - name: 🛠️ Build frontend
+        working-directory: ./AOS_FE
+        run: npm run build
+
+      ### --- BACKEND --- ###
+      - name: ☕ Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "23" # or "17" if needed
+          distribution: "temurin"
+
+      - name: 🔧 Build backend with Maven
+        working-directory: ./AOS_BE
+        run: mvn clean install -DskipTests=false
+
+      - name: ✅ Run backend tests
+        working-directory: ./AOS_BE
+        run: mvn test
