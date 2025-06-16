@@ -2,9 +2,10 @@ package com.aos.AOSBE;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-
+@ActiveProfiles("test")
 class AosBeApplicationTests {
 //	@BeforeAll
 //	static void loadEnv() {
