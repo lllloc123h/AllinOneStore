@@ -1,0 +1,46 @@
+name: CI Build for FE + BE
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout source code
+        uses: actions/checkout@v3
+
+      ### FRONTEND BUILD ###
+      - name: 🌐 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: 📦 Install frontend dependencies
+        working-directory: ./AOS_FE
+        run: npm install
+
+      - name: 🛠️ Build frontend
+        working-directory: ./AOS_FE
+        run: npm run build
+
+      ### BACKEND BUILD ###
+      - name: ☕ Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "23"
+          distribution: "temurin"
+
+      - name: 🔧 Build backend with Maven
+        working-directory: ./AOS_BE
+        run: mvn clean install -DskipTests=false
+
+      - name: ✅ Run backend tests
+        working-directory: ./AOS_BE
+        run: mvn test
