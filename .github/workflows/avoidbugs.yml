@@ -14,6 +14,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+      FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+      VITE_FIREBASE_DATABASE_URL: ${{ secrets.VITE_FIREBASE_DATABASE_URL }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+      VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+      VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+      VITE_FIREBASE_MEASUREMENTID: ${{ secrets.VITE_FIREBASE_MEASUREMENTID }}
+      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
     steps:
       - name: 📥 Checkout source code
         uses: actions/checkout@v3
@@ -41,6 +61,7 @@ jobs:
         run: npm run build
 
       ### --- BACKEND --- ###
+
       - name: ☕ Set up Java
         uses: actions/setup-java@v3
         with:
@@ -53,4 +74,15 @@ jobs:
 
       - name: ✅ Run backend tests
         working-directory: ./AOS_BE
-        run: mvn test
+        run: |
+          mvn test \
+            -Dspring.datasource.url="$DB_URL" \
+            -Dspring.datasource.username="$DB_USERNAME" \
+            -Dspring.datasource.password="$DB_PASSWORD" \
+            -DGOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
+            -DGOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
+            -DFACEBOOK_CLIENT_ID="$FACEBOOK_CLIENT_ID" \
+            -DFACEBOOK_CLIENT_SECRET="$FACEBOOK_CLIENT_SECRET" \
+            -DJWT_SECRET_KEY="$JWT_SECRET_KEY" \
+            -DMAIL_USERNAME="$MAIL_USERNAME" \
+            -DMAIL_PASSWORD="$MAIL_PASSWORD"
