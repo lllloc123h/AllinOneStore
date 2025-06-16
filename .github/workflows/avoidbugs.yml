@@ -16,7 +16,7 @@ jobs:
       - name: 📥 Checkout source code
         uses: actions/checkout@v3
 
-      ### FRONTEND BUILD ###
+      ### --- FRONTEND BUILD --- ###
       - name: 🌐 Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -26,15 +26,19 @@ jobs:
         working-directory: ./AOS_FE
         run: npm install
 
+      - name: 🔍 List available npm scripts (debugging)
+        working-directory: ./AOS_FE
+        run: npm run
+
       - name: 🛠️ Build frontend
         working-directory: ./AOS_FE
         run: npm run build
 
-      ### BACKEND BUILD ###
+      ### --- BACKEND BUILD --- ###
       - name: ☕ Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: "23"
+          java-version: "17" # ✅ Use LTS for Spring Boot
           distribution: "temurin"
 
       - name: 🔧 Build backend with Maven
