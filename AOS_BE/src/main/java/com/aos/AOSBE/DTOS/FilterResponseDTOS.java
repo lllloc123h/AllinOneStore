@@ -13,6 +13,8 @@ public class FilterResponseDTOS {
 	private boolean isCustom;
 	private int turnBuy;
 	private int rating;
+	private String description;
+	private int safetyStock;
 	private boolean isActive;
 	private int qty;
 	private String listPriceRaw;
@@ -24,7 +26,7 @@ public class FilterResponseDTOS {
 	}
 
 	public FilterResponseDTOS(int id, String name, String material, String mainImage, boolean isCustom, int turnBuy,
-			int rating, boolean isActive, int qty, String listPriceRaw) {
+			int rating, String description, boolean isActive, int safetyStock, int qty, String listPriceRaw) {
 		this.id = id;
 		this.name = name;
 		this.material = material;
@@ -32,6 +34,8 @@ public class FilterResponseDTOS {
 		this.isCustom = isCustom;
 		this.turnBuy = turnBuy;
 		this.rating = rating;
+		this.description = description;
+		this.safetyStock = safetyStock;
 		this.isActive = isActive;
 		this.qty = qty;
 		this.listPriceRaw = listPriceRaw;

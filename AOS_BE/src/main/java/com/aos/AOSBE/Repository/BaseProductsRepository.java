@@ -27,13 +27,31 @@ public interface BaseProductsRepository extends JpaRepository<BaseProducts, Inte
 //    Page<BaseProductsDTOS> findBaseProductsByCategoryAndNameAndSkuAndPrice(Pageable pageable, String categories, String name, String sku, Double minPrice, Double maxPrice);
 
 	@Query(value = """
-			    SELECT bp.id, bp.name, bp.material, bp.main_image, bp.is_custom, bp.turn_buy,
-			           bp.rating, bp.is_active, SUM(pit.qty) AS qty,
-			           STRING_AGG(CAST(pit.price AS VARCHAR), ', ') AS list_price_raw
+			    SELECT
+				    bp.id,
+				    bp.name,
+				    bp.material,
+				    bp.main_image,
+				    bp.is_custom,
+				    bp.turn_buy,
+				    bp.rating,
+				    pit.description,
+				    bp.is_active,
+				    pit.safety_stock,
+				    SUM(pit.qty) AS qty,
+				    STRING_AGG(CAST(pit.price AS VARCHAR), ', ') AS list_price_raw
 			    FROM base_products bp
 			    JOIN product_items pit ON bp.id = pit.base_id
-			    GROUP BY bp.id, bp.name, bp.material, bp.main_image, bp.is_custom,
-			             bp.turn_buy, bp.rating, bp.is_active
+			    GROUP BY bp.id,
+			     		 bp.name,
+			     		 bp.material,
+			     		 bp.main_image,
+			     		 bp.is_custom,
+			             bp.turn_buy,
+			             bp.rating,
+			             pit.description,
+			             bp.is_active,
+					   	 pit.safety_stock
 			""", nativeQuery = true)
 	Page<Object[]> findAllWithListPriceRaw(Pageable pageable);
 

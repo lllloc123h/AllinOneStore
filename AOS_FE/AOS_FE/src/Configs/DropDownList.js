@@ -1,14 +1,13 @@
 import api from "./api";
 
-const dropDownVariant = async () => {
-    api.get('/VariantValues')
+async function dropDownVariant() {
+    const VariantValues = await api.get('/VariantValues')
+    return VariantValues.data
 }
 
-async function dropDownBaseProducts(name) {
-    api.get('/' + name)
-    const hashMapById = new Map();
-    products.forEach(product => {
-        hashMapById.set(product.id, product);
-    });
-    return hashMapById;
+async function dropDown(name) {
+    const products = await api.get('/' + name)
+    return products.data;
 }
+
+export { dropDownVariant, dropDown }
