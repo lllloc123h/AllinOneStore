@@ -76,13 +76,16 @@ jobs:
         working-directory: ./AOS_BE
         run: |
           mvn test \
-            -Dspring.datasource.url="$DB_URL" \
-            -Dspring.datasource.username="$DB_USERNAME" \
-            -Dspring.datasource.password="$DB_PASSWORD" \
-            -DGOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
-            -DGOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
-            -DFACEBOOK_CLIENT_ID="$FACEBOOK_CLIENT_ID" \
-            -DFACEBOOK_CLIENT_SECRET="$FACEBOOK_CLIENT_SECRET" \
-            -DJWT_SECRET_KEY="$JWT_SECRET_KEY" \
-            -DMAIL_USERNAME="$MAIL_USERNAME" \
-            -DMAIL_PASSWORD="$MAIL_PASSWORD"
+            -Dspring.datasource.url="${DB_URL}" \
+            -Dspring.datasource.username="${DB_USERNAME}" \
+            -Dspring.datasource.password="${DB_PASSWORD}" \
+            -Dspring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver \
+            -Dspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect \
+            -Dspring.jpa.hibernate.ddl-auto=none \
+            -DGOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}" \
+            -DGOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}" \
+            -DFACEBOOK_CLIENT_ID="${FACEBOOK_CLIENT_ID}" \
+            -DFACEBOOK_CLIENT_SECRET="${FACEBOOK_CLIENT_SECRET}" \
+            -DMAIL_USERNAME="${MAIL_USERNAME}" \
+            -DMAIL_PASSWORD="${MAIL_PASSWORD}" \
+            -DJWT_SECRET_KEY="${JWT_SECRET_KEY}"
