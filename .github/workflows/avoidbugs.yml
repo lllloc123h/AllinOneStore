@@ -56,7 +56,9 @@ jobs:
 
       - name: 📦 Install frontend dependencies
         working-directory: ./AOS_FE/AOS_FE
-        run: npm install
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: 🛠️ Build frontend
         working-directory: ./AOS_FE/AOS_FE
