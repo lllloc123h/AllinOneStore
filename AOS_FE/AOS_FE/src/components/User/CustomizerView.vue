@@ -177,7 +177,16 @@
           aria-labelledby="contact-tab"
           tabindex="0"
         >
-          ...
+          <input type="file" @change="handleImageUpload" />
+          <button @click="exportImage">Xuất ảnh</button>
+          <button @click="saveCanvas">💾 Lưu tạm</button>
+          <button @click="loadCanvas">🔁 Tải lại</button>
+          <img
+            v-if="exportedImage"
+            :src="exportedImage"
+            alt="Ảnh xuất"
+            style="margin-top: 1rem; border: 1px solid #ccc; width: 200px; height: 200px"
+          />
         </div>
         <div
           class="tab-pane fade"
@@ -190,9 +199,6 @@
         </div>
       </div>
     </div>
-
-    <!-- JSON output -->
-    <pre v-if="exportedJson"><code>{{ exportedJson }}</code></pre>
   </div>
 </template>
 
@@ -228,6 +234,7 @@ const drawingLineWidth = ref(15);
 const drawingShadowWidth = ref(0);
 const drawingShadowColor = ref("#000000");
 const btnDraw = ref(false);
+const exportedImage = ref(null);
 function startDrawingMode() {
   canvas.isDrawingMode = !canvas.isDrawingMode;
   btnDraw.value = canvas.isDrawingMode;
@@ -463,7 +470,58 @@ function handleDeleteKey(e) {
     }
   }
 }
+// Hàm xử lý khi chọn ảnh
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    fabric.Image.fromURL(e.target.result, (img) => {
+      const canvasWidth = canvas.getWidth();
+      const targetWidth = canvasWidth * 0.5; // 50% chiều rộng canvas
+      const scale = targetWidth / img.width;
+
+      img.scale(scale);
+      img.set({
+        left: (canvasWidth - img.getScaledWidth()) / 2, // căn giữa
+        top: 100,
+        selectable: true,
+      });
+
+      canvas.add(img);
+    });
+  };
+  reader.readAsDataURL(file);
+}
+// Xuất ảnh từ canvas
+function exportImage() {
+  const dataURL = canvas.toDataURL({
+    format: "png",
+    quality: 1.0, // chất lượng 1.0 là cao nhất
+    multiplier: 2,
+  });
+  exportedImage.value = dataURL;
+
+  // 👉 Nếu muốn tải ảnh về luôn:
+  const link = document.createElement("a");
+  link.href = dataURL;
+  link.download = "canvas-image.png";
+  link.click();
+}
+function saveCanvas() {
+  const json = canvas.toJSON();
+  localStorage.setItem("savedCanvas", JSON.stringify(json));
+}
+
+function loadCanvas() {
+  const saved = localStorage.getItem("savedCanvas");
+  if (!saved) return;
+
+  canvas.loadFromJSON(JSON.parse(saved), () => {
+    canvas.renderAll();
+  });
+}
 // Thêm textbox
 function addTextbox() {
   const textbox = new fabric.Textbox("Nhập chữ ở đây", {
