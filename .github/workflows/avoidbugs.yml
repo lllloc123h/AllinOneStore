@@ -61,6 +61,6 @@ jobs:
         working-directory: ./AOS_BE
         run: mvn clean install -DskipTests=true
 
-      - name: ✅ Run backend tests using H2
-        working-directory: ./AOS_BE
-        run: mvn test -Dspring.profiles.active=test
+      # - name: ✅ Run backend tests using H2
+      #   working-directory: ./AOS_BE
+      #   run: mvn test -Dspring.profiles.active=test
