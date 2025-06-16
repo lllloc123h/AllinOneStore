@@ -79,6 +79,15 @@
               <input type="color" v-model="textColor" @input="updateActiveTextbox" />
             </label>
             <label>
+              🎨 Background :
+              <input type="color" v-model="bgColor" @input="updateActiveTextbox" />
+              <input
+                type="checkbox"
+                v-model="isTransparent"
+                @input="updateActiveTextbox"
+              />
+            </label>
+            <label>
               Căn chỉnh :
               <input type="checkbox" v-model="bold" @change="updateActiveTextbox" />B
               <input type="checkbox" v-model="italic" @change="updateActiveTextbox" />I
@@ -188,7 +197,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { fabric } from "fabric";
 import komiImage from "../../assets/imgs/komi.jpg";
 
@@ -211,7 +220,8 @@ const exportedJson = ref("");
 const bold = ref(false);
 const italic = ref(false);
 const underline = ref(false);
-
+const bgColor = ref("#10C6C3");
+const isTransparent = ref(true);
 const drawingMode = ref("Pencil");
 const drawingColor = ref("#000000");
 const drawingLineWidth = ref(15);
@@ -463,11 +473,34 @@ function addTextbox() {
     fontWeight: bold.value ? "bold" : "",
     fontStyle: italic.value ? "italic" : "normal",
     underline: underline.value,
+    textBackgroundColor: null,
+    splitByGrapheme: true, // BẮT BUỘC để style từng ký tự
   });
+
   canvas.add(textbox).setActiveObject(textbox);
-  console.log("bold ", bold.value);
-  console.log("fontStyle ", italic.value);
-  console.log("under ", underline.value);
+  var finalBgColor = "";
+  if (isTransparent.value) {
+    finalBgColor = null;
+  } else {
+    finalBgColor = bgColor.value;
+  }
+
+  // Set inline style cho toàn bộ ký tự
+  const styles = {
+    fill: textColor.value,
+    fontFamily: fontFamily.value,
+    fontSize: fontSize.value,
+    fontWeight: bold.value ? "bold" : "",
+    fontStyle: italic.value ? "italic" : "",
+    underline: underline.value,
+    textBackgroundColor: finalBgColor,
+  };
+
+  for (let i = 0; i < textbox.text.length; i++) {
+    textbox.setSelectionStyles(styles, i, i + 1);
+  }
+
+  canvas.requestRenderAll();
 }
 
 // Cập nhật textbox đang chọn
@@ -476,7 +509,12 @@ function updateActiveTextbox() {
   if (obj && obj.type === "textbox") {
     const start = obj.selectionStart;
     const end = obj.selectionEnd;
-
+    var finalBgColor = "";
+    if (isTransparent.value) {
+      finalBgColor = null;
+    } else {
+      finalBgColor = bgColor.value;
+    }
     const newStyle = {
       fill: textColor.value,
       fontFamily: fontFamily.value,
@@ -484,12 +522,16 @@ function updateActiveTextbox() {
       fontWeight: bold.value ? "bold" : "",
       fontStyle: italic.value ? "italic" : "",
       underline: underline.value,
+      textBackgroundColor: finalBgColor,
     };
 
     if (start === end) {
       // Không có vùng chọn → cập nhật từng ký tự + style mặc định
       const fullLength = obj.text.length;
       for (let i = 0; i < fullLength; i++) {
+        obj.set({
+          textAlign: textAlign.value,
+        });
         obj.setSelectionStyles(newStyle, i, i + 1);
       }
 
@@ -501,15 +543,21 @@ function updateActiveTextbox() {
         fontWeight: newStyle.fontWeight,
         fontStyle: newStyle.fontStyle,
         underline: newStyle.underline,
+        textBackgroundColor: newStyle.textBackgroundColor,
       });
-
+      console.log("requestRenderAll ", textAlign.value);
       canvas.requestRenderAll();
     } else {
+      obj.set({
+        textAlign: textAlign.value,
+      });
       for (let i = start; i < end; i++) {
         obj.setSelectionStyles(newStyle, i, i + 1);
       }
     }
-
+    obj.set({
+      textAlign: textAlign.value,
+    });
     canvas.requestRenderAll();
   }
 }
@@ -551,6 +599,7 @@ function updateFormFromObject() {
       fontWeight: obj.fontWeight,
       fontStyle: obj.fontStyle,
       underline: obj.underline,
+      textBackgroundColor: obj.textBackgroundColor,
     };
   }
   console.log("start ", start);
@@ -563,11 +612,18 @@ function updateFormFromObject() {
   bold.value = styles.fontWeight === "bold";
   italic.value = styles.fontStyle === "italic";
   underline.value = !!styles.underline;
+  if (styles.textBackgroundColor == null) {
+    isTransparent.value = true;
+  } else {
+    isTransparent.value = false;
+    bgColor.value = styles.textBackgroundColor;
+  }
   console.error("color ", textColor.value);
   console.error("family ", fontFamily.value);
   console.error("size ", fontSize.value);
   console.error("align ", textAlign.value);
   console.error("bold ", bold.value);
+  console.error("bg ", bgColor.value);
   console.error("updateFormFromObject styles", styles);
 }
 
