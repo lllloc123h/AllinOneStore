@@ -21,7 +21,7 @@
 </style>
 <script setup>
 import Table from "../../Module/Table.vue";
-import Dashboard from "../../Module/Dashboard.vue";
+import Dashboard from "../../Module/DashBoard.vue";
 import { useRouter } from 'vue-router'
 import { ref, reactive, watch } from 'vue'
 import FilterDropDown from "../../Module/FilterDropDown.vue";
@@ -63,13 +63,17 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'name', type: 'text' },
+          	{ name: 'accountId', type: 'number' },
+          	{ name: 'productItemId', type: 'number' },
+          	{ name: 'qty', type: 'number' },
  
 ]
 
 const filters = ref({
   			id: '',
-  			name: '',
+  			accountId: '',
+  			productItemId: '',
+  			qty: '',
   			createdAt: '',
   			updatedAt: '',
 })

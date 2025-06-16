@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ShippingMethodsAPI {
 	@Autowired
@@ -31,7 +32,7 @@ public class ShippingMethodsAPI {
 	@Autowired
 	private ShippingMethodsMapper shippingMethodsMapper;
 
-	@GetMapping("/ShippingMethods")
+	@GetMapping("/admin/ShippingMethods")
 	public ResponseEntity<List<ShippingMethodsDTOS>> getAllShippingMethodsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
@@ -43,7 +44,7 @@ public class ShippingMethodsAPI {
 		return ResponseEntity.ok(shippingMethods);
 	}
 
-	@GetMapping("/ShippingMethods/{id}")
+	@GetMapping("/admin/ShippingMethods/{id}")
 	public ResponseEntity<ShippingMethods> getShippingMethodsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
@@ -52,18 +53,29 @@ public class ShippingMethodsAPI {
 		ShippingMethods shippingMethods =(ShippingMethods)shippingMethodsService.shippingMethodsFindById(id).orElse(new ShippingMethods());
 		return ResponseEntity.ok(shippingMethods);
 	}
-	@PostMapping("/ShippingMethods")
+	@PostMapping("/admin/ShippingMethods")
 	public ResponseEntity<ShippingMethods> addNewShippingMethods(@RequestBody ShippingMethodsDTOS entity) {
 	    
 	    ShippingMethods saved = shippingMethodsService.shippingMethodsSave(shippingMethodsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/ShippingMethods")
-	public ResponseEntity<ShippingMethods> updateShippingMethods(@RequestBody ShippingMethods entity) {
-	    ShippingMethods updated = shippingMethodsService.shippingMethodsSave(entity); 
-	    return ResponseEntity.ok(updated);
+	@PutMapping("/admin/ShippingMethods/{id}")
+	public ResponseEntity<?> updateShippingMethods( @PathVariable int id,@RequestBody ShippingMethodsDTOS entity) {
+			try {
+			ShippingMethods  isExist = shippingMethodsService.shippingMethodsFindById(id).orElse(null);
+			if (isExist != null) {
+				ShippingMethods  update = shippingMethodsMapper.mapperToObject(entity);
+				shippingMethodsService.shippingMethodsSave(update);
+				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		} 
 	}
-	@DeleteMapping("/ShippingMethods/{id}")
+	@DeleteMapping("/admin/ShippingMethods/{id}")
 	public ResponseEntity<Void> deleteShippingMethods(@PathVariable int id) {
 	    shippingMethodsService.shippingMethodsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 

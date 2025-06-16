@@ -72,106 +72,106 @@
 <style></style>
 
 <script setup>
-  import { reactive, ref, onMounted, watch } from 'vue'
-  import { formatDate } from '../../Module/CommonsFunctions.js'
-  import Dashboard from '../../Module/Dashboard.vue'
-  import createCrudService from '../../../Configs/reusableCRUDService.js'
-  import { useRouter } from 'vue-router'
-	const router = useRouter()
-  import axios from 'axios'
-  import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-  import 'bootstrap/dist/css/bootstrap.min.css'
-  const props = defineProps({
-      TableName: {
-          type: String,
-          required: true
-      },
-      action: {
-          type: String,
-          required: true
-      },
-      id: {
-          type: String,
-          required: true
-      }
-  })
-  const formTableService = createCrudService(props.TableName);
+    import { reactive, ref, onMounted, watch } from 'vue'
+    import { formatDate } from '../../Module/CommonsFunctions.js'
+    import Dashboard from '../../Module/DashBoard.vue'
+    import createCrudService from '../../../Configs/reusableCRUDService.js'
+    import { useRouter } from 'vue-router'
+  	const router = useRouter()
+    import axios from 'axios'
+    import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+    import 'bootstrap/dist/css/bootstrap.min.css'
+    const props = defineProps({
+        TableName: {
+            type: String,
+            required: true
+        },
+        action: {
+            type: String,
+            required: true
+        },
+        id: {
+            type: String,
+            required: true
+        }
+    })
+    const formTableService = createCrudService(props.TableName);
 
-  const formData = reactive({
-  			id: '',
-  			name: '',
-  			description: '',
-  			isActive: '',
-  			createdAt: '',
-  			updatedAt: '',
-  })
+    const formData = reactive({
+    			id: '',
+    			name: '',
+    			description: '',
+    			isActive: '',
+    			createdAt: '',
+    			updatedAt: '',
+    })
 
-  const listDashBoard = [
-  	"Accounts",
-  	"Authorities",
-  	"BaseProducts",
-  	"Cancels",
-  	"CartItems",
-  	"Catalogs",
-  	"Categories",
-  	"CostHistories",
-  	"Coupons",
-  	"News",
-  	"OrderItems",
-  	"Orders",
-  	"PaymentMethods",
-  	"PriceHistories",
-  	"ProductImages",
-  	"ProductItems",
-  	"PromotionProduct",
-  	"Promotions",
-  	"PurchaseOrderItems",
-  	"PurchaseOrders",
-  	"Returns",
-  	"Reviews",
-  	"Roles",
-  	"ShippingMethods",
-  	"UserAddresses",
-  	"VariantValues",
-  	"Variants",
-  ]
+    const listDashBoard = [
+    	"Accounts",
+    	"Authorities",
+    	"BaseProducts",
+    	"Cancels",
+    	"CartItems",
+    	"Catalogs",
+    	"Categories",
+    	"CostHistories",
+    	"Coupons",
+    	"News",
+    	"OrderItems",
+    	"Orders",
+    	"PaymentMethods",
+    	"PriceHistories",
+    	"ProductImages",
+    	"ProductItems",
+    	"PromotionProduct",
+    	"Promotions",
+    	"PurchaseOrderItems",
+    	"PurchaseOrders",
+    	"Returns",
+    	"Reviews",
+    	"Roles",
+    	"ShippingMethods",
+    	"UserAddresses",
+    	"VariantValues",
+    	"Variants",
+    ]
 
 
 
-  async function submitUpdateForm() {
-  console.log(formData)
-  try {
-    const response = await formTableService.update(props.id, formData)
-    console.log('Insert successful:', response.data)
-    router.push(`/Admin/${props.TableName}`)
-  } catch (error) {
-    console.error('Insert failed:', error)
+    async function submitUpdateForm() {
+    console.log(formData)
+    try {
+      const response = await formTableService.update(props.id, formData)
+      console.log('Insert successful:', response.data)
+      router.push(`/Admin/${props.TableName}`)
+    } catch (error) {
+      console.error('Insert failed:', error)
+    }
   }
-}
 
 
-async function submitForm() {
-  console.log(formData)
-  try {
-    const response = await formTableService.post(formData)
-    console.log('Insert successful:', response.data)
-    router.push(`/Admin/${props.TableName}`)
-  } catch (error) {
-    console.error('Insert failed:', error)
+  async function submitForm() {
+    console.log(formData)
+    try {
+      const response = await formTableService.post(formData)
+      console.log('Insert successful:', response.data)
+      router.push(`/Admin/${props.TableName}`)
+    } catch (error) {
+      console.error('Insert failed:', error)
+    }
   }
-}
-const fetchData = async () => {
-  if (!props.TableName) return
-  try {
-    const response = await formTableService.getById(props.id)
-    response.data.createdAt = formatDate(response.data.createdAt)
-    response.data.updatedAt = formatDate(response.data.updatedAt)
-    Object.assign(formData, response.data)
-  } catch (err) {
-    console.error('Get failed:', err)
+  const fetchData = async () => {
+    if (!props.TableName) return
+    try {
+      const response = await formTableService.getById(props.id)
+      response.data.createdAt = formatDate(response.data.createdAt)
+      response.data.updatedAt = formatDate(response.data.updatedAt)
+      Object.assign(formData, response.data)
+    } catch (err) {
+      console.error('Get failed:', err)
+    }
   }
-}
 
-  onMounted(fetchData)
-  watch(() => props.id, fetchData)
+    onMounted(fetchData)
+    watch(() => props.id, fetchData)
 </script>
