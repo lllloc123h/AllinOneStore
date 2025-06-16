@@ -26,10 +26,6 @@ jobs:
         working-directory: ./AOS_FE
         run: npm install
 
-      - name: 🔍 List available npm scripts (debugging)
-        working-directory: ./AOS_FE
-        run: npm run
-
       - name: 🛠️ Build frontend
         working-directory: ./AOS_FE
         run: npm run build
