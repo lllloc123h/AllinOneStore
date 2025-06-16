@@ -1,0 +1,24 @@
+- name: 🌐 Set up Node.js
+  uses: actions/setup-node@v3
+  with:
+    node-version: "18"
+
+- name: 📦 Install frontend dependencies
+  working-directory: ./AOS_FE
+  run: npm install
+
+- name: 🧾 Show files in AOS_FE folder (debug)
+  run: ls -la
+  working-directory: ./AOS_FE
+
+- name: 🐛 Show package.json content (debug)
+  run: cat package.json
+  working-directory: ./AOS_FE
+
+- name: 🔍 List available npm scripts
+  working-directory: ./AOS_FE
+  run: npm run
+
+- name: 🛠️ Build frontend
+  working-directory: ./AOS_FE
+  run: npm run build
