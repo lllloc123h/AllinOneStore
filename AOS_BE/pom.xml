@@ -126,6 +126,10 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
@@ -153,52 +157,52 @@
 	</dependencies>
 
 	<build>
-  <plugins>
-    <!-- ✅ FIXED: Maven Compiler Plugin with preview and Lombok support -->
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-compiler-plugin</artifactId>
-      <version>3.11.0</version>
-      <configuration>
-        <release>23</release>
-        <compilerArgs>
-          <arg>--enable-preview</arg>
-        </compilerArgs>
-        <annotationProcessorPaths>
-          <path>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version> <!-- ✅ ADDED version -->
-          </path>
-        </annotationProcessorPaths>
-      </configuration>
-    </plugin>
+		<plugins>
+			<!-- ✅ FIXED: Maven Compiler Plugin with preview and Lombok support -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>23</release>
+					<compilerArgs>
+						<arg>--enable-preview</arg>
+					</compilerArgs>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.30</version> <!-- ✅ ADDED version -->
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
 
-    <!-- ✅ FIXED: Surefire Plugin for test phase -->
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <version>3.1.2</version>
-      <configuration>
-        <argLine>--enable-preview</argLine>
-      </configuration>
-    </plugin>
+			<!-- ✅ FIXED: Surefire Plugin for test phase -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<argLine>--enable-preview</argLine>
+				</configuration>
+			</plugin>
 
-    <!-- ✅ FIXED: Spring Boot Plugin -->
-    <plugin>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-maven-plugin</artifactId>
-      <configuration>
-        <excludes>
-          <exclude>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-          </exclude>
-        </excludes>
-      </configuration>
-    </plugin>
-  </plugins>
-</build>
+			<!-- ✅ FIXED: Spring Boot Plugin -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 
 
