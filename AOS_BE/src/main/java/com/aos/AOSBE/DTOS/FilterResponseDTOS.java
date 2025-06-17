@@ -10,6 +10,7 @@ public class FilterResponseDTOS {
 	private String name;
 	private String material;
 	private String mainImage;
+	private int categoryId;
 	private boolean isCustom;
 	private int turnBuy;
 	private int rating;
@@ -25,12 +26,14 @@ public class FilterResponseDTOS {
 		return List.of(listPriceRaw.split(",")).stream().map(String::trim).map(Double::parseDouble).toList();
 	}
 
-	public FilterResponseDTOS(int id, String name, String material, String mainImage, boolean isCustom, int turnBuy,
-			int rating, String description, boolean isActive, int safetyStock, int qty, String listPriceRaw) {
+	public FilterResponseDTOS(int id, String name, String material, String mainImage, int categoryId, boolean isCustom,
+			int turnBuy, int rating, String description, boolean isActive, int safetyStock, int qty,
+			String listPriceRaw) {
 		this.id = id;
 		this.name = name;
 		this.material = material;
 		this.mainImage = mainImage;
+		this.categoryId = categoryId;
 		this.isCustom = isCustom;
 		this.turnBuy = turnBuy;
 		this.rating = rating;

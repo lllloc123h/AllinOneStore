@@ -1,16 +1,15 @@
 package com.aos.AOSBE.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aos.AOSBE.DTOS.FilterResponseDTOS;
 import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Mapper.BaseProductsMapper;
 import com.aos.AOSBE.Repository.BaseProductsRepository;
@@ -48,32 +47,10 @@ public class BaseProductsService {
 //                .map(base -> baseProductsMapper.mapper(base))
 //                .toList();
 //    }
-	public List<FilterResponseDTOS> baseProductsFindAllAsDto(int page, int size) {
+	public Page<Object[]> baseProductsFindAllAsDto(int page, int size, String searchByKeyWord, int searchByCategory) {
 		{
 			Pageable pageable = PageRequest.of(page, size);
-			List<FilterResponseDTOS> FilterResponseMapped = new ArrayList<>();
-			List<Object[]> FilterResponse = baseProductsRepository.findAllWithListPriceRaw(pageable).getContent();
-			FilterResponse.forEach(e -> {
-				FilterResponseDTOS item = new FilterResponseDTOS();
-				item.setId((int) e[0]);
-				item.setName((String) e[1]);
-				item.setMaterial((String) e[2]);
-				item.setMainImage((String) e[3]);
-				item.setCustom((Boolean) e[4]);
-				item.setTurnBuy((Integer) e[5]);
-				item.setRating((Integer) e[6]);
-				item.setDescription((String) e[7]);
-				item.setActive((Boolean) e[8]);
-				item.setSafetyStock((Integer) e[9]);
-				item.setQty(((Number) e[10]).intValue()); // handle BigInteger
-				item.setListPriceRaw((String) e[11]);
-				FilterResponseMapped.add(item);
-			});
-			return FilterResponseMapped;
-//      return baseProductsRepository.findAllAsDto(pageable,category,name,sku,minPrice,maxPrice);
-//    		  .stream()
-//              .map(base -> baseProductsMapper.mapper(base))
-//              .toList();
+			return baseProductsRepository.findAllWithListPriceRaw(pageable, searchByKeyWord, searchByCategory);
 		}
 	}
 }
