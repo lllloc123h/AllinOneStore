@@ -62,9 +62,11 @@ public class BaseProductsService {
 				item.setCustom((Boolean) e[4]);
 				item.setTurnBuy((Integer) e[5]);
 				item.setRating((Integer) e[6]);
-				item.setActive((Boolean) e[7]);
-				item.setQty(((Number) e[8]).intValue()); // handle BigInteger
-				item.setListPriceRaw((String) e[9]);
+				item.setDescription((String) e[7]);
+				item.setActive((Boolean) e[8]);
+				item.setSafetyStock((Integer) e[9]);
+				item.setQty(((Number) e[10]).intValue()); // handle BigInteger
+				item.setListPriceRaw((String) e[11]);
 				FilterResponseMapped.add(item);
 			});
 			return FilterResponseMapped;
