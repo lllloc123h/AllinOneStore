@@ -1,11 +1,13 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,10 +34,18 @@ public class AccountsService {
 	private RolesRepository rolesRepository;
 	@Autowired
 	private UserAddressesRepository addressRepository;
+	@Autowired
+	private GenericSpecificationBuilder specBuilder;
 
 	public List<Accounts> accountsFindAll(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return accountsRepository.findAll(pageable).getContent();
+	}
+
+	public List<Accounts> accountsFindWithFilter(int page, int size, Map<String, Object> filters) {
+		Pageable pageable = PageRequest.of(page, size);
+		Specification<Accounts> spec = specBuilder.buildFilter(filters);
+		return accountsRepository.findAll(spec, pageable).getContent();
 	}
 
 	public Accounts accountsSave(Accounts accounts) {

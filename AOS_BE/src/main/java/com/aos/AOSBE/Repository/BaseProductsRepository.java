@@ -3,6 +3,7 @@ package com.aos.AOSBE.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.aos.AOSBE.Entity.BaseProducts;
 
 @Repository
-public interface BaseProductsRepository extends JpaRepository<BaseProducts, Integer> {
+public interface BaseProductsRepository
+		extends JpaRepository<BaseProducts, Integer>, JpaSpecificationExecutor<BaseProducts> {
 	// Add custom query methods here if needed
 
 //    SELECT bp.id,bp.name,bp.material,bp.main_image,bp.is_active,bp.is_custom,bp.turn_buy,bp.rating
