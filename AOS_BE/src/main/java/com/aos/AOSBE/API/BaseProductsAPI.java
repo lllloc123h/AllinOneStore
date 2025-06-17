@@ -40,7 +40,7 @@ public class BaseProductsAPI {
 
 	@GetMapping("/admin/BaseProducts")
 	public ResponseEntity<List<FilterResponseDTOS>> getAllBaseProductsAdminRoleApi(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "9") int size,
 			@RequestParam(defaultValue = "") String search) {
 		List<FilterResponseDTOS> baseProducts = baseProductsService.baseProductsFindAllAsDto(page, size);
 		return ResponseEntity.ok(baseProducts);
