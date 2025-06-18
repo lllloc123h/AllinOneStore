@@ -1,4 +1,4 @@
-name: Build and Deploy to GitHub Pages (Alternative)
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
           rm -rf node_modules package-lock.json
           npm cache clean --force
           npm install
-          npm install @rollup/rollup-linux-x64-gnu --save-dev
+          npm install terser --save-dev
 
       - name: Build for Production
         run: |
