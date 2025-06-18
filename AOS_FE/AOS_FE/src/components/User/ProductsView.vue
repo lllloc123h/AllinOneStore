@@ -189,6 +189,7 @@ import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import api from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
+import { finalHandleCartProgress } from "../../Configs/cart";
 const mapVarriants = ref({});
 const data = ref([])
 const selected = ref([]);
@@ -221,6 +222,20 @@ onMounted(() => {
     })
     .catch((erorr) => console.log(erorr));
 });
+const itemCart = ref({
+  id: '',
+  accounts: authService.getUserName(),
+  productItems: '',
+  qty: '',
+  createdAt: '',
+  updatedAt: ''
+})
+const addToCart = () => {
+  if (!selectedProduct.value || quantity.value <= 0) return;
+  finalHandleCartProgress(itemCart.value)
+  alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
+  closeModal();
+};
 
 const fetchData = async () => {
   try {
@@ -235,11 +250,9 @@ const fetchData = async () => {
       minPriceReq.value = 1; // or "" if needed
     }
     // console.log(minPriceReq.value, maxPriceReq.value)
-
     const response = await axios.get(
       `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}`
     );
-
     data.value = response.data.totalPages
     products.value = response.data.content;
     console.log(response.data);

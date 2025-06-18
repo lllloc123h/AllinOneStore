@@ -31,16 +31,26 @@ public class CartHandleAPI {
 
 	@PostMapping("/addToCart")
 	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
-		CartItems cartItem = cartItemsMapper.mapperToObject(entity);
-		CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(cartItem.getAccounts().getEmail(),
-				cartItem.getProductItems().getId());
-		if (item != null) {
-			item.setQty(item.getQty() + cartItem.getQty());
-			cartItemsService.cartItemsSave(item);
-			return ResponseEntity.ok(item);
-		} else {
-			cartItemsService.cartItemsSave(cartItem);
-			return ResponseEntity.ok(cartItem);
+
+
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			CartItems cartItem = cartItemsMapper.mapperToObject(entity);
+			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(userEmail,
+					cartItem.getProductItems().getId());
+			if (item != null) {
+				item.setQty(item.getQty() + cartItem.getQty());
+				cartItemsService.cartItemsSave(item);
+				return ResponseEntity.ok(item);
+			} else {
+				cartItemsService.cartItemsSave(cartItem);
+				return ResponseEntity.ok(cartItem);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+
 		}
 	}
 
