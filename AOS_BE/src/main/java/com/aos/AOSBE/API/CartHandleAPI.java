@@ -1,6 +1,7 @@
 package com.aos.AOSBE.API;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,8 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.CartItemsDTOS;
@@ -30,18 +31,27 @@ public class CartHandleAPI {
 	AccountsService accountsService;
 
 	@PostMapping("/addToCart")
-	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
-		CartItems cartItem = cartItemsMapper.mapperToObject(entity);
-		CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(cartItem.getAccounts().getEmail(),
-				cartItem.getProductItems().getId());
-		if (item != null) {
-			item.setQty(item.getQty() + cartItem.getQty());
-			cartItemsService.cartItemsSave(item);
-			return ResponseEntity.ok(item);
-		} else {
-			cartItemsService.cartItemsSave(cartItem);
-			return ResponseEntity.ok(cartItem);
+	public ResponseEntity<?> addToCart(@RequestParam CartItemsDTOS entity) {
+
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			CartItems cartItem = cartItemsMapper.mapperToObject(entity);
+			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(userEmail,
+					cartItem.getProductItems().getId());
+			if (item != null) {
+				item.setQty(item.getQty() + cartItem.getQty());
+				cartItemsService.cartItemsSave(item);
+				return ResponseEntity.ok(item);
+			} else {
+				cartItemsService.cartItemsSave(cartItem);
+				return ResponseEntity.ok(cartItem);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
+
 	}
 
 	@GetMapping("/cart")

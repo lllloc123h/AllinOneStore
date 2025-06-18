@@ -27,24 +27,6 @@
               </div>
             </div>
           </div>
-          <div class="accordion accordion-flush" id="accordionFlushExample">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                  Accordion Item #1
-                </button>
-              </h2>
-              <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                <div class="accordion-body">
-                  Placeholder content for this accordion, which is intended to demonstrate
-                  the <code>.accordion-flush</code> class. This is the first item’s
-                  accordion body.
-                </div>
-              </div>
-            </div>
-          </div>
-
           <hr class="divider" />
 
           <div class="filter-group">
@@ -128,7 +110,7 @@
         </div>
         <h3 class="mt-4">hien thi 12 trong so 34 san pham</h3>
 
-        <div class="row mt-4 g-4">
+        <div class="product-flatform row mt-4 g-4">
           <div v-for="product in products" :key="product.id" class="col-4">
             <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
               <!-- Label Giảm giá -->
@@ -162,7 +144,7 @@
 
                   <div class="main-section rounded-4">
                     <button class="first-button">Còn hàng</button>
-                    <button class="second-button">
+                    <button class="second-button" @click="openModal(product)">
                       <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
                         stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
                         <circle cx="9" cy="21" r="1"></circle>
@@ -176,7 +158,31 @@
               </div>
             </div>
           </div>
-
+          <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5)">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ selectedProduct?.name }}</h5>
+                  <button type="button" class="btn-close" @click="closeModal"></button>
+                </div>
+                <div class="modal-body">
+                  <img
+                    :src="selectedProduct?.imageUrl || 'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'"
+                    class="img-fluid mb-3" />
+                  <p>{{ selectedProduct?.description }}</p>
+                  <p><strong>Giá:</strong> {{ selectedProduct?.price || '---' }} VND</p>
+                  <p><strong>Vật liệu:</strong> {{ selectedProduct?.material || '---' }} </p>
+                  <p><strong>Biến thể:</strong> {{ selectedProduct?.sku || '---' }} </p>
+                  <label for="qtyInput">Số lượng:</label>
+                  <input v-model="quantity" type="number" id="qtyInput" min="1" class="form-control w-25" />
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" @click="closeModal">Đóng</button>
+                  <button class="btn btn-primary" @click="addToCart">Thêm vào giỏ</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <PageNavigative :totalPage="data" v-model:currentPage="pageIndex" v-model:currentSize="pageSize" />
         </div>
       </div>
@@ -187,8 +193,9 @@
 import { ref, onMounted, watch } from "vue";
 
 import axios from "axios";
-import api from "../../Configs/api";
+import api, { authService } from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
+import { finalHandleCartProgress } from "../../Configs/cart";
 const mapVarriants = ref({});
 const data = ref([])
 const selected = ref([]);
@@ -201,6 +208,19 @@ const products = ref([]);
 const pageIndex = ref(0);
 const pageSize = ref(5);
 const totalPages = ref(0);
+const showModal = ref(false);
+const selectedProduct = ref(null);
+const quantity = ref(1);
+
+const openModal = (product) => {
+  selectedProduct.value = product;
+  showModal.value = true;
+  itemCart.value.productItems = product.id;
+  itemCart.value.qty = quantity.value;
+};
+const closeModal = () => {
+  showModal.value = false;
+};
 onMounted(() => {
   api
     .get("/VariantValues")
@@ -215,12 +235,26 @@ onMounted(() => {
   api
     .get("/BaseProducts")
     .then((resp) => {
-      console.log(resp.data);
+      // console.log(resp.data);
       data.value = resp.data.totalPages
       products.value = resp.data;
     })
     .catch((erorr) => console.log(erorr));
 });
+const itemCart = ref({
+  id: '',
+  accounts: authService.getUserName(),
+  productItems: '',
+  qty: '',
+  createdAt: '',
+  updatedAt: ''
+})
+const addToCart = () => {
+  if (!selectedProduct.value || quantity.value <= 0) return;
+  finalHandleCartProgress(itemCart.value)
+  alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
+  closeModal();
+};
 
 const fetchData = async () => {
   try {
@@ -242,7 +276,7 @@ const fetchData = async () => {
 
     data.value = response.data.totalPages
     products.value = response.data.content;
-    console.log(response.data);
+    // console.log(response.data);
   } catch (error) {
     console.error("Error fetching variants:", error);
   }
@@ -252,8 +286,18 @@ watch(() => selected.value["Màu sắc"], fetchData);
 watch(() => selectedPrice.value, fetchData);
 watch(() => pageIndex.value, fetchData);
 watch(() => pageSize.value, fetchData);
+watch(() => quantity.value, () => itemCart.value.qty = quantity.value);
 </script>
 <style scoped>
+/* .product-flatform {
+  position: relative;
+
+}
+
+.modal {
+  position: absolute;
+} */
+
 .filter-group h3 {
   font-size: 18px;
   font-weight: bold;

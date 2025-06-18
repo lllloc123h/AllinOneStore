@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import router from '../router' // ✅ đúng, vì bạn đã export router ở router/index.js
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
+import { syncLocalCartToServer } from './cart';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -72,6 +73,7 @@ const authService = {
         localStorage.setItem('jwtToken', response.data.token);
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         tokenRef.value = '1';
+        syncLocalCartToServer();
         router.push(localStorage.getItem('redirectTo') || '/')
       })
       .catch(error => console.log('Đăng nhập thất bại ', error.response))
@@ -87,6 +89,19 @@ const authService = {
       try {
         const roles = authService.parseJwt(tokenRef.value).roles
         return Array.isArray(roles) && roles.includes('ADMIN');
+      } catch (error) {
+        console.error('Invalid payload:', error);
+        return false;
+      }
+    }
+  },
+  getUserName() {
+    if (localStorage.getItem("jwtToken")) {
+      try {
+        const username = authService.parseJwt(tokenRef.value).sub
+        // // .username
+        // console.log(username)
+        return username;
       } catch (error) {
         console.error('Invalid payload:', error);
         return false;
