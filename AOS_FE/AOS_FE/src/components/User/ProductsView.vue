@@ -52,19 +52,19 @@
             <h3><span class="line"></span> Khoảng giá</h3>
             <ul class="filter-list">
               <li>
-                <label><input type="checkbox" name="price" value="100-200" /> 100k -
+                <label><input type="radio" name="price" v-model="selectedPrice" value="100-200" /> 100k -
                   200k</label>
               </li>
               <li>
-                <label><input type="checkbox" name="price" value="200-500" /> 200k -
+                <label><input type="radio" name="price" v-model="selectedPrice" value="200-500" /> 200k -
                   500k</label>
               </li>
               <li>
-                <label><input type="checkbox" name="price" value="500-700" /> 500k -
+                <label><input type="radio" name="price" v-model="selectedPrice" value="500-700" /> 500k -
                   700k</label>
               </li>
               <li>
-                <label><input type="checkbox" name="price" value=">700" /> &gt; 700k</label>
+                <label><input type="radio" name="price" v-model="selectedPrice" value=">700" /> &gt; 700k</label>
               </li>
             </ul>
             <hr class="divider" />
@@ -176,23 +176,8 @@
               </div>
             </div>
           </div>
-          <nav aria-label="Page navigation">
-            <ul class="pagination pagination-floating justify-content-center">
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                  <span aria-hidden="true">«</span>
-                </a>
-              </li>
-              <li class="page-item active"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">»</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+
+          <PageNavigative :totalPage="data" v-model:currentPage="pageIndex" v-model:currentSize="pageSize" />
         </div>
       </div>
     </div>
@@ -200,29 +185,38 @@
 </template>
 <script setup>
 import { ref, onMounted, watch } from "vue";
+
 import axios from "axios";
 import api from "../../Configs/api";
+import PageNavigative from "../Module/PageNavigative.vue";
 const mapVarriants = ref({});
-const selected = ref({});
+const data = ref([])
+const selected = ref([]);
 const skuColorLike = ref("");
 const skuSizeLike = ref("");
+const minPriceReq = ref(1);
+const maxPriceReq = ref(200000000);
+const selectedPrice = ref("");
 const products = ref([]);
+const pageIndex = ref(0);
+const pageSize = ref(5);
+const totalPages = ref(0);
 onMounted(() => {
-  // api
-  //   .get("/VariantValues")
-  //   .then((resp) => {
-  //     mapVarriants.value = resp.data;
-  //     for (const groupName in resp.data) {
-  //       selected.value[groupName] = [];
-  //     }
-  //   })
-  //   .catch((error) => console.log(error));
+  api
+    .get("/VariantValues")
+    .then((resp) => {
+      mapVarriants.value = resp.data;
+      for (const groupName in resp.data) {
+        selected.value[groupName] = [];
+      }
+    })
+    .catch((error) => console.log(error));
 
   api
     .get("/BaseProducts")
     .then((resp) => {
       console.log(resp.data);
-
+      data.value = resp.data.totalPages
       products.value = resp.data;
     })
     .catch((erorr) => console.log(erorr));
@@ -232,10 +226,22 @@ const fetchData = async () => {
   try {
     skuColorLike.value = selected.value["Màu sắc"].join("-");
     skuSizeLike.value = selected.value["Kích thước"].join("-");
+    if (selectedPrice.value.includes("-")) {
+      const [min, max] = selectedPrice.value.split("-").map(p => p.trim());
+      minPriceReq.value = min + "000";
+      maxPriceReq.value = max + "000";
+    } else if (selectedPrice.value.startsWith(">")) {
+      maxPriceReq.value = selectedPrice.value.replace(">", "").trim() + "000";
+      minPriceReq.value = 1; // or "" if needed
+    }
+    // console.log(minPriceReq.value, maxPriceReq.value)
+
     const response = await axios.get(
-      `http://localhost:8080/api/Product/MultiplrFilter?skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}`
+      `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}`
     );
 
+    data.value = response.data.totalPages
+    products.value = response.data.content;
     console.log(response.data);
   } catch (error) {
     console.error("Error fetching variants:", error);
@@ -243,6 +249,9 @@ const fetchData = async () => {
 };
 watch(() => selected.value["Kích thước"], fetchData);
 watch(() => selected.value["Màu sắc"], fetchData);
+watch(() => selectedPrice.value, fetchData);
+watch(() => pageIndex.value, fetchData);
+watch(() => pageSize.value, fetchData);
 </script>
 <style scoped>
 .filter-group h3 {
