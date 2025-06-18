@@ -1,16 +1,19 @@
-name: Deploy Vue FE to GitHub Pages
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ production ]
-    paths: [ 'AOS_FE/**' ]
-  workflow_dispatch:
+    branches: [ "production" ]
+  pull_request:
+    branches: [ "production" ]
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -18,25 +21,29 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: production  # Checkout từ nhánh production
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'AOS_FE/AOS_FE/package-lock.json'
 
-      - name: Clean install dependencies
+      - name: Install dependencies
         run: |
           cd AOS_FE/AOS_FE
-          rm -rf node_modules package-lock.json
           npm ci
 
-      - name: Build Vue app
+      - name: Build for Production
         run: |
           cd AOS_FE/AOS_FE
-          npm run build
+          NODE_ENV=production npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -44,7 +51,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'AOS_FE/AOS_FE/dist'
+          # Upload dist repository
+          path: './AOS_FE/AOS_FE/dist'
 
   deploy:
     environment:
