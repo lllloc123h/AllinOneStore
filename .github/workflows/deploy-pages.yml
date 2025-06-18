@@ -26,19 +26,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: production  # Checkout từ nhánh production
+          ref: production
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'AOS_FE/AOS_FE/package-lock.json'
 
-      - name: Install dependencies
+      - name: Clear npm cache and clean install
         run: |
           cd AOS_FE/AOS_FE
-          npm ci
+          npm cache clean --force
+          rm -rf node_modules
+          rm -f package-lock.json
+
+      - name: Install dependencies with fresh lock file
+        run: |
+          cd AOS_FE/AOS_FE
+          npm install --no-optional
+          npm ci --no-optional
+
+      - name: Verify rollup installation
+        run: |
+          cd AOS_FE/AOS_FE
+          npx rollup --version
 
       - name: Build for Production
         run: |
@@ -51,7 +62,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload dist repository
           path: './AOS_FE/AOS_FE/dist'
 
   deploy:
