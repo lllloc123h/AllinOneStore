@@ -114,7 +114,7 @@ create table accounts (
 	email varchar(100) unique not null,
 	password varchar(100) not null,
 	fullname nvarchar(100) not null,
-	avatar varchar(255),
+	avatar_url varchar(255),
 	phone varchar(15) null,
 	average_order_value decimal(18,2) default 0,
 	user_rank nvarchar(20) default N'Đồng',
@@ -184,7 +184,7 @@ create table base_products(
 	name nvarchar(100) not null,
 	material nvarchar(50) not null,
 	category_id int not null,
-	main_image varchar(100) not null,
+	main_image_url varchar(255) not null,
 	is_custom bit default 0,
 	turn_buy int default 0,
 	rating int default 0,
@@ -213,10 +213,15 @@ create table product_items(
 );
 GO
 
-create table custom (
+create table customs (
 	id int identity(1,1) primary key,
 	product_item_id int not null,
-	infor nvarchar(max),
+	account_id int not null, -- kh cần liên kết cũng đc
+	canvas_json nvarchar(max) not null,
+	image_url nvarchar(255) not null,
+	design_name nvarchar(50) not null, -- mặt trước, mặt sau 
+	created_at datetime default getdate(),
+	updated_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id)
 );
 GO
@@ -236,7 +241,7 @@ GO
 create table product_images(
 	id int identity(1,1) primary key,
 	product_item_id int not null,
-	image varchar(255) not null,
+	image_url varchar(255) not null,
 	created_at datetime default getdate(),
 	updated_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id)
@@ -245,7 +250,7 @@ GO
 
 create table news (
 	id int identity(1,1) primary key,
-	image varchar(255) not null,
+	image_url varchar(255) not null,
 	is_home bit default 1,
 	description nvarchar(max) not null,
 	created_at datetime default getdate(),
@@ -270,7 +275,7 @@ CREATE TABLE promotions (
 );
 GO
 
-CREATE TABLE PromotionProduct (
+CREATE TABLE promotion_products (
 	id INT PRIMARY KEY,
 	promotion_id INT NOT NULL,
 	product_item_id INT NOT NULL,
@@ -308,7 +313,10 @@ create table reviews (
 	account_id int not null,
 	rating int not null,
 	comment nvarchar(max),
-	images varchar(max),
+	image_url1 nvarchar(255),
+	image_url2 nvarchar(255),
+	image_url3 nvarchar(255),
+	video_url varchar(255),
 	created_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id),
 	foreign key (account_id) references accounts(id)
@@ -394,7 +402,7 @@ create table order_items (
 	is_gift bit default 0,
 	selling_price decimal(18,2) not null,
 	total AS (qty * selling_price) PERSISTED,
-	coupon_code int,
+	coupon_code nvarchar(50),
 	created_at datetime default getdate(),
 	updated_at datetime default getdate(),
 	foreign key (order_id) references orders(id),
@@ -402,21 +410,26 @@ create table order_items (
 	foreign key (promotion_id) references promotions(id)
 );
 GO
-
-create table returns (
-	id int identity(1,1) primary key,
-	order_product_item_id int not null,
-	reason nvarchar(max) not null,
-	image1 varchar(255) not null,
-	image2 varchar(255),
-	image3 varchar(255),
-	is_returned_money nvarchar(50) not null,
-	is_returned_item nvarchar(50) not null,
-	status nvarchar(50) not null,
-	created_at datetime default getdate(),
-	updated_at datetime default getdate(),
-	foreign key (order_product_item_id) references order_items(id)
+CREATE TABLE returns (
+	id INT IDENTITY(1,1) PRIMARY KEY,
+	order_product_item_id INT NOT NULL,
+	qty INT NOT NULL,
+	reason NVARCHAR(MAX) NOT NULL,
+	image_url1 VARCHAR(255) NOT NULL,
+	image_url2 VARCHAR(255),
+	image_url3 VARCHAR(255),
+	video_url nvarchar(255) not null,
+	is_returned_money BIT DEFAULT 0,
+	refund_amount DECIMAL(18,2) NOT NULL,
+	return_type NVARCHAR(20) CHECK (return_type IN ('REFUND', 'EXCHANGE')) DEFAULT 'REFUND',
+	refund_type NVARCHAR(50) CHECK (refund_type IN ('WALLET', 'BANK', 'POINT')),
+	status NVARCHAR(50) CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED', 'DONE')) DEFAULT 'PENDING',
+	processed_at DATETIME NULL,
+	created_at DATETIME DEFAULT GETDATE(),
+	updated_at DATETIME DEFAULT GETDATE(),
+	FOREIGN KEY (order_product_item_id) REFERENCES order_items(id)
 );
+
 GO
 
 CREATE TABLE coupons (
