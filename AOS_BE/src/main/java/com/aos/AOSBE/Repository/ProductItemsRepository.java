@@ -2,6 +2,8 @@ package com.aos.AOSBE.Repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -61,4 +63,35 @@ public interface ProductItemsRepository
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPriceJoined") String minPriceJoined,
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPriceJoined") String maxPriceJoined);
 
+	@Query(value = """
+				SELECT  bp.id,
+						bp.name,
+				        bp.material,
+				        bp.category_id,
+				        bp.main_image,
+				        bp.is_custom,
+				        pit.turn_buy,
+				        pit.sku,
+				        bp.rating,
+				        bp.is_active,
+				        pit.qty,
+				        pit.price
+				FROM base_products bp
+				JOIN product_items pit ON bp.id = pit.base_id
+				WHERE
+				    (:isSkuLikeListEmpty = 1 OR EXISTS (
+				        SELECT 1 FROM STRING_SPLIT(:skuLikeList, ',') c
+				        WHERE pit.sku LIKE '%' + c.value + '%'
+				    ))
+				AND
+				    (:minPriceIsEmpty = 1 OR  pit.price >TRY_CAST(:minPrice  AS FLOAT))
+				AND
+
+				    (:maxPriceIsEmpty = 1 OR  pit.price <TRY_CAST(:maxPrice  AS FLOAT))
+			""", nativeQuery = true)
+	Page<Object[]> newFilterItems(Pageable pageable,
+//			@Param("colorsIsEmpty") int colorsIsEmpty, @Param("colorsJoined") String colorsJoined,
+			@Param("isSkuLikeListEmpty") int isSkuLikeListEmpty, @Param("skuLikeList") String sizesJoined,
+			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
+			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined);
 }

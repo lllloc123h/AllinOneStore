@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -91,38 +93,21 @@ public class ProductItemsAPI {
 
 	}
 
-//	@GetMapping("/Product/MultiplrFilter/{sku}")
-//	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
-//			@RequestParam(defaultValue = "5") int size, @PathVariable String sku, @RequestParam String skuColorLikeReq,
-//			@RequestParam String skuSizeLikeReq) {
-//		String skuColorLike = sku.split(",")[0];
-//		String skuSizeLike = sku.split(",")[1];
-//		System.out.println(sku);
-//		System.out.println(skuColorLike);
-//		System.out.println(skuSizeLike);
-//		try {
-//			List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
-//
-//			productItemsService.productItemsFilterItemsByColorAndSize(skuColorLike, skuSizeLike).forEach(e -> {
-//				productItems.add(productItemsMapper.mapper(e));
-//			});
-//			return ResponseEntity.ok(productItems);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
-//		}
-//
-//	}
-
-	@GetMapping("/Product/MultiplrFilter")
+	@GetMapping("/Product/MultiplrFilter/{sku}")
 	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
-			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq, @RequestParam("minPriceReq") String minPriceReq,
-			@RequestParam("maxPriceReq") String maxPriceReq) {
+			@RequestParam(defaultValue = "9") int size, @PathVariable String sku,
+			@RequestParam(required = false) String skuColorLikeReq,
+			@RequestParam(required = false) String skuSizeLikeReq, @RequestParam(required = false) String minPriceReq,
+			@RequestParam(required = false) String maxPriceReq) {
+
+		String skuColorLike = sku.split(",")[0];
+		String skuSizeLike = sku.split(",")[1];
+
+		System.out.println(minPriceReq + maxPriceReq);
 		try {
 			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
-			productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(skuColorLikeReq,
-					skuSizeLikeReq, minPriceReq, maxPriceReq).forEach(e -> {
+			productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(page, size, skuColorLikeReq,
+					skuSizeLikeReq, minPriceReq, maxPriceReq).getContent().forEach(e -> {
 						filterAdvanceDTOS item = new filterAdvanceDTOS();
 						item.setId((int) e[0]);
 						item.setName((String) e[1]);
@@ -139,6 +124,43 @@ public class ProductItemsAPI {
 						productItems.add(item);
 					});
 			return ResponseEntity.ok(productItems);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		}
+
+	}
+
+	@GetMapping("/Product/MultiplrFilter")
+	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
+			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq, @RequestParam("minPriceReq") String minPriceReq,
+			@RequestParam("maxPriceReq") String maxPriceReq) {
+		try {
+			Page<Object[]> pageResult = productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(
+					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq);
+			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
+			pageResult.getContent().forEach(e -> {
+				filterAdvanceDTOS item = new filterAdvanceDTOS();
+				item.setId((int) e[0]);
+				item.setName((String) e[1]);
+				item.setMaterial((String) e[2]);
+				item.setCategoryId((int) e[3]);
+				item.setMainImage((String) e[4]);
+				item.setCustom((boolean) e[5]);
+				item.setTurnBuy((int) e[6]);
+				item.setSku((String) e[7]);
+				item.setRating((int) e[8]);
+				item.setActive((boolean) e[9]);
+				item.setQty((int) e[10]);
+				item.setPrice(((Number) e[11]).doubleValue());
+				productItems.add(item);
+			});
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("content", productItems);
+			response.put("totalPages", pageResult.getTotalPages());
+			return ResponseEntity.ok(response);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
