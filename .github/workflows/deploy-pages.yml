@@ -29,9 +29,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'AOS_FE/AOS_FE/package-lock.json'
 
-      - name: Install dependencies
+      - name: Clean install dependencies
         run: |
           cd AOS_FE/AOS_FE
+          rm -rf node_modules package-lock.json
           npm ci
 
       - name: Build Vue app
