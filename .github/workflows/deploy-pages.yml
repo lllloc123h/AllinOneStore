@@ -26,12 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'AOS_FE/AOS_FE/package-lock.json'
 
-      - name: Install dependencies
+      - name: Clean install dependencies (fix rollup bug)
         run: |
           cd AOS_FE/AOS_FE
+          rm -rf node_modules package-lock.json
           npm ci
 
       - name: Build Vue app
