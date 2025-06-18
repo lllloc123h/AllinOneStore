@@ -190,6 +190,7 @@ import axios from "axios";
 import api from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
 import { finalHandleCartProgress } from "../../Configs/cart";
+import { notification } from 'ant-design-vue';
 const mapVarriants = ref({});
 const data = ref([])
 const selected = ref([]);
@@ -224,7 +225,7 @@ onMounted(() => {
 });
 const itemCart = ref({
   id: '',
-  accounts: authService.getUserName(),
+  accounts: '',
   productItems: '',
   qty: '',
   createdAt: '',
@@ -232,9 +233,23 @@ const itemCart = ref({
 })
 const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
-  finalHandleCartProgress(itemCart.value)
-  alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
-  closeModal();
+  console.log(quantity.value, selectedProduct.value.safetyStock)
+  if (quantity.value < selectedProduct.value.safetyStock) {
+    finalHandleCartProgress(itemCart.value)
+    notification.success({
+      message: 'Success',
+      description: `Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`,
+    });
+    closeModal();
+  } else {
+    // alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
+    notification.success({
+      message: 'Danger',
+      description: `Số lượng tông không đủ`,
+    });
+    closeModal();
+  }
+
 };
 
 const fetchData = async () => {

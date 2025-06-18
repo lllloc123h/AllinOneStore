@@ -72,6 +72,7 @@ const authService = {
         localStorage.setItem('jwtToken', response.data.token);
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         // tokenRef.value = '1';
+
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
         router.push(localStorage.getItem('redirectTo') || '/')
