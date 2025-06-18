@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Clean install dependencies (fix rollup bug)
+      - name: Clean install dependencies
         run: |
           cd AOS_FE/AOS_FE
           rm -rf node_modules package-lock.json
