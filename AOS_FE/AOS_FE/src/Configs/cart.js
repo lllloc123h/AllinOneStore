@@ -27,11 +27,16 @@ async function addToCartLocal(ProductObject) {
     localStorage.setItem("cart", JSON.stringify(cart));
 }
 async function syncLocalCartToServer() {
+
+    console.debug(!authService.isLogged());
     if (!authService.isLogged()) return;
     let cart = JSON.parse(localStorage.getItem("cart")) ?? [];
+
+    console.debug(!authService.isLogged(), cart);
     if (cart.length === 0) return;
     try {
-        for (itemCart in cart) {
+        for (const itemCart of cart) {
+            itemCart.accounts = authService.getUserName();
             await api.post('/addToCart', itemCart);
         }
         localStorage.setItem("cart", JSON.stringify([]));
@@ -43,7 +48,8 @@ async function syncLocalCartToServer() {
 async function handleCartWhileLogin(itemCart) {
     if (!authService.isLogged()) return;
     try {
-        await api.post('/addToCart', itemCart.value);
+        itemCart.accounts = authService.getUserName();
+        await api.post('/addToCart', itemCart);
 
     } catch (error) {
         console.error("Failed to sync cart:", error);

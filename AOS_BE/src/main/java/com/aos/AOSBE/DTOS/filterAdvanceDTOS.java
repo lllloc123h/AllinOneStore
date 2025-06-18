@@ -16,4 +16,5 @@ public class filterAdvanceDTOS {
 	private boolean isActive;
 	private int qty;
 	private double price;
+	private int safetyStock;
 }

@@ -121,6 +121,7 @@ public class ProductItemsAPI {
 						item.setActive((boolean) e[9]);
 						item.setQty((int) e[10]);
 						item.setPrice(((Number) e[11]).doubleValue());
+						item.setSafetyStock(((int) e[12]));
 						productItems.add(item);
 					});
 			return ResponseEntity.ok(productItems);
@@ -154,6 +155,7 @@ public class ProductItemsAPI {
 				item.setActive((boolean) e[9]);
 				item.setQty((int) e[10]);
 				item.setPrice(((Number) e[11]).doubleValue());
+				item.setSafetyStock(((int) e[12]));
 				productItems.add(item);
 			});
 

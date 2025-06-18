@@ -45,6 +45,7 @@ const router = useRouter();
 import { authService } from "../../Configs/api";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { syncLocalCartToServer } from '../../Configs/cart';
 import { toast } from "vue3-toastify";
 const formData = reactive({
   email: "admin",
@@ -52,6 +53,7 @@ const formData = reactive({
 });
 async function handleLogin() {
   authService.login(formData.email, formData.password);
+  await syncLocalCartToServer();
   toast.success("Đăng nhập thành công !");
 }
 </script>

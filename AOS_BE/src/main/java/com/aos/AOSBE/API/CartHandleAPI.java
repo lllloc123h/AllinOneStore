@@ -31,8 +31,7 @@ public class CartHandleAPI {
 	AccountsService accountsService;
 
 	@PostMapping("/addToCart")
-	public ResponseEntity<?> addToCart(@RequestParam CartItemsDTOS entity) {
-
+	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			CartItems cartItem = cartItemsMapper.mapperToObject(entity);

@@ -75,7 +75,8 @@ public interface ProductItemsRepository
 				        bp.rating,
 				        bp.is_active,
 				        pit.qty,
-				        pit.price
+				        pit.price,
+						pit.safety_stock
 				FROM base_products bp
 				JOIN product_items pit ON bp.id = pit.base_id
 				WHERE

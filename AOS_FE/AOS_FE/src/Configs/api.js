@@ -69,11 +69,13 @@ const authService = {
   login(email, password) {
     console.log({ email, password })
     return api.post('/Accounts/login', { email, password })
-      .then(response => {
+      .then(async (response) => {
         localStorage.setItem('jwtToken', response.data.token);
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
-        tokenRef.value = '1';
-        syncLocalCartToServer();
+        // tokenRef.value = '1';
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+        await syncLocalCartToServer();
         router.push(localStorage.getItem('redirectTo') || '/')
       })
       .catch(error => console.log('Đăng nhập thất bại ', error.response))
@@ -94,14 +96,15 @@ const authService = {
         return false;
       }
     }
+
   },
   getUserName() {
     if (localStorage.getItem("jwtToken")) {
       try {
-        const username = authService.parseJwt(tokenRef.value).sub
+        const username = authService.parseJwt(tokenRef.value)
         // // .username
         // console.log(username)
-        return username;
+        return username.sub;
       } catch (error) {
         console.error('Invalid payload:', error);
         return false;

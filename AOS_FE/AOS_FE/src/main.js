@@ -8,6 +8,8 @@ import authJWTPlugins from './pulgins/authJWTPlugins'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import Vue3Toastify, { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+import Antd from 'ant-design-vue';
+// import 'ant-design-vue/dist/antd.css';
 
 const app = createApp(App)
 
@@ -27,4 +29,5 @@ app.use(Vue3Toastify, {
     backgroundImage: 'linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)',
   }
 })
+app.use(Antd);
 app.mount('#app')
