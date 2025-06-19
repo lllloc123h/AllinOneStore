@@ -11,7 +11,7 @@
 
     <div class="section order-status">
       <div v-for="(step, idx) in steps" :key="idx"
-           :class="['step', { done: idx < statusIndex, active: idx === statusIndex }]">
+           :class="['step', { active: idx === statusIndex }]">
         <div class="circle"><i :class="step.icon"></i></div>
         <div>{{ step.label }}</div>
       </div>
@@ -23,7 +23,7 @@
         <thead><tr><th>Ảnh</th><th>Tên</th><th>Số lượng</th><th>Đơn giá</th><th>Tổng</th></tr></thead>
         <tbody>
           <tr v-for="(sp, i) in order.sanPham" :key="i">
-            <td><img :src="sp.anh"/></td>
+            <td><img :src="sp.anh" /></td>
             <td>{{ sp.ten }}</td>
             <td>{{ sp.soLuong }}</td>
             <td>{{ formatMoney(sp.gia) }}</td>
@@ -59,7 +59,7 @@
       <table class="history-table">
         <thead><tr><th>Thời gian</th><th>Nội dung</th></tr></thead>
         <tbody>
-          <tr v-for="(log,i) in order.lichSu" :key="i">
+          <tr v-for="(log, i) in order.lichSu" :key="i">
             <td>{{ formatDateTime(log.thoiGian) }}</td>
             <td>{{ log.noiDung }}</td>
           </tr>
@@ -74,46 +74,46 @@
       <button>In hóa đơn</button>
     </div>
   </div>
-  <div v-else class="container"><p>Đang tải...</p></div>
+
+  <div v-else class="container">
+    <p>Đang tải...</p>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { useRoute } from 'vue-router'
 import fakeOrder from '../../assets/fakeOrder.json'
-
 
 const order = ref(null)
 const statusIndex = ref(0)
+
 const steps = [
-  { label: 'Đã đặt', icon: 'fa-solid fa-receipt' },
-  { label: 'Đang xử lý', icon: 'fas fa-cogs' },
-  { label: 'Đang giao', icon: 'fas fa-truck' },
-  { label: 'Hoàn tất', icon: 'fas fa-box-open' }
+  { label: 'Chờ xác nhận', icon: 'fa-solid fa-receipt' },
+  { label: 'Chờ lấy hàng', icon: 'fas fa-box' },
+  { label: 'Chờ giao hàng', icon: 'fas fa-truck' },
+  { label: 'Đã nhận hàng', icon: 'fas fa-box-open' }
 ]
-const statusMap = { 'Đã đặt': 0, 'Đang xử lý': 1, 'Đang giao': 2, 'Hoàn tất': 3 }
 
-onMounted(async () => {
-  try {
-    // Tạm dùng fakeOrder thay vì gọi API
-    // const { data } = await axios.get('/api/orders/ALLINONE123')
-    // order.value = data
-    // statusIndex.value = statusMap[data.trangThai] ?? 0
+const statusMap = {
+  'Chờ xác nhận': 0,
+  'Chờ lấy hàng': 1,
+  'Chờ giao hàng': 2,
+  'Đã nhận hàng': 3
+}
 
-    order.value = fakeOrder
-    statusIndex.value = statusMap[fakeOrder.trangThai] ?? 0
-  } catch (e) {
-    console.error('Lỗi tải:', e)
-  }
+const route = useRoute()
+const maDon = route.params.id
+
+onMounted(() => {
+  order.value = fakeOrder
+  statusIndex.value = statusMap[order.value.trangThai] ?? 0
 })
 
 const formatDate = d => new Date(d).toLocaleDateString('vi-VN')
 const formatDateTime = d => new Date(d).toLocaleString('vi-VN')
 const formatMoney = v => Number(v).toLocaleString('vi-VN') + 'đ'
 </script>
-
-
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
@@ -225,14 +225,6 @@ p strong {
   background: #b59b8a;
 }
 
-.step.done {
-  color: #7b6d61;
-}
-
-.step.done .circle {
-  background: #7b6d61;
-}
-
 table,
 .history-table {
   width: 100%;
@@ -261,20 +253,6 @@ th,
   color: #6a5647;
   font-weight: 600;
   border-bottom: 2px solid #e7ded9;
-}
-
-table thead tr:first-child th:first-child {
-  border-top-left-radius: 10px;
-}
-table thead tr:first-child th:last-child {
-  border-top-right-radius: 10px;
-}
-
-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 10px;
-}
-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 10px;
 }
 
 .products img {
@@ -337,7 +315,7 @@ textarea.note {
   resize: vertical;
   font-size: 1rem;
   font-family: 'Quicksand', sans-serif;
-  background-color: whitewhite;
+  background-color: white;
   color: #333;
   box-sizing: border-box;
 }
@@ -375,7 +353,7 @@ textarea.note {
   }
 
   .order-status .step .circle i {
-  color: white !important;
-}
+    color: white !important;
+  }
 }
 </style>

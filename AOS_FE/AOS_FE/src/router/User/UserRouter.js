@@ -56,7 +56,7 @@ export default [
     },
 
     {
-        path: '/OrderStatus',
+        path: '/OrderStatus/:id?',
         name: 'OrderStatus',
         component: OrderStatus
     },
