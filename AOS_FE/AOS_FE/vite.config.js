@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: '', // Tên repository của bạn
+  base: '/', // Tên repository của bạn
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
