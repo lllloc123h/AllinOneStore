@@ -34,3 +34,16 @@ build/
 
 ### VS Code ###
 .vscode/
+/.metadata/
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Web Data-journal
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Web Data
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Site Characteristics Database/MANIFEST-000001
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Site Characteristics Database/LOG
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Session Storage/LOG
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Session Storage/000003.log
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Local Storage/leveldb/LOG
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/Local Storage/leveldb/000003.log
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/History
+.metadata/.plugins/org.eclipse.swt/EBWebView/Default/DIPS
+.metadata/.plugins/org.eclipse.swt/EBWebView/CrashpadMetrics-active.pma
+.metadata/.plugins/org.eclipse.m2e.logback/0.log

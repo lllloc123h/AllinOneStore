@@ -5,6 +5,7 @@ import java.util.*;
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Service.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -181,7 +182,22 @@ public class AccountsAPI {
 	    }
 	}
 	
-
+	@PutMapping("/admin/Accounts/ResetPassword/{email}")
+	public ResponseEntity<?> ResetPassword( @PathVariable String email){
+		try {
+			Accounts isExist= accountsService.accountsFindByEmail(email).orElse(null);
+			if(isExist!=null) {
+				isExist.setPassword(passwordEncoder.encode("UserCube@123"));
+				accountsService.accountsSave(isExist);
+			}else {
+				return  ResponseEntity.badRequest().body(Map.of("message","Email khong ton tai"));
+			}
+			return ResponseEntity.ok("Mật khẩu của tài khoản "+ email+"đã được reset");
+		
+		}catch (Exception e) {
+			return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 //	@PutMapping("/Accounts/profile")
 //	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
 //    try {
