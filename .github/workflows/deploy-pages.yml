@@ -3,22 +3,10 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches: [ "production" ]
-  pull_request:
-    branches: [ "production" ]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,18 +18,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Clean and install dependencies
+      - name: Install dependencies
         run: |
           cd AOS_FE/AOS_FE
-          rm -rf node_modules package-lock.json
-          npm cache clean --force
-          npm install
-          npm install terser --save-dev
+          npm ci
 
       - name: Build for Production
         run: |
           cd AOS_FE/AOS_FE
-          NODE_ENV=production npm run build
+          npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
