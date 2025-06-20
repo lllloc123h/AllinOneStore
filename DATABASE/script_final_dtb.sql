@@ -1,7 +1,4 @@
-﻿create database all_in_store;
---drop database all_in_store
- use all_in_store
-GO
+﻿
 -- Disable all constraints temporarily (optional safety)
 EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
 
@@ -10,104 +7,104 @@ EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
 
 IF OBJECT_ID('FK_roles_accounts', 'F') IS NOT NULL
     ALTER TABLE roles DROP CONSTRAINT FK_roles_accounts
-	go
+	
 IF OBJECT_ID('FK_roles_authorities', 'F') IS NOT NULL
     ALTER TABLE roles DROP CONSTRAINT FK_roles_authorities
-	go
+	
 -- Drop child tables first to avoid foreign key errors
 IF OBJECT_ID('order_items', 'U') IS NOT NULL
     DROP TABLE order_items
-	go
+	
 IF OBJECT_ID('returns', 'U') IS NOT NULL
     DROP TABLE returns
-	go
+	
 IF OBJECT_ID('orders', 'U') IS NOT NULL
     DROP TABLE orders
-	go
+	
 IF OBJECT_ID('cancels', 'U') IS NOT NULL
     DROP TABLE cancels
-	go
+	
 IF OBJECT_ID('cart_items', 'U') IS NOT NULL
     DROP TABLE cart_items
-	go
+	
 IF OBJECT_ID('reviews', 'U') IS NOT NULL
     DROP TABLE reviews
-	go
+	
 IF OBJECT_ID('product_images', 'U') IS NOT NULL
     DROP TABLE product_images
-	go
+	
 IF OBJECT_ID('PromotionProduct', 'U') IS NOT NULL
     DROP TABLE PromotionProduct
-	go
+	
 IF OBJECT_ID('promotions', 'U') IS NOT NULL
     DROP TABLE promotions
-	go
+	
 IF OBJECT_ID('price_histories', 'U') IS NOT NULL
     DROP TABLE price_histories
-	go
+	
 IF OBJECT_ID('cost_histories', 'U') IS NOT NULL
     DROP TABLE cost_histories
-	go
+	
 IF OBJECT_ID('product_items', 'U') IS NOT NULL
     DROP TABLE product_items
-	go
+	
 IF OBJECT_ID('base_products', 'U') IS NOT NULL
     DROP TABLE base_products
-	go
+	
 IF OBJECT_ID('categories', 'U') IS NOT NULL
     DROP TABLE categories
-	go
+	
 IF OBJECT_ID('catalogs', 'U') IS NOT NULL
     DROP TABLE catalogs
-	go
-IF OBJECT_ID('custom', 'U') IS NOT NULL
+	
+IF OBJECT_ID('customs', 'U') IS NOT NULL
     DROP TABLE custom
-	go
+	
 IF OBJECT_ID('roles', 'U') IS NOT NULL
     DROP TABLE roles
-	go
+	
 IF OBJECT_ID('authorities', 'U') IS NOT NULL
     DROP TABLE authorities
-	go
+	
 IF OBJECT_ID('user_addresses', 'U') IS NOT NULL
     DROP TABLE user_addresses
-	go
+	
 IF OBJECT_ID('e_wallet_transactions', 'U') IS NOT NULL
     DROP TABLE e_wallet_transactions
-	go
+	
 IF OBJECT_ID('e_wallets', 'U') IS NOT NULL
     DROP TABLE e_wallets
-	go
+	
 IF OBJECT_ID('accounts', 'U') IS NOT NULL
     DROP TABLE accounts
-	go
+	
 IF OBJECT_ID('payment_methods', 'U') IS NOT NULL
     DROP TABLE payment_methods
-	go
+	
 IF OBJECT_ID('shipping_methods', 'U') IS NOT NULL
     DROP TABLE shipping_methods
-	go
+	
 IF OBJECT_ID('UserLogs', 'U') IS NOT NULL
     DROP TABLE UserLogs
-	go
+	
 IF OBJECT_ID('news', 'U') IS NOT NULL
     DROP TABLE news
-go
+
 IF OBJECT_ID('coupons', 'U') IS NOT NULL
     DROP TABLE coupons
-go
+
 IF OBJECT_ID('variants', 'U') IS NOT NULL
     DROP TABLE variants
-	go
+	
 IF OBJECT_ID('variant_values', 'U') IS NOT NULL
     DROP TABLE variant_values
-go
+
 IF OBJECT_ID('purchase_order_items', 'U') IS NOT NULL
     DROP TABLE purchase_order_items
-go
+
 IF OBJECT_ID('purchase_orders', 'U') IS NOT NULL
     DROP TABLE purchase_orders
-go
+
 
 create table accounts (
 	id int identity(1,1) primary key,
@@ -124,7 +121,7 @@ create table accounts (
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 create table roles (
 	id int identity(1,2) primary key,
@@ -141,7 +138,6 @@ create table authorities(
 	foreign key (account_id) references accounts(id),
 	foreign key (role_id) references roles(id)
 )
-GO
 
 create table user_addresses (
 	id int identity (1,1) primary key,
@@ -159,7 +155,7 @@ create table user_addresses (
 	updated_at datetime default getdate(),
 	foreign key (account_id) references accounts(id)
 );
-GO
+
 
 create table catalogs(
 	id int identity (1,1) primary key,
@@ -167,7 +163,7 @@ create table catalogs(
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 create table categories (
 	id int identity (1,1) primary key,
@@ -177,7 +173,7 @@ create table categories (
 	updated_at datetime default getdate(),
 	foreign key (catalog_id) references catalogs(id)
 );
-GO
+
 
 create table base_products(
 	id int identity(1,1) primary key,
@@ -193,7 +189,7 @@ create table base_products(
 	updated_at datetime default getdate(),
 	foreign key (category_id) references categories(id)
 );
-GO
+
 
 create table product_items(
 	id int identity(1,1) primary key,
@@ -211,7 +207,7 @@ create table product_items(
 	updated_at datetime default getdate(),
 	foreign key (base_id) references base_products(id)
 );
-GO
+
 
 create table customs (
 	id int identity(1,1) primary key,
@@ -224,7 +220,7 @@ create table customs (
 	updated_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id)
 );
-GO
+
 
 CREATE TABLE UserLogs (
 	id INT IDENTITY(1,1) PRIMARY KEY,
@@ -236,7 +232,7 @@ CREATE TABLE UserLogs (
 	created_at DATETIME DEFAULT GETDATE(),
 	module NVARCHAR(100)
 );
-GO
+
 
 create table product_images(
 	id int identity(1,1) primary key,
@@ -246,7 +242,7 @@ create table product_images(
 	updated_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id)
 );
-GO
+
 
 create table news (
 	id int identity(1,1) primary key,
@@ -256,7 +252,7 @@ create table news (
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 CREATE TABLE promotions (
 	id INT identity(1,1) PRIMARY KEY,
@@ -273,7 +269,7 @@ CREATE TABLE promotions (
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 CREATE TABLE promotion_products (
 	id INT PRIMARY KEY,
@@ -287,7 +283,7 @@ CREATE TABLE promotion_products (
 	foreign key (product_item_id) references product_items(id),
 	foreign key (promotion_id) references promotions(id)
 );
-GO
+
 
 create table cost_histories (
 	id int identity(1,1) primary key,
@@ -296,7 +292,7 @@ create table cost_histories (
 	created_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id)
 );
-GO
+
 
 create table price_histories (
 	id int identity(1,1) primary key,
@@ -305,7 +301,7 @@ create table price_histories (
 	created_at datetime default getdate(),
 	foreign key (product_item_id) references product_items(id)
 );
-GO
+
 
 create table reviews (
 	id int identity(1,1) primary key,
@@ -321,7 +317,7 @@ create table reviews (
 	foreign key (product_item_id) references product_items(id),
 	foreign key (account_id) references accounts(id)
 );
-GO
+
 
 create table cart_items (
 	id int identity(1,1) primary key,
@@ -333,7 +329,7 @@ create table cart_items (
 	foreign key (product_item_id) references product_items(id),
 	foreign key (account_id) references accounts(id)
 );
-GO
+
 
 create TABLE payment_methods (
 	id INT identity(1,1) PRIMARY KEY,
@@ -343,7 +339,7 @@ create TABLE payment_methods (
 	created_at DATETIME DEFAULT GETDATE(),
 	updated_at DATETIME DEFAULT GETDATE()
 );
-GO
+
 
 CREATE TABLE shipping_methods (
 	id INT identity(1,1) primary key,
@@ -353,7 +349,7 @@ CREATE TABLE shipping_methods (
 	created_at DATETIME DEFAULT GETDATE(),
 	updated_at DATETIME DEFAULT GETDATE()
 );
-GO
+
 
 create table orders (
 	id int identity(1,1) primary key,
@@ -378,7 +374,7 @@ create table orders (
 	foreign key (payment_method_id) references payment_methods(id),
 	foreign key (shipping_method_id) references shipping_methods(id)
 );
-GO
+
 
 create table cancels (
 	id int identity(1,1) primary key,
@@ -390,7 +386,7 @@ create table cancels (
 	updated_at datetime default getdate(),
 	foreign key (order_id) references orders(id)
 );
-GO
+
 
 create table order_items (
 	id int identity(1,1) primary key,
@@ -409,7 +405,7 @@ create table order_items (
 	foreign key (product_item_id) references product_items(id),
 	foreign key (promotion_id) references promotions(id)
 );
-GO
+
 CREATE TABLE returns (
 	id INT IDENTITY(1,1) PRIMARY KEY,
 	order_product_item_id INT NOT NULL,
@@ -430,7 +426,7 @@ CREATE TABLE returns (
 	FOREIGN KEY (order_product_item_id) REFERENCES order_items(id)
 );
 
-GO
+
 
 CREATE TABLE coupons (
 	id int identity(1,1) primary key,
@@ -450,7 +446,7 @@ CREATE TABLE coupons (
 	created_at DATETIME DEFAULT GETDATE(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 create table variants(
 	id int identity(1,1) primary key,
@@ -458,7 +454,7 @@ create table variants(
 	created_at datetime default getdate(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 create table variant_values(
 	id int identity(1,1) primary key,
@@ -469,7 +465,7 @@ create table variant_values(
 	updated_at datetime default getdate(),
 	foreign key (variant_id) references variants(id)
 );
-GO
+
 
 CREATE TABLE purchase_orders (
 	id INT PRIMARY KEY IDENTITY(1,1),
@@ -482,7 +478,7 @@ CREATE TABLE purchase_orders (
 	created_at DATETIME DEFAULT GETDATE(),
 	updated_at datetime default getdate()
 );
-GO
+
 
 create TABLE purchase_order_items (
 	id INT PRIMARY KEY IDENTITY(1,1),
@@ -496,7 +492,7 @@ create TABLE purchase_order_items (
 	FOREIGN KEY (product_item_id) REFERENCES product_items(id),
 	FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id)
 );
-GO
+
 CREATE TABLE e_wallets (
     id INT IDENTITY(1,1) PRIMARY KEY,
     account_id INT NOT NULL UNIQUE,
@@ -521,7 +517,7 @@ INSERT INTO accounts(
     email,
     password,
     fullname,
-    avatar,
+    avatar_url,
     phone,
     average_order_value,
     user_rank,
