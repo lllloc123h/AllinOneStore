@@ -93,69 +93,71 @@ public class ProductItemsAPI {
 
 	}
 
-	@GetMapping("/Product/MultiplrFilter/{sku}")
-	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "9") int size, @PathVariable String sku,
-			@RequestParam(required = false) String skuColorLikeReq,
-			@RequestParam(required = false) String skuSizeLikeReq, @RequestParam(required = false) String minPriceReq,
-			@RequestParam(required = false) String maxPriceReq) {
-
-		String skuColorLike = sku.split(",")[0];
-		String skuSizeLike = sku.split(",")[1];
-
-		System.out.println(minPriceReq + maxPriceReq);
-		try {
-			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
-			productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(page, size, skuColorLikeReq,
-					skuSizeLikeReq, minPriceReq, maxPriceReq).getContent().forEach(e -> {
-						filterAdvanceDTOS item = new filterAdvanceDTOS();
-						item.setId((int) e[0]);
-						item.setName((String) e[1]);
-						item.setMaterial((String) e[2]);
-						item.setCategoryId((int) e[3]);
-						item.setMainImage((String) e[4]);
-						item.setCustom((boolean) e[5]);
-						item.setTurnBuy((int) e[6]);
-						item.setSku((String) e[7]);
-						item.setRating((int) e[8]);
-						item.setActive((boolean) e[9]);
-						item.setQty((int) e[10]);
-						item.setPrice(((Number) e[11]).doubleValue());
-						item.setSafetyStock(((int) e[12]));
-						productItems.add(item);
-					});
-			return ResponseEntity.ok(productItems);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
-		}
-
-	}
+//	@GetMapping("/Product/MultiplrFilter/{sku}")
+//	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "9") int size, @PathVariable String sku,
+//			@RequestParam(required = false) String skuColorLikeReq,
+//			@RequestParam(required = false) String skuSizeLikeReq, @RequestParam(required = false) String minPriceReq,
+//			@RequestParam(required = false) String maxPriceReq, @RequestParam(required = false) Integer idProductItem) {
+//
+//		String skuColorLike = sku.split(",")[0];
+//		String skuSizeLike = sku.split(",")[1];
+//
+//		System.out.println(minPriceReq + maxPriceReq);
+//		try {
+//			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
+//			productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(page, size, skuColorLikeReq,
+//					skuSizeLikeReq, minPriceReq, maxPriceReq, idProductItem).getContent().forEach(e -> {
+//						filterAdvanceDTOS item = new filterAdvanceDTOS();
+//						item.setId((int) e[0]);
+//						item.setProductItemId((int) e[1]);
+//						item.setName((String) e[2]);
+//						item.setMaterial((String) e[3]);
+//						item.setCategoryId((int) e[4]);
+//						item.setMainImage((String) e[5]);
+//						item.setCustom((boolean) e[6]);
+//						item.setTurnBuy((int) e[7]);
+//						item.setSku((String) e[8]);
+//						item.setRating((int) e[9]);
+//						item.setActive((boolean) e[10]);
+//						item.setQty((int) e[11]);
+//						item.setPrice(((Number) e[12]).doubleValue());
+//						item.setSafetyStock(((int) e[13]));
+//						productItems.add(item);
+//					});
+//			return ResponseEntity.ok(productItems);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+//		}
+//
+//	}
 
 	@GetMapping("/Product/MultiplrFilter")
 	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
 			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq, @RequestParam("minPriceReq") String minPriceReq,
-			@RequestParam("maxPriceReq") String maxPriceReq) {
+			@RequestParam("maxPriceReq") String maxPriceReq, @RequestParam(required = false) Integer idProductItem) {
 		try {
 			Page<Object[]> pageResult = productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(
-					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq);
+					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq, idProductItem);
 			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
 			pageResult.getContent().forEach(e -> {
 				filterAdvanceDTOS item = new filterAdvanceDTOS();
 				item.setId((int) e[0]);
-				item.setName((String) e[1]);
-				item.setMaterial((String) e[2]);
-				item.setCategoryId((int) e[3]);
-				item.setMainImage((String) e[4]);
-				item.setCustom((boolean) e[5]);
-				item.setTurnBuy((int) e[6]);
-				item.setSku((String) e[7]);
-				item.setRating((int) e[8]);
-				item.setActive((boolean) e[9]);
-				item.setQty((int) e[10]);
-				item.setPrice(((Number) e[11]).doubleValue());
-				item.setSafetyStock(((int) e[12]));
+				item.setProductItemId((int) e[1]);
+				item.setName((String) e[2]);
+				item.setMaterial((String) e[3]);
+				item.setCategoryId((int) e[4]);
+				item.setMainImage((String) e[5]);
+				item.setCustom((boolean) e[6]);
+				item.setTurnBuy((int) e[7]);
+				item.setSku((String) e[8]);
+				item.setRating((int) e[9]);
+				item.setActive((boolean) e[10]);
+				item.setQty((int) e[11]);
+				item.setPrice(((Number) e[12]).doubleValue());
+				item.setSafetyStock(((int) e[13]));
 				productItems.add(item);
 			});
 

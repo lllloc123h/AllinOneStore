@@ -214,9 +214,10 @@ const selectedProduct = ref(null);
 const quantity = ref(1);
 
 const openModal = (product) => {
+  console.log(product)
   selectedProduct.value = product;
   showModal.value = true;
-  itemCart.value.productItems = product.id;
+  itemCart.value.productItems = product.productItemId;
   itemCart.value.qty = quantity.value;
 };
 const closeModal = () => {
@@ -236,7 +237,7 @@ onMounted(() => {
   api
     .get("/BaseProducts")
     .then((resp) => {
-      // console.log(resp.data);
+      console.log(resp.data);
       data.value = resp.data.totalPages
       products.value = resp.data;
     })
@@ -289,7 +290,7 @@ const fetchData = async () => {
     );
     data.value = response.data.totalPages
     products.value = response.data.content;
-    // console.log(response.data);
+    console.log(response.data);
   } catch (error) {
     console.error("Error fetching variants:", error);
   }
