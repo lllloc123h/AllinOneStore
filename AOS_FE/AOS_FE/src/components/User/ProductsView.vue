@@ -121,7 +121,7 @@
 
               <!-- Bo góc ảnh luôn -->
               <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-                src="https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07"
+                :src="product?.imageUrl || 'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'"
                 alt="Card
               image" />
 
@@ -191,7 +191,7 @@
 </template>
 <script setup>
 import { ref, onMounted, watch } from "vue";
-
+import { storage, ref as storageRef, getDownloadURL } from "../../Configs/firebase";
 import axios from "axios";
 import api, { authService } from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
@@ -223,6 +223,17 @@ const openModal = (product) => {
 const closeModal = () => {
   showModal.value = false;
 };
+async function handleImg(mainImage) {
+  const fileRef = storageRef(storage, "products/" + mainImage);
+
+  try {
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    return "https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media";
+  }
+}
+
 onMounted(() => {
   api
     .get("/VariantValues")
@@ -236,12 +247,24 @@ onMounted(() => {
 
   api
     .get("/BaseProducts")
-    .then((resp) => {
+    .then(async (resp) => {
       console.log(resp.data);
-      data.value = resp.data.totalPages
-      products.value = resp.data;
+      data.value = resp.data.totalPages;
+
+      const rawProducts = resp.data;
+
+      const updatedProducts = await Promise.all(
+        rawProducts.map(async (product) => {
+          const imageUrl = await handleImg(product.mainImage);
+          return { ...product, imageUrl };
+        })
+      );
+
+      products.value = updatedProducts;
     })
-    .catch((erorr) => console.log(erorr));
+    .catch((error) => console.log("Error loading base products:", error));
+
+
 });
 const itemCart = ref({
   id: '',
@@ -290,7 +313,18 @@ const fetchData = async () => {
     );
     data.value = response.data.totalPages
     products.value = response.data.content;
-    console.log(response.data);
+
+    const rawProducts = response.data.content;
+
+    const updatedProducts = await Promise.all(
+      rawProducts.map(async (product) => {
+        const imageUrl = await handleImg(product.mainImage);
+        return { ...product, imageUrl };
+      })
+    );
+
+    products.value = updatedProducts;
+    // console.log(products.value);
   } catch (error) {
     console.error("Error fetching variants:", error);
   }
