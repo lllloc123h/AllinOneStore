@@ -104,7 +104,7 @@ const selectedItems = ref([])
 async function loadCart() {
   try {
     const response = await cartService.getCart();
-    console.log(response);
+    // console.log(response);
     if (authService.isLogged()) {
       cart.value = response.map(item => ({
         id: item.id,
@@ -138,10 +138,24 @@ async function loadCart() {
 
 // Xóa sản phẩm
 function removeItem(item) {
-  console.log(item)
   cart.value = cart.value.filter(i => i.productItemId !== item.productItemId)
   selectedItems.value = selectedItems.value.filter(productItemId => productItemId !== item.productItemId)
+  cart.value = cart.value.filter(i => i.productItemId !== item.productItemId);
+  selectedItems.value = selectedItems.value.filter(id => id !== item.productItemId);
 
+  if (authService.isLogged()) {
+    // ✅ Call API to remove from backend
+    // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`);
+  } else {
+    // ✅ Update localStorage for guest user
+    let tempCart = JSON.parse(localStorage.getItem('cart')) ?? [];
+
+    // Remove item from local cart
+    tempCart = tempCart.filter(i => i.productItems !== item.productItemId);
+
+    // Save updated list
+    localStorage.setItem('cart', JSON.stringify(tempCart));
+  }
   // TODO: Gọi API xóa nếu backend hỗ trợ
   // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`)
 }
