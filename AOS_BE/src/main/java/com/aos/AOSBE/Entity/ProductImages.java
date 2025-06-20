@@ -22,8 +22,8 @@ public class ProductImages {
     @Column(name = "id")
     private int id;
 	
-    @Column(name = "image")
-    private String image;
+    @Column(name = "image_url")
+    private String imageUrl;
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;

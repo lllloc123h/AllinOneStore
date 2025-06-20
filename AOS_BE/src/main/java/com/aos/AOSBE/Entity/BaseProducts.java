@@ -28,8 +28,8 @@ public class BaseProducts {
     @Column(name = "material")
     private String material;
 	
-    @Column(name = "main_image")
-    private String mainImage;
+    @Column(name = "main_image_url")
+    private String mainImageUrl;
 	
     @Column(name = "is_custom")
     private boolean isCustom;

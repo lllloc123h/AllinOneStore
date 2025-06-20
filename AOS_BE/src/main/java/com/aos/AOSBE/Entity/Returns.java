@@ -22,26 +22,41 @@ public class Returns {
     @Column(name = "id")
     private int id;
 	
+    @Column(name = "qty")
+    private int qty;
+	
     @Column(name = "reason")
     private String reason;
 	
-    @Column(name = "image1")
-    private String image1;
+    @Column(name = "image_url1")
+    private String imageUrl1;
 	
-    @Column(name = "image2")
-    private String image2;
+    @Column(name = "image_url2")
+    private String imageUrl2;
 	
-    @Column(name = "image3")
-    private String image3;
+    @Column(name = "image_url3")
+    private String imageUrl3;
+	
+    @Column(name = "video_url")
+    private String videoUrl;
 	
     @Column(name = "is_returned_money")
-    private String isReturnedMoney;
+    private boolean isReturnedMoney;
 	
-    @Column(name = "is_returned_item")
-    private String isReturnedItem;
+    @Column(name = "refund_amount")
+    private double refundAmount;
+	
+    @Column(name = "return_type")
+    private String returnType;
+	
+    @Column(name = "refund_type")
+    private String refundType;
 	
     @Column(name = "status")
     private String status;
+	
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;

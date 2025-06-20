@@ -103,6 +103,7 @@ const selectedItems = ref([])
 // Lấy giỏ hàng từ API
 async function loadCart() {
   try {
+
     const response = await cartService.getCart()
     console.log(response)
     // Ánh xạ dữ liệu cho UI

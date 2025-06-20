@@ -28,8 +28,17 @@ public class Reviews {
     @Column(name = "comment")
     private String comment;
 	
-    @Column(name = "images")
-    private String images;
+    @Column(name = "image_url1")
+    private String imageUrl1;
+	
+    @Column(name = "image_url2")
+    private String imageUrl2;
+	
+    @Column(name = "image_url3")
+    private String imageUrl3;
+	
+    @Column(name = "video_url")
+    private String videoUrl;
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
