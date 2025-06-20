@@ -71,8 +71,6 @@
 <script setup>
 import { computed, watch } from "vue";
 import { authService } from "../../Configs/api";
-console.log("trang thai logged ", !!authService.isLogged());
-console.log("trang thai logged ", !!authService.isAdmin());
 const isLogged = computed(() => {
     return !!authService.isLogged();
 });
