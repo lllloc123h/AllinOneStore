@@ -36,7 +36,6 @@ import com.aos.AOSBE.Service.EmailService;
 import com.aos.AOSBE.Service.OTPService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
