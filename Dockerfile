@@ -1,5 +1,5 @@
 # ---- STEP 1: Build Spring Boot app ----
-FROM eclipse-temurin:17-jdk-alpine as builder
+FROM eclipse-temurin:21-jdk-alpine as builder
 
 WORKDIR /build
 COPY AOS_BE .
