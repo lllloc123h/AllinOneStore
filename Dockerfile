@@ -5,7 +5,7 @@ WORKDIR /build
 COPY AOS_BE .
 
 # ✅ Cấp quyền thực thi cho mvnw
-RUN chmod +x ./mvnw
+RUN chmod +x mvnw
 
 # Sử dụng Maven Wrapper để build
 RUN ./mvnw clean package -DskipTests
