@@ -1,0 +1,26 @@
+steps:
+  # Bước 1: Build Docker image từ thư mục AOS_BE
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/aos-be', './AOS_BE']
+
+  # Bước 2: Push image lên Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/aos-be']
+
+  # Bước 3: Deploy image lên Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'aos-be-service'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/aos-be'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'europe-west1'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/aos-be'
