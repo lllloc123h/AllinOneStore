@@ -12,7 +12,7 @@ RUN ./mvnw clean package -DskipTests
 
 
 # ---- STEP 2: Run built JAR app ----
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
