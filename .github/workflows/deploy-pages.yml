@@ -2,7 +2,7 @@ name: Deploy Vue FE to GitHub Pages
 
 on:
   push:
-    branches: [ production ]
+    branches: [ main ]
     paths: [ 'AOS_FE/**' ]
   workflow_dispatch:
 
