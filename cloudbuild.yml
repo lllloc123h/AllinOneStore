@@ -1,3 +1,4 @@
+
 steps:
   # Bước 1: Build Docker image từ thư mục AOS_BE
   - name: 'gcr.io/cloud-builders/docker'
