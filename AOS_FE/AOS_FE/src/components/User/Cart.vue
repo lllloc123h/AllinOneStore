@@ -22,7 +22,7 @@
                 </button>
               </td>
               <td>
-                <input type="checkbox" v-model="selectedItems" :value="item.id" />
+                <input type="checkbox" v-model="selectedItems" :value="item.productItemId" />
               </td>
               <td>
                 <div class="d-flex align-items-center">
@@ -90,7 +90,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import { cartService } from '../../Configs/api'
+import { authService, cartService } from '../../Configs/api'
 
 const router = useRouter()
 
@@ -103,36 +103,83 @@ const selectedItems = ref([])
 // Lấy giỏ hàng từ API
 async function loadCart() {
   try {
-    const response = await cartService.getCart()
-    console.log(response)
-    // Ánh xạ dữ liệu cho UI
-    cart.value = response.data.map(item => ({
-      id: item.id,
-      name: item.productItems.name,
-      price: item.productItems.price,
-      quantity: item.qty,
-      image: item.productItems.image
-    }))
+    const response = await cartService.getCart();
+    // console.log(response);
+    if (authService.isLogged()) {
+      cart.value = response.map(item => ({
+        id: item.id,
+        productItemId: item.productItems.productItemId,
+        name: item.productItems.name,
+        price: item.productItems.price,
+        quantity: item.qty,
+        image: item.productItems.image
+      }));
+      selectedItems.value = cart.value.map(item => item.productItems.productItemId);
 
-    // Mặc định chọn tất cả
-    selectedItems.value = cart.value.map(item => item.id)
+    } else {
+      cart.value = response.map(item => ({
+        id: item.id,
+        productItemId: item.productItemId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image
+      }));
+      selectedItems.value = cart.value.map(item => item.productItems);
+
+    }
+
+
+    // Select all items by default
   } catch (error) {
-    console.error('Lỗi tải giỏ hàng:', error)
+    console.error('Failed to load cart:', error);
   }
 }
 
 // Xóa sản phẩm
 function removeItem(item) {
-  cart.value = cart.value.filter(i => i.id !== item.id)
-  selectedItems.value = selectedItems.value.filter(id => id !== item.id)
+  cart.value = cart.value.filter(i => i.productItemId !== item.productItemId)
+  selectedItems.value = selectedItems.value.filter(productItemId => productItemId !== item.productItemId)
+  cart.value = cart.value.filter(i => i.productItemId !== item.productItemId);
+  selectedItems.value = selectedItems.value.filter(id => id !== item.productItemId);
 
+  if (authService.isLogged()) {
+    // ✅ Call API to remove from backend
+    // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`);
+  } else {
+    // ✅ Update localStorage for guest user
+    let tempCart = JSON.parse(localStorage.getItem('cart')) ?? [];
+
+    // Remove item from local cart
+    tempCart = tempCart.filter(i => i.productItems !== item.productItemId);
+
+    // Save updated list
+    localStorage.setItem('cart', JSON.stringify(tempCart));
+  }
   // TODO: Gọi API xóa nếu backend hỗ trợ
   // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`)
 }
 
 // Tăng số lượng
 function increaseQty(item) {
-  item.quantity++
+  if (authService.isLogged()) {
+
+    item.quantity++
+  } else {
+    let tempLocalList = JSON.parse(localStorage.getItem('cart')) ?? [];
+    tempLocalList = tempLocalList.map(cartItem => {
+      if (cartItem.productItems === item.productItemId) {
+        cartItem.qty++; // Increase quantity
+      }
+      return cartItem;
+    });
+    localStorage.setItem('cart', JSON.stringify(tempLocalList));
+    const cartItem = cart.value.find(c => c.productItemId === item.productItemId);
+    if (cartItem) {
+      cartItem.quantity++;
+    }
+
+  }
   // TODO: Gọi API cập nhật nếu backend hỗ trợ
 }
 
@@ -148,15 +195,22 @@ function decreaseQty(item) {
 
 // Tính tổng tiền sản phẩm được chọn
 const selectedTotal = computed(() => {
-  return cart.value
-    .filter(item => selectedItems.value.includes(item.id))
-    .reduce((sum, item) => sum + item.price * item.quantity, 0)
+  if (authService.isLogged()) {
+    return cart.value
+      .filter(item => selectedItems.value.includes(item.productItemId))
+      .reduce((sum, item) => sum + item.price * item.quantity, 0)
+  } else {
+    return cart.value
+      .filter(item => selectedItems.value.includes(item.productItemId))
+      .reduce((sum, item) => sum + item.price * item.quantity, 0)
+  }
+
 })
 
 // Gửi dữ liệu thanh toán
 function checkout() {
   const selectedProducts = cart.value.filter(item =>
-    selectedItems.value.includes(item.id)
+    selectedItems.value.includes(item.productItemId)
   )
   router.push({
     name: 'CheckoutPage',

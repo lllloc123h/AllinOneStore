@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class filterAdvanceDTOS {
 	private int id;
+	private int productItemId;
 	private String name;
 	private String material;
 	private int categoryId;
