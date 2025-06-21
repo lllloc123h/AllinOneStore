@@ -5,10 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.relation.Role;
-
-import com.aos.AOSBE.Entity.Roles;
-import com.aos.AOSBE.Repository.RolesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +22,7 @@ import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Authorities;
 import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Repository.AuthoritiesRepository;
+import com.aos.AOSBE.Repository.RolesRepository;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -35,6 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private AuthoritiesRepository authorityRepository;
 	@Autowired
 	private RolesRepository rolesRepository;
+
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -51,7 +49,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			Accounts userRegister = new Accounts();
 			userRegister.setEmail(email);
 			userRegister.setFullname(fullname);
-			userRegister.setAvatar(picture);
+			userRegister.setAvatarUrl(picture);
 			userRegister.setPassword(new BCryptPasswordEncoder().encode("123"));
 			userRegister = userRepository.save(userRegister);
 			Authorities auth = new Authorities();
@@ -61,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		} else {
 			System.out.println("user ko null");
 			user.get().setFullname(fullname);
-			user.get().setAvatar(picture);
+			user.get().setAvatarUrl(picture);
 			userRepository.save(user.get());
 		}
 		// Lấy role từ database

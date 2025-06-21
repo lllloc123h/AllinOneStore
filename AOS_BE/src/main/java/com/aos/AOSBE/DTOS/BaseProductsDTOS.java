@@ -15,7 +15,7 @@ public class BaseProductsDTOS {
     private int id;
     private String name;
     private String material;
-    private String mainImage;
+    private String mainImageUrl;
     private boolean isCustom;
     private int turnBuy;
     private int rating;

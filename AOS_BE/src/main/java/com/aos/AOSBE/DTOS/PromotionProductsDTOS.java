@@ -11,18 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountsDTOS {
+public class PromotionProductsDTOS {
     private int id;
-    private String email;
-    private String password;
-    private String fullname;
-    private String avatarUrl;
-    private String phone;
-    private double averageOrderValue;
-    private String userRank;
-    private double totalSpent;
-    private int totalOrder;
-    private int loyaltyPoint;
+    private int requireQty;
+    private boolean isGift;
+    private double costShare;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int productItems;
+    private int promotions;
 }

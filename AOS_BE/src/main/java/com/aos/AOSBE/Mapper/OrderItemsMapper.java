@@ -22,7 +22,7 @@ public class OrderItemsMapper {
 		return new OrderItemsDTOS(entity.getId(), entity.getPromotions().getId(), entity.getQty(), entity.getCost(),
 				entity.isGift(), entity.getSellingPrice(), entity.getTotal(), entity.getCouponCode(),
 				entity.getCreatedAt(), entity.getUpdatedAt(), entity.getOrders().getId(),
-				entity.getProductItems().getId());
+				entity.getProductItems().getId(), entity.getPromotions().getId());
 	}
 
 	public OrderItems mapperToObject(OrderItemsDTOS entity) {

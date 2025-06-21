@@ -38,6 +38,7 @@ public class AccountsService {
 	private GenericSpecificationBuilder specBuilder;
 
 	PasswordEncoder passwordEncoder;
+
 	public List<Accounts> accountsFindAll(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return accountsRepository.findAll(pageable).getContent();
@@ -69,7 +70,7 @@ public class AccountsService {
 	public Accounts registerByEmail(RegisterRequestDTO registerRequestDTO) {
 		Accounts accounts = new Accounts();
 		accounts.setEmail(registerRequestDTO.getEmail());
-		accounts.setPassword( passwordEncoder.encode(registerRequestDTO.getPassword()));
+		accounts.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
 		accounts.setPhone(registerRequestDTO.getPhone());
 		accounts.setFullname(registerRequestDTO.getFullname());
 		Authorities authority = new Authorities();
@@ -102,7 +103,7 @@ public class AccountsService {
 		account.setFullname(dto.getFullname());
 		account.setEmail(dto.getEmail());
 		account.setPhone(dto.getPhone());
-		account.setAvatar(dto.getAvatar());
+		account.setAvatarUrl(dto.getAvatar());
 		accountsRepository.save(account);
 		Optional<UserAddresses> optionalAddress = addressRepository.findByAccountsIdAndIsDefaultTrue(account.getId());
 		UserAddresses address = optionalAddress.orElse(new UserAddresses());

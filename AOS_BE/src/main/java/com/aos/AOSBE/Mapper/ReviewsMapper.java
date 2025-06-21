@@ -16,13 +16,15 @@ public class ReviewsMapper {
 	private ProductItemsService productItemsService;
 
 	public ReviewsDTOS mapper(Reviews entity) {
-		return new ReviewsDTOS(entity.getId(), entity.getRating(), entity.getComment(), entity.getImagesUrl(),
-				entity.getCreatedAt(), entity.getAccounts().getId(), entity.getProductItems().getId());
+		return new ReviewsDTOS(entity.getId(), entity.getRating(), entity.getComment(), entity.getImageUrl1(),
+				entity.getImageUrl2(), entity.getImageUrl3(), entity.getVideoUrl(), entity.getCreatedAt(),
+				entity.getAccounts().getId(), entity.getProductItems().getId());
 	}
 
 	public Reviews mapperToObject(ReviewsDTOS entity) {
-		return new Reviews(entity.getId(), entity.getRating(), entity.getComment(), entity.getImages(),
-				entity.getCreatedAt(), accountsService.accountsFindById(entity.getAccounts()).orElse(null),
+		return new Reviews(entity.getId(), entity.getRating(), entity.getComment(), entity.getImageUrl1(),
+				entity.getImageUrl2(), entity.getImageUrl3(), entity.getVideoUrl(), entity.getCreatedAt(),
+				accountsService.accountsFindById(entity.getAccounts()).orElse(null),
 				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null));
 	}
 

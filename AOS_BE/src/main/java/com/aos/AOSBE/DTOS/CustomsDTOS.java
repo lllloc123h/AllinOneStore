@@ -11,18 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountsDTOS {
+public class CustomsDTOS {
     private int id;
-    private String email;
-    private String password;
-    private String fullname;
-    private String avatarUrl;
-    private String phone;
-    private double averageOrderValue;
-    private String userRank;
-    private double totalSpent;
-    private int totalOrder;
-    private int loyaltyPoint;
+    private int accountId;
+    private String canvasJson;
+    private String imageUrl;
+    private String designName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int productItems;
 }

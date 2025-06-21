@@ -14,7 +14,7 @@ public class NewsMapper {
 	}
 
 	public News mapperToObject(NewsDTOS entity) {
-		return new News(entity.getId(), entity.getImage(), entity.isHome(), entity.getDescription(),
+		return new News(entity.getId(), entity.getImageUrl(), entity.isHome(), entity.getDescription(),
 				entity.getCreatedAt(), entity.getUpdatedAt());
 	}
 

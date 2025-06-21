@@ -18,7 +18,7 @@ public class ProductImagesMapper {
 	}
 
 	public ProductImages mapperToObject(ProductImagesDTOS entity) {
-		return new ProductImages(entity.getId(), entity.getImage(), entity.getCreatedAt(), entity.getUpdatedAt(),
+		return new ProductImages(entity.getId(), entity.getImageUrl(), entity.getCreatedAt(), entity.getUpdatedAt(),
 				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null));
 	}
 
