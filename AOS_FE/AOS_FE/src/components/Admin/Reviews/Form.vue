@@ -45,13 +45,46 @@
         </div>
 
         <div class="mb-3">
-          <label :for="images" class="form-label text-capitalize">images</label>
+          <label :for="imageUrl1" class="form-label text-capitalize">imageUrl1</label>
           <input
-            :id="images"
-            v-model="formData.images"
+            :id="imageUrl1"
+            v-model="formData.imageUrl1"
             type="text"
             class="form-control"
-            :placeholder="`Enter images`"
+            :placeholder="`Enter imageUrl1`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="imageUrl2" class="form-label text-capitalize">imageUrl2</label>
+          <input
+            :id="imageUrl2"
+            v-model="formData.imageUrl2"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter imageUrl2`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="imageUrl3" class="form-label text-capitalize">imageUrl3</label>
+          <input
+            :id="imageUrl3"
+            v-model="formData.imageUrl3"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter imageUrl3`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="videoUrl" class="form-label text-capitalize">videoUrl</label>
+          <input
+            :id="videoUrl"
+            v-model="formData.videoUrl"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter videoUrl`"
           />
         </div>
 
@@ -101,7 +134,10 @@
     			id: '',
     			rating: '',
     			comment: '',
-    			images: '',
+    			imageUrl1: '',
+    			imageUrl2: '',
+    			imageUrl3: '',
+    			videoUrl: '',
     			createdAt: '',
     })
 

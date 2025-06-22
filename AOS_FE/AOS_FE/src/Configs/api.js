@@ -32,7 +32,6 @@ api.interceptors.request.use(config => {
   // neu url ngoai le 
   if (!isExcluded) {
     const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
-    console.log('url ko ngoai le' + isExpirate + new Date().toLocaleString());
     config.headers.Authorization = `Bearer ${token}`;
     if (token && !isExpirate >= new Date().toLocaleString()) {
       alert('Đăng nhập hết hạn 1')

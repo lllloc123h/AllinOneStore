@@ -23,13 +23,13 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="image" class="form-label text-capitalize">image</label>
+          <label :for="imageUrl" class="form-label text-capitalize">imageUrl</label>
           <input
-            :id="image"
-            v-model="formData.image"
+            :id="imageUrl"
+            v-model="formData.imageUrl"
             type="text"
             class="form-control"
-            :placeholder="`Enter image`"
+            :placeholder="`Enter imageUrl`"
           />
         </div>
 
@@ -77,7 +77,7 @@
 
     const formData = reactive({
     			id: '',
-    			image: '',
+    			imageUrl: '',
     			createdAt: '',
     			updatedAt: '',
     })

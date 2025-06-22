@@ -159,7 +159,6 @@ const props = defineProps({
     FilterList: Object
 })
 
-
 const indexTableService = createCrudService(props.TableName);
 
 function goToView(id) {
@@ -182,7 +181,6 @@ const fetchData = async () => {
         data.value = Array.isArray(json) ? json : [json]
         columns.value = data.value.length ? Object.keys(data.value[0]) : []
     } catch (err) {
-        console.log(error)
         error.value = err.message
         data.value = []
         columns.value = []

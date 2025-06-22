@@ -82,7 +82,7 @@
           <input
             :id="couponCode"
             v-model="formData.couponCode"
-            type="number"
+            type="text"
             class="form-control"
             :placeholder="`Enter couponCode`"
           />

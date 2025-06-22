@@ -23,35 +23,46 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="imageUrl" class="form-label text-capitalize">imageUrl</label>
+          <label :for="name" class="form-label text-capitalize">name</label>
           <input
-            :id="imageUrl"
-            v-model="formData.imageUrl"
+            :id="name"
+            v-model="formData.name"
             type="text"
             class="form-control"
-            :placeholder="`Enter imageUrl`"
+            :placeholder="`Enter name`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="isHome" class="form-label text-capitalize">isHome</label>
+          <label :for="principalId" class="form-label text-capitalize">principalId</label>
           <input
-            :id="isHome"
-            v-model="formData.isHome"
-            type="text"
+            :id="principalId"
+            v-model="formData.principalId"
+            type="number"
             class="form-control"
-            :placeholder="`Enter isHome`"
+            :placeholder="`Enter principalId`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="description" class="form-label text-capitalize">description</label>
+          <label :for="version" class="form-label text-capitalize">version</label>
           <input
-            :id="description"
-            v-model="formData.description"
+            :id="version"
+            v-model="formData.version"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter version`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="definition" class="form-label text-capitalize">definition</label>
+          <input
+            :id="definition"
+            v-model="formData.definition"
             type="text"
             class="form-control"
-            :placeholder="`Enter description`"
+            :placeholder="`Enter definition`"
           />
         </div>
 
@@ -98,12 +109,11 @@
     const formTableService = createCrudService(props.TableName);
 
     const formData = reactive({
-    			id: '',
-    			imageUrl: '',
-    			isHome: '',
-    			description: '',
-    			createdAt: '',
-    			updatedAt: '',
+    			name: '',
+    			principalId: '',
+    			diagramId: '',
+    			version: '',
+    			definition: '',
     })
 
     const listDashBoard = [

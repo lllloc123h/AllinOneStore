@@ -23,35 +23,46 @@
           />
         </div>
         <div class="mb-3">
-          <label :for="imageUrl" class="form-label text-capitalize">imageUrl</label>
+          <label :for="id" class="form-label text-capitalize">id</label>
           <input
-            :id="imageUrl"
-            v-model="formData.imageUrl"
-            type="text"
+            :id="id"
+            v-model="formData.id"
+            type="number"
             class="form-control"
-            :placeholder="`Enter imageUrl`"
+            :placeholder="`Enter id`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="isHome" class="form-label text-capitalize">isHome</label>
+          <label :for="requireQty" class="form-label text-capitalize">requireQty</label>
           <input
-            :id="isHome"
-            v-model="formData.isHome"
-            type="text"
+            :id="requireQty"
+            v-model="formData.requireQty"
+            type="number"
             class="form-control"
-            :placeholder="`Enter isHome`"
+            :placeholder="`Enter requireQty`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="description" class="form-label text-capitalize">description</label>
+          <label :for="isGift" class="form-label text-capitalize">isGift</label>
           <input
-            :id="description"
-            v-model="formData.description"
+            :id="isGift"
+            v-model="formData.isGift"
             type="text"
             class="form-control"
-            :placeholder="`Enter description`"
+            :placeholder="`Enter isGift`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="costShare" class="form-label text-capitalize">costShare</label>
+          <input
+            :id="costShare"
+            v-model="formData.costShare"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter costShare`"
           />
         </div>
 
@@ -99,9 +110,9 @@
 
     const formData = reactive({
     			id: '',
-    			imageUrl: '',
-    			isHome: '',
-    			description: '',
+    			requireQty: '',
+    			isGift: '',
+    			costShare: '',
     			createdAt: '',
     			updatedAt: '',
     })
