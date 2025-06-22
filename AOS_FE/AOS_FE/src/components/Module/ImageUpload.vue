@@ -92,9 +92,11 @@ import { ref } from "vue";
 import { storage } from "../../Configs/firebase";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
+let lastFilePath = "";
+let lastDownloadUrl = "";
 const imageUrls = ref([]);
 const imageView = ref([]);
-const emit = defineEmits(["update-avatar"]);
+const emit = defineEmits(["update-avatar", 'update-main-image-url']);
 const removeItem = (index) => {
   const removed = imageView.value.splice(index, 1);
   if (removed.length && removed[0].url) {
@@ -126,12 +128,19 @@ async function uploadImages() {
       await uploadBytes(fileRef, file);
       const url = await getDownloadURL(fileRef);
       imageUrls.value.push(url);
+      lastFilePath = file.name;
+      lastDownloadUrl = url;
+
       console.log("Uploaded:", url);
     } catch (err) {
       console.error("Upload error:", err);
     }
   }
 
+  emit("update-main-image-url", {
+    filePath: lastFilePath,
+    downloadUrl: lastDownloadUrl,
+  });
   emit("update-avatar", imageUrls.value);
 }
 </script>

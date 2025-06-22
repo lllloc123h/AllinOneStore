@@ -187,9 +187,9 @@ const dropdownTypeDiscount = [
 
 
 async function submitUpdateForm() {
-  formData.startAt = toISOStringWithTimezone(formData.startAt)
-  formData.endAt = toISOStringWithTimezone(formData.endAt)
   try {
+    formData.createdAt = formatDateTimeLocal(formData.createdAt)
+    formData.updatedAt = formatDateTimeLocal(formData.updatedAt)
     console.log(formData)
     const response = await formTableService.update(props.id, formData)
     console.log('Insert successful:', response.data)

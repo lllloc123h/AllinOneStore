@@ -2,6 +2,7 @@ package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -63,11 +64,15 @@ public class BaseProductsAPI {
 
 	@GetMapping("/admin/BaseProducts")
 
-	public ResponseEntity<List<BaseProducts>> getAllBaseProductsAdminRoleApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "") String search) {
+	public ResponseEntity<List<BaseProductsDTOS>> getAllBaseProductsAdminRoleApi(
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "") String search) {
 
-		List<BaseProducts> baseProducts = baseProductsService.baseProductsFindAll(page, size);
-
+		List<BaseProductsDTOS> baseProducts = new ArrayList<BaseProductsDTOS>();
+		;
+		baseProductsService.baseProductsFindAll(page, size).forEach(e -> {
+			baseProducts.add(baseProductsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(baseProducts);
 	}
 
@@ -93,11 +98,28 @@ public class BaseProductsAPI {
 		return ResponseEntity.ok(baseProducts);
 	}
 
-	@PostMapping("/BaseProducts")
+	@PostMapping("/admin/BaseProducts")
 	public ResponseEntity<BaseProducts> addNewBaseProducts(@RequestBody BaseProductsDTOS entity) {
 
 		BaseProducts saved = baseProductsService.baseProductsSave(baseProductsMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
+	}
+
+	@PutMapping("/admin/BaseProducts/{id}")
+	public ResponseEntity<?> updateBaseProducts(@PathVariable int id, @RequestBody BaseProductsDTOS entity) {
+		try {
+			BaseProducts isExist = baseProductsService.baseProductsFindById(id).orElse(null);
+			if (isExist != null) {
+				entity.setId(isExist.getId());
+				BaseProducts updated = baseProductsMapper.mapperToObject(entity);
+				return ResponseEntity.ok().body(Map.of("measage", "Update successfuly", "update", updated));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			}
+
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		}
 	}
 
 	@PutMapping("/BaseProducts")

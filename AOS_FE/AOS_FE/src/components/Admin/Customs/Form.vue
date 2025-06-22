@@ -23,6 +23,28 @@
           />
         </div>
         <div class="mb-3">
+          <label :for="accountId" class="form-label text-capitalize">accountId</label>
+          <input
+            :id="accountId"
+            v-model="formData.accountId"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter accountId`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="canvasJson" class="form-label text-capitalize">canvasJson</label>
+          <input
+            :id="canvasJson"
+            v-model="formData.canvasJson"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter canvasJson`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="imageUrl" class="form-label text-capitalize">imageUrl</label>
           <input
             :id="imageUrl"
@@ -34,24 +56,13 @@
         </div>
 
         <div class="mb-3">
-          <label :for="isHome" class="form-label text-capitalize">isHome</label>
+          <label :for="designName" class="form-label text-capitalize">designName</label>
           <input
-            :id="isHome"
-            v-model="formData.isHome"
+            :id="designName"
+            v-model="formData.designName"
             type="text"
             class="form-control"
-            :placeholder="`Enter isHome`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="description" class="form-label text-capitalize">description</label>
-          <input
-            :id="description"
-            v-model="formData.description"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter description`"
+            :placeholder="`Enter designName`"
           />
         </div>
 
@@ -99,9 +110,10 @@
 
     const formData = reactive({
     			id: '',
+    			accountId: '',
+    			canvasJson: '',
     			imageUrl: '',
-    			isHome: '',
-    			description: '',
+    			designName: '',
     			createdAt: '',
     			updatedAt: '',
     })

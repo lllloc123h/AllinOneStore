@@ -32,7 +32,7 @@
           <input :id="avatar" v-model="formData.avatar" type="text" class="form-control"
             :placeholder="`Enter avatar`" />
         </div> -->
-        <ImageUpload @update-avatar="formData.avatar = $event" />
+        <ImageUpload @update-avatar="formData.avatarUrl = $event" />
         <div v-if="formData.avatar" class="mb-3">
           <label class="form-label">Preview Avatar:</label>
           <img :src="formData.avatar" alt="Avatar Preview" class="img-thumbnail" style="max-height: 150px;" />
@@ -118,7 +118,7 @@ const formData = reactive({
   email: '',
   password: '',
   fullname: '',
-  avatar: '',
+  avatarUrl: '',
   phone: '',
   averageOrderValue: '',
   userRank: '',
@@ -159,7 +159,9 @@ const listDashBoard = [
   "Variants",
 ]
 
-
+function onAvatarUpdate(url) {
+  formData.mainImageUrl = url;
+}
 
 async function submitUpdateForm() {
   console.log(formData)
