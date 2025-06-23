@@ -4,7 +4,9 @@
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     <div class="article col-9">
+      <h1>ProductItems</h1>
       <div class="dropdown mb-3">
+        Select product
         <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
           <span v-if="selectedProduct">
             <img :src="previewMainImg" alt="" width="30" height="30" class="me-2" />
@@ -23,6 +25,27 @@
           </li>
         </ul>
       </div>
+      <h2>Base infomation </h2>
+      <div v-if="selectedProduct" class="card mt-3 shadow-sm p-3 rounded-4">
+        <h5 class="mb-3">Base Product Information</h5>
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <strong>Name:</strong> {{ selectedProduct.name }}
+          </div>
+          <div class="col-md-6 mb-2">
+            <strong>Material:</strong> {{ selectedProduct.material }}
+          </div>
+          <div class="col-md-6 mb-2">
+            <strong>Quantity:</strong> {{ selectedProduct.qty }}
+          </div>
+          <div class="col-md-6 mb-2">
+            <strong>Category ID:</strong> {{categoriesDropDownList.find(c => c.id === selectedProduct.categoryId)?.name
+              || 'Unknown' }}
+          </div>
+
+        </div>
+      </div>
+
       <!-- <form @submit.prevent="handleSubmit"> -->
       <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
         <label for="id" class="form-label text-capitalize"></label>
@@ -164,72 +187,7 @@
     </div>
   </div>
 </template>
-<style scoped>
-.dropdown {
-  margin-bottom: 1rem;
-}
 
-.first-button {
-  background-color: #0d6efd;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.first-button:hover {
-  background-color: #0b5ed7;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-toggle {
-  width: 100%;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dropdown-toggle span {
-  display: flex;
-  align-items: center;
-}
-
-.dropdown-menu {
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-item {
-  padding: 0.5rem 1rem;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-}
-
-.dropdown-item img {
-  border-radius: 6px;
-  object-fit: cover;
-}
-
-.variant-preview ul {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.variant-preview img {
-  border: 1px solid #ccc;
-}
-</style>
 
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
@@ -287,6 +245,8 @@ const list = ref([])
 const previewImg = ref();
 const showModal = ref(false);
 const previewMainImg = ref("");
+const categoriesDropDownList = ref([]);
+const categoriesService = createCrudService("Categories");
 const formData = reactive({
   id: '',
   baseId: '',
@@ -465,6 +425,13 @@ onMounted(async () => {
   await fetchData();
   dropDownListVariants.value = await dropDownVariant()
   dropDownListBaseProduct.value = await dropDown("BaseProducts")
+  const responseCategories = await categoriesService.getAll(0, 1000)
+  categoriesDropDownList.value = responseCategories.data.map(category => {
+    return {
+      id: category.id,
+      name: category.name
+    }
+  })
 })
 watch(() => props.id, fetchData)
 watch([() => selectedVarriantColor.value, () => selectedVarriantSize.value], () => {
@@ -479,3 +446,80 @@ watch(() => dropDownListBaseProduct.value, async () => {
   }
 })
 </script>
+<style scoped>
+.form-control {
+  border-radius: 0.75rem;
+  border: 1px solid #dee2e6;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.dropdown {
+  margin-bottom: 1rem;
+}
+
+.first-button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.first-button:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-toggle {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdown-toggle span {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-item img {
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.variant-preview ul {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.variant-preview img {
+  border: 1px solid #ccc;
+}
+</style>
