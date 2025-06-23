@@ -130,6 +130,31 @@
           </div>
         </div>
       </div>
+      <!-- Preview of Added Variants -->
+      <div class="variant-preview mt-4">
+        <h5 class="mb-3">Danh sách biến thể đã thêm:</h5>
+        <div v-if="list.length === 0" class="text-muted">Chưa có biến thể nào được thêm.</div>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(item, index) in list"
+            :key="index">
+            <div class="d-flex align-items-center">
+              <img :src="item.imgPreview || previewMainImg" alt="Preview" class="me-3 rounded"
+                style="width: 50px; height: 50px; object-fit: cover;" />
+              <div>
+                <strong>{{ item.name }}</strong><br />
+                <small>
+                  SKU: {{ item.sku }} |
+                  Giá: {{ item.price }} |
+                  SL: {{ item.qty }}
+                </small><br />
+                <small class="text-muted">Ảnh: {{ item.fileNameImgOfVariant || 'Không có' }}</small>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" @click="removeVariant(index)">Xóa</button>
+          </li>
+        </ul>
+      </div>
+
       <button type="submit" :disabled="props.action === 'view'" class="btn btn-primary">
         <span v-if="props.action === 'create'">Create</span>
         <span v-else-if="props.action === 'create'">Create</span>
@@ -195,6 +220,15 @@
   border-radius: 6px;
   object-fit: cover;
 }
+
+.variant-preview ul {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.variant-preview img {
+  border: 1px solid #ccc;
+}
 </style>
 
 <script setup>
@@ -229,13 +263,30 @@ const formTableService = createCrudService(props.TableName);
 const mapSku = ref()
 const dropDownListVariants = ref([])
 const dropDownListBaseProduct = ref(new Map())
-const selectedProduct = ref(null)
+const selectedProduct = ref({
+  id: '',
+  baseId: '',
+  cost: '',
+  price: '',
+  turnBuy: 0,
+  description: '',
+  sku: '',
+  safetyStock: '',
+  qty: '',
+  sellStart: '',
+  sellEnd: '',
+  createdAt: '',
+  updatedAt: '',
+  imgPreview: '',
+  fileNameImgOfVariant: '',
+})
 const selectedPrice = ref(null)
 const selectedVarriantColor = ref("")
 const selectedVarriantSize = ref("")
 const list = ref([])
 const previewImg = ref();
 const showModal = ref(false);
+const previewMainImg = ref("");
 const formData = reactive({
   id: '',
   baseId: '',
@@ -305,7 +356,6 @@ const listDashBoard = [
   "VariantValues",
   "Variants",
 ]
-
 const fetchData = async () => {
   if (!props.TableName) return
   try {
@@ -326,13 +376,14 @@ function handleSubmit() {
     submitUpdateForm()
   }
 }
-const previewMainImg = ref("");
 function onAvatarUpdate(url) {
-  formData.mainImageUrl = url.filePath;
+  // formData.mainImageUrl = url.filePath;
   previewImg.value = url.downloadUrl
-  selectedProduct.value.image = url.filePath
+  // selectedProduct.value.imagePreview = url.downloadUrl
+  // selectedProduct.value.imageName = previewImg.value
+  selectedProduct.value.imgPreview = url.downloadUrl
+  selectedProduct.value.fileNameImgOfVariant = url.filePath
 }
-
 async function submitUpdateForm() {
   console.log(formData)
   try {
@@ -343,7 +394,9 @@ async function submitUpdateForm() {
     console.error('Insert failed:', error)
   }
 }
-
+function removeVariant(index) {
+  list.value.splice(index, 1)
+}
 async function submitForm() {
   console.log(formData)
   try {
@@ -354,7 +407,6 @@ async function submitForm() {
     console.error('Insert failed:', error)
   }
 }
-
 const openModal = (product) => {
   if (selectedProduct.value == null) return
   itemToAddList.value = { ...product };
@@ -364,14 +416,17 @@ const openModal = (product) => {
   selectedProduct.value.baseId = product.id;
   selectedProduct.value.price = 0;
   selectedProduct.value.cost = 0;
-
 };
 const closeModal = () => {
   console.log(list.value)
   showModal.value = false;
 };
 const addToCart = () => {
-  list.value.push(selectedProduct.value)
+  list.value.push({
+    ...selectedProduct.value,
+    imgPreview: selectedProduct.value.imgPreview || previewImg.value || '',
+    fileNameImgOfVariant: selectedProduct.value.fileNameImgOfVariant || ''
+  })
   // if (!selectedProduct.value || quantity.value <= 0) return;
   // console.log(quantity.value, selectedProduct.value.safetyStock)
   // if (quantity.value < selectedProduct.value.safetyStock) {
@@ -390,7 +445,6 @@ const addToCart = () => {
   closeModal();
   // }
 };
-
 async function selectBaseProduct(product) {
   selectedProduct.value = product
   itemToAddList.value = { ...product };
@@ -407,7 +461,6 @@ function selectPrice(price) {
   selectedPrice.value = price
   formData.price = price
 }
-
 onMounted(async () => {
   await fetchData();
   dropDownListVariants.value = await dropDownVariant()
