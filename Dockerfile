@@ -18,6 +18,6 @@ WORKDIR /app
 
 # Copy JAR file từ build stage
 COPY --from=builder /build/target/*.jar app.jar
-
 # Khởi chạy ứng dụng
 CMD ["java", "-jar", "app.jar"]
+EXPOSE 8080
