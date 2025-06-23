@@ -155,7 +155,7 @@
         </ul>
       </div>
 
-      <button type="submit" :disabled="props.action === 'view'" class="btn btn-primary">
+      <button @click="handleSubmit" :disabled="props.action === 'view'" class="btn btn-primary">
         <span v-if="props.action === 'create'">Create</span>
         <span v-else-if="props.action === 'create'">Create</span>
         <span v-else>Update</span>
@@ -331,6 +331,7 @@ const listDashBoard = [
   "Accounts",
   "Authorities",
   "BaseProducts",
+  "ProductItems",
   "Cancels",
   "CartItems",
   "Catalogs",
@@ -343,7 +344,6 @@ const listDashBoard = [
   "PaymentMethods",
   "PriceHistories",
   "ProductImages",
-  "ProductItems",
   "PromotionProduct",
   "Promotions",
   "PurchaseOrderItems",
