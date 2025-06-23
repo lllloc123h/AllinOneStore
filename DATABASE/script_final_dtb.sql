@@ -191,7 +191,7 @@ create table
 
 GO
 CREATE TABLE
-	UserLogs (
+	user_logs (
 		id INT IDENTITY (1, 1) PRIMARY KEY,
 		user_id INT NOT NULL,
 		action NVARCHAR (100) NOT NULL,
