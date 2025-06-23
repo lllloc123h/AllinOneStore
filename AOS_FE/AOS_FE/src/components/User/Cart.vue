@@ -104,11 +104,12 @@ const selectedItems = ref([])
 async function loadCart() {
   try {
     const response = await cartService.getCart();
+    console.log(response)
     // console.log(response);
     if (authService.isLogged()) {
       cart.value = response.map(item => ({
         id: item.id,
-        productItemId: item.productItems.productItemId,
+        productItemId: item.productItems.id,
         name: item.productItems.name,
         price: item.productItems.price,
         quantity: item.qty,
