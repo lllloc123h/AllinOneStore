@@ -81,6 +81,27 @@ public class UserLogsAPI {
 	    return ResponseEntity.noContent().build(); 
 	}
 
+	@GetMapping("/admin/UserLogs/inactive-users")
+	public ResponseEntity<List<Integer>> getInactiveUserIds(
+	        @RequestParam(defaultValue = "30") int days) {
+	    List<Integer> inactiveUserIds = userLogsService.getInactiveUserIds(days);
+	    return ResponseEntity.ok(inactiveUserIds);
+	}
 
-	
+	@PostMapping("/admin/UserLogs/send-promotion")
+	public ResponseEntity<?> sendPromotionToInactiveUsers(@RequestBody PromotionSendRequestDTOS request) {
+	    for (Integer userId : request.getUserIds()) {
+	        UserLogs log = new UserLogs();
+	        log.setUserId(userId);
+	        log.setAction("PROMOTION_SUGGESTION");
+	        log.setDescription("Đã gửi mã khuyến mãi: " + request.getCouponCode());
+	        log.setModule("PROMOTION_MODULE");
+	        log.setIpAddress("system");
+	        log.setUserAgent("admin-manual");
+	        userLogsService.userLogsSave(log);
+	    }
+
+	    return ResponseEntity.ok(Map.of("message", "Ghi log gửi mã thành công"));
+	}
+
 }

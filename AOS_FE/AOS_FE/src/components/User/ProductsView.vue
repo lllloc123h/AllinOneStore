@@ -111,59 +111,60 @@
         <h3 class="mt-4">hien thi 12 trong so 34 san pham</h3>
 
         <div class="product-flatform row mt-4 g-4">
-          <div v-for="product in products" :key="product.id" class="col-4">
-            <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
-              <!-- Label Giảm giá -->
-              <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
-                style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-                Giảm giá
-              </div>
 
-              <!-- Bo góc ảnh luôn -->
-              <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-                :src="product?.imageUrl || 'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'"
-                alt="Card
+
+          <div v-for="product in products" :key="product.id" class="col-4">
+
+            <ProductCard :product="product" @view-detail="openModal" />
+            <!-- <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
+             
+            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
+              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+              Giảm giá
+            </div>
+
+            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
+              :src="product?.imageUrl || 'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'"
+              alt="Card
               image" />
 
-              <!-- Nội dung -->
-              <div class="card-body">
-                <div class="card-title">
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-fill text-warning"></i>
-                  <i class="bi bi-star-half text-warning"></i>
-                  <i class="bi bi-star text-warning"></i>
-                  <span> (5,4k) revivews</span>
-                </div>
-                <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
+            <div class="card-body">
+              <div class="card-title">
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-half text-warning"></i>
+                <i class="bi bi-star text-warning"></i>
+                <span> (5,4k) revivews</span>
+              </div>
+              <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
 
-                <p class="card-text">{{ product.name }}</p>
+              <p class="card-text">{{ product.name }}</p>
 
-                <div class="d-flex justify-content-end">
-                  <!-- From Uiverse.io by AKAspidey01 -->
-
-                  <div class="main-section rounded-4">
-                    <button class="first-button">Còn hàng</button>
-                    <button class="second-button" @click="openModal(product)">
-                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                        <circle cx="9" cy="21" r="1"></circle>
-                        <circle cx="20" cy="21" r="1"></circle>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                      </svg>
-                      3,4k đã bán
-                    </button>
-                  </div>
+              <div class="d-flex justify-content-end">
+                <div class="main-section rounded-4">
+                  <button class="first-button">Còn hàng</button>
+                  <button class="second-button" @click="openModal(product)">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+                      <circle cx="9" cy="21" r="1"></circle>
+                      <circle cx="20" cy="21" r="1"></circle>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    3,4k đã bán
+                  </button>
                 </div>
               </div>
             </div>
+          </div> -->
           </div>
+
           <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5)">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">{{ selectedProduct?.name }}</h5>
-                  <button type="button" class="btn-close" @click="closeModal"></button>
+                  <button type="button" class="btn-close" @view-detail="closeModal"></button>
                 </div>
                 <div class="modal-body">
                   <img
@@ -197,6 +198,7 @@ import api, { authService } from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from 'ant-design-vue';
+import ProductCard from "../Module/ProductCard.vue";
 const mapVarriants = ref({});
 const data = ref([])
 const selected = ref([]);

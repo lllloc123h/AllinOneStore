@@ -108,7 +108,8 @@ const props = defineProps({
 })
 const formTableService = createCrudService(props.TableName);
 const categoriesService = createCrudService("Categories");
-
+const categoriesDropDownList = ref([]);
+const previewImg = ref();
 const formData = reactive({
   id: '',
   name: '',
@@ -122,14 +123,14 @@ const formData = reactive({
   createdAt: '',
   updatedAt: '',
 })
-const previewImg = ref();
 function onAvatarUpdate(url) {
-  console.log("Received image URL:", url);
+  // console.log("Received image URL:", url);
   formData.mainImageUrl = url.filePath;
+  const filePath = `products/${Date.now()}_${file.name}`;
+  const fileRef = storageRef(storage, filePath);
   previewImg.value = url.downloadUrl
-  console.log("formData.mainImageUrl = ", formData.mainImageUrl);
+  // console.log("formData.mainImageUrl = ", formData.mainImageUrl);
 }
-
 const listDashBoard = [
   "Accounts",
   "Authorities",
@@ -159,9 +160,6 @@ const listDashBoard = [
   "VariantValues",
   "Variants",
 ]
-
-const categoriesDropDownList = ref([]);
-
 async function submitUpdateForm() {
   try {
     formData.createdAt = formatDateTimeLocal(formData.createdAt)
@@ -174,8 +172,6 @@ async function submitUpdateForm() {
     console.error('Insert failed:', error)
   }
 }
-
-
 async function submitForm() {
   console.log(formData)
   try {
@@ -188,7 +184,6 @@ async function submitForm() {
 }
 const fetchData = async () => {
   if (!props.TableName) return
-
   try {
     if (!props.action || props.action === 'view' || props.action === 'update') {
       const response = await formTableService.getById(props.id)
@@ -207,7 +202,6 @@ const fetchData = async () => {
       response.data.updatedAt = formatDate(response.data.updatedAt)
       Object.assign(formData, response.data)
     }
-
     const responseCategories = await categoriesService.getAll(0, 1000)
     categoriesDropDownList.value = responseCategories.data.map(category => {
       return {
@@ -216,7 +210,6 @@ const fetchData = async () => {
       }
     })
   } catch (err) {
-
     console.error('Get failed:', err)
   }
 }
