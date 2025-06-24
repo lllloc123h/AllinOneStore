@@ -63,7 +63,7 @@ DROP TABLE IF EXISTS roles;
 
 DROP TABLE IF EXISTS accounts;
 
-go EXEC usp_DropTablesAndConstraints;
+
 
 go
 create table
@@ -90,7 +90,8 @@ create table
 		name nvarchar (50),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
-	) go
+	) 
+	go
 create table
 	authorities (
 		id int identity (1, 5) primary key,
@@ -100,7 +101,8 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (account_id) references accounts (id),
 		foreign key (role_id) references roles (id)
-	) GO
+	) 
+	GO
 create table
 	user_addresses (
 		id int identity (1, 1) primary key,
@@ -494,7 +496,7 @@ CREATE TABLE
 		created_at DATETIME DEFAULT GETDATE (),
 		FOREIGN KEY (account_id) REFERENCES accounts (id)
 	);
-
+GO
 CREATE TABLE
 	e_wallet_transactions (
 		id INT IDENTITY (1, 1) PRIMARY KEY,
