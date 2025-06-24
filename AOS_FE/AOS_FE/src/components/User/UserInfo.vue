@@ -4,46 +4,68 @@
     <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
   </div>
 
+  <div class="button-holder">
+    <div>
+      <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
+    </div>
+    <div>
+      <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
+    </div>
+    <div>
+      <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
+    </div>
+  </div>
+
   <div>
+    <div v-if="showPopupTaiKhoan" class="popup-overlay">
+      <form>
+        <div class="popup-content">
+          <h4><strong>Thông tin khách hàng</strong></h4>
+          <label class="form-label">Họ và tên</label>
+          <input type="text" class="form-control" v-model="user.Name">
+
+          <div class="row">
+            <div class="col-sm-12">
+              <label class="form-label">Địa chỉ Email</label>
+              <input type="email" class="form-control" v-model="user.Email">
+            </div>
+            <div class="col-sm-12">
+              <label class="form-label">Số điện thoại</label>
+              <input type="text" class="form-control" v-model="user.Phone">
+            </div>
+          </div>
+          <button class="btn-popup" @click="closePopup">OK</button>
+        </div>
+      </form>
+    </div>
+    <div v-if="showPopupDoiMatKhau" class="popup-overlay">
+      <form>
+        <div class="popup-content">
+          <h4 class="mt-4"><strong>Đổi mật khẩu</strong></h4>
+          <div class="row">
+            <div class="col-sm-6">
+              <label class="form-label">Mật khẩu cũ</label>
+              <input type="password" class="form-control" v-model="user.Password">
+            </div>
+            <div class="col-sm-6 mt-3"></div>
+            <div class="col-sm-6 mt-3">
+              <label class="form-label">Mật khẩu mới</label>
+              <input type="password" class="form-control">
+            </div>
+            <div class="col-sm-6 mt-3">
+              <label class="form-label">Xác nhận mật khẩu</label>
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <button class="btn-popup" @click="closePopup">OK</button>
+        </div>
+      </form>
+    </div>
     <form>
-      <!-- Avatar -->
       <div class="card" style="width: 240px; height: 320px; margin: auto;">
         <img :src="user.Avatar" alt="" id="avatar" class="card-img" width="100%" height="100%">
       </div>
 
-      <!-- Thông tin khách hàng -->
-      <h4><strong>Thông tin khách hàng</strong></h4>
-      <label class="form-label">Họ và tên</label>
-      <input type="text" class="form-control" v-model="user.Name">
-
-      <div class="row">
-        <div class="col-sm-6">
-          <label class="form-label">Địa chỉ Email</label>
-          <input type="email" class="form-control" v-model="user.Email">
-        </div>
-        <div class="col-sm-6">
-          <label class="form-label">Số điện thoại</label>
-          <input type="text" class="form-control" v-model="user.Phone">
-        </div>
-      </div>
-
-      <!-- Đổi mật khẩu -->
-      <h4 class="mt-4"><strong>Đổi mật khẩu</strong></h4>
-      <div class="row">
-        <div class="col-sm-6">
-          <label class="form-label">Mật khẩu cũ</label>
-          <input type="password" class="form-control" v-model="user.Password">
-        </div>
-        <div class="col-sm-6 mt-3"></div>
-        <div class="col-sm-6 mt-3">
-          <label class="form-label">Mật khẩu mới</label>
-          <input type="password" class="form-control">
-        </div>
-        <div class="col-sm-6 mt-3">
-          <label class="form-label">Xác nhận mật khẩu</label>
-          <input type="password" class="form-control">
-        </div>
-      </div>
 
       <!-- Địa chỉ -->
       <h4 class="mt-4"><strong>Địa chỉ</strong></h4>
@@ -84,7 +106,7 @@
       <textarea class="form-control input-address" v-model="user.Address" readonly></textarea>
 
       <div class="div-input">
-        <button class="btn my-4" type="button" @click="updateProfile">Cập Nhật</button>
+        <button class="btn" type="button" @click="updateProfile">Cập Nhật</button>
       </div>
     </form>
   </div>
@@ -117,6 +139,23 @@ const selectedWard = ref('')
 
 const selectedProvinceName = ref('')
 const selectedDistrictName = ref('')
+const showPopupTaiKhoan = ref(false)
+const showPopupDoiMatKhau = ref(false)
+const showPopupDiaChi = ref(false)
+const popupMessage = ref("")
+
+const openPopupTaiKhoan = () => {
+  showPopupTaiKhoan.value = true
+}
+const openPopupDoiMatKhau = () => {
+  showPopupDoiMatKhau.value = true
+}
+const openPopupDiaChi = () => {
+  showPopupDiaChi.value = true
+}
+const openPopup = () => {
+  showPopup.value = true
+}
 
 // load tỉnh khi khởi động
 onMounted(async () => {
@@ -208,7 +247,7 @@ form {
   width: 50%;
   margin: auto;
   padding: 10px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 15px;
   margin-bottom: 50px;
 }
@@ -216,11 +255,70 @@ form {
 .btn {
   background-color: burlywood;
   right: 45%;
-  position: absolute;
   font-size: larger;
   height: 60px;
   width: 180px;
   border-radius: 25px;
+}
+
+template {
+  position: relative;
+}
+
+.popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  width: 300px;
+  margin: 0 auto;
+}
+
+.div-input {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.btn-popup {
+  background-color: #deb887;
+  /* burlywood */
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  width: 160px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-popup:hover {
+  background-color: #ffa835;
+  transform: scale(1.05);
+}
+
+.btn-popup:active {
+  transform: scale(0.95);
+}
+
+.btn:hover {
+  background-color: rgb(255, 168, 53);
 }
 
 .btn:hover {
@@ -230,5 +328,51 @@ form {
 .div-input {
   position: relative;
   min-height: 90px;
+}
+
+.open-popup-btn {
+  background-color: #deb887;
+  /* burlywood */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 10px 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.open-popup-btn:hover {
+  background-color: #ffa835;
+  transform: scale(1.05);
+}
+
+.open-popup-btn:active {
+  transform: scale(0.95);
+}
+
+.button-holder {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  /* allows responsive wrap */
+}
+
+.open-popup-btn {
+  background-color: #deb887;
+  /* burlywood */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 </style>
