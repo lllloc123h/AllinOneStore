@@ -6,7 +6,7 @@ import { toast } from 'vue3-toastify';
 import { syncLocalCartToServer } from './cart';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: `${import.meta.env.VITE_PAKE_DOMAIN}/api`,
   headers: {
     'Content-Type': 'application/json'
   },
