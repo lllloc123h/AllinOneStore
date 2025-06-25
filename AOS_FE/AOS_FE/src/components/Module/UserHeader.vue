@@ -20,9 +20,6 @@
             <RouterLink class="nav-link active" aria-current="page" to="/products">Product</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/UserInfo">User Info</RouterLink>
-          </li>
-          <li class="nav-item">
             <RouterLink class="nav-link active" aria-current="page" to="/Customizer">Customizer
             </RouterLink>
           </li>
@@ -56,6 +53,9 @@
               <li>
                 <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="isAdmin">Admin
                 </RouterLink>
+              </li>
+              <li class="dropdown-item">
+                <RouterLink class="nav-link active" to="/UserInfo">Setting</RouterLink>
               </li>
               <li>
                 <button class="dropdown-item" @click="logout" v-if="isLogged">
