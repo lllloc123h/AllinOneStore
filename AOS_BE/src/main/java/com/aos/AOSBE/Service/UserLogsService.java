@@ -37,6 +37,7 @@ public class UserLogsService {
     public void userLogsDeleteById(int id) {
         userLogsRepository.deleteById(id);
     }
+    @Transactional(readOnly = true)
     public List<InactiveUserPromotionDTOS> getInactiveUsersWithSuggestion(int inactiveDays) {
         LocalDateTime cutoff = LocalDateTime.now().minusDays(inactiveDays);
         // Lấy toàn bộ ID user đã từng log
@@ -58,6 +59,7 @@ public class UserLogsService {
         }
         return result;
     }
+    @Transactional(readOnly = true)
     public List<Integer> getInactiveUserIds(int days) {
         LocalDateTime cutoffDate = LocalDateTime.now().minusDays(days);
         List<Integer> activeUserIds = userLogsRepository.findDistinctUserIdAfter(cutoffDate);
@@ -71,6 +73,10 @@ public class UserLogsService {
         return allUserIds.stream()
             .filter(id -> !activeUserIds.contains(id))
             .toList();
+    }
+    @Transactional(readOnly = true)
+    public boolean hasUserReceivedPromotion(int userId, String couponCode) {
+        return userLogsRepository.hasReceivedPromotion(userId, couponCode);
     }
 
 }

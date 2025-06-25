@@ -17,4 +17,8 @@ public interface UserLogsRepository extends JpaRepository<UserLogs, Integer>, Jp
     @Query("SELECT DISTINCT u.userId FROM UserLogs u WHERE u.createdAt > :cutoff")
     List<Integer> findDistinctUserIdAfter(@Param("cutoff") LocalDateTime cutoff);
 
+    @Query("SELECT COUNT(u) > 0 FROM UserLogs u " +
+           "WHERE u.userId = :userId AND u.action = 'PROMOTION_SUGGESTION' " +
+           "AND u.description LIKE %:couponCode%")
+    boolean hasReceivedPromotion(@Param("userId") int userId, @Param("couponCode") String couponCode);
 }
