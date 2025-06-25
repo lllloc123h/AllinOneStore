@@ -76,8 +76,6 @@ public class AccountsAPI {
 
 	@GetMapping("/test")
 	public ResponseEntity<?> test() {
-		System.err.println("test");
-
 		return ResponseEntity.ok(authoritiesService.findAllByEmail("adminCUDE@gmail.com").stream()
 				.map(authority -> authority.getAccounts().getEmail()).toList());
 	}
