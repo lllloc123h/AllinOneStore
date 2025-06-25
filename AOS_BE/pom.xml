@@ -36,6 +36,13 @@
 	</properties>
 
 	<dependencies>
+<!--		<dependency>-->
+<!--			<groupId>com.google.cloud.sql</groupId>-->
+<!--			<artifactId>cloud-sql-connector-jdbc-sqlserver</artifactId>-->
+<!--			<version>1.25.1</version>-->
+<!--		</dependency>-->
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jdbc</artifactId>
