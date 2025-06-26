@@ -90,7 +90,16 @@ public class UserLogsAPI {
 
 	@PostMapping("/admin/UserLogs/send-promotion")
 	public ResponseEntity<?> sendPromotionToInactiveUsers(@RequestBody PromotionSendRequestDTOS request) {
+	    List<Integer> sent = new ArrayList<>();
+	    List<Integer> skipped = new ArrayList<>();
+
 	    for (Integer userId : request.getUserIds()) {
+	        boolean alreadySent = userLogsService.hasUserReceivedPromotion(userId, request.getCouponCode());
+	        if (alreadySent) {
+	            skipped.add(userId); // đã gửi → bỏ qua
+	            continue;
+	        }
+
 	        UserLogs log = new UserLogs();
 	        log.setUserId(userId);
 	        log.setAction("PROMOTION_SUGGESTION");
@@ -99,9 +108,15 @@ public class UserLogsAPI {
 	        log.setIpAddress("system");
 	        log.setUserAgent("admin-manual");
 	        userLogsService.userLogsSave(log);
+	        sent.add(userId);
 	    }
 
-	    return ResponseEntity.ok(Map.of("message", "Ghi log gửi mã thành công"));
+	    return ResponseEntity.ok(Map.of(
+	        "message", "Ghi log gửi mã thành công",
+	        "sent", sent,
+	        "skipped", skipped
+	    ));
 	}
+
 
 }
