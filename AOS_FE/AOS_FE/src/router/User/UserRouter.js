@@ -35,12 +35,12 @@ export default [
         path: 'register',
         name: 'register',
         component: () => import('../../components/Module/RegisterView.vue')
-    },  {
+    }, {
         path: 'otp',
         name: 'otp',
         component: () => import('../../components/Module/OTPView.vue')
     },
-     {
+    {
         path: 'cart',
         name: 'cart',
         component: Cart
@@ -64,13 +64,23 @@ export default [
     {
         path: '/Customizer',
         name: 'Customizer',
-        component: () => import ('../../components/User/CustomizerView.vue')
+        component: () => import('../../components/User/CustomizerView.vue')
     },
 
     {
         path: '/Crop',
         name: 'CropCrop',
-        component: () => import ('../../components/User/CropImage.vue')
+        component: () => import('../../components/User/CropImage.vue')
+    },
+    {
+        path: '/Checkoutpage',
+        name: 'CheckoutPage',
+        component: () => import('../../components/User/CheckoutPage.vue')
+    },
+    {
+        path: '/shippingaddress',
+        name: 'shippingaddress',
+        component: () => import('../../components/Module/ShippingAddress.vue')
     }
 
 ]
