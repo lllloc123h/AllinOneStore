@@ -1,25 +1,6 @@
 <template>
   <div>
-    <!-- Header -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    <header class="header">
-      <div class="header-left">
-        <span class="logo">OOO</span>
-      </div>
-      <nav class="header-nav">
-        <ul>
-          <li><a href="#">Trang chủ</a></li>
-          <li><a href="#">Loại Hàng</a></li>
-          <li><a href="#">Giới thiệu</a></li>
-          <li><a href="#">Tin tức</a></li>
-        </ul>
-      </nav>
-      <div class="header-right">
-        <i class="header-icon fas fa-user"></i>
-        <i class="header-icon fas fa-shopping-bag"></i>
-        <i class="header-icon fas fa-chevron-down"></i>
-      </div>
-    </header>
+
     <div class="address-container">
       <div class="address row">
         <div class="form col-sm-12">
