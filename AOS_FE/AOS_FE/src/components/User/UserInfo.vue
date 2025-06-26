@@ -4,17 +4,7 @@
     <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
   </div>
 
-  <div class="button-holder">
-    <div>
-      <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
-    </div>
-    <div>
-      <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
-    </div>
-    <div>
-      <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
-    </div>
-  </div>
+
 
   <div>
     <div v-if="showPopupTaiKhoan" class="popup-overlay">
@@ -61,54 +51,26 @@
         </div>
       </form>
     </div>
-    <form>
-      <div class="card" style="width: 240px; height: 320px; margin: auto;">
-        <img :src="user.Avatar" alt="" id="avatar" class="card-img" width="100%" height="100%">
+
+    <div class="card" style="width: 240px; height: 320px; margin: auto;">
+      <img :src="user.Avatar" alt="" id="avatar" class="card-img" width="100%" height="100%">
+
+    </div>
+    <div class="button-holder">
+      <div>
+        <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
       </div>
-
-
-      <!-- Địa chỉ -->
-      <h4 class="mt-4"><strong>Địa chỉ</strong></h4>
-
-      <div class="row">
-        <div class="col-sm-4">
-          <label class="form-label">Tỉnh / Thành phố</label>
-          <select class="form-select" v-model="selectedProvinceId">
-            <option disabled value="">-- Chọn Tỉnh --</option>
-            <option v-for="p in provinces" :key="p.ProvinceID" :value="p.ProvinceID">
-              {{ p.ProvinceName }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-sm-4">
-          <label class="form-label">Quận / Huyện</label>
-          <select class="form-select" v-model="selectedDistrictId">
-            <option disabled value="">-- Chọn Huyện --</option>
-            <option v-for="d in districts" :key="d.DistrictID" :value="d.DistrictID">
-              {{ d.DistrictName }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-sm-4">
-          <label class="form-label">Phường / Xã</label>
-          <select class="form-select" v-model="selectedWard">
-            <option disabled value="">-- Chọn Xã --</option>
-            <option v-for="w in wards" :key="w.WardCode" :value="w.WardName">
-              {{ w.WardName }}
-            </option>
-          </select>
-        </div>
+      <div>
+        <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
       </div>
-
-      <label class="form-label mt-3">Địa chỉ đầy đủ</label>
-      <textarea class="form-control input-address" v-model="user.Address" readonly></textarea>
-
-      <div class="div-input">
+      <div>
+        <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
+      </div>
+    </div>
+    <!-- <div class="div-input">
         <button class="btn" type="button" @click="updateProfile">Cập Nhật</button>
-      </div>
-    </form>
+      </div> -->
+
   </div>
 </template>
 
@@ -116,6 +78,7 @@
 import { reactive, ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import avatar from '../../assets/imgs/avarta_Kha.png'
+import { useRouter } from 'vue-router'
 
 const GHN_TOKEN = '86a66676-4794-11f0-8342-3e24ae01a77c'
 
@@ -143,7 +106,7 @@ const showPopupTaiKhoan = ref(false)
 const showPopupDoiMatKhau = ref(false)
 const showPopupDiaChi = ref(false)
 const popupMessage = ref("")
-
+const router = useRouter()
 const openPopupTaiKhoan = () => {
   showPopupTaiKhoan.value = true
 }
@@ -151,7 +114,11 @@ const openPopupDoiMatKhau = () => {
   showPopupDoiMatKhau.value = true
 }
 const openPopupDiaChi = () => {
-  showPopupDiaChi.value = true
+  router.push({
+    name: "shippingaddress"
+  }
+
+  )
 }
 const openPopup = () => {
   showPopup.value = true
@@ -356,11 +323,16 @@ template {
 
 .button-holder {
   display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  /* allows responsive wrap */
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+  max-width: 300px;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.button-holder>div>button {
+  min-width: 100%;
 }
 
 .open-popup-btn {

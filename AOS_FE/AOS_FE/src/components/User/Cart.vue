@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { authService, cartService } from '../../Configs/api'
@@ -105,7 +105,6 @@ async function loadCart() {
   try {
     const response = await cartService.getCart();
     console.log(response)
-    // console.log(response);
     if (authService.isLogged()) {
       cart.value = response.map(item => ({
         id: item.id,
@@ -115,7 +114,8 @@ async function loadCart() {
         quantity: item.qty,
         image: item.productItems.image
       }));
-      selectedItems.value = cart.value.map(item => item.productItems.productItemId);
+      console.log(cart.value)
+      selectedItems.value = cart.value.map(item => item.productItemId);
 
     } else {
       cart.value = response.map(item => ({
@@ -215,16 +215,19 @@ function checkout() {
   )
   router.push({
     name: 'CheckoutPage',
-    state: {
-      selectedProducts
+    query: {
+      products: JSON.stringify(selectedProducts)
     }
-  })
+  });
 }
 
 // Tải giỏ hàng khi trang được mount
 onMounted(() => {
   loadCart()
 })
+// watch(() => selectedItems.value, (newvalue) => {
+//   console.log(selectedProducts[newvalue])
+// })
 </script>
 
 
