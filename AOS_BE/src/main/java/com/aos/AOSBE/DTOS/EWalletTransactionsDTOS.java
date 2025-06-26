@@ -18,5 +18,7 @@ public class EWalletTransactionsDTOS {
     private int relatedWalletId;
     private String description;
     private LocalDateTime createdAt;
+    private String orderId;
+    private String status;
     private int eWallets;
 }
