@@ -81,6 +81,21 @@ export default [
         path: '/shippingaddress',
         name: 'shippingaddress',
         component: () => import('../../components/Module/ShippingAddress.vue')
+    },
+    {
+        path: '/momotopup',
+        name: 'momotopup',
+        component: () => import('../../components/User/MomoTopUp.vue')
+    },
+    {
+        path: '/wallet',
+        name: 'wallet',
+        component: () => import('../../components/User/WalletInfor.vue')
+    },
+    {
+        path: '/momo/return',
+        name: 'momo-return',
+        component: () => import('../../components/User/WalletInfor.vue')
     }
 
 ]

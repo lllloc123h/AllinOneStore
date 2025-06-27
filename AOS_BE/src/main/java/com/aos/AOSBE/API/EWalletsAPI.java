@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.EWalletsDTOS;
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Mapper.EWalletsMapper;
+import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.EWalletsService;
 
 @RestController
@@ -28,12 +31,13 @@ import com.aos.AOSBE.Service.EWalletsService;
 public class EWalletsAPI {
 	@Autowired
 	private EWalletsService eWalletsService;
-
+	@Autowired
+	AccountsService accountsService;
 	@Autowired
 	private EWalletsMapper eWalletsMapper;
 
 	@GetMapping("/admin/EWallets")
-	public ResponseEntity<List<EWalletsDTOS>> getAllEWalletsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<EWalletsDTOS>> getAllEWalletsApiAdminRole(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 
 		List<EWalletsDTOS> eWallets = new ArrayList<EWalletsDTOS>();
@@ -41,6 +45,24 @@ public class EWalletsAPI {
 			eWallets.add(eWalletsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(eWallets);
+	}
+
+	@GetMapping("/EWallets")
+	public ResponseEntity<?> getAllEWalletsApi(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
+		try {
+
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountsService.accountsFindByEmail(userEmail).orElse(null);
+			EWallets eWallets = eWalletsService.eWalletsFindByAccountId(user.getId()).orElse(null);
+			if (eWallets != null) {
+				return ResponseEntity.ok(eWallets);
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+			}
+		} catch (Exception c) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
 	}
 
 	@GetMapping("/admin/EWallets/{id}")

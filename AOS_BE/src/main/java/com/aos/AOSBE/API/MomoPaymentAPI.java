@@ -53,25 +53,27 @@ public class MomoPaymentAPI {
 	public ResponseEntity<?> createTopUpRequest(@RequestBody TopUpRequestDTO dto) throws Exception {
 		EWalletTransactionsDTOS transaction = new EWalletTransactionsDTOS();
 
+		String domain = System.getProperty("BE_PAKE_DOMAIN_ORIGIN");
 		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 		Accounts user = accountsService.accountsFindByEmail(userEmail).orElse(null);
+		// MoMo credentials and URLs
+		String endpoint = "https://payment.momo.vn/v2/gateway/api/create";
+
+		String partnerCode = System.getProperty("MOMO_PARTNER");
+		String accessKey = System.getProperty("MOMO_ACCESS_KEY");
+		String secretKey = System.getProperty("MOMO_SECRECT_KEY");
+
+		String orderId = "TOPUP" + System.currentTimeMillis();
+		String requestId = UUID.randomUUID().toString();
+		String returnUrl = "http://localhost:5173/momo/return";
+		String notifyUrl = domain + "/api/e-wallet/callback";
 
 		transaction.setEWallets(user.getId());
 		transaction.setAmount(dto.getAmount().doubleValue());
 		transaction.setTransactionType("TOP_UP");
 		transaction.setRelatedWalletId(user.getId());
-
-		// MoMo credentials and URLs
-		String endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-		String partnerCode = "MOMOQMAG20240109_TEST";
-		String accessKey = "plj1XZEx4Vg4WR5P";
-		String secretKey = "BjjoUGFHjbKaVMBcJPJqrK7xCr8lh64q";
-
-		String orderId = "TOPUP" + System.currentTimeMillis();
-		String requestId = UUID.randomUUID().toString();
-		String returnUrl = "http://localhost:5173/momo/return";
-		String notifyUrl = "https://your-ngrok-url.ngrok.io/api/e-wallet/callback";
-
+		transaction.setOrderId(orderId);
+		transaction.setStatus("PENDING");
 		// Create payment data
 		Map<String, String> rawData = new LinkedHashMap<>();
 		rawData.put("accessKey", accessKey);
@@ -120,7 +122,7 @@ public class MomoPaymentAPI {
 				if (transaction != null && !"SUCCESS".equals(transaction.getStatus())) {
 					// 3. Update transaction status
 					transaction.setStatus("SUCCESS");
-					eWalletTransactionsRepository.save(transaction);
+					eWalletTransactionsService.eWalletTransactionsSave(transaction);
 					// 4. Update e-wallet balance
 					EWallets userWallet = eWalletsService.eWalletsFindById(transaction.getEWallets().getId());
 					if (userWallet != null) {

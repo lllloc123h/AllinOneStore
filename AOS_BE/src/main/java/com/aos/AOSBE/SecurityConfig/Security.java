@@ -42,7 +42,7 @@ public class Security {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
 						"/api/test", "/api/Accounts/verify-otp", "/api/BaseProducts/**", "/api/test",
-						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/Product/**"
+						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback"
 //								, "/api/cart"
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

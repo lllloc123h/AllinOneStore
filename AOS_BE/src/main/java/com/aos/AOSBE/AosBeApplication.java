@@ -24,6 +24,11 @@ public class AosBeApplication {
 		System.setProperty("MAIL_USERNAME", dotenv.get("MAIL_USERNAME"));
 		System.setProperty("MAIL_PASSWORD", dotenv.get("MAIL_PASSWORD"));
 		System.setProperty("JWT_SECRET_KEY", dotenv.get("JWT_SECRET_KEY"));
+
+		System.setProperty("BE_PAKE_DOMAIN_ORIGIN", dotenv.get("BE_PAKE_DOMAIN_ORIGIN"));
+		System.setProperty("MOMO_PARTNER", dotenv.get("MOMO_PARTNER"));
+		System.setProperty("MOMO_ACCESS_KEY", dotenv.get("MOMO_ACCESS_KEY"));
+		System.setProperty("MOMO_SECRECT_KEY", dotenv.get("MOMO_SECRECT_KEY"));
 		SpringApplication.run(AosBeApplication.class, args);
 	}
 

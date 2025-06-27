@@ -64,6 +64,9 @@
         <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
       </div>
       <div>
+        <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
+      </div>
+      <div>
         <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
       </div>
     </div>
@@ -117,7 +120,12 @@ const openPopupDiaChi = () => {
   router.push({
     name: "shippingaddress"
   }
-
+  )
+}
+const openPopupTopUp = () => {
+  router.push({
+    name: "wallet"
+  }
   )
 }
 const openPopup = () => {
