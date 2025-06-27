@@ -17,9 +17,10 @@ public class OrderItemsDTOS {
 	private boolean isGift;
 	private double sellingPrice;
 	private double total;
-	private int couponCode;
+	private String couponCode;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private int orders;
 	private int productItems;
+	private int promotions;
 }

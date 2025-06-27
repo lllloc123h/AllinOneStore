@@ -31,25 +31,25 @@ public class Accounts {
     @Column(name = "fullname")
     private String fullname;
 	
-    @Column(name = "avatar")
-    private String avatar;
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 	
     @Column(name = "phone")
     private String phone;
 	
-    @Column(name = "average_order_value",insertable = false)
+    @Column(name = "average_order_value")
     private double averageOrderValue;
 	
-    @Column(name = "user_rank",insertable = false)
+    @Column(name = "user_rank")
     private String userRank;
 	
-    @Column(name = "total_spent",insertable = false)
+    @Column(name = "total_spent")
     private double totalSpent;
 	
-    @Column(name = "total_order",insertable = false)
+    @Column(name = "total_order")
     private int totalOrder;
 	
-    @Column(name = "loyalty_point",insertable = false)
+    @Column(name = "loyalty_point")
     private int loyaltyPoint;
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)

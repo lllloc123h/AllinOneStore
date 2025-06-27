@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NewsDTOS {
     private int id;
-    private String image;
+    private String imageUrl;
     private boolean isHome;
     private String description;
     private LocalDateTime createdAt;

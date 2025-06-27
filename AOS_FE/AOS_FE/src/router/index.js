@@ -39,10 +39,19 @@ const routes = [
 
 ]
 
+// const router = createRouter({
+//   history: createWebHistory(),
+//   routes
+// })
 const router = createRouter({
+<<<<<<< HEAD
   history: createWebHashHistory(),
+=======
+  history: createWebHistory('/AllinOneStore/'),
+>>>>>>> main
   routes
 })
+
 // router.beforeEach((to, from, next) => {
 //   const isAuthenticated = authService.getToken() != null
 //   if (to.meta.requiresAuth && !isAuthenticated) {

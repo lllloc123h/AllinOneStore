@@ -22,8 +22,8 @@ public class News {
     @Column(name = "id")
     private int id;
 	
-    @Column(name = "image")
-    private String image;
+    @Column(name = "image_url")
+    private String imageUrl;
 	
     @Column(name = "is_home")
     private boolean isHome;

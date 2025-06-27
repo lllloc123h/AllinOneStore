@@ -1,0 +1,14 @@
+package com.aos.AOSBE.DTOS;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ResetPasswordDTOS {
+	private int id;
+	private String Email;
+	private String PassWord;
+}

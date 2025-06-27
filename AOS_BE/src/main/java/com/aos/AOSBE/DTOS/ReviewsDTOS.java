@@ -15,7 +15,10 @@ public class ReviewsDTOS {
     private int id;
     private int rating;
     private String comment;
-    private String images;
+    private String imageUrl1;
+    private String imageUrl2;
+    private String imageUrl3;
+    private String videoUrl;
     private LocalDateTime createdAt;
     private int accounts;
     private int productItems;

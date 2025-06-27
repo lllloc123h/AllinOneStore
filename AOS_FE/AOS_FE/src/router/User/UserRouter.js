@@ -35,12 +35,12 @@ export default [
         path: 'register',
         name: 'register',
         component: () => import('../../components/Module/RegisterView.vue')
-    },  {
+    }, {
         path: 'otp',
         name: 'otp',
         component: () => import('../../components/Module/OTPView.vue')
     },
-     {
+    {
         path: 'cart',
         name: 'cart',
         component: Cart
@@ -56,7 +56,7 @@ export default [
     },
 
     {
-        path: '/OrderStatus',
+        path: '/OrderStatus/:id?',
         name: 'OrderStatus',
         component: OrderStatus
     },
@@ -64,13 +64,38 @@ export default [
     {
         path: '/Customizer',
         name: 'Customizer',
-        component: () => import ('../../components/User/CustomizerView.vue')
+        component: () => import('../../components/User/CustomizerView.vue')
     },
 
     {
         path: '/Crop',
         name: 'CropCrop',
-        component: () => import ('../../components/User/CropImage.vue')
+        component: () => import('../../components/User/CropImage.vue')
+    },
+    {
+        path: '/Checkoutpage',
+        name: 'CheckoutPage',
+        component: () => import('../../components/User/CheckoutPage.vue')
+    },
+    {
+        path: '/shippingaddress',
+        name: 'shippingaddress',
+        component: () => import('../../components/Module/ShippingAddress.vue')
+    },
+    {
+        path: '/momotopup',
+        name: 'momotopup',
+        component: () => import('../../components/User/MomoTopUp.vue')
+    },
+    {
+        path: '/wallet',
+        name: 'wallet',
+        component: () => import('../../components/User/WalletInfor.vue')
+    },
+    {
+        path: '/momo/return',
+        name: 'momo-return',
+        component: () => import('../../components/User/WalletInfor.vue')
     }
 
 ]

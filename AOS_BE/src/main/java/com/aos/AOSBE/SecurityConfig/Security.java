@@ -41,8 +41,8 @@ public class Security {
 		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
-						"/api/test", "/api/Accounts/verify-otp","/api/BaseProducts/**",
-						"/api/test", "/api/Accounts/verify-otp", "/api/VariantValues", "/api/Product/**"
+						"/api/test", "/api/Accounts/verify-otp", "/api/BaseProducts/**", "/api/test",
+						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback"
 //								, "/api/cart"
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())
@@ -86,7 +86,7 @@ public class Security {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOriginPatterns(List.of("http://localhost:5173"));
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
 

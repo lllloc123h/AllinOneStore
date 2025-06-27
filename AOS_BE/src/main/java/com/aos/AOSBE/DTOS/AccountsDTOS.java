@@ -16,7 +16,7 @@ public class AccountsDTOS {
     private String email;
     private String password;
     private String fullname;
-    private String avatar;
+    private String avatarUrl;
     private String phone;
     private double averageOrderValue;
     private String userRank;

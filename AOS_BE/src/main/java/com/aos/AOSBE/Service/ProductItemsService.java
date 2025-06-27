@@ -33,10 +33,11 @@ public class ProductItemsService {
 	}
 
 	public Page<Object[]> productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(int page, int size,
-			String skuColorLike, String skuSizeLike, String minPrice, String maxPrice) {
+			String skuColorLike, String skuSizeLike, String minPrice, String maxPrice, Integer idProductItem) {
 		Pageable pageable = PageRequest.of(page, size);
 		int isMinPriceEmpty = (minPrice == null || minPrice.isEmpty()) ? 1 : 0;
 		int isMaxPriceEmpty = (maxPrice == null || maxPrice.isEmpty()) ? 1 : 0;
+		int idProductItemIsEmpty = (idProductItem == null) ? 1 : 0;
 
 		skuColorLike = (skuColorLike == null) ? "" : skuColorLike;
 		skuSizeLike = (skuSizeLike == null) ? "" : skuSizeLike;
@@ -48,7 +49,8 @@ public class ProductItemsService {
 		System.out.println(skuList);
 		try {
 			return productItemsRepository.newFilterItems(pageable, isSkuLikeListEmpty, skuList, isMinPriceEmpty,
-					minPrice, isMaxPriceEmpty, maxPrice);
+					minPrice, isMaxPriceEmpty, maxPrice, idProductItemIsEmpty,
+					idProductItem != null ? idProductItem.intValue() : 0);
 
 		} catch (Exception e) {
 			e.printStackTrace();

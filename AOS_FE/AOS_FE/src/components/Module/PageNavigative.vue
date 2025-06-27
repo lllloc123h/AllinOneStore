@@ -49,7 +49,7 @@
     </div>
 </template>
 <script setup>
-import { ref, watch, defineEmits, defineProps } from 'vue'
+import { ref, watch } from 'vue'
 
 const emits = defineEmits(['update:currentPage', 'update:currentSize'])
 

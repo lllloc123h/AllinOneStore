@@ -2,14 +2,14 @@
   <div class="container-fluid px-4">
     <div class="row g-4 mt-4 mb-4">
       <!-- Canvas wrapper -->
-      <div class="col-6">
-        <div class="border rounded h-100">
+      <div class="col-6 d-flex align-items-center justify-content-center">
+        <div class="rounded" style="width: 600px; height: 700px">
           <canvas
             ref="canvasRef"
-            width="810"
-            height="500"
+            width="600"
+            height="700"
             class="w-100 rounded-2"
-            style="display: block"
+            style="display: block; border: 1px dashed #ccc"
           />
         </div>
       </div>
@@ -66,7 +66,7 @@
               role="tabpanel"
               tabindex="0"
             >
-              <button @click="addTextbox">➕ Thêm textbox</button>
+              <button class="btn border" @click="addTextbox">➕ Thêm textbox</button>
               <div class="form-group mt-2">
                 <label
                   >Màu chữ:
@@ -133,13 +133,18 @@
                   </select>
                 </label>
               </div>
-              <button class="mt-2" @click="exportJSON">💾 Xuất JSON</button>
+              <button class="btn border mt-2" @click="exportJSON">💾 Xuất JSON</button>
             </div>
 
             <!-- Tab: Vẽ -->
             <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" tabindex="0">
-              <button @click="startDrawingMode">
+              <button class="btn border" @click="startDrawingMode">
                 {{ btnDraw ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
+              </button>
+              <br />
+              <!-- Thêm vào tab Vẽ, dưới nút bật chế độ vẽ -->
+              <button class="btn border mt-2" @click="toggleEraser">
+                {{ isErasing ? "✏️ Vẽ lại" : "🧹 Gôm" }}
               </button>
               <div class="form-group mt-2">
                 <label
@@ -186,15 +191,19 @@
             <!-- Tab: Contact -->
             <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" tabindex="0">
               <input type="file" @change="handleImageUpload" />
-              <button class="mt-2" @click="exportImage">Xuất ảnh</button>
-              <button class="mt-2" @click="saveCanvas">💾 Lưu tạm</button>
-              <button class="mt-2" @click="loadCanvas">🔁 Tải lại</button>
+              <br />
+              <button class="btn border mt-2" @click="exportImage">Xuất ảnh</button>
+              <br />
+              <button class="btn border mt-2" @click="saveCanvas">💾 Lưu tạm</button>
+              <br />
+              <button class="btn border mt-2" @click="loadCanvas">🔁 Tải lại</button>
+              <br />
               <img
                 v-if="exportedImage"
                 :src="exportedImage"
                 alt="Ảnh xuất"
                 class="mt-3 border"
-                style="width: 410px; height: 250px"
+                style="width: 300px; height: 350px"
               />
             </div>
           </div>
@@ -237,6 +246,8 @@ const drawingShadowWidth = ref(0);
 const drawingShadowColor = ref("#000000");
 const btnDraw = ref(false);
 const exportedImage = ref(null);
+const isErasing = ref(false);
+
 function startDrawingMode() {
   canvas.isDrawingMode = !canvas.isDrawingMode;
   btnDraw.value = canvas.isDrawingMode;
@@ -292,7 +303,6 @@ function mode() {
     affectStroke: true,
     color: drawingShadowColor.value,
   });
-  console.log("test 2", brush);
 
   canvas.freeDrawingBrush = brush;
   if (
@@ -305,11 +315,27 @@ function mode() {
     ].getPatternSrcFunction();
   }
 }
-
+5;
 onMounted(() => {
   canvas = new fabric.Canvas(canvasRef.value);
   canvas.hoverCursor = "pointer";
+  fabric.Image.fromURL("/src/assets/imgs/ao_bomber_nu.webp", (img) => {
+    // Tính scale để không méo ảnh
+    const canvasW = canvas.getWidth();
+    const canvasH = canvas.getHeight();
+    const scale = Math.min(canvasW / img.width, canvasH / img.height);
+    img.scale(scale);
 
+    // Căn giữa ảnh trong canvas
+    img.set({
+      left: (canvasW - img.width * scale) / 2,
+      top: (canvasH - img.height * scale) / 2,
+      originX: "left",
+      originY: "top",
+    });
+
+    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+  });
   fabric.Object.prototype.set({
     transparentCorners: false,
     cornerColor: "blue",

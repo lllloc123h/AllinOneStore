@@ -23,6 +23,17 @@
           />
         </div>
         <div class="mb-3">
+          <label :for="qty" class="form-label text-capitalize">qty</label>
+          <input
+            :id="qty"
+            v-model="formData.qty"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter qty`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="reason" class="form-label text-capitalize">reason</label>
           <input
             :id="reason"
@@ -34,35 +45,46 @@
         </div>
 
         <div class="mb-3">
-          <label :for="image1" class="form-label text-capitalize">image1</label>
+          <label :for="imageUrl1" class="form-label text-capitalize">imageUrl1</label>
           <input
-            :id="image1"
-            v-model="formData.image1"
+            :id="imageUrl1"
+            v-model="formData.imageUrl1"
             type="text"
             class="form-control"
-            :placeholder="`Enter image1`"
+            :placeholder="`Enter imageUrl1`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="image2" class="form-label text-capitalize">image2</label>
+          <label :for="imageUrl2" class="form-label text-capitalize">imageUrl2</label>
           <input
-            :id="image2"
-            v-model="formData.image2"
+            :id="imageUrl2"
+            v-model="formData.imageUrl2"
             type="text"
             class="form-control"
-            :placeholder="`Enter image2`"
+            :placeholder="`Enter imageUrl2`"
           />
         </div>
 
         <div class="mb-3">
-          <label :for="image3" class="form-label text-capitalize">image3</label>
+          <label :for="imageUrl3" class="form-label text-capitalize">imageUrl3</label>
           <input
-            :id="image3"
-            v-model="formData.image3"
+            :id="imageUrl3"
+            v-model="formData.imageUrl3"
             type="text"
             class="form-control"
-            :placeholder="`Enter image3`"
+            :placeholder="`Enter imageUrl3`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="videoUrl" class="form-label text-capitalize">videoUrl</label>
+          <input
+            :id="videoUrl"
+            v-model="formData.videoUrl"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter videoUrl`"
           />
         </div>
 
@@ -78,13 +100,35 @@
         </div>
 
         <div class="mb-3">
-          <label :for="isReturnedItem" class="form-label text-capitalize">isReturnedItem</label>
+          <label :for="refundAmount" class="form-label text-capitalize">refundAmount</label>
           <input
-            :id="isReturnedItem"
-            v-model="formData.isReturnedItem"
+            :id="refundAmount"
+            v-model="formData.refundAmount"
+            type="number"
+            class="form-control"
+            :placeholder="`Enter refundAmount`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="returnType" class="form-label text-capitalize">returnType</label>
+          <input
+            :id="returnType"
+            v-model="formData.returnType"
             type="text"
             class="form-control"
-            :placeholder="`Enter isReturnedItem`"
+            :placeholder="`Enter returnType`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="refundType" class="form-label text-capitalize">refundType</label>
+          <input
+            :id="refundType"
+            v-model="formData.refundType"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter refundType`"
           />
         </div>
 
@@ -96,6 +140,17 @@
             type="text"
             class="form-control"
             :placeholder="`Enter status`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="processedAt" class="form-label text-capitalize">processedAt</label>
+          <input
+            :id="processedAt"
+            v-model="formData.processedAt"
+            type="datetime"
+            class="form-control"
+            :placeholder="`Enter processedAt`"
           />
         </div>
 
@@ -143,13 +198,18 @@
 
     const formData = reactive({
     			id: '',
+    			qty: '',
     			reason: '',
-    			image1: '',
-    			image2: '',
-    			image3: '',
+    			imageUrl1: '',
+    			imageUrl2: '',
+    			imageUrl3: '',
+    			videoUrl: '',
     			isReturnedMoney: '',
-    			isReturnedItem: '',
+    			refundAmount: '',
+    			returnType: '',
+    			refundType: '',
     			status: '',
+    			processedAt: '',
     			createdAt: '',
     			updatedAt: '',
     })

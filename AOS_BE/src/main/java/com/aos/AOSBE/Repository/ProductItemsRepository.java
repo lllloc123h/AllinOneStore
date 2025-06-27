@@ -27,7 +27,7 @@ public interface ProductItemsRepository
 						bp.name,
 				        bp.material,
 				        bp.category_id,
-				        bp.main_image,
+				        bp.main_image_url,
 				        bp.is_custom,
 				        pit.turn_buy,
 				        pit.sku,
@@ -65,10 +65,11 @@ public interface ProductItemsRepository
 
 	@Query(value = """
 				SELECT  bp.id,
+						pit.id,
 						bp.name,
 				        bp.material,
 				        bp.category_id,
-				        bp.main_image,
+				        bp.main_image_url,
 				        bp.is_custom,
 				        pit.turn_buy,
 				        pit.sku,
@@ -87,12 +88,14 @@ public interface ProductItemsRepository
 				AND
 				    (:minPriceIsEmpty = 1 OR  pit.price >TRY_CAST(:minPrice  AS FLOAT))
 				AND
-
 				    (:maxPriceIsEmpty = 1 OR  pit.price <TRY_CAST(:maxPrice  AS FLOAT))
+				AND
+				    (:idProductItemIsEmpty = 1 OR  pit.id = :idProductItem)
 			""", nativeQuery = true)
 	Page<Object[]> newFilterItems(Pageable pageable,
 //			@Param("colorsIsEmpty") int colorsIsEmpty, @Param("colorsJoined") String colorsJoined,
 			@Param("isSkuLikeListEmpty") int isSkuLikeListEmpty, @Param("skuLikeList") String sizesJoined,
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
-			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined);
+			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
+			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
 }

@@ -1,12 +1,12 @@
 // src/services/authService.js
 import { computed, ref } from 'vue';
 import router from '../router' // ✅ đúng, vì bạn đã export router ở router/index.js
-import axios from 'axios';
+import axios, { Axios } from 'axios';
 import { toast } from 'vue3-toastify';
 import { syncLocalCartToServer } from './cart';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: `${import.meta.env.VITE_PAKE_DOMAIN}/api`,
   headers: {
     'Content-Type': 'application/json'
   },
@@ -32,7 +32,6 @@ api.interceptors.request.use(config => {
   // neu url ngoai le 
   if (!isExcluded) {
     const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
-    console.log('url ko ngoai le' + isExpirate + new Date().toLocaleString());
     config.headers.Authorization = `Bearer ${token}`;
     if (token && !isExpirate >= new Date().toLocaleString()) {
       alert('Đăng nhập hết hạn 1')
@@ -134,10 +133,47 @@ const authService = {
   }
 };
 const cartService = {
-  getCart() {
-    return api.get('/cart')
+  async getCart() {
+    const cartList = ref([]);
+
+    try {
+      const response = await api.get('/cart');
+      cartList.value = response.data;
+      return cartList.value;
+    } catch (error) {
+      const localCartList = JSON.parse(localStorage.getItem('cart')) ?? [];
+
+      if (localCartList.length === 0) {
+        return cartList.value;
+      }
+
+      const response = await axios.get(
+        `http://localhost:8080/api/Product/MultiplrFilter?page=0&size=10000000&skuColorLikeReq=&skuSizeLikeReq=&minPriceReq=&maxPriceReq=`
+      );
+
+      // Get product data from response
+      const productList = response.data.content;
+
+      // Map local cart with product details
+      cartList.value = localCartList.map(item => {
+        const product = productList.find(p => p.productItemId === item.productItems);
+
+        return {
+          id: item.id || '',
+          productItemId: product?.productItemId,
+          name: product?.name || 'Unknown Product',
+          price: product?.price || 0,
+          quantity: item.qty,
+          image: product?.image || 'no-image.png'
+        };
+      });
+
+      // ✅ Return after mapping
+      return cartList.value;
+    }
   }
 };
+
 
 export default api;
 export { authService, cartService };

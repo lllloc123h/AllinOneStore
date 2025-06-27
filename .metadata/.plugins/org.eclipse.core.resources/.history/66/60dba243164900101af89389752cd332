@@ -1,0 +1,11 @@
+package com.aos.AOSBE.API;
+
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RestController("/api/admin")
+public class ResetPassword {
+	@PostMapping("/ResetPassword")
+}

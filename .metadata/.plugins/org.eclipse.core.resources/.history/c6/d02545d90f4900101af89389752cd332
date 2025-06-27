@@ -1,0 +1,5 @@
+package com.aos.AOSBE.API;
+
+public class ResetPassword {
+
+}
