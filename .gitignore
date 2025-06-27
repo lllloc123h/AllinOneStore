@@ -1,36 +1,25 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+### IDEs ###
+/.metadata/                          # Eclipse workspace metadata
+/.idea/                              # IntelliJ IDEA
+.vscode/                             # VS Code
+*.iml                                # IntelliJ project files
 
-.env
+# Eclipse plugin/cache logs (optional but cleaner)
+.metadata/.plugins/org.eclipse.swt/EBWebView/
+.metadata/.plugins/org.eclipse.m2e.logback/
+.metadata/.plugins/org.eclipse.core.runtime/
 
-*.properties
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+### Java / Spring Boot ###
+/target/                             # Maven build output
+/bin/                                # Compiled binaries
+*.log                                # Logs
+*.tmp                                # Temp files
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+### Node / Vue ###
+node_modules/
+dist/
+*.local
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+### System files ###
+.DS_Store
+Thumbs.db
