@@ -65,7 +65,7 @@ public class MomoPaymentAPI {
 
 		String orderId = "TOPUP" + System.currentTimeMillis();
 		String requestId = UUID.randomUUID().toString();
-		String returnUrl = "http://localhost:5173/momo/return";
+		String returnUrl = "http://localhost:5173/AllinOneStore/momo/return";
 		String notifyUrl = domain + "/api/e-wallet/callback";
 
 		transaction.setEWallets(user.getId());
