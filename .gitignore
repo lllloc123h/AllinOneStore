@@ -1,5 +1,5 @@
 ### IDEs ###
-/.metadata/                          # Eclipse workspace metadata
+.metadata/                          # Eclipse workspace metadata
 /.idea/                              # IntelliJ IDEA
 .vscode/                             # VS Code
 *.iml                                # IntelliJ project files
@@ -8,7 +8,10 @@
 .metadata/.plugins/org.eclipse.swt/EBWebView/
 .metadata/.plugins/org.eclipse.m2e.logback/
 .metadata/.plugins/org.eclipse.core.runtime/
-
+.metadata/.plugins/
+.metadata/.mylyn/
+**.log  
+.metadata
 ### Java / Spring Boot ###
 /target/                             # Maven build output
 /bin/                                # Compiled binaries
@@ -23,3 +26,4 @@ dist/
 ### System files ###
 .DS_Store
 Thumbs.db
+
