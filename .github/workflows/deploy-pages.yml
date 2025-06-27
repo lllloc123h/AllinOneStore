@@ -27,11 +27,10 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Clean install dependencies
+      - name: Install dependencies
         run: |
           cd AOS_FE/AOS_FE
-          rm -rf node_modules package-lock.json
-          npm ci
+          npm install
 
       - name: Build Vue app
         run: |
