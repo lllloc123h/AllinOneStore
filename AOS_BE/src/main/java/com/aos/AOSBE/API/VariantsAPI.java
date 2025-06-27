@@ -1,26 +1,26 @@
 package com.aos.AOSBE.API;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.PageRequest;
-import com.aos.AOSBE.Entity.*;
-import com.aos.AOSBE.Service.*;
-import com.aos.AOSBE.DTOS.*;
-import com.aos.AOSBE.Mapper.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.VariantsDTOS;
+import com.aos.AOSBE.Entity.Variants;
+import com.aos.AOSBE.Mapper.VariantsMapper;
+import com.aos.AOSBE.Service.VariantsService;
 
 @RestController
 @RequestMapping("/api")
@@ -28,15 +28,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class VariantsAPI {
 	@Autowired
 	private VariantsService variantsService;
-	
+
 	@Autowired
 	private VariantsMapper variantsMapper;
 
 	@GetMapping("/admin/Variants")
-	public ResponseEntity<List<VariantsDTOS>> getAllVariantsApi(	
-			@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<VariantsDTOS>> getAllVariantsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
-			
+
 		List<VariantsDTOS> variants = new ArrayList<VariantsDTOS>();
 		variantsService.variantsFindAll(page, size).forEach(e -> {
 			variants.add(variantsMapper.mapper(e));
@@ -46,25 +45,27 @@ public class VariantsAPI {
 
 	@GetMapping("/admin/Variants/{id}")
 	public ResponseEntity<Variants> getVariantsByIdApi(@PathVariable int id) {
-		//try{
-		//}catch(Exception e){
-		//}
-		
-		Variants variants =(Variants)variantsService.variantsFindById(id).orElse(new Variants());
+		// try{
+		// }catch(Exception e){
+		// }
+
+		Variants variants = (Variants) variantsService.variantsFindById(id).orElse(new Variants());
 		return ResponseEntity.ok(variants);
 	}
+
 	@PostMapping("/admin/Variants")
 	public ResponseEntity<Variants> addNewVariants(@RequestBody VariantsDTOS entity) {
-	    
-	    Variants saved = variantsService.variantsSave(variantsMapper.mapperToObject(entity));	    
-	    return ResponseEntity.ok(saved);
+
+		Variants saved = variantsService.variantsSave(variantsMapper.mapperToObject(entity));
+		return ResponseEntity.ok(saved);
 	}
+
 	@PutMapping("/admin/Variants/{id}")
-	public ResponseEntity<?> updateVariants( @PathVariable int id,@RequestBody VariantsDTOS entity) {
-			try {
-			Variants  isExist = variantsService.variantsFindById(id).orElse(null);
+	public ResponseEntity<?> updateVariants(@PathVariable int id, @RequestBody VariantsDTOS entity) {
+		try {
+			Variants isExist = variantsService.variantsFindById(id).orElse(null);
 			if (isExist != null) {
-				Variants  update = variantsMapper.mapperToObject(entity);
+				Variants update = variantsMapper.mapperToObject(entity);
 				variantsService.variantsSave(update);
 				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
 			} else {
@@ -73,14 +74,13 @@ public class VariantsAPI {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
-		} 
+		}
 	}
+
 	@DeleteMapping("/admin/Variants/{id}")
 	public ResponseEntity<Void> deleteVariants(@PathVariable int id) {
-	    variantsService.variantsDeleteById(id); 
-	    return ResponseEntity.noContent().build(); 
+		variantsService.variantsDeleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 
-
-	
 }

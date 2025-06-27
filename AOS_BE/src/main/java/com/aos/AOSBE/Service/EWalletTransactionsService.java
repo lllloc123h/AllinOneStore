@@ -22,6 +22,10 @@ public class EWalletTransactionsService {
 		return eWalletTransactionsRepository.findAll(pageable).getContent();
 	}
 
+	public List<EWalletTransactions> eWalletTransactionsFindByEwalletId(int id) {
+		return eWalletTransactionsRepository.findByEwalletId(id);
+	}
+
 	public EWalletTransactions eWalletTransactionsFindByOrderID(String orderID) {
 		return eWalletTransactionsRepository.findByOrderId(orderID).orElse(null);
 	}
