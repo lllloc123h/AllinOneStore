@@ -22163,9 +22163,9 @@
 										"$ref": "AAAAAAGXOTLPqRgEQC0="
 									},
 									"font": "Arial;13;0",
-									"left": 1312,
+									"left": 1204,
 									"top": 243,
-									"width": 131,
+									"width": 346.0107421875,
 									"height": 13,
 									"alpha": -4.091688187311463,
 									"distance": 18.601075237738275,
@@ -22173,7 +22173,7 @@
 										"$ref": "AAAAAAGXOTLPqhgFqMw="
 									},
 									"edgePosition": 1,
-									"text": "Sai"
+									"text": "Trạng thái đơn hàng là đã được giao cho đơn vị vận chuyển"
 								},
 								{
 									"_type": "EdgeLabelView",
@@ -22845,9 +22845,9 @@
 										"$ref": "AAAAAAGXOVDhXhmxRF4="
 									},
 									"font": "Arial;13;0",
-									"left": 1462,
+									"left": 1432,
 									"top": 701,
-									"width": 235.16796875,
+									"width": 294.29638671875,
 									"height": 13,
 									"alpha": 1.5707963267948966,
 									"distance": 15,
@@ -22855,7 +22855,7 @@
 										"$ref": "AAAAAAGXOVDhXhmyfK8="
 									},
 									"edgePosition": 1,
-									"text": "Sai"
+									"text": "Trạng thái thanh toán đơn hàng là chưa thanh toán"
 								},
 								{
 									"_type": "EdgeLabelView",
@@ -24627,7 +24627,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGXORKoKRPy2hs="
 					},
-					"name": "Sai",
+					"name": "Trạng thái đơn hàng là đã được giao cho đơn vị vận chuyển",
 					"source": {
 						"$ref": "AAAAAAGXOTKfjRdpdsY="
 					},
@@ -24786,7 +24786,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGXORKoKRPy2hs="
 					},
-					"name": "Sai",
+					"name": "Trạng thái thanh toán đơn hàng là chưa thanh toán",
 					"source": {
 						"$ref": "AAAAAAGXOVDfZxlYnNA="
 					},
