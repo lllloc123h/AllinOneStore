@@ -47,6 +47,7 @@ public class AccountsService {
 	public List<Accounts> accountsFindWithFilter(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<Accounts> spec = specBuilder.buildFilter(filters);
+		List<Accounts> test = accountsRepository.findAll(spec);
 		return accountsRepository.findAll(spec, pageable).getContent();
 	}
 
