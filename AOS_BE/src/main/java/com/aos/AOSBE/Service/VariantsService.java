@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.VariantsRepository;
 
 @Service
 public class VariantsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private VariantsRepository variantsRepository;

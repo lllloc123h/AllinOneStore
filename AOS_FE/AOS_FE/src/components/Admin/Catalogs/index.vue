@@ -10,7 +10,7 @@
         Catalogs
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
@@ -63,17 +63,13 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'accountId', type: 'number' },
-          	{ name: 'productItemId', type: 'number' },
-          	{ name: 'qty', type: 'number' },
+          	{ name: 'name', type: 'text' },
  
 ]
 
 const filters = ref({
   			id: '',
-  			accountId: '',
-  			productItemId: '',
-  			qty: '',
+  			name: '',
   			createdAt: '',
   			updatedAt: '',
 })

@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.ReturnsRepository;
 
 @Service
 public class ReturnsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private ReturnsRepository returnsRepository;

@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.CustomsRepository;
 
 @Service
 public class CustomsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CustomsRepository customsRepository;

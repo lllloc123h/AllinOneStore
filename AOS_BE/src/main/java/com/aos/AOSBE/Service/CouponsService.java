@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.CouponsRepository;
 
 @Service
 public class CouponsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CouponsRepository couponsRepository;

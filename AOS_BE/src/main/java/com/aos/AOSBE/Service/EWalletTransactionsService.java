@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.EWalletTransactionsRepository;
 
 @Service
 public class EWalletTransactionsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private EWalletTransactionsRepository eWalletTransactionsRepository;

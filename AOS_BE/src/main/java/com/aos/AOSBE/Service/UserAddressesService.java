@@ -17,6 +17,7 @@ import com.aos.AOSBE.Repository.UserAddressesRepository;
 
 @Service
 public class UserAddressesService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private UserAddressesRepository userAddressesRepository;

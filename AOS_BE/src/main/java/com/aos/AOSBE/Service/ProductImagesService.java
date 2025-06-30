@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.ProductImagesRepository;
 
 @Service
 public class ProductImagesService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private ProductImagesRepository productImagesRepository;

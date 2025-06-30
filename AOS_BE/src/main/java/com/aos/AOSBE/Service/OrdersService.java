@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.OrdersRepository;
 
 @Service
 public class OrdersService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private OrdersRepository ordersRepository;

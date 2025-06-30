@@ -15,6 +15,7 @@ import com.aos.AOSBE.Repository.AuthoritiesRepository;
 
 @Service
 public class AuthoritiesService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private AuthoritiesRepository authoritiesRepository;

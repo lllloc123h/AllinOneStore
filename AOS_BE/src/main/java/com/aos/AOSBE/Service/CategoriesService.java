@@ -16,8 +16,9 @@ import com.aos.AOSBE.Repository.CategoriesRepository;
 
 @Service
 public class CategoriesService {
-private GenericSpecificationBuilder specBuilder;
-@Autowired
+	@Autowired
+	private GenericSpecificationBuilder specBuilder;
+	@Autowired
 	private CategoriesRepository categoriesRepository;
 
 	public List<Categories> categoriesFindAll(int page, int size, Map<String, Object> filters) {

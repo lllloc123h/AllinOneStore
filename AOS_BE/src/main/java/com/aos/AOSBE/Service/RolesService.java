@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.RolesRepository;
 
 @Service
 public class RolesService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private RolesRepository rolesRepository;

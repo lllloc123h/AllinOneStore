@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.CostHistoriesRepository;
 
 @Service
 public class CostHistoriesService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CostHistoriesRepository costHistoriesRepository;

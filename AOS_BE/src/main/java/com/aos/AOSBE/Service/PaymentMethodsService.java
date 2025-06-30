@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.PaymentMethodsRepository;
 
 @Service
 public class PaymentMethodsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private PaymentMethodsRepository paymentMethodsRepository;

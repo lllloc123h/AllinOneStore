@@ -10,7 +10,7 @@
         Reviews
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
@@ -65,7 +65,10 @@ const router = useRouter()
   const FilterList = [
           	{ name: 'rating', type: 'number' },
           	{ name: 'comment', type: 'text' },
-          	{ name: 'images', type: 'text' },
+          	{ name: 'imageUrl1', type: 'text' },
+          	{ name: 'imageUrl2', type: 'text' },
+          	{ name: 'imageUrl3', type: 'text' },
+          	{ name: 'videoUrl', type: 'text' },
  
 ]
 
@@ -73,7 +76,10 @@ const filters = ref({
   			id: '',
   			rating: '',
   			comment: '',
-  			images: '',
+  			imageUrl1: '',
+  			imageUrl2: '',
+  			imageUrl3: '',
+  			videoUrl: '',
   			createdAt: '',
 })
   

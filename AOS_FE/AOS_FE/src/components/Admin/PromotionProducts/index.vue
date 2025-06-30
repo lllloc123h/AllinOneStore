@@ -7,7 +7,7 @@
     
     <div class="article col-10">
       <h1>
-        Authorities
+        PromotionProducts
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
       <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
@@ -63,11 +63,18 @@ const router = useRouter()
   ];
  
   const FilterList = [
+          	{ name: 'id', type: 'number' },
+          	{ name: 'requireQty', type: 'number' },
+          	{ name: 'isGift', type: 'text' },
+          	{ name: 'costShare', type: 'number' },
  
 ]
 
 const filters = ref({
   			id: '',
+  			requireQty: '',
+  			isGift: '',
+  			costShare: '',
   			createdAt: '',
   			updatedAt: '',
 })

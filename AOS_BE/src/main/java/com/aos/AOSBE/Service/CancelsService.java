@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class CancelsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CancelsRepository cancelsRepository;

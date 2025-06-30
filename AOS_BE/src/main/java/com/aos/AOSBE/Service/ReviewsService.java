@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.ReviewsRepository;
 
 @Service
 public class ReviewsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private ReviewsRepository reviewsRepository;

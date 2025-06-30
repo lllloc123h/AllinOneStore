@@ -15,6 +15,7 @@ import com.aos.AOSBE.Repository.CartItemsRepository;
 
 @Service
 public class CartItemsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CartItemsRepository cartItemsRepository;

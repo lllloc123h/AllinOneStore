@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.NewsRepository;
 
 @Service
 public class NewsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private NewsRepository newsRepository;

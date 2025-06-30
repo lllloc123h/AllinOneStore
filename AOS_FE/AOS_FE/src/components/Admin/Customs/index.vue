@@ -7,7 +7,7 @@
     
     <div class="article col-10">
       <h1>
-        Authorities
+        Customs
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
       <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
@@ -63,11 +63,19 @@ const router = useRouter()
   ];
  
   const FilterList = [
+          	{ name: 'accountId', type: 'number' },
+          	{ name: 'canvasJson', type: 'text' },
+          	{ name: 'imageUrl', type: 'text' },
+          	{ name: 'designName', type: 'text' },
  
 ]
 
 const filters = ref({
   			id: '',
+  			accountId: '',
+  			canvasJson: '',
+  			imageUrl: '',
+  			designName: '',
   			createdAt: '',
   			updatedAt: '',
 })

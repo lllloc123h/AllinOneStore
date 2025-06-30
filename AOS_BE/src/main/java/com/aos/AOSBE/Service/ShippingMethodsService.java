@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.ShippingMethodsRepository;
 
 @Service
 public class ShippingMethodsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private ShippingMethodsRepository shippingMethodsRepository;

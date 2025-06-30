@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.CatalogsRepository;
 
 @Service
 public class CatalogsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CatalogsRepository catalogsRepository;

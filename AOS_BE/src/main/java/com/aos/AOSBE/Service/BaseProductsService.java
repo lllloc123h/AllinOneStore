@@ -20,7 +20,7 @@ import com.aos.AOSBE.Repository.BaseProductsRepository;
 public class BaseProductsService {
 	@Autowired
 	private BaseProductsRepository baseProductsRepository;
-
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private BaseProductsMapper baseProductsMapper;

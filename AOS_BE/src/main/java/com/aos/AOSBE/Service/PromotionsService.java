@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.PromotionsRepository;
 
 @Service
 public class PromotionsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private PromotionsRepository promotionsRepository;

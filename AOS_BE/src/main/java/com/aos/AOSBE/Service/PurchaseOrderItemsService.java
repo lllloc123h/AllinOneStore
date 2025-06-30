@@ -16,6 +16,7 @@ import com.aos.AOSBE.Repository.PurchaseOrderItemsRepository;
 
 @Service
 public class PurchaseOrderItemsService {
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private PurchaseOrderItemsRepository purchaseOrderItemsRepository;

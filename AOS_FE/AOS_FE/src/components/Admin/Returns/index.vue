@@ -10,7 +10,7 @@
         Returns
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
@@ -63,25 +63,35 @@ const router = useRouter()
   ];
  
   const FilterList = [
+          	{ name: 'qty', type: 'number' },
           	{ name: 'reason', type: 'text' },
-          	{ name: 'image1', type: 'text' },
-          	{ name: 'image2', type: 'text' },
-          	{ name: 'image3', type: 'text' },
+          	{ name: 'imageUrl1', type: 'text' },
+          	{ name: 'imageUrl2', type: 'text' },
+          	{ name: 'imageUrl3', type: 'text' },
+          	{ name: 'videoUrl', type: 'text' },
           	{ name: 'isReturnedMoney', type: 'text' },
-          	{ name: 'isReturnedItem', type: 'text' },
+          	{ name: 'refundAmount', type: 'number' },
+          	{ name: 'returnType', type: 'text' },
+          	{ name: 'refundType', type: 'text' },
           	{ name: 'status', type: 'text' },
+          	{ name: 'processedAt', type: 'datetime' },
  
 ]
 
 const filters = ref({
   			id: '',
+  			qty: '',
   			reason: '',
-  			image1: '',
-  			image2: '',
-  			image3: '',
+  			imageUrl1: '',
+  			imageUrl2: '',
+  			imageUrl3: '',
+  			videoUrl: '',
   			isReturnedMoney: '',
-  			isReturnedItem: '',
+  			refundAmount: '',
+  			returnType: '',
+  			refundType: '',
   			status: '',
+  			processedAt: '',
   			createdAt: '',
   			updatedAt: '',
 })

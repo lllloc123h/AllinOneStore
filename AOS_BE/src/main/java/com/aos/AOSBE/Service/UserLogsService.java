@@ -23,6 +23,7 @@ import com.aos.AOSBE.Repository.UserLogsRepository;
 public class UserLogsService {
 	@Autowired
 	private AccountsRepository accountsRepository;
+	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 
 	@Autowired
