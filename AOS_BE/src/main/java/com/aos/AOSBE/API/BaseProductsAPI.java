@@ -66,11 +66,14 @@ public class BaseProductsAPI {
 
 	public ResponseEntity<List<BaseProductsDTOS>> getAllBaseProductsAdminRoleApi(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
-			@RequestParam(defaultValue = "") String search) {
-
+			@RequestParam(defaultValue = "") String search,
+			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("search");
+		filters.remove("size");
 		List<BaseProductsDTOS> baseProducts = new ArrayList<BaseProductsDTOS>();
 		;
-		baseProductsService.baseProductsFindAll(page, size).forEach(e -> {
+		baseProductsService.baseProductsFindAll(page, size, filters).forEach(e -> {
 			baseProducts.add(baseProductsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(baseProducts);

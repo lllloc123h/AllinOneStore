@@ -10,7 +10,7 @@
         News
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
@@ -63,7 +63,7 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'image', type: 'text' },
+          	{ name: 'imageUrl', type: 'text' },
           	{ name: 'isHome', type: 'text' },
           	{ name: 'description', type: 'text' },
  
@@ -71,7 +71,7 @@ const router = useRouter()
 
 const filters = ref({
   			id: '',
-  			image: '',
+  			imageUrl: '',
   			isHome: '',
   			description: '',
   			createdAt: '',

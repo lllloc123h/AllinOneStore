@@ -1,11 +1,13 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +17,14 @@ import com.aos.AOSBE.Repository.OrderItemsRepository;
 @Service
 public class OrderItemsService {
 	@Autowired
+	private GenericSpecificationBuilder specBuilder;
+	@Autowired
 	private OrderItemsRepository orderItemsRepository;
 
-	public List<OrderItems> orderItemsFindAll(int page, int size) {
+	public List<OrderItems> orderItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
-		return orderItemsRepository.findAll(pageable).getContent();
+		Specification<OrderItems> spec = specBuilder.buildFilter(filters);
+		return orderItemsRepository.findAll(spec, pageable).getContent();
 	}
 
 	@Transactional
@@ -43,6 +48,6 @@ public class OrderItemsService {
 
 	@Transactional
 	public List<OrderItems> findByOrderId(int orderId) {
-    return orderItemsRepository.findByOrdersId(orderId);
-}
+		return orderItemsRepository.findByOrdersId(orderId);
+	}
 }

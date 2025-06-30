@@ -7,7 +7,7 @@
     
     <div class="article col-10">
       <h1>
-        Authorities
+        Sysdiagrams
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
       <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
@@ -63,13 +63,19 @@ const router = useRouter()
   ];
  
   const FilterList = [
+          	{ name: 'name', type: 'text' },
+          	{ name: 'principalId', type: 'number' },
+          	{ name: 'version', type: 'number' },
+          	{ name: 'definition', type: 'text' },
  
 ]
 
 const filters = ref({
-  			id: '',
-  			createdAt: '',
-  			updatedAt: '',
+  			name: '',
+  			principalId: '',
+  			diagramId: '',
+  			version: '',
+  			definition: '',
 })
   
   

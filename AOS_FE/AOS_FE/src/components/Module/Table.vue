@@ -199,7 +199,19 @@ watch(() => currentPage.value, fetchData)
 watch(
     () => props.FilterList,
     () => {
-        fetchData();
+        // try {
+        //     const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
+        //     const json = responseIndexTable.data
+        //     data.value = Array.isArray(json) ? json : [json]
+        //     columns.value = data.value.length ? Object.keys(data.value[0]) : []
+        // } catch (err) {
+        //     error.value = err.message
+        //     data.value = []
+        //     columns.value = []
+        // } finally {
+        //     loading.value = false
+        // }
+        fetchData()
     },
     { deep: true }
 );

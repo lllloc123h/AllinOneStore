@@ -43,10 +43,13 @@ public class EWalletTransactionsAPI {
 
 	@GetMapping("/admin/EWalletTransactions")
 	public ResponseEntity<List<EWalletTransactionsDTOS>> getAllEWalletTransactionsApiAdminRole(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 
 		List<EWalletTransactionsDTOS> eWalletTransactions = new ArrayList<EWalletTransactionsDTOS>();
-		eWalletTransactionsService.eWalletTransactionsFindAll(page, size).forEach(e -> {
+		eWalletTransactionsService.eWalletTransactionsFindAll(page, size, filters).forEach(e -> {
 			eWalletTransactions.add(eWalletTransactionsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(eWalletTransactions);

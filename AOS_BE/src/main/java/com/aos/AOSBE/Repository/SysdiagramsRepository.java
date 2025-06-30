@@ -4,9 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import com.aos.AOSBE.Entity.Custom;
+import com.aos.AOSBE.Entity.Sysdiagrams;
 
 @Repository
-public interface CustomRepository extends JpaRepository<Custom, Integer>, JpaSpecificationExecutor<Custom> {
+public interface SysdiagramsRepository
+		extends JpaRepository<Sysdiagrams, String>, JpaSpecificationExecutor<Sysdiagrams> {
 	// Add custom query methods here if needed
 }

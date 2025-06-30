@@ -17,58 +17,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aos.AOSBE.DTOS.NewsDTOS;
-import com.aos.AOSBE.Entity.News;
-import com.aos.AOSBE.Mapper.NewsMapper;
-import com.aos.AOSBE.Service.NewsService;
+import com.aos.AOSBE.DTOS.CustomsDTOS;
+import com.aos.AOSBE.Entity.Customs;
+import com.aos.AOSBE.Mapper.CustomsMapper;
+import com.aos.AOSBE.Service.CustomsService;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
-public class NewsAPI {
+public class CustomsAPI {
 	@Autowired
-	private NewsService newsService;
+	private CustomsService customsService;
 
 	@Autowired
-	private NewsMapper newsMapper;
+	private CustomsMapper customsMapper;
 
-	@GetMapping("/admin/News")
-	public ResponseEntity<List<NewsDTOS>> getAllNewsApi(@RequestParam(defaultValue = "0") int page,
+	@GetMapping("/admin/Customs")
+	public ResponseEntity<List<CustomsDTOS>> getAllCustomsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-
-		List<NewsDTOS> news = new ArrayList<NewsDTOS>();
-		newsService.newsFindAll(page, size, filters).forEach(e -> {
-			news.add(newsMapper.mapper(e));
+		List<CustomsDTOS> customs = new ArrayList<CustomsDTOS>();
+		customsService.customsFindAll(page, size, filters).forEach(e -> {
+			customs.add(customsMapper.mapper(e));
 		});
-		return ResponseEntity.ok(news);
+		return ResponseEntity.ok(customs);
 	}
 
-	@GetMapping("/admin/News/{id}")
-	public ResponseEntity<News> getNewsByIdApi(@PathVariable int id) {
+	@GetMapping("/admin/Customs/{id}")
+	public ResponseEntity<Customs> getCustomsByIdApi(@PathVariable int id) {
 		// try{
 		// }catch(Exception e){
 		// }
 
-		News news = (News) newsService.newsFindById(id).orElse(new News());
-		return ResponseEntity.ok(news);
+		Customs customs = (Customs) customsService.customsFindById(id).orElse(new Customs());
+		return ResponseEntity.ok(customs);
 	}
 
-	@PostMapping("/admin/News")
-	public ResponseEntity<News> addNewNews(@RequestBody NewsDTOS entity) {
+	@PostMapping("/admin/Customs")
+	public ResponseEntity<Customs> addNewCustoms(@RequestBody CustomsDTOS entity) {
 
-		News saved = newsService.newsSave(newsMapper.mapperToObject(entity));
+		Customs saved = customsService.customsSave(customsMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
 	}
 
-	@PutMapping("/admin/News/{id}")
-	public ResponseEntity<?> updateNews(@PathVariable int id, @RequestBody NewsDTOS entity) {
+	@PutMapping("/admin/Customs/{id}")
+	public ResponseEntity<?> updateCustoms(@PathVariable int id, @RequestBody CustomsDTOS entity) {
 		try {
-			News isExist = newsService.newsFindById(id).orElse(null);
+			Customs isExist = customsService.customsFindById(id).orElse(null);
 			if (isExist != null) {
-				News update = newsMapper.mapperToObject(entity);
-				newsService.newsSave(update);
+				Customs update = customsMapper.mapperToObject(entity);
+				customsService.customsSave(update);
 				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
 			} else {
 				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
@@ -79,9 +78,9 @@ public class NewsAPI {
 		}
 	}
 
-	@DeleteMapping("/admin/News/{id}")
-	public ResponseEntity<Void> deleteNews(@PathVariable int id) {
-		newsService.newsDeleteById(id);
+	@DeleteMapping("/admin/Customs/{id}")
+	public ResponseEntity<Void> deleteCustoms(@PathVariable int id) {
+		customsService.customsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 

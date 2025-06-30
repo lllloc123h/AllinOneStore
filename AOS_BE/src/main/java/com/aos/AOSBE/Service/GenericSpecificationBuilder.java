@@ -16,10 +16,18 @@ public class GenericSpecificationBuilder {
 			List<Predicate> predicates = new ArrayList<>();
 			filters.forEach((field, value) -> {
 				if (value != null) {
-					if (value instanceof String && !((String) value).isEmpty()) {
-						predicates.add(cb.like(cb.lower(root.get(field)), "%" + value.toString().toLowerCase() + "%"));
+					if (value instanceof String) {
+						String stringValue = (String) value;
+						if (!stringValue.trim().isEmpty()) {
+							predicates.add(cb.like(cb.lower(root.get(field)), "%" + stringValue.toLowerCase() + "%"));
+						}
 					} else {
-						predicates.add(cb.equal(root.get(field), value));
+						try {
+							predicates.add(cb.equal(root.get(field), value));
+						} catch (IllegalArgumentException e) {
+							// Optional: log field name causing the error
+							System.err.println("Skipping invalid filter field: " + field);
+						}
 					}
 				}
 			});

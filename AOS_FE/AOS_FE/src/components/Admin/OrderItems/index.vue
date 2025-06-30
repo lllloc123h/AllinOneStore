@@ -10,7 +10,7 @@
         OrderItems
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
@@ -68,7 +68,7 @@ const router = useRouter()
           	{ name: 'isGift', type: 'text' },
           	{ name: 'sellingPrice', type: 'number' },
           	{ name: 'total', type: 'number' },
-          	{ name: 'couponCode', type: 'number' },
+          	{ name: 'couponCode', type: 'text' },
  
 ]
 

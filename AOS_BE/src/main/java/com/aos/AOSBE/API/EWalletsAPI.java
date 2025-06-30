@@ -38,10 +38,11 @@ public class EWalletsAPI {
 
 	@GetMapping("/admin/EWallets")
 	public ResponseEntity<List<EWalletsDTOS>> getAllEWalletsApiAdminRole(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		List<EWalletsDTOS> eWallets = new ArrayList<EWalletsDTOS>();
-		eWalletsService.eWalletsFindAll(page, size).forEach(e -> {
+		eWalletsService.eWalletsFindAll(page, size, filters).forEach(e -> {
 			eWallets.add(eWalletsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(eWallets);

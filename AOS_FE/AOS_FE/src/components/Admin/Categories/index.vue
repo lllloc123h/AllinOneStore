@@ -10,7 +10,7 @@
         Categories
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>

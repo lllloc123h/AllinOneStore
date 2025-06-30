@@ -39,9 +39,10 @@ public class AccountsService {
 
 	PasswordEncoder passwordEncoder;
 
-	public List<Accounts> accountsFindAll(int page, int size) {
+	public List<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
-		return accountsRepository.findAll(pageable).getContent();
+		Specification<Accounts> spec = specBuilder.buildFilter(filters);
+		return accountsRepository.findAll(spec, pageable).getContent();
 	}
 
 	public List<Accounts> accountsFindWithFilter(int page, int size, Map<String, Object> filters) {

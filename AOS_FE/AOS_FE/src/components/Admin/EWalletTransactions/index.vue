@@ -10,7 +10,7 @@
         EWalletTransactions
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName"></Table>
+      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
@@ -67,6 +67,8 @@ const router = useRouter()
           	{ name: 'transactionType', type: 'text' },
           	{ name: 'relatedWalletId', type: 'number' },
           	{ name: 'description', type: 'text' },
+          	{ name: 'orderId', type: 'text' },
+          	{ name: 'status', type: 'text' },
  
 ]
 
@@ -77,6 +79,8 @@ const filters = ref({
   			relatedWalletId: '',
   			description: '',
   			createdAt: '',
+  			orderId: '',
+  			status: '',
 })
   
   

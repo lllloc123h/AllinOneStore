@@ -34,10 +34,11 @@ public class VariantsAPI {
 
 	@GetMapping("/admin/Variants")
 	public ResponseEntity<List<VariantsDTOS>> getAllVariantsApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		List<VariantsDTOS> variants = new ArrayList<VariantsDTOS>();
-		variantsService.variantsFindAll(page, size).forEach(e -> {
+		variantsService.variantsFindAll(page, size, filters).forEach(e -> {
 			variants.add(variantsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(variants);

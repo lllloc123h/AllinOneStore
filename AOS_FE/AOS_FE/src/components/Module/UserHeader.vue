@@ -54,8 +54,8 @@
                 <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="isAdmin">Admin
                 </RouterLink>
               </li>
-              <li class="dropdown-item">
-                <RouterLink class="nav-link active" to="/UserInfo">Setting</RouterLink>
+              <li>
+                <RouterLink class="dropdown-item" to="/UserInfo">Setting</RouterLink>
               </li>
               <li>
                 <button class="dropdown-item" @click="logout" v-if="isLogged">

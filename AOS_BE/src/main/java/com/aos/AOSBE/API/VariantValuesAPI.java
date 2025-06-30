@@ -36,10 +36,11 @@ public class VariantValuesAPI {
 
 	@GetMapping("/admin/VariantValues")
 	public ResponseEntity<List<VariantValuesDTOS>> getAllVariantValuesApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		List<VariantValuesDTOS> variantValues = new ArrayList<VariantValuesDTOS>();
-		variantValuesService.variantValuesFindAll(page, size).forEach(e -> {
+		variantValuesService.variantValuesFindAll(page, size, filters).forEach(e -> {
 			variantValues.add(variantValuesMapper.mapper(e));
 		});
 		return ResponseEntity.ok(variantValues);
@@ -77,12 +78,14 @@ public class VariantValuesAPI {
 
 	@GetMapping("/VariantValues")
 	public ResponseEntity<?> getAllVariantValuesApiToQuery(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "100") int size) {
-
+			@RequestParam(defaultValue = "100") int size,
+			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		Map<String, List<VariantValuesDTOS>> variantValuesForList = new HashMap<>();
 
 		List<VariantValuesDTOS> variantValues = new ArrayList<VariantValuesDTOS>();
-		variantValuesService.variantValuesFindAll(page, size).forEach(e -> {
+		variantValuesService.variantValuesFindAll(page, size, filters).forEach(e -> {
 			variantValues.add(variantValuesMapper.mapper(e));
 		});
 		variantValuesForList = variantValues.stream().collect(Collectors.groupingBy(VariantValuesDTOS::getName));
