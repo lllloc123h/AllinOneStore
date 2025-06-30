@@ -37,10 +37,11 @@ public class ProductItemsAPI {
 
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<List<ProductItemsDTOS>> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
-		productItemsService.productItemsFindAll(page, size).forEach(e -> {
+		productItemsService.productItemsFindAll(page, size, filters).forEach(e -> {
 			productItems.add(productItemsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(productItems);

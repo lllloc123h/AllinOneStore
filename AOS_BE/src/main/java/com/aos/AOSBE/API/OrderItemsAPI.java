@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +22,8 @@ import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Service.OrderItemsService;
 
+import lombok.extern.log4j.Log4j2;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -36,10 +37,12 @@ public class OrderItemsAPI {
 
 	@GetMapping("/admin/OrderItems")
 	public ResponseEntity<List<OrderItemsDTOS>> getAllOrderItemsApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 
 		List<OrderItemsDTOS> orderItems = new ArrayList<OrderItemsDTOS>();
-		orderItemsService.orderItemsFindAll(page, size).forEach(e -> {
+		orderItemsService.orderItemsFindAll(page, size, filters).forEach(e -> {
 			orderItems.add(orderItemsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(orderItems);

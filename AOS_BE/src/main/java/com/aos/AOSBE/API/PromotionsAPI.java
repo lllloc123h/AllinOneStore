@@ -34,10 +34,11 @@ public class PromotionsAPI {
 
 	@GetMapping("/admin/Promotions")
 	public ResponseEntity<List<PromotionsDTOS>> getAllPromotionsApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		List<PromotionsDTOS> promotions = new ArrayList<PromotionsDTOS>();
-		promotionsService.promotionsFindAll(page, size).forEach(e -> {
+		promotionsService.promotionsFindAll(page, size, filters).forEach(e -> {
 			promotions.add(promotionsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(promotions);

@@ -35,10 +35,12 @@ public class UserAddressesAPI {
 
 	@GetMapping("/admin/UserAddresses")
 	public ResponseEntity<List<UserAddressesDTOS>> getAllUserAddressesApiAdminRoles(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
-
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
 		List<UserAddressesDTOS> userAddresses = new ArrayList<UserAddressesDTOS>();
-		userAddressesService.userAddressesFindAll(page, size).forEach(e -> {
+		userAddressesService.userAddressesFindAll(page, size, filters).forEach(e -> {
 			userAddresses.add(userAddressesMapper.mapper(e));
 		});
 		return ResponseEntity.ok(userAddresses);
