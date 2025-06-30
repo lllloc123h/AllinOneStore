@@ -38,7 +38,7 @@ public class CouponsAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<CouponsDTOS> coupons = new ArrayList<CouponsDTOS>();
-		couponsService.couponsFindAll(page, size).forEach(e -> {
+		couponsService.couponsFindAll(page, size, filters).forEach(e -> {
 			coupons.add(couponsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(coupons);

@@ -70,7 +70,7 @@ public class BaseProductsAPI {
 
 		List<BaseProductsDTOS> baseProducts = new ArrayList<BaseProductsDTOS>();
 		;
-		baseProductsService.baseProductsFindAll(page, size).forEach(e -> {
+		baseProductsService.baseProductsFindAll(page, size, filters).forEach(e -> {
 			baseProducts.add(baseProductsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(baseProducts);

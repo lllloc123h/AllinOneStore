@@ -1,33 +1,43 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import com.aos.AOSBE.Entity.*;
-import com.aos.AOSBE.Repository.*;
-import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import com.aos.AOSBE.Entity.Authorities;
+import com.aos.AOSBE.Repository.AuthoritiesRepository;
+
 @Service
 public class AuthoritiesService {
+	private GenericSpecificationBuilder specBuilder;
 	@Autowired
-    private AuthoritiesRepository authoritiesRepository;
+	private AuthoritiesRepository authoritiesRepository;
 
-    public List<Authorities> authoritiesFindAll(int page, int size) {
-    	Pageable pageable = PageRequest.of(page, size);
-		return authoritiesRepository.findAll(pageable).getContent();
-    }
-    public Authorities authoritiesSave(Authorities authorities) {
-        return authoritiesRepository.save(authorities);
-    }
-    public Optional<Authorities> authoritiesFindById(int id) {
-        return authoritiesRepository.findById(id);
-    }
-    public void authoritiesDeleteById(int id) {
-        authoritiesRepository.deleteById(id);
-    }
-    public List<Authorities> findAllByEmail(String email) {
-        return authoritiesRepository.findAllByEmail(email);
-    }
+	public List<Authorities> authoritiesFindAll(int page, int size, Map<String, Object> filters) {
+		Pageable pageable = PageRequest.of(page, size);
+		Specification<Authorities> spec = specBuilder.buildFilter(filters);
+		return authoritiesRepository.findAll(spec, pageable).getContent();
+	}
+
+	public Authorities authoritiesSave(Authorities authorities) {
+		return authoritiesRepository.save(authorities);
+	}
+
+	public Optional<Authorities> authoritiesFindById(int id) {
+		return authoritiesRepository.findById(id);
+	}
+
+	public void authoritiesDeleteById(int id) {
+		authoritiesRepository.deleteById(id);
+	}
+
+	public List<Authorities> findAllByEmail(String email) {
+		return authoritiesRepository.findAllByEmail(email);
+	}
 }

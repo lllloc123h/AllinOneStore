@@ -38,7 +38,7 @@ public class CancelsAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<CancelsDTOS> cancels = new ArrayList<CancelsDTOS>();
-		cancelsService.cancelsFindAll(page, size).forEach(e -> {
+		cancelsService.cancelsFindAll(page, size, filters).forEach(e -> {
 			cancels.add(cancelsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(cancels);

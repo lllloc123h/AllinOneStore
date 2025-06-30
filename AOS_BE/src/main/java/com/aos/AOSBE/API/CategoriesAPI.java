@@ -38,7 +38,7 @@ public class CategoriesAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<CategoriesDTOS> categories = new ArrayList<CategoriesDTOS>();
-		categoriesService.categoriesFindAll(page, size).forEach(e -> {
+		categoriesService.categoriesFindAll(page, size, filters).forEach(e -> {
 			categories.add(categoriesMapper.mapper(e));
 		});
 		return ResponseEntity.ok(categories);

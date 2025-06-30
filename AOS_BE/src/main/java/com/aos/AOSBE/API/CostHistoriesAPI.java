@@ -38,7 +38,7 @@ public class CostHistoriesAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<CostHistoriesDTOS> costHistories = new ArrayList<CostHistoriesDTOS>();
-		costHistoriesService.costHistoriesFindAll(page, size).forEach(e -> {
+		costHistoriesService.costHistoriesFindAll(page, size, filters).forEach(e -> {
 			costHistories.add(costHistoriesMapper.mapper(e));
 		});
 		return ResponseEntity.ok(costHistories);

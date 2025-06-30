@@ -38,7 +38,7 @@ public class CatalogsAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<CatalogsDTOS> catalogs = new ArrayList<CatalogsDTOS>();
-		catalogsService.catalogsFindAll(page, size).forEach(e -> {
+		catalogsService.catalogsFindAll(page, size, filters).forEach(e -> {
 			catalogs.add(catalogsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(catalogs);

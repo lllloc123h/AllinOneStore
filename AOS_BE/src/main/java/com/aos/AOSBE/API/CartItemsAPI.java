@@ -38,7 +38,7 @@ public class CartItemsAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<CartItemsDTOS> cartItems = new ArrayList<CartItemsDTOS>();
-		cartItemsService.cartItemsFindAll(page, size).forEach(e -> {
+		cartItemsService.cartItemsFindAll(page, size, filters).forEach(e -> {
 			cartItems.add(cartItemsMapper.mapper(e));
 		});
 		return ResponseEntity.ok(cartItems);

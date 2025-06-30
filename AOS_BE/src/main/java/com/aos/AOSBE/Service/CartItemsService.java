@@ -1,11 +1,13 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.aos.AOSBE.Entity.CartItems;
@@ -13,12 +15,14 @@ import com.aos.AOSBE.Repository.CartItemsRepository;
 
 @Service
 public class CartItemsService {
+	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CartItemsRepository cartItemsRepository;
 
-	public List<CartItems> cartItemsFindAll(int page, int size) {
+	public List<CartItems> cartItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
-		return cartItemsRepository.findAll(pageable).getContent();
+		Specification<CartItems> spec = specBuilder.buildFilter(filters);
+		return cartItemsRepository.findAll(spec, pageable).getContent();
 	}
 
 	public List<CartItems> cartItemsFindAccounts(String email) {

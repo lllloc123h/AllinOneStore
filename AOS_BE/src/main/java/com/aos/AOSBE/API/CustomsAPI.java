@@ -25,47 +25,47 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
-public class CustomAPI {
+public class CustomsAPI {
 	@Autowired
-	private CustomService customService;
+	private CustomsService customsService;
 	
 	@Autowired
-	private CustomMapper customMapper;
+	private CustomsMapper customsMapper;
 
-	@GetMapping("/admin/Custom")
-	public ResponseEntity<List<CustomDTOS>> getAllCustomApi(	
+	@GetMapping("/admin/Customs")
+	public ResponseEntity<List<CustomsDTOS>> getAllCustomsApi(	
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 			
-		List<CustomDTOS> custom = new ArrayList<CustomDTOS>();
-		customService.customFindAll(page, size).forEach(e -> {
-			custom.add(customMapper.mapper(e));
+		List<CustomsDTOS> customs = new ArrayList<CustomsDTOS>();
+		customsService.customsFindAll(page, size).forEach(e -> {
+			customs.add(customsMapper.mapper(e));
 		});
-		return ResponseEntity.ok(custom);
+		return ResponseEntity.ok(customs);
 	}
 
-	@GetMapping("/admin/Custom/{id}")
-	public ResponseEntity<Custom> getCustomByIdApi(@PathVariable int id) {
+	@GetMapping("/admin/Customs/{id}")
+	public ResponseEntity<Customs> getCustomsByIdApi(@PathVariable int id) {
 		//try{
 		//}catch(Exception e){
 		//}
 		
-		Custom custom =(Custom)customService.customFindById(id).orElse(new Custom());
-		return ResponseEntity.ok(custom);
+		Customs customs =(Customs)customsService.customsFindById(id).orElse(new Customs());
+		return ResponseEntity.ok(customs);
 	}
-	@PostMapping("/admin/Custom")
-	public ResponseEntity<Custom> addNewCustom(@RequestBody CustomDTOS entity) {
+	@PostMapping("/admin/Customs")
+	public ResponseEntity<Customs> addNewCustoms(@RequestBody CustomsDTOS entity) {
 	    
-	    Custom saved = customService.customSave(customMapper.mapperToObject(entity));	    
+	    Customs saved = customsService.customsSave(customsMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
 	}
-	@PutMapping("/admin/Custom/{id}")
-	public ResponseEntity<?> updateCustom( @PathVariable int id,@RequestBody CustomDTOS entity) {
+	@PutMapping("/admin/Customs/{id}")
+	public ResponseEntity<?> updateCustoms( @PathVariable int id,@RequestBody CustomsDTOS entity) {
 			try {
-			Custom  isExist = customService.customFindById(id).orElse(null);
+			Customs  isExist = customsService.customsFindById(id).orElse(null);
 			if (isExist != null) {
-				Custom  update = customMapper.mapperToObject(entity);
-				customService.customSave(update);
+				Customs  update = customsMapper.mapperToObject(entity);
+				customsService.customsSave(update);
 				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
 			} else {
 				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
@@ -75,9 +75,9 @@ public class CustomAPI {
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
 		} 
 	}
-	@DeleteMapping("/admin/Custom/{id}")
-	public ResponseEntity<Void> deleteCustom(@PathVariable int id) {
-	    customService.customDeleteById(id); 
+	@DeleteMapping("/admin/Customs/{id}")
+	public ResponseEntity<Void> deleteCustoms(@PathVariable int id) {
+	    customsService.customsDeleteById(id); 
 	    return ResponseEntity.noContent().build(); 
 	}
 

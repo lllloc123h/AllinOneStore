@@ -1,11 +1,13 @@
 package com.aos.AOSBE.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +16,14 @@ import com.aos.AOSBE.Repository.EWalletTransactionsRepository;
 
 @Service
 public class EWalletTransactionsService {
+	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private EWalletTransactionsRepository eWalletTransactionsRepository;
 
-	public List<EWalletTransactions> eWalletTransactionsFindAll(int page, int size) {
+	public List<EWalletTransactions> eWalletTransactionsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
-		return eWalletTransactionsRepository.findAll(pageable).getContent();
+		Specification<EWalletTransactions> spec = specBuilder.buildFilter(filters);
+		return eWalletTransactionsRepository.findAll(spec, pageable).getContent();
 	}
 
 	public List<EWalletTransactions> eWalletTransactionsFindByEwalletId(int id) {

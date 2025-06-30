@@ -63,44 +63,44 @@ public class AccountsAPI {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-//	@GetMapping("/admin/Accounts")
-//	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiAdminRole(@RequestParam(defaultValue = "0") int page,
-//			@RequestParam(defaultValue = "5") int size) {
-//
-//		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
-//		accountsService.accountsFindAll(page, size).forEach(e -> {
-//			accounts.add(accountsMapper.mapper(e));
-//		});
-//		return ResponseEntity.ok(accounts);
-//	}
-
 	@GetMapping("/admin/Accounts")
 	public ResponseEntity<?> getAllAccountsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<Accounts> accounts = accountsService.accountsFindWithFilter(page, size, filters);
+		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
+		accountsService.accountsFindWithFilter(page, size, filters).forEach(e -> {
+			accounts.add(accountsMapper.mapper(e));
+		});
 		return ResponseEntity.ok(accounts);
 	}
 
-	@GetMapping("/test")
+//	@GetMapping("/admin/Accounts")
+//	public ResponseEntity<?> getAllAccountsApi(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+//		filters.remove("page");
+//		filters.remove("size");
+//		List<Accounts> accounts = accountsService.accountsFindWithFilter(page, size, filters);
+//		return ResponseEntity.ok(accounts);
+//	}
 
+	@GetMapping("/test")
 	public ResponseEntity<?> test() {
 		return ResponseEntity.ok(authoritiesService.findAllByEmail("adminCUDE@gmail.com").stream()
 				.map(authority -> authority.getAccounts().getEmail()).toList());
 	}
 
-	@GetMapping("/user/Accounts")
-	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiUser(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-
-		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
-		accountsService.accountsFindAll(page, size).forEach(e -> {
-			accounts.add(accountsMapper.mapper(e));
-		});
-		accounts.stream().forEach(e -> System.out.println(e.getEmail()));
-		return ResponseEntity.ok(accounts);
-	}
+//	@GetMapping("/user/Accounts")
+//	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiUser(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "5") int size) {
+//
+//		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
+//		accountsService.accountsFindAll(page, size, filters).forEach(e -> {
+//			accounts.add(accountsMapper.mapper(e));
+//		});
+//		accounts.stream().forEach(e -> System.out.println(e.getEmail()));
+//		return ResponseEntity.ok(accounts);
+//	}
 
 	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {

@@ -38,7 +38,7 @@ public class AuthoritiesAPI {
 			@RequestParam(defaultValue = "5") int size) {
 			
 		List<AuthoritiesDTOS> authorities = new ArrayList<AuthoritiesDTOS>();
-		authoritiesService.authoritiesFindAll(page, size).forEach(e -> {
+		authoritiesService.authoritiesFindAll(page, size, filters).forEach(e -> {
 			authorities.add(authoritiesMapper.mapper(e));
 		});
 		return ResponseEntity.ok(authorities);
