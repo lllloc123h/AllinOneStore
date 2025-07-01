@@ -18,6 +18,9 @@
                                 :placeholder="`Enter ${field.name}`" :type="field.type" :id="field.name" />
                         </div>
                     </div>
+                    <div class="text-end mt-3">
+                        <button class="btn btn-outline-secondary" @click="clearFilters">Clear Filters</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,6 +39,11 @@ const props = defineProps({
 })
 const filters = ref({ ...props.modelValue })
 const emit = defineEmits(['update:modelValue'])
+const clearFilters = () => {
+    Object.keys(filters.value).forEach(key => {
+        filters.value[key] = ''
+    })
+}
 watch(filters, (newVal) => {
     emit('update:modelValue', { ...newVal })
 }, { deep: true })
