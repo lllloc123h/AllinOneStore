@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,20 @@ public class GenericSpecificationBuilder {
 								break;
 							default:
 								predicates.add(cb.equal(path, numberValue));
+								break;
+							}
+						} else if (fieldType == java.time.LocalDateTime.class) {
+							LocalDateTime dateTimeValue = LocalDateTime.parse(value.toString());
+							Path<LocalDateTime> datePath = root.get(field);
+							switch (operator) {
+							case "gte":
+								predicates.add(cb.greaterThanOrEqualTo(datePath, dateTimeValue));
+								break;
+							case "lte":
+								predicates.add(cb.lessThanOrEqualTo(datePath, dateTimeValue));
+								break;
+							default:
+								predicates.add(cb.equal(datePath, dateTimeValue));
 								break;
 							}
 						} else {
