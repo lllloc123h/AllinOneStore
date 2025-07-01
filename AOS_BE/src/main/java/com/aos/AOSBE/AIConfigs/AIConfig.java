@@ -29,29 +29,36 @@ import java.util.Map;
 @Autowired
         private QdrantVectorStore vectorStore;
     // cau hinh cho ChatMemory, toi da 30 tn, co the thay doi bang jdbc, neoj4,v.v
-    ChatMemory memory = MessageWindowChatMemory.builder()
-            .chatMemoryRepository(jdbcChatMemoryRepository)
-            .maxMessages(25)
-            .build();
-    PromptTemplate customPromptTemplate = PromptTemplate.builder()
-            .renderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
-            .template("""
-                    <query>
-                    
-                    Thông tin ngữ cảnh nằm bên dưới.
-                    
-                    ---------------------
-                    <question_answer_context>
-                    ---------------------
-                    
-                    Dựa trên thông tin ngữ cảnh và không sử dụng kiến thức bên ngoài, hãy trả lời câu hỏi sau.
-                    
-                    Lưu ý các quy tắc sau:
-                    
-                    1. Nếu không tìm thấy câu trả lời trong ngữ cảnh, chỉ cần trả lời rằng bạn không biết.
-                    2. Tránh các câu kiểu như "Dựa trên ngữ cảnh..." hoặc "Theo thông tin cung cấp...".
-            """)
-            .build();
+    @Bean
+    ChatMemory memory (){
+        return  MessageWindowChatMemory.builder()
+                .chatMemoryRepository(jdbcChatMemoryRepository)
+                .maxMessages(25)
+                .build();
+    }
+
+    @Bean
+    PromptTemplate customPromptTemplate () {
+       return PromptTemplate.builder()
+                .renderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
+                .template("""
+                                <query>
+                        
+                                Thông tin ngữ cảnh nằm bên dưới.
+                        
+                                ---------------------
+                                <question_answer_context>
+                                ---------------------
+                        
+                                Dựa trên thông tin ngữ cảnh và không sử dụng kiến thức bên ngoài, hãy trả lời câu hỏi sau.
+                        
+                                Lưu ý các quy tắc sau:
+                        
+                                1. Nếu không tìm thấy câu trả lời trong ngữ cảnh, chỉ cần trả lời rằng bạn không biết.
+                                2. Tránh các câu kiểu như "Dựa trên ngữ cảnh..." hoặc "Theo thông tin cung cấp...".
+                        """)
+                .build();
+    }
     //chiến lược gửi request, ở đây là gửi tối đa 8000 token, với 10% dự trữ
 //    @PostConstruct
 //    public void loadSampleData() {
@@ -76,20 +83,20 @@ import java.util.Map;
                 - Đưa ra gợi ý dựa trên thông tin khách hàng cung cấp (giới tính, độ tuổi, mục đích sử dụng, ngân sách, v.v.).
                 - Luôn trả lời ngắn gọn, dễ hiểu, nhiệt tình và rõ ràng.
                 - Không bịa ra thông tin nếu không biết — chỉ trả lời dựa trên dữ liệu được cung cấp.
-                - Nếu khách hỏi biết Trần Hữu Lộc hay không, hãy kể với khách rằng vài điều về người đàn ông tuyệt vời này.
+                - Nếu khách hỏi biết Trần Hữu Lộc hay không, hãy nói rằng "anh ấy rất đẹp trai".
                 Nếu không có đủ thông tin, hãy chủ động hỏi lại khách hàng để làm rõ nhu cầu.
                 
                 Luôn ưu tiên giúp khách hàng chọn được sản phẩm phù hợp và hài lòng nhất.
                 
                 """).
                 defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(memory).build(),
+                        MessageChatMemoryAdvisor.builder(memory()).build(),
                         QuestionAnswerAdvisor.builder(vectorStore)
                                         .searchRequest(SearchRequest.builder()
                                         .similarityThreshold(0.5)
                                         .topK(5)
                                         .build())
-                        .promptTemplate(customPromptTemplate).build()
+                        .promptTemplate(customPromptTemplate()).build()
                                 ).
                 defaultUser("Xin chào, mình cần tư vấn sản phẩm")
                 .build();

@@ -3,6 +3,7 @@ package com.aos.AOSBE.Service;
 import com.aos.AOSBE.AIConfigs.AITools;
 import com.nimbusds.openid.connect.sdk.Prompt;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ public class OpenAIService {
     }
     public ChatResponse chatWithGPT(String message) {
         // dinh dang response dep hon
-        ChatResponse resp = this.chatClient.prompt().user(message).call().chatResponse();
+        ChatResponse resp = this.chatClient.prompt().user(message)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID,"001"))
+                .call().chatResponse();
 //        dùng khi muốn truy xuất trò truyện từ trước của ng dùng đã ĐĂNG NHẬP
 //        String conversationId = "007";
 //chatClient.prompt()
