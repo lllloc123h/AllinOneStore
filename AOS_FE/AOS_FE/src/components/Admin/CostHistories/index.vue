@@ -65,6 +65,8 @@ const router = useRouter()
   const FilterList = [
           	{ name: 'costFrom', type: 'number' },
           	{ name: 'costTo', type: 'number' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
  
 ]
 

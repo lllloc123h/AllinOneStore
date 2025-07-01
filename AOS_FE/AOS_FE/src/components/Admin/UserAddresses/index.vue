@@ -72,6 +72,10 @@ const router = useRouter()
           	{ name: 'label', type: 'text' },
           	{ name: 'isDefault', type: 'text' },
           	{ name: 'note', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

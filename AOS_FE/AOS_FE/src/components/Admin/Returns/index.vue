@@ -76,7 +76,12 @@ const router = useRouter()
           	{ name: 'returnType', type: 'text' },
           	{ name: 'refundType', type: 'text' },
           	{ name: 'status', type: 'text' },
-          	{ name: 'processedAt', type: 'datetime' },
+          	{ name: 'processedAtFrom', type: 'datetime' },
+          	{ name: 'processedAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

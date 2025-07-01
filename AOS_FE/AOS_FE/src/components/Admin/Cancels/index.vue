@@ -66,6 +66,10 @@ const router = useRouter()
           	{ name: 'reason', type: 'text' },
           	{ name: 'isPaid', type: 'text' },
           	{ name: 'status', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

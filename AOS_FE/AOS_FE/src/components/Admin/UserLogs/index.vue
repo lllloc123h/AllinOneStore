@@ -69,6 +69,8 @@ const router = useRouter()
           	{ name: 'description', type: 'text' },
           	{ name: 'ipAddress', type: 'text' },
           	{ name: 'userAgent', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
           	{ name: 'module', type: 'text' },
  
 ]

@@ -72,7 +72,8 @@ const router = useRouter()
           	{ name: 'discountCouponCode', type: 'text' },
           	{ name: 'discountValueFrom', type: 'number' },
           	{ name: 'discountValueTo', type: 'number' },
-          	{ name: 'shippedDate', type: 'datetime' },
+          	{ name: 'shippedDateFrom', type: 'datetime' },
+          	{ name: 'shippedDateTo', type: 'datetime' },
           	{ name: 'paymentStatus', type: 'text' },
           	{ name: 'note', type: 'text' },
           	{ name: 'pointFrom', type: 'number' },
@@ -80,6 +81,10 @@ const router = useRouter()
           	{ name: 'finalTotalFrom', type: 'number' },
           	{ name: 'finalTotalTo', type: 'number' },
           	{ name: 'orderInfor', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

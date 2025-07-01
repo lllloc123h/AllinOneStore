@@ -63,13 +63,20 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'orderDate', type: 'datetime' },
-          	{ name: 'expectedDate', type: 'datetime' },
-          	{ name: 'receivedDate', type: 'datetime' },
+          	{ name: 'orderDateFrom', type: 'datetime' },
+          	{ name: 'orderDateTo', type: 'datetime' },
+          	{ name: 'expectedDateFrom', type: 'datetime' },
+          	{ name: 'expectedDateTo', type: 'datetime' },
+          	{ name: 'receivedDateFrom', type: 'datetime' },
+          	{ name: 'receivedDateTo', type: 'datetime' },
           	{ name: 'totalFrom', type: 'number' },
           	{ name: 'totalTo', type: 'number' },
           	{ name: 'status', type: 'text' },
           	{ name: 'note', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

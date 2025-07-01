@@ -79,8 +79,14 @@ const router = useRouter()
           	{ name: 'isAllowVoucher', type: 'text' },
           	{ name: 'isActive', type: 'text' },
           	{ name: 'customerGroup', type: 'text' },
-          	{ name: 'startAt', type: 'datetime' },
-          	{ name: 'endAt', type: 'datetime' },
+          	{ name: 'startAtFrom', type: 'datetime' },
+          	{ name: 'startAtTo', type: 'datetime' },
+          	{ name: 'endAtFrom', type: 'datetime' },
+          	{ name: 'endAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

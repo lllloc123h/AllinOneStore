@@ -73,9 +73,15 @@ const router = useRouter()
           	{ name: 'comboPriceTo', type: 'number' },
           	{ name: 'usageLimitFrom', type: 'number' },
           	{ name: 'usageLimitTo', type: 'number' },
-          	{ name: 'startAt', type: 'datetime' },
-          	{ name: 'endAt', type: 'datetime' },
+          	{ name: 'startAtFrom', type: 'datetime' },
+          	{ name: 'startAtTo', type: 'datetime' },
+          	{ name: 'endAtFrom', type: 'datetime' },
+          	{ name: 'endAtTo', type: 'datetime' },
           	{ name: 'isActive', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

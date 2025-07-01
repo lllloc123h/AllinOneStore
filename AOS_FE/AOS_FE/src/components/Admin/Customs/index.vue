@@ -68,6 +68,10 @@ const router = useRouter()
           	{ name: 'canvasJson', type: 'text' },
           	{ name: 'imageUrl', type: 'text' },
           	{ name: 'designName', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 
