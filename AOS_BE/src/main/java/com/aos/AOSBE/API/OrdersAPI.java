@@ -83,5 +83,35 @@ public class OrdersAPI {
 		ordersService.ordersDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	@GetMapping("/Orders/detail/{id}")
+	public ResponseEntity<?> getOrderDetail(@PathVariable int id) {
+	    Optional<Orders> orderOpt = ordersService.ordersFindById(id);
+	    if (orderOpt.isEmpty()) {
+	        return ResponseEntity.notFound().build();
+	    }
 
+	    Orders order = orderOpt.get();
+	    OrdersDTOS orderDTO = ordersMapper.mapper(order); // bạn đang có
+
+	    List<OrderItems> items = orderItemsService.findByOrderId(id);
+	    List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
+
+	    for (OrderItems item : items) {
+	        ProductItems pi = item.getProductItems();
+	        String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
+
+	        itemsDTO.add(new OrderItemDetailDTO(
+	            item.getQty(),
+	            item.getSellingPrice(),
+	            item.getTotal(),
+	            item.isGift(),
+	            pi.getSku(),
+	            productName,
+	            pi.getDescription()
+	        ));
+	    }
+
+	    OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
+	    return ResponseEntity.ok(response);
+	}
 }
