@@ -27,8 +27,9 @@
 # .DS_Store
 # Thumbs.db
 ### Java / Spring Boot ###
-/target/                            # Maven output
-/build/                             # Gradle output
+target
+/target/                            
+/build/                             
 *.class
 *.jar
 *.war
