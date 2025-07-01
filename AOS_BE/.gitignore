@@ -1,35 +1,112 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# ### IDEs ###
+# .metadata/                          # Eclipse workspace metadata
+# /.idea/                              # IntelliJ IDEA
+# .vscode/                             # VS Code
+# *.iml                                # IntelliJ project files
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# # Eclipse plugin/cache logs (optional but cleaner)
+# .metadata/.plugins/org.eclipse.swt/EBWebView/
+# .metadata/.plugins/org.eclipse.m2e.logback/
+# .metadata/.plugins/org.eclipse.core.runtime/
+# .metadata/.plugins/
+# .metadata/.mylyn/
+# **.log  
+# .metadata
+# ### Java / Spring Boot ###
+# /target/                             # Maven build output
+# /bin/                                # Compiled binaries
+# *.log                                # Logs
+# *.tmp                                # Temp files
 
+# ### Node / Vue ###
+# node_modules/
+# dist/
+# *.local
+
+# ### System files ###
+# .DS_Store
+# Thumbs.db
+### Java / Spring Boot ###
+/target/                            # Maven output
+/build/                             # Gradle output
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.tmp
+
+### Environment files ###
 .env
+.env.*                              # dotenv environment files for multiple environments
+*env
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+### Maven ###
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+### Gradle ###
+.gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
 
-### VS Code ###
+### Vue.js / Node ###
+node_modules/
+dist/
+*.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+vite.config.js
+vite.config.ts
+
+### OS / System files ###
+.DS_Store
+Thumbs.db
+
+### IDEs ###
+
+# VS Code
 .vscode/
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+.metadata/.plugins/
+.metadata/.mylyn/
+.metadata/.plugins/org.eclipse.*
+.apt_generated/
+.factorypath
+.loadpath
+.env
+### Testing ###
+test-output/
+cypress/videos/
+cypress/screenshots/
+coverage/
+
+### Logs ###
+logs/
+*.log
+
+### Others ###
+/bin/
+.cache/
+*.swp
+

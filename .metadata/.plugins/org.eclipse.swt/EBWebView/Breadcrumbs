@@ -34,8 +34,8 @@
 0:00:00 Microsoft.Shutdown.OnWindowClosingPostClearBrowsingData_NoBrowsingDataCleared
 0:00:00 Microsoft.Last_Browser_Removed
 0:00:00 Startup
-0:00:00 Microsoft.DeleteProfileHelper.CleanUpEphemeralProfiles
-0:00:00 Microsoft.DeleteProfileHelper.CleanUpDeletedProfiles
+0:00:00 Microsoft.DeleteProfileHelper.CleanUp4:02:37 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+pDeletedProfiles
 0:00:00 Microsoft.NewBrowser_Popup
 0:00:00 Microsoft.BrowserList.AddBrowser
 0:00:00 Browser1 Insert active Tab1 at 0

@@ -1,34 +1,83 @@
-### IDEs ###
-# VS Code
-.vscode/
-
-# IntelliJ IDEA
-.idea/
-*.iml
-
-# Eclipse
-.metadata/
-.metadata/.mylyn/
-.metadata/.plugins/
-.metadata/.plugins/org.eclipse.swt/EBWebView/
-.metadata/.plugins/org.eclipse.m2e.logback/
-.metadata/.plugins/org.eclipse.core.runtime/
-
 ### Java / Spring Boot ###
-/target/
+/target/                            # Maven output
+/build/                             # Gradle output
+*.class
+*.jar
+*.war
+*.ear
 *.log
 *.tmp
-/bin/
-
-### Node / Vue ###
-node_modules/
-dist/
-*.local
 
 ### Environment files ###
 .env
+.env.*                              # dotenv environment files for multiple environments
 *env
 
-### System files ###
+### Maven ###
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+
+### Vue.js / Node ###
+node_modules/
+dist/
+*.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+vite.config.js
+vite.config.ts
+
+### OS / System files ###
 .DS_Store
 Thumbs.db
+
+### IDEs ###
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+.metadata/.plugins/
+.metadata/.mylyn/
+.metadata/.plugins/org.eclipse.*
+.apt_generated/
+.factorypath
+.loadpath
+.env
+### Testing ###
+test-output/
+cypress/videos/
+cypress/screenshots/
+coverage/
+
+### Logs ###
+logs/
+*.log
+
+### Others ###
+/bin/
+.cache/
+*.swp
