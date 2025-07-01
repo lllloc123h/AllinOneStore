@@ -77,18 +77,23 @@
 
                     <div class="d-flex justify-content-end">
                         <!-- From Uiverse.io by AKAspidey01 -->
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                        <button class="detail-button" @click="goToDetailPage(props.product.id)">
+                            Chi tiết
+                        </button>
 
                         <div class="main-section rounded-4">
                             <button class="first-button">Còn hàng</button>
                             <button class="second-button" @click="openPopup(props.product)">
-                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                                    <circle cx="9" cy="21" r="1"></circle>
-                                    <circle cx="20" cy="21" r="1"></circle>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                </svg>
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                    </svg>
                                 3,4k đã bán
                             </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -98,9 +103,17 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
 const props = defineProps({
     product: Object
 });
+
+const router = useRouter();
+
+function goToDetailPage(productId) {
+    router.push(`/product/${productId}`);
+}
 
 
 const emit = defineEmits(['view-detail']);
@@ -165,5 +178,19 @@ function formatPrice(price) {
     align-items: center;
     justify-content: center;
     transition-duration: 0.6s;
+}
+.detail-button {
+    background: #0b5ed7;
+    color: white;
+    border: none;
+    font-weight: 700;
+    font-size: 1em;
+    min-height: 45px;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.3s;
 }
 </style>

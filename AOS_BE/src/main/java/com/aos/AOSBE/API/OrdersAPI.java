@@ -3,6 +3,7 @@ package com.aos.AOSBE.API;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
+import com.aos.AOSBE.DTOS.OrderItemDetailDTO;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
+import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
+import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.OrdersMapper;
+import com.aos.AOSBE.Service.OrderItemsService;
 import com.aos.AOSBE.Service.OrdersService;
 
 @RestController
@@ -30,6 +36,8 @@ public class OrdersAPI {
 	private OrdersService ordersService;
 	@Autowired
 	private OrdersMapper ordersMapper;
+	@Autowired
+	private OrderItemsService orderItemsService;
 
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<List<OrdersDTOS>> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
@@ -82,5 +90,36 @@ public class OrdersAPI {
 		ordersService.ordersDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	@GetMapping("/Orders/detail/{id}")
+	public ResponseEntity<?> getOrderDetail(@PathVariable int id) {
+	    Optional<Orders> orderOpt = ordersService.ordersFindById(id);
+	    if (orderOpt.isEmpty()) {
+	        return ResponseEntity.notFound().build();
+	    }
 
+	    Orders order = orderOpt.get();
+	    OrdersDTOS orderDTO = ordersMapper.mapper(order); // bạn đang có
+
+	    List<OrderItems> items = orderItemsService.findByOrderId(id);
+	    List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
+
+	    for (OrderItems item : items) {
+	        ProductItems pi = item.getProductItems();
+	        String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
+
+	        itemsDTO.add(new OrderItemDetailDTO(
+	            item.getQty(),
+	            item.getSellingPrice(),
+	            item.getTotal(),
+	            item.isGift(),
+	            pi.getSku(),
+	            productName,
+	            pi.getDescription()
+	        ));
+	    }
+	    
+
+	    OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
+	    return ResponseEntity.ok(response);
+	}
 }

@@ -8,6 +8,7 @@ import com.aos.AOSBE.Repository.*;
 import java.util.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @Service
@@ -29,5 +30,9 @@ public class PromotionProductService {
     @Transactional
     public void promotionProductDeleteById(int id) {
         promotionProductRepository.deleteById(id);
+    }
+    @Transactional
+    public List<PromotionProduct> promotionProductFindByProductItemId(int productItemId) {
+    	return promotionProductRepository.findByProductItems_Id(productItemId);
     }
 }

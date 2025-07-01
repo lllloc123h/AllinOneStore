@@ -18,7 +18,7 @@ const excludedPaths = [
   '/Accounts/register',
   '/Accounts/verify-otp',
   '/BaseProducts',
-  '/VariantValues'
+  '/VariantValues',
 ]
 
 // Automatically attach token to each request
