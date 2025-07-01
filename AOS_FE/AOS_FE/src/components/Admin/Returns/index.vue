@@ -63,14 +63,16 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'qty', type: 'number' },
+          	{ name: 'qtyFrom', type: 'number' },
+          	{ name: 'qtyTo', type: 'number' },
           	{ name: 'reason', type: 'text' },
           	{ name: 'imageUrl1', type: 'text' },
           	{ name: 'imageUrl2', type: 'text' },
           	{ name: 'imageUrl3', type: 'text' },
           	{ name: 'videoUrl', type: 'text' },
           	{ name: 'isReturnedMoney', type: 'text' },
-          	{ name: 'refundAmount', type: 'number' },
+          	{ name: 'refundAmountFrom', type: 'number' },
+          	{ name: 'refundAmountTo', type: 'number' },
           	{ name: 'returnType', type: 'text' },
           	{ name: 'refundType', type: 'text' },
           	{ name: 'status', type: 'text' },

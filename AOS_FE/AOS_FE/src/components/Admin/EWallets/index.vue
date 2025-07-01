@@ -63,7 +63,8 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'balance', type: 'number' },
+          	{ name: 'balanceFrom', type: 'number' },
+          	{ name: 'balanceTo', type: 'number' },
           	{ name: 'walletType', type: 'text' },
           	{ name: 'isActive', type: 'text' },
  

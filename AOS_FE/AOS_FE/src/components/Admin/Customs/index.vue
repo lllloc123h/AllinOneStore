@@ -63,7 +63,8 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'accountId', type: 'number' },
+          	{ name: 'accountIdFrom', type: 'number' },
+          	{ name: 'accountIdTo', type: 'number' },
           	{ name: 'canvasJson', type: 'text' },
           	{ name: 'imageUrl', type: 'text' },
           	{ name: 'designName', type: 'text' },

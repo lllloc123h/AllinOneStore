@@ -66,7 +66,8 @@ const router = useRouter()
           	{ name: 'orderDate', type: 'datetime' },
           	{ name: 'expectedDate', type: 'datetime' },
           	{ name: 'receivedDate', type: 'datetime' },
-          	{ name: 'total', type: 'number' },
+          	{ name: 'totalFrom', type: 'number' },
+          	{ name: 'totalTo', type: 'number' },
           	{ name: 'status', type: 'text' },
           	{ name: 'note', type: 'text' },
  

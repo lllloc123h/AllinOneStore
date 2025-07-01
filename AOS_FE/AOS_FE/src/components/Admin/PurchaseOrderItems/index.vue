@@ -63,9 +63,12 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'qty', type: 'number' },
-          	{ name: 'cost', type: 'number' },
-          	{ name: 'totalCost', type: 'number' },
+          	{ name: 'qtyFrom', type: 'number' },
+          	{ name: 'qtyTo', type: 'number' },
+          	{ name: 'costFrom', type: 'number' },
+          	{ name: 'costTo', type: 'number' },
+          	{ name: 'totalCostFrom', type: 'number' },
+          	{ name: 'totalCostTo', type: 'number' },
  
 ]
 

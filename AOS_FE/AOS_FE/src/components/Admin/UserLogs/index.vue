@@ -63,7 +63,8 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'userId', type: 'number' },
+          	{ name: 'userIdFrom', type: 'number' },
+          	{ name: 'userIdTo', type: 'number' },
           	{ name: 'action', type: 'text' },
           	{ name: 'description', type: 'text' },
           	{ name: 'ipAddress', type: 'text' },

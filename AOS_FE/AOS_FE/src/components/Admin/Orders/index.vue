@@ -64,16 +64,21 @@ const router = useRouter()
  
   const FilterList = [
           	{ name: 'shippingStatus', type: 'text' },
-          	{ name: 'estimatedShippingFee', type: 'number' },
+          	{ name: 'estimatedShippingFeeFrom', type: 'number' },
+          	{ name: 'estimatedShippingFeeTo', type: 'number' },
           	{ name: 'freeshipCouponCode', type: 'text' },
-          	{ name: 'actualShippingFee', type: 'number' },
+          	{ name: 'actualShippingFeeFrom', type: 'number' },
+          	{ name: 'actualShippingFeeTo', type: 'number' },
           	{ name: 'discountCouponCode', type: 'text' },
-          	{ name: 'discountValue', type: 'number' },
+          	{ name: 'discountValueFrom', type: 'number' },
+          	{ name: 'discountValueTo', type: 'number' },
           	{ name: 'shippedDate', type: 'datetime' },
           	{ name: 'paymentStatus', type: 'text' },
           	{ name: 'note', type: 'text' },
-          	{ name: 'point', type: 'number' },
-          	{ name: 'finalTotal', type: 'number' },
+          	{ name: 'pointFrom', type: 'number' },
+          	{ name: 'pointTo', type: 'number' },
+          	{ name: 'finalTotalFrom', type: 'number' },
+          	{ name: 'finalTotalTo', type: 'number' },
           	{ name: 'orderInfor', type: 'text' },
  
 ]
