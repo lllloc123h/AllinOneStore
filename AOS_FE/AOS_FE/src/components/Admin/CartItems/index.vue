@@ -65,6 +65,10 @@ const router = useRouter()
   const FilterList = [
           	{ name: 'qtyFrom', type: 'number' },
           	{ name: 'qtyTo', type: 'number' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

@@ -66,6 +66,10 @@ const router = useRouter()
           	{ name: 'imageUrl', type: 'text' },
           	{ name: 'isHome', type: 'text' },
           	{ name: 'description', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

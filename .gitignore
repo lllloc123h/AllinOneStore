@@ -7,7 +7,7 @@
 *.ear
 *.log
 *.tmp
-
+target
 ### Environment files ###
 .env
 .env.*                              # dotenv environment files for multiple environments

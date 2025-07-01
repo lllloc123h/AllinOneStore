@@ -72,6 +72,10 @@ const router = useRouter()
           	{ name: 'ratingFrom', type: 'number' },
           	{ name: 'ratingTo', type: 'number' },
           	{ name: 'isActive', type: 'text' },
+          	{ name: 'createdAtFrom', type: 'datetime' },
+          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'updatedAtFrom', type: 'datetime' },
+          	{ name: 'updatedAtTo', type: 'datetime' },
  
 ]
 

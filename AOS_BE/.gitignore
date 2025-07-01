@@ -105,7 +105,7 @@ coverage/
 ### Logs ###
 logs/
 *.log
-
+target
 ### Others ###
 /bin/
 .cache/
