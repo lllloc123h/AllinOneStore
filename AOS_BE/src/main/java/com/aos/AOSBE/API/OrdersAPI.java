@@ -28,7 +28,6 @@ import com.aos.AOSBE.Service.OrdersService;
 public class OrdersAPI {
 	@Autowired
 	private OrdersService ordersService;
-
 	@Autowired
 	private OrdersMapper ordersMapper;
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.aos.AOSBE.DTOS.GhnDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,7 +35,11 @@ public class OrderItemsAPI {
 
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
-
+	@PostMapping("/webhook/status")
+	public ResponseEntity<String> getStatus(@RequestBody GhnDTO entity) {
+		System.out.println(entity);
+		return ResponseEntity.ok("Success");
+	}
 	@GetMapping("/admin/OrderItems")
 	public ResponseEntity<List<OrderItemsDTOS>> getAllOrderItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
