@@ -63,7 +63,8 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'price', type: 'number' },
+          	{ name: 'priceFrom', type: 'number' },
+          	{ name: 'priceTo', type: 'number' },
  
 ]
 

@@ -63,9 +63,11 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'amount', type: 'number' },
+          	{ name: 'amountFrom', type: 'number' },
+          	{ name: 'amountTo', type: 'number' },
           	{ name: 'transactionType', type: 'text' },
-          	{ name: 'relatedWalletId', type: 'number' },
+          	{ name: 'relatedWalletIdFrom', type: 'number' },
+          	{ name: 'relatedWalletIdTo', type: 'number' },
           	{ name: 'description', type: 'text' },
           	{ name: 'orderId', type: 'text' },
           	{ name: 'status', type: 'text' },

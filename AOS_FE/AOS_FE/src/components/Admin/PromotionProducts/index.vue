@@ -63,10 +63,13 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'id', type: 'number' },
-          	{ name: 'requireQty', type: 'number' },
+          	{ name: 'idFrom', type: 'number' },
+          	{ name: 'idTo', type: 'number' },
+          	{ name: 'requireQtyFrom', type: 'number' },
+          	{ name: 'requireQtyTo', type: 'number' },
           	{ name: 'isGift', type: 'text' },
-          	{ name: 'costShare', type: 'number' },
+          	{ name: 'costShareFrom', type: 'number' },
+          	{ name: 'costShareTo', type: 'number' },
  
 ]
 

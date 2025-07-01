@@ -63,11 +63,15 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'qty', type: 'number' },
-          	{ name: 'cost', type: 'number' },
+          	{ name: 'qtyFrom', type: 'number' },
+          	{ name: 'qtyTo', type: 'number' },
+          	{ name: 'costFrom', type: 'number' },
+          	{ name: 'costTo', type: 'number' },
           	{ name: 'isGift', type: 'text' },
-          	{ name: 'sellingPrice', type: 'number' },
-          	{ name: 'total', type: 'number' },
+          	{ name: 'sellingPriceFrom', type: 'number' },
+          	{ name: 'sellingPriceTo', type: 'number' },
+          	{ name: 'totalFrom', type: 'number' },
+          	{ name: 'totalTo', type: 'number' },
           	{ name: 'couponCode', type: 'text' },
  
 ]

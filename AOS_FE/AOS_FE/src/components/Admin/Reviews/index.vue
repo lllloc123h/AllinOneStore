@@ -63,7 +63,8 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'rating', type: 'number' },
+          	{ name: 'ratingFrom', type: 'number' },
+          	{ name: 'ratingTo', type: 'number' },
           	{ name: 'comment', type: 'text' },
           	{ name: 'imageUrl1', type: 'text' },
           	{ name: 'imageUrl2', type: 'text' },

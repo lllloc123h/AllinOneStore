@@ -64,8 +64,10 @@ const router = useRouter()
  
   const FilterList = [
           	{ name: 'name', type: 'text' },
-          	{ name: 'principalId', type: 'number' },
-          	{ name: 'version', type: 'number' },
+          	{ name: 'principalIdFrom', type: 'number' },
+          	{ name: 'principalIdTo', type: 'number' },
+          	{ name: 'versionFrom', type: 'number' },
+          	{ name: 'versionTo', type: 'number' },
           	{ name: 'definition', type: 'text' },
  
 ]

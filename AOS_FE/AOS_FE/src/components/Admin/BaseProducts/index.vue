@@ -67,8 +67,10 @@ const router = useRouter()
           	{ name: 'material', type: 'text' },
           	{ name: 'mainImageUrl', type: 'text' },
           	{ name: 'isCustom', type: 'text' },
-          	{ name: 'turnBuy', type: 'number' },
-          	{ name: 'rating', type: 'number' },
+          	{ name: 'turnBuyFrom', type: 'number' },
+          	{ name: 'turnBuyTo', type: 'number' },
+          	{ name: 'ratingFrom', type: 'number' },
+          	{ name: 'ratingTo', type: 'number' },
           	{ name: 'isActive', type: 'text' },
  
 ]

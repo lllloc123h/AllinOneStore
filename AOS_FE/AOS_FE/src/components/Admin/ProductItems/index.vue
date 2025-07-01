@@ -63,13 +63,18 @@ const router = useRouter()
   ];
  
   const FilterList = [
-          	{ name: 'cost', type: 'number' },
-          	{ name: 'price', type: 'number' },
-          	{ name: 'turnBuy', type: 'number' },
+          	{ name: 'costFrom', type: 'number' },
+          	{ name: 'costTo', type: 'number' },
+          	{ name: 'priceFrom', type: 'number' },
+          	{ name: 'priceTo', type: 'number' },
+          	{ name: 'turnBuyFrom', type: 'number' },
+          	{ name: 'turnBuyTo', type: 'number' },
           	{ name: 'description', type: 'text' },
           	{ name: 'sku', type: 'text' },
-          	{ name: 'safetyStock', type: 'number' },
-          	{ name: 'qty', type: 'number' },
+          	{ name: 'safetyStockFrom', type: 'number' },
+          	{ name: 'safetyStockTo', type: 'number' },
+          	{ name: 'qtyFrom', type: 'number' },
+          	{ name: 'qtyTo', type: 'number' },
           	{ name: 'sellStart', type: 'datetime' },
           	{ name: 'sellEnd', type: 'datetime' },
  

@@ -68,11 +68,15 @@ const router = useRouter()
           	{ name: 'fullname', type: 'text' },
           	{ name: 'avatarUrl', type: 'text' },
           	{ name: 'phone', type: 'text' },
-          	{ name: 'averageOrderValue', type: 'number' },
+          	{ name: 'averageOrderValueFrom', type: 'number' },
+          	{ name: 'averageOrderValueTo', type: 'number' },
           	{ name: 'userRank', type: 'text' },
-          	{ name: 'totalSpent', type: 'number' },
-          	{ name: 'totalOrder', type: 'number' },
-          	{ name: 'loyaltyPoint', type: 'number' },
+          	{ name: 'totalSpentFrom', type: 'number' },
+          	{ name: 'totalSpentTo', type: 'number' },
+          	{ name: 'totalOrderFrom', type: 'number' },
+          	{ name: 'totalOrderTo', type: 'number' },
+          	{ name: 'loyaltyPointFrom', type: 'number' },
+          	{ name: 'loyaltyPointTo', type: 'number' },
  
 ]
 
