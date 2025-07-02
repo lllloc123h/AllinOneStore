@@ -67,8 +67,8 @@ const router = useRouter()
           	{ name: 'balanceTo', type: 'number' },
           	{ name: 'walletType', type: 'text' },
           	{ name: 'isActive', type: 'text' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
  
 ]
 

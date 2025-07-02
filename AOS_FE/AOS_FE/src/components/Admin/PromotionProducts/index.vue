@@ -70,10 +70,10 @@ const router = useRouter()
           	{ name: 'isGift', type: 'text' },
           	{ name: 'costShareFrom', type: 'number' },
           	{ name: 'costShareTo', type: 'number' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
-          	{ name: 'updatedAtFrom', type: 'datetime' },
-          	{ name: 'updatedAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
+          	{ name: 'updatedAtFrom', type: 'datetime-local' },
+          	{ name: 'updatedAtTo', type: 'datetime-local' },
  
 ]
 

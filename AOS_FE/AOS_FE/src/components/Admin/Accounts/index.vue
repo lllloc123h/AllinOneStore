@@ -77,10 +77,10 @@ const router = useRouter()
           	{ name: 'totalOrderTo', type: 'number' },
           	{ name: 'loyaltyPointFrom', type: 'number' },
           	{ name: 'loyaltyPointTo', type: 'number' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
-          	{ name: 'updatedAtFrom', type: 'datetime' },
-          	{ name: 'updatedAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
+          	{ name: 'updatedAtFrom', type: 'datetime-local' },
+          	{ name: 'updatedAtTo', type: 'datetime-local' },
  
 ]
 

@@ -79,14 +79,14 @@ const router = useRouter()
           	{ name: 'isAllowVoucher', type: 'text' },
           	{ name: 'isActive', type: 'text' },
           	{ name: 'customerGroup', type: 'text' },
-          	{ name: 'startAtFrom', type: 'datetime' },
-          	{ name: 'startAtTo', type: 'datetime' },
-          	{ name: 'endAtFrom', type: 'datetime' },
-          	{ name: 'endAtTo', type: 'datetime' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
-          	{ name: 'updatedAtFrom', type: 'datetime' },
-          	{ name: 'updatedAtTo', type: 'datetime' },
+          	{ name: 'startAtFrom', type: 'datetime-local' },
+          	{ name: 'startAtTo', type: 'datetime-local' },
+          	{ name: 'endAtFrom', type: 'datetime-local' },
+          	{ name: 'endAtTo', type: 'datetime-local' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
+          	{ name: 'updatedAtFrom', type: 'datetime-local' },
+          	{ name: 'updatedAtTo', type: 'datetime-local' },
  
 ]
 

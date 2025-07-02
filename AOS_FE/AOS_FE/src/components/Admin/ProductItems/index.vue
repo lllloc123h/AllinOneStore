@@ -75,14 +75,14 @@ const router = useRouter()
           	{ name: 'safetyStockTo', type: 'number' },
           	{ name: 'qtyFrom', type: 'number' },
           	{ name: 'qtyTo', type: 'number' },
-          	{ name: 'sellStartFrom', type: 'datetime' },
-          	{ name: 'sellStartTo', type: 'datetime' },
-          	{ name: 'sellEndFrom', type: 'datetime' },
-          	{ name: 'sellEndTo', type: 'datetime' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
-          	{ name: 'updatedAtFrom', type: 'datetime' },
-          	{ name: 'updatedAtTo', type: 'datetime' },
+          	{ name: 'sellStartFrom', type: 'datetime-local' },
+          	{ name: 'sellStartTo', type: 'datetime-local' },
+          	{ name: 'sellEndFrom', type: 'datetime-local' },
+          	{ name: 'sellEndTo', type: 'datetime-local' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
+          	{ name: 'updatedAtFrom', type: 'datetime-local' },
+          	{ name: 'updatedAtTo', type: 'datetime-local' },
  
 ]
 

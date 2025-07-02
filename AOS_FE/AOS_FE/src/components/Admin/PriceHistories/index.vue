@@ -65,8 +65,8 @@ const router = useRouter()
   const FilterList = [
           	{ name: 'priceFrom', type: 'number' },
           	{ name: 'priceTo', type: 'number' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
  
 ]
 

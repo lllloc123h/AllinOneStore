@@ -70,8 +70,8 @@ const router = useRouter()
           	{ name: 'imageUrl2', type: 'text' },
           	{ name: 'imageUrl3', type: 'text' },
           	{ name: 'videoUrl', type: 'text' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
  
 ]
 
