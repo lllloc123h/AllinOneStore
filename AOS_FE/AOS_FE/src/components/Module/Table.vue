@@ -37,7 +37,7 @@
 
         <div v-if="!data.length && !loading && !error" class="text-muted">
         </div>
-        <div class="pageselect">
+        <!-- <div class="pageselect">
             <select id="pageSize" class="form-select" v-model="currentSize">
                 <option :value="5">5</option>
                 <option :value="10">10</option>
@@ -60,7 +60,7 @@
                     </li>
                 </ul>
             </nav>
-        </div>
+        </div> -->
         <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
         </PageNavigative>
     </div>
