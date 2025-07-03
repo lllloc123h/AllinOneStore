@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +35,17 @@ public class PurchaseOrderItemsAPI {
 	private PurchaseOrderItemsMapper purchaseOrderItemsMapper;
 
 	@GetMapping("/admin/PurchaseOrderItems")
-	public ResponseEntity<List<PurchaseOrderItemsDTOS>> getAllPurchaseOrderItemsApi(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
-			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+	public ResponseEntity<?> getAllPurchaseOrderItemsApi(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<PurchaseOrderItemsDTOS> purchaseOrderItems = new ArrayList<PurchaseOrderItemsDTOS>();
-		purchaseOrderItemsService.purchaseOrderItemsFindAll(page, size, filters).forEach(e -> {
-			purchaseOrderItems.add(purchaseOrderItemsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(purchaseOrderItems);
+		Page<PurchaseOrderItems> pageResult = purchaseOrderItemsService.purchaseOrderItemsFindAll(page, size, filters);
+		List<PurchaseOrderItemsDTOS> purchaseOrderItems = pageResult.getContent().stream()
+				.map(purchaseOrderItemsMapper::mapper).collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", purchaseOrderItems);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/PurchaseOrderItems/{id}")

@@ -247,16 +247,19 @@ CREATE TABLE
 GO
 CREATE TABLE
 	promotion_products (
-		id INT PRIMARY KEY,
+		id INT IDENTITY PRIMARY KEY,
 		promotion_id INT NOT NULL,
-		product_item_id INT NOT NULL,
+		base_product_id INT NULL,         -- nếu áp dụng theo base_product
+		product_item_id INT NULL,         -- nếu áp dụng cụ thể từng item
 		require_qty int,
 		is_gift bit default 0,
 		cost_share decimal(3, 2),
+		match_mode VARCHAR(20) CHECK (match_mode IN ('BASE', 'ITEM')) NOT NULL, -- kiểu so khớp
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
-		foreign key (promotion_id) references promotions (id)
+		foreign key (promotion_id) references promotions (id),
+		FOREIGN KEY (base_product_id) REFERENCES base_products(id)
 	);
 
 GO
@@ -302,11 +305,13 @@ create table
 		id int identity (1, 1) primary key,
 		account_id int not null,
 		product_item_id int,
+		combo_id int null,
 		qty int,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
-		foreign key (account_id) references accounts (id)
+		foreign key (account_id) references accounts (id),
+		foreign key (combo_id) references promotions(id)
 	);
 
 GO
@@ -456,34 +461,6 @@ create table
 		foreign key (variant_id) references variants (id)
 	);
 
-GO
-CREATE TABLE
-	purchase_orders (
-		id INT PRIMARY KEY IDENTITY (1, 1),
-		order_date DATETIME DEFAULT GETDATE (),
-		expected_date DATETIME,
-		received_date DATETIME,
-		total decimal(18, 2) not null,
-		status NVARCHAR (50),
-		note NVARCHAR (500),
-		created_at DATETIME DEFAULT GETDATE (),
-		updated_at datetime default getdate ()
-	);
-
-GO
-create TABLE
-	purchase_order_items (
-		id INT PRIMARY KEY IDENTITY (1, 1),
-		purchase_order_id INT NOT NULL,
-		product_item_id INT NOT NULL,
-		qty INT NOT NULL,
-		cost DECIMAL(18, 2) NOT NULL,
-		total_cost AS (qty * cost) PERSISTED,
-		created_at DATETIME DEFAULT GETDATE (),
-		updated_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (product_item_id) REFERENCES product_items (id),
-		FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders (id)
-	);
 
 GO
 CREATE TABLE

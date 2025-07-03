@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +35,17 @@ public class CostHistoriesAPI {
 	private CostHistoriesMapper costHistoriesMapper;
 
 	@GetMapping("/admin/CostHistories")
-	public ResponseEntity<List<CostHistoriesDTOS>> getAllCostHistoriesApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllCostHistoriesApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-
-		List<CostHistoriesDTOS> costHistories = new ArrayList<CostHistoriesDTOS>();
-		costHistoriesService.costHistoriesFindAll(page, size, filters).forEach(e -> {
-			costHistories.add(costHistoriesMapper.mapper(e));
-		});
-		return ResponseEntity.ok(costHistories);
+		Page<CostHistories> pageResult = costHistoriesService.costHistoriesFindAll(page, size, filters);
+		List<CostHistoriesDTOS> costHistories = pageResult.getContent().stream().map(costHistoriesMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", costHistories);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/CostHistories/{id}")

@@ -114,7 +114,9 @@ public class MomoPaymentAPI {
 	public ResponseEntity<String> momoCallback(@RequestBody MomoCallbackDTO callback) {
 		try {
 //			 1. Check result
-			if (callback.getResultCode() == 0) {
+
+			switch (callback.getResultCode()) {
+			case 0: {
 				String momoOrderId = callback.getOrderId();
 				// 2. Find transaction by MoMo orderId
 				EWalletTransactions transaction = eWalletTransactionsService
@@ -134,10 +136,35 @@ public class MomoPaymentAPI {
 				} else {
 					return ResponseEntity.ok("Transaction already processed or not found");
 				}
-			} else {
+			}
+			case 9000: {
+				String momoOrderId = callback.getOrderId();
+				EWalletTransactions transaction = eWalletTransactionsService
+						.eWalletTransactionsFindByOrderID(momoOrderId);
+				if (transaction != null && !"SUCCESS".equals(transaction.getStatus())) {
+					transaction.setStatus("TIMEOUT");
+					eWalletTransactionsService.eWalletTransactionsSave(transaction);
+					return ResponseEntity.ok("Transaction successful and wallet updated");
+				} else {
+					return ResponseEntity.ok("Transaction already processed or not found");
+				}
+			}
+			case 1006: {
+				String momoOrderId = callback.getOrderId();
+				EWalletTransactions transaction = eWalletTransactionsService
+						.eWalletTransactionsFindByOrderID(momoOrderId);
+				if (transaction != null && !"SUCCESS".equals(transaction.getStatus())) {
+					transaction.setStatus("Canceled");
+					eWalletTransactionsService.eWalletTransactionsSave(transaction);
+					return ResponseEntity.ok("Transaction successful and wallet updated");
+				} else {
+					return ResponseEntity.ok("Transaction already processed or not found");
+				}
+			}
+			default: {
 				return ResponseEntity.ok("MoMo payment failed: " + callback.getMessage());
 			}
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body("Server error");

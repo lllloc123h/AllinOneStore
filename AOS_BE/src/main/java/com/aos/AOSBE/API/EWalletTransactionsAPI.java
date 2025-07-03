@@ -1,10 +1,13 @@
 package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,17 +45,19 @@ public class EWalletTransactionsAPI {
 	private EWalletsService eWalletsService;
 
 	@GetMapping("/admin/EWalletTransactions")
-	public ResponseEntity<List<EWalletTransactionsDTOS>> getAllEWalletTransactionsApiAdminRole(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
-			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+	public ResponseEntity<?> getAllEWalletTransactionsApiAdminRole(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
+		Page<EWalletTransactions> pageResult = eWalletTransactionsService.eWalletTransactionsFindAll(page, size,
+				filters);
+		List<EWalletTransactionsDTOS> eWalletTransactions = pageResult.getContent().stream()
+				.map(eWalletTransactionsMapper::mapper).collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", eWalletTransactions);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 
-		List<EWalletTransactionsDTOS> eWalletTransactions = new ArrayList<EWalletTransactionsDTOS>();
-		eWalletTransactionsService.eWalletTransactionsFindAll(page, size, filters).forEach(e -> {
-			eWalletTransactions.add(eWalletTransactionsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(eWalletTransactions);
 	}
 
 	@GetMapping("/EWalletTransactions")

@@ -73,10 +73,10 @@ const router = useRouter()
           	{ name: 'totalFrom', type: 'number' },
           	{ name: 'totalTo', type: 'number' },
           	{ name: 'couponCode', type: 'text' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
-          	{ name: 'updatedAtFrom', type: 'datetime' },
-          	{ name: 'updatedAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
+          	{ name: 'updatedAtFrom', type: 'datetime-local' },
+          	{ name: 'updatedAtTo', type: 'datetime-local' },
  
 ]
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,15 +36,17 @@ public class VariantValuesAPI {
 	private VariantValuesMapper variantValuesMapper;
 
 	@GetMapping("/admin/VariantValues")
-	public ResponseEntity<List<VariantValuesDTOS>> getAllVariantValuesApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllVariantValuesApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<VariantValuesDTOS> variantValues = new ArrayList<VariantValuesDTOS>();
-		variantValuesService.variantValuesFindAll(page, size, filters).forEach(e -> {
-			variantValues.add(variantValuesMapper.mapper(e));
-		});
-		return ResponseEntity.ok(variantValues);
+		Page<VariantValues> pageResult = variantValuesService.variantValuesFindAll(page, size, filters);
+		List<VariantValuesDTOS> variantValues = pageResult.getContent().stream().map(variantValuesMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", variantValues);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/VariantValues/{id}")

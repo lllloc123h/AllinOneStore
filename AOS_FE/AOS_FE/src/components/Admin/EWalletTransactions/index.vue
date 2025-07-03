@@ -69,8 +69,8 @@ const router = useRouter()
           	{ name: 'relatedWalletIdFrom', type: 'number' },
           	{ name: 'relatedWalletIdTo', type: 'number' },
           	{ name: 'description', type: 'text' },
-          	{ name: 'createdAtFrom', type: 'datetime' },
-          	{ name: 'createdAtTo', type: 'datetime' },
+          	{ name: 'createdAtFrom', type: 'datetime-local' },
+          	{ name: 'createdAtTo', type: 'datetime-local' },
           	{ name: 'orderId', type: 'text' },
           	{ name: 'status', type: 'text' },
  
