@@ -1,10 +1,10 @@
 package com.aos.AOSBE.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,10 +21,10 @@ public class CustomsService {
 	@Autowired
 	private CustomsRepository customsRepository;
 
-	public List<Customs> customsFindAll(int page, int size, Map<String, Object> filters) {
+	public Page<Customs> customsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<Customs> spec = specBuilder.buildFilter(filters);
-		return customsRepository.findAll(spec, pageable).getContent();
+		return customsRepository.findAll(spec, pageable);
 	}
 
 	@Transactional

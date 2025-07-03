@@ -1,7 +1,5 @@
 package com.aos.AOSBE.Service;
 
-import com.aos.AOSBE.AIConfigs.AITools;
-import com.nimbusds.openid.connect.sdk.Prompt;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -9,16 +7,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OpenAIService {
-    private final ChatClient chatClient;
+	private final ChatClient chatClient;
 
-    public OpenAIService(ChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
-    public ChatResponse chatWithGPT(String message) {
-        // dinh dang response dep hon
-        ChatResponse resp = this.chatClient.prompt().user(message)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID,"001"))
-                .call().chatResponse();
+	public OpenAIService(ChatClient chatClient) {
+		this.chatClient = chatClient;
+	}
+
+	public ChatResponse chatWithGPT(String message) {
+		// dinh dang response dep hon
+		ChatResponse resp = this.chatClient.prompt().user(message)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "001")).call().chatResponse();
 //        dùng khi muốn truy xuất trò truyện từ trước của ng dùng đã ĐĂNG NHẬP
 //        String conversationId = "007";
 //chatClient.prompt()
@@ -26,7 +24,6 @@ public class OpenAIService {
 //    .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
 //    .call()
 //    .content();
-
 
 //        sử dụng khi bấm nút muốn làm chức năng gì đó, chỉ gán vào 1 lần request này
 //        ToolCallback[] dateTimeTools = ToolCallbacks.from(new DateTimeTools());
@@ -36,9 +33,8 @@ public class OpenAIService {
 //Prompt prompt = new Prompt("What day is tomorrow?", chatOptions);
 //chatModel.call(prompt);
 
-    return resp;
-    }
-
+		return resp;
+	}
 
 //    Map<String, Object> result = ChatClient.create(chatModel).prompt()
 //        .user(u -> u.text("Provide me a List of {subject}")

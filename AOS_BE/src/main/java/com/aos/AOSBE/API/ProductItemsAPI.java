@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,15 +37,17 @@ public class ProductItemsAPI {
 	private ProductItemsMapper productItemsMapper;
 
 	@GetMapping("/admin/ProductItems")
-	public ResponseEntity<List<ProductItemsDTOS>> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
-		productItemsService.productItemsFindAll(page, size, filters).forEach(e -> {
-			productItems.add(productItemsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(productItems);
+		Page<ProductItems> pageResult = productItemsService.productItemsFindAll(page, size, filters);
+		List<ProductItemsDTOS> productItems = pageResult.getContent().stream().map(productItemsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", productItems);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/ProductItems/{id}")

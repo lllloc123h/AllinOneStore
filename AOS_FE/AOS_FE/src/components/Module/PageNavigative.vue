@@ -8,42 +8,36 @@
 
         <nav aria-label="Page navigation">
             <ul class="pagination">
-
                 <!-- Previous -->
                 <li class="page-item" :class="{ disabled: currentPage <= 0 }">
                     <button class="page-link" @click.prevent="updateCurrentPage(currentPage - 1)">
                         &laquo;
                     </button>
                 </li>
-
                 <!-- Page -1 -->
                 <li class="page-item" v-if="currentPage > 0" :style="{ color: 'white' }">
                     <button class="page-link" @click.prevent="updateCurrentPage(currentPage - 1)">
                         {{ currentPage - 1 }}
                     </button>
                 </li>
-
                 <!-- Current Page -->
                 <li class="page-item active">
                     <button class="page-link active" disabled>
                         {{ currentPage }}
                     </button>
                 </li>
-
                 <!-- Page +1 -->
                 <li class="page-item" v-if="currentPage + 1 < props.totalPage">
                     <button class="page-link" @click.prevent="updateCurrentPage(currentPage + 1)">
                         {{ currentPage + 1 }}
                     </button>
                 </li>
-
                 <!-- Next -->
                 <li class="page-item" :class="{ disabled: currentPage + 1 >= props.totalPage }">
                     <button class="page-link" @click.prevent="updateCurrentPage(currentPage + 1)">
                         &raquo;
                     </button>
                 </li>
-
             </ul>
         </nav>
     </div>

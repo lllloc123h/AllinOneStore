@@ -1,10 +1,10 @@
 package com.aos.AOSBE.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,10 +21,10 @@ public class CategoriesService {
 	@Autowired
 	private CategoriesRepository categoriesRepository;
 
-	public List<Categories> categoriesFindAll(int page, int size, Map<String, Object> filters) {
+	public Page<Categories> categoriesFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<Categories> spec = specBuilder.buildFilter(filters);
-		return categoriesRepository.findAll(spec, pageable).getContent();
+		return categoriesRepository.findAll(spec, pageable);
 	}
 
 	public Optional<Categories> categoriesFindByName(String name) {

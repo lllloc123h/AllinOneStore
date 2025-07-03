@@ -61,7 +61,8 @@
                 </ul>
             </nav>
         </div>
-
+        <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
+        </PageNavigative>
     </div>
 </template>
 <style>
@@ -138,12 +139,14 @@
 import { ref, watch, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import createCrudService from '../../Configs/reusableCRUDService'
-const router = useRouter()
-import 'bootstrap/dist/css/bootstrap.min.css'
+import PageNavigative from './PageNavigative.vue'
 import FilterDropDown from './FilterDropDown.vue'
+import 'bootstrap/dist/css/bootstrap.min.css'
+const router = useRouter()
 
 const currentPage = ref(0);
 const currentSize = ref(5);
+const totalPage = ref(0);
 function updatePageSize(size) {
     currentSize.value = size
 }
@@ -177,7 +180,9 @@ const fetchData = async () => {
     error.value = null
     try {
         const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
-        const json = responseIndexTable.data
+        console.log(responseIndexTable)
+        const json = responseIndexTable.data.content
+        totalPage.value = responseIndexTable.data.totalPages
         data.value = Array.isArray(json) ? json : [json]
         columns.value = data.value.length ? Object.keys(data.value[0]) : []
     } catch (err) {
@@ -199,18 +204,6 @@ watch(() => currentPage.value, fetchData)
 watch(
     () => props.FilterList,
     () => {
-        // try {
-        //     const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
-        //     const json = responseIndexTable.data
-        //     data.value = Array.isArray(json) ? json : [json]
-        //     columns.value = data.value.length ? Object.keys(data.value[0]) : []
-        // } catch (err) {
-        //     error.value = err.message
-        //     data.value = []
-        //     columns.value = []
-        // } finally {
-        //     loading.value = false
-        // }
         fetchData()
     },
     { deep: true }
