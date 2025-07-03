@@ -1,11 +1,14 @@
 package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,15 +43,18 @@ public class OrdersAPI {
 	private OrderItemsService orderItemsService;
 
 	@GetMapping("/admin/Orders")
-	public ResponseEntity<List<OrdersDTOS>> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<OrdersDTOS> orders = new ArrayList<OrdersDTOS>();
-		ordersService.ordersFindAll(page, size, filters).forEach(e -> {
-			orders.add(ordersMapper.mapper(e));
-		});
-		return ResponseEntity.ok(orders);
+		Page<Orders> pageResult = ordersService.ordersFindAll(page, size, filters);
+		List<OrdersDTOS> orders = pageResult.getContent().stream().map(ordersMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", orders);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
+
 	}
 
 	@GetMapping("/admin/Orders/{id}")
@@ -90,36 +96,29 @@ public class OrdersAPI {
 		ordersService.ordersDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+
 	@GetMapping("/Orders/detail/{id}")
 	public ResponseEntity<?> getOrderDetail(@PathVariable int id) {
-	    Optional<Orders> orderOpt = ordersService.ordersFindById(id);
-	    if (orderOpt.isEmpty()) {
-	        return ResponseEntity.notFound().build();
-	    }
+		Optional<Orders> orderOpt = ordersService.ordersFindById(id);
+		if (orderOpt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
 
-	    Orders order = orderOpt.get();
-	    OrdersDTOS orderDTO = ordersMapper.mapper(order); // bạn đang có
+		Orders order = orderOpt.get();
+		OrdersDTOS orderDTO = ordersMapper.mapper(order); // bạn đang có
 
-	    List<OrderItems> items = orderItemsService.findByOrderId(id);
-	    List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
+		List<OrderItems> items = orderItemsService.findByOrderId(id);
+		List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
 
-	    for (OrderItems item : items) {
-	        ProductItems pi = item.getProductItems();
-	        String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
+		for (OrderItems item : items) {
+			ProductItems pi = item.getProductItems();
+			String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
 
-	        itemsDTO.add(new OrderItemDetailDTO(
-	            item.getQty(),
-	            item.getSellingPrice(),
-	            item.getTotal(),
-	            item.isGift(),
-	            pi.getSku(),
-	            productName,
-	            pi.getDescription()
-	        ));
-	    }
-	    
+			itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
+					pi.getSku(), productName, pi.getDescription()));
+		}
 
-	    OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
-	    return ResponseEntity.ok(response);
+		OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
+		return ResponseEntity.ok(response);
 	}
 }

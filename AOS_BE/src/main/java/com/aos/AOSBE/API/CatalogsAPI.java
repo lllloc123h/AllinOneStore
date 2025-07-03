@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,15 +35,17 @@ public class CatalogsAPI {
 	private CatalogsMapper catalogsMapper;
 
 	@GetMapping("/admin/Catalogs")
-	public ResponseEntity<List<CatalogsDTOS>> getAllCatalogsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllCatalogsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<CatalogsDTOS> catalogs = new ArrayList<CatalogsDTOS>();
-		catalogsService.catalogsFindAll(page, size, filters).forEach(e -> {
-			catalogs.add(catalogsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(catalogs);
+		Page<Catalogs> pageResult = catalogsService.catalogsFindAll(page, size, filters);
+		List<CatalogsDTOS> catalogs = pageResult.getContent().stream().map(catalogsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", catalogs);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/Catalogs/{id}")

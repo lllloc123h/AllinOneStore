@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,15 +35,17 @@ public class ReturnsAPI {
 	private ReturnsMapper returnsMapper;
 
 	@GetMapping("/admin/Returns")
-	public ResponseEntity<List<ReturnsDTOS>> getAllReturnsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllReturnsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<ReturnsDTOS> returns = new ArrayList<ReturnsDTOS>();
-		returnsService.returnsFindAll(page, size, filters).forEach(e -> {
-			returns.add(returnsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(returns);
+		Page<Returns> pageResult = returnsService.returnsFindAll(page, size, filters);
+		List<ReturnsDTOS> returns = pageResult.getContent().stream().map(returnsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", returns);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/Returns/{id}")
