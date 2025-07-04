@@ -54,13 +54,7 @@ public class UserAddresses {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
-
-
-
-
-
 }

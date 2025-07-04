@@ -33,13 +33,7 @@ public class VariantValues {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "variant_id")
     private Variants variants;
-
-
-
-
-
 }

@@ -30,10 +30,4 @@ public class Catalogs {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
-
-
-
-
-
 }

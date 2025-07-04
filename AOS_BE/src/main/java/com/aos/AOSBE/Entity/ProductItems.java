@@ -54,13 +54,7 @@ public class ProductItems {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "base_id")
     private BaseProducts baseProducts;
-
-
-
-
-
 }

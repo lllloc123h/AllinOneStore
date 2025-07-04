@@ -30,13 +30,7 @@ public class Categories {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "catalog_id")
     private Catalogs catalogs;
-
-
-
-
-
 }

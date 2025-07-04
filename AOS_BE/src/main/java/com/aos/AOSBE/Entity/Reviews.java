@@ -42,16 +42,10 @@ public class Reviews {
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
-   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
-
-
-
-
-
 }

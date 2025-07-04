@@ -39,13 +39,7 @@ public class Customs {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
-
-
-
-
-
 }

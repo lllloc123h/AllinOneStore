@@ -45,7 +45,6 @@ public class OrderItems {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
@@ -55,9 +54,4 @@ public class OrderItems {
     @ManyToOne
     @JoinColumn(name = "promotion_id")
     private Promotions promotions;
-
-
-
-
-
 }

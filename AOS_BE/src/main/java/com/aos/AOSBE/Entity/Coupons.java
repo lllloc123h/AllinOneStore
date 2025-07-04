@@ -66,10 +66,4 @@ public class Coupons {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
-
-
-
-
-
 }

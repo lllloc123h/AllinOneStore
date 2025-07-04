@@ -28,6 +28,12 @@ public class EWalletTransactions {
     @Column(name = "transaction_type")
     private String transactionType;
 	
+    @Column(name = "order_id")
+    private String orderId;
+	
+    @Column(name = "status")
+    private String status;
+	
     @Column(name = "related_wallet_id")
     private int relatedWalletId;
 	
@@ -36,19 +42,7 @@ public class EWalletTransactions {
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
-	
-    @Column(name = "Order_Id")
-    private String orderId;
-	
-    @Column(name = "Status")
-    private String status;
-   
     @ManyToOne
     @JoinColumn(name = "wallet_id")
     private EWallets eWallets;
-
-
-
-
-
 }

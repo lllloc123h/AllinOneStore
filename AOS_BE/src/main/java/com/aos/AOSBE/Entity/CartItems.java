@@ -21,11 +21,7 @@ public class CartItems {
 	
     @Column(name = "id")
     private int id;
-
-    @ManyToOne
-    @JoinColumn(name = "combo_id")
-    private Promotions combo;
-
+	
     @Column(name = "qty")
     private int qty;
 	@CreationTimestamp
@@ -34,16 +30,13 @@ public class CartItems {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
-
-
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "combo_id")
+    private Promotions promotions;
 }

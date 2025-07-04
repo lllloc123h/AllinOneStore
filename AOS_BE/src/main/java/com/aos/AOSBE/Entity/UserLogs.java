@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "UserLogs")
+@Table(name = "user_logs")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,10 +42,4 @@ public class UserLogs {
 	
     @Column(name = "module")
     private String module;
-   
-
-
-
-
-
 }

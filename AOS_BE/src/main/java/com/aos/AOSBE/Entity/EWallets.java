@@ -33,13 +33,7 @@ public class EWallets {
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
-   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
-
-
-
-
-
 }

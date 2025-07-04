@@ -36,13 +36,7 @@ public class Cancels {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
-
-
-
-
-
 }
