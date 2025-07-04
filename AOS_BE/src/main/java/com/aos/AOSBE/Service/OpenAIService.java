@@ -13,10 +13,10 @@ public class OpenAIService {
 		this.chatClient = chatClient;
 	}
 
-	public ChatResponse chatWithGPT(String message) {
+	public String chatWithGPT(String message) {
 		// dinh dang response dep hon
-		ChatResponse resp = this.chatClient.prompt().user(message)
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "001")).call().chatResponse();
+		String resp = this.chatClient.prompt().user(message)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "001")).call().content();
 //        dùng khi muốn truy xuất trò truyện từ trước của ng dùng đã ĐĂNG NHẬP
 //        String conversationId = "007";
 //chatClient.prompt()

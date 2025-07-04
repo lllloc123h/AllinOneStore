@@ -4,9 +4,9 @@ import router from '../router' // ✅ đúng, vì bạn đã export router ở r
 import axios, { Axios } from 'axios';
 import { toast } from 'vue3-toastify';
 import { syncLocalCartToServer } from './cart';
-
+// ${import.meta.env.VITE_PAKE_DOMAIN}
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_PAKE_DOMAIN}/api`,
+  baseURL: `http://localhost:8080/api`,
   headers: {
     'Content-Type': 'application/json'
   },
@@ -19,6 +19,7 @@ const excludedPaths = [
   '/Accounts/verify-otp',
   '/BaseProducts',
   '/VariantValues',
+  '/openai/chat'
 ]
 
 // Automatically attach token to each request

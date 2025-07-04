@@ -19,10 +19,10 @@ public class OpenAI {
     private OpenAIService openAIService; // Assuming you have a service to handle OpenAI API calls
 //     Example endpoint (to be implemented):
      @PostMapping("/openai/chat")
-     public ResponseEntity<ChatResponse> chatWithOpenAI(@RequestBody ChatDTO chat) {
+     public ResponseEntity<?> chatWithOpenAI(@RequestBody ChatDTO chat) {
         try {
             // Logic to call OpenAI API and return response
-            ChatResponse response = openAIService.chatWithGPT(chat.getMessage());
+            String response = openAIService.chatWithGPT(chat.getMessage());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.status(500).body(null);

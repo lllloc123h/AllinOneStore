@@ -30,18 +30,18 @@
                 ? 'bg-light shadow-sm text-end ms-auto w-75'
                 : 'shadow-sm text-black w-75',
             ]"
-          >
-            {{ msg.text }}
-          </div>
+            v-html="msg.text"
+          ></div>
         </div>
 
         <!-- Spinner hiển thị như bot đang trả lời -->
         <div
           v-if="loading"
-          class="mb-3 w-75 bg-primary text-white p-2 rounded-3 d-flex align-items-center gap-2"
+          class="mb-3 w-75 text-black p-2 rounded-3 d-flex align-items-center gap-2"
+          style="background-color: beige"
         >
           <div class="spinner-border spinner-border-sm text-light" role="status"></div>
-          <span>Đang nhập...</span>
+          <span>Đang soạn...</span>
         </div>
       </div>
 
@@ -69,9 +69,10 @@
 
 <script setup>
 import { ref, nextTick } from "vue";
+import api from "../../Configs/api";
 
 const open = ref(false);
-const input = ref("");
+const input = ref("bên bạn bán gì vậy");
 const loading = ref(false);
 const messages = ref([
   { from: "bot", text: "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?" },
@@ -92,15 +93,26 @@ const sendMessage = () => {
   input.value = "";
   loading.value = true;
   scrollToBottom();
-
   setTimeout(() => {
-    messages.value.push({
-      from: "bot",
-      text: `Bạn vừa nói: "${text}". Tôi sẽ xử lý ngay!`,
-    });
-    loading.value = false;
-    scrollToBottom();
-  }, 1200);
+    api
+      .post("/openai/chat", { message: text })
+      .then((response) => {
+        messages.value.push({
+          from: "bot",
+          text: `${response.data.replace(/\n/g, "<br>")}`,
+        });
+        loading.value = false;
+      })
+      .catch((error) => {
+        messages.value.push({
+          from: "bot",
+          text: `Đã có lỗi xảy ra !!`,
+        });
+        console.error("Error sending message:", error);
+        loading.value = false;
+      });
+  }, 500);
+  scrollToBottom();
 };
 
 const toggleOpen = () => {
