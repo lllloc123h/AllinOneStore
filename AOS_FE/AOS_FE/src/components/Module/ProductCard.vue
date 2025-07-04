@@ -77,7 +77,8 @@
 
                     <div class="d-flex justify-content-end">
                         <!-- From Uiverse.io by AKAspidey01 -->
-                        <div class="d-flex justify-content-end align-items-center gap-2">
+                        <!-- GỢI Ý BỐ CỤC -->
+                        <div class="d-flex flex-column align-items-end gap-2 mt-3">
                         <button class="detail-button" @click="goToDetailPage(props.product.id)">
                             Chi tiết
                         </button>
@@ -183,14 +184,20 @@ function formatPrice(price) {
     background: #0b5ed7;
     color: white;
     border: none;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1em;
-    min-height: 45px;
+    height: 45px;
     width: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.detail-button:hover {
+    background: #0846a8;
+    transform: translateY(-2px);
 }
 </style>
