@@ -30,11 +30,11 @@ const routes = [
     component: Oauth2,
 
   },
-  {
-    path: '/403',
-    name: '403',
-    component: Unauthorized,
-  }
+  // {
+  //   path: '/403',
+  //   name: '403',
+  //   component: Unauthorized,
+  // }
 
 
 ]
