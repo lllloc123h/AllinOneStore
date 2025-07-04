@@ -249,17 +249,14 @@ CREATE TABLE
 	promotion_products (
 		id INT IDENTITY PRIMARY KEY,
 		promotion_id INT NOT NULL,
-		base_product_id INT NULL,         -- nếu áp dụng theo base_product
 		product_item_id INT NULL,         -- nếu áp dụng cụ thể từng item
 		require_qty int,
 		is_gift bit default 0,
 		cost_share decimal(3, 2),
-		match_mode VARCHAR(20) CHECK (match_mode IN ('BASE', 'ITEM')) NOT NULL, -- kiểu so khớp
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
 		foreign key (promotion_id) references promotions (id),
-		FOREIGN KEY (base_product_id) REFERENCES base_products(id)
 	);
 
 GO

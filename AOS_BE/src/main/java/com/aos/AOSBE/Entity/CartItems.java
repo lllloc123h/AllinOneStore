@@ -21,7 +21,11 @@ public class CartItems {
 	
     @Column(name = "id")
     private int id;
-	
+
+    @ManyToOne
+    @JoinColumn(name = "combo_id")
+    private Promotions combo;
+
     @Column(name = "qty")
     private int qty;
 	@CreationTimestamp
