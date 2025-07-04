@@ -1,6 +1,8 @@
 ﻿--create database all_in_store;
 --drop database all_in_store
 use all_in_store
+go
+exec usp_DropTablesAndConstraints;
 DROP TABLE IF EXISTS order_items;
 
 DROP TABLE IF EXISTS returns;
@@ -55,14 +57,14 @@ DROP TABLE IF EXISTS purchase_order_items;
 
 DROP TABLE IF EXISTS purchase_orders;
 
-DROP TABLE IF EXISTS UserLogs;
+DROP TABLE IF EXISTS User_Logs;
 
 DROP TABLE IF EXISTS authorities;
 
 DROP TABLE IF EXISTS roles;
 
 DROP TABLE IF EXISTS accounts;
-
+go
 
 
 go
@@ -479,6 +481,8 @@ CREATE TABLE
 		transaction_type NVARCHAR (50) CHECK (
 			transaction_type IN ('TOP_UP', 'PURCHASE', 'WITHDRAW', 'RECEIVE')
 		),
+		order_id NVARCHAR(max) NOT NULL,
+		status NVARCHAR(max) NOT NULL,
 		related_wallet_id INT NULL,
 		description NVARCHAR (255),
 		created_at DATETIME DEFAULT GETDATE (),
