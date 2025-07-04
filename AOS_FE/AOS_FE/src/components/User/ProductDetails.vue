@@ -13,11 +13,11 @@
         <div class="row">
           <div class="col-3 d-flex flex-column gap-3">
             <img
-              v-for="(img, idx) in product.images"
+              v-for="(img, idx) in images"
               :key="idx"
-              :src="img"
-              @click="currentImage = img"
-              :class="['img-thumbnail', { 'border-primary': currentImage === img }]"
+              :src="img.imageUrl"
+              @click="currentImage = img.imageUrl"
+              :class="['img-thumbnail', { 'border-primary': currentImage === img.imageUrl }]"
               style="cursor: pointer; width: 100%; aspect-ratio: 1/1; object-fit: cover"
             />
           </div>
@@ -30,38 +30,47 @@
       <!-- Thông tin phải -->
       <div class="col-lg-5 col-md-12">
         <h2 class="fw-semibold mb-1">{{ product.name }}</h2>
+
+        <!-- Giá hiện tại -->
         <p class="text-danger fs-4 fw-bold">
-          {{ product.price.toLocaleString('vi-VN') }}đ
+          {{ formatPrice(currentPrice) }} 
           <small class="text-muted">| ★★★★☆ ({{ reviews.length }} lượt mua)</small>
         </p>
-        <p class="text-muted mb-3">{{ product.description }}</p>
 
-        <ul class="mb-4">
-          <li v-for="(feature, index) in product.features" :key="index">{{ feature }}</li>
-        </ul>
+        <p class="text-muted mb-3">{{ product.material }}</p>
 
-        <!-- Số lượng và nút Thêm vào giỏ -->
+        <div class="mb-2" v-if="promotion">
+          <span class="badge bg-danger">
+            KM: {{ promotion.promotions.name }} ({{ promotion.promotions.discountPercent }}%)
+          </span>
+          <div class="text-muted small">
+            Áp dụng từ {{ formatDate(promotion.promotions.startDate) }} đến {{ formatDate(promotion.promotions.endDate) }}
+          </div>
+        </div>
+
+        <!-- Số lượng và nút -->
         <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <div class="d-flex align-items-center border rounded-pill px-3" style="height: 48px; flex: 1 1 120px; min-width: 100px; max-width: 160px;">
+          <div class="d-flex align-items-center border rounded-pill px-3"
+               style="height: 48px; flex: 1 1 120px; min-width: 100px; max-width: 160px;">
             <button @click="decreaseQty" class="btn btn-sm px-3 py-0 border-0">−</button>
             <span class="mx-3 fw-medium">{{ quantity }}</span>
             <button @click="increaseQty" class="btn btn-sm px-3 py-0 border-0">+</button>
           </div>
 
-          <button class="text-white flex-grow-1" style="background-color: #e9cebd; border-radius: 999px; border: none; height: 48px; min-width: 150px;">
+          <button class="text-white flex-grow-1" style="background-color: #e9cebd; border-radius: 999px; border: none; height: 48px;">
             Thêm vào giỏ
           </button>
         </div>
 
         <div class="mb-3">
-          <button class="w-100" style="background-color: #fdf3ed; color: #000; border: 1px solid #000; border-radius: 999px; padding: 14px 0; font-size: 18px; font-weight: 600;">
+          <button class="w-100" style="background-color: #fdf3ed; color: #000; border: 1px solid #000; border-radius: 999px; padding: 14px 0;">
             Mua ngay
           </button>
         </div>
 
         <div class="text-muted small">
           <div>🚚 Miễn phí giao hàng toàn quốc cho đơn hàng từ 1.000.000đ.</div>
-          <div>⏰ Thời gian giao hàng: 3–7 ngày làm việc. Vận chuyển & đổi trả linh hoạt.</div>
+          <div>⏰ Giao hàng: 3–7 ngày làm việc. Đổi trả linh hoạt.</div>
         </div>
       </div>
     </div>
@@ -79,19 +88,14 @@
       <div class="tab-content border border-top-0 p-4 bg-light-subtle">
         <div v-show="activeTab === 'desc'">
           <h6 class="fw-bold">{{ product.name }}</h6>
-          <p>{{ product.longDescription }}</p>
+          <p>{{ product.material }}</p>
         </div>
 
         <div v-show="activeTab === 'review'">
           <div v-for="review in reviews" :key="review.name" class="mb-3 p-3 border rounded bg-white">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <h6 class="mb-0">{{ review.name }}</h6>
-                <p class="text-muted small mb-1">{{ review.text }}</p>
-                <small class="text-muted">Thích • Trả lời • 1 phút</small>
-              </div>
-              <div>★★★★★</div>
-            </div>
+            <h6 class="mb-1">{{ review.name }}</h6>
+            <p class="text-muted small mb-1">{{ review.text }}</p>
+            <small class="text-muted">1 phút trước</small>
           </div>
 
           <form @submit.prevent="submitReview" class="p-3 border rounded bg-white">
@@ -101,17 +105,17 @@
                 <input type="text" class="form-control rounded-pill" v-model="newReview.name" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label">Địa chỉ Email</label>
+                <label class="form-label">Email</label>
                 <input type="email" class="form-control rounded-pill" placeholder="example@gmail.com" />
               </div>
             </div>
             <div class="mb-2">
-              <label class="form-label">Viết đánh giá của bạn</label>
+              <label class="form-label">Đánh giá</label>
               <textarea class="form-control rounded" rows="3" v-model="newReview.text" required></textarea>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-              <div>đánh giá ★☆☆☆☆</div>
-              <button type="submit" class="btn btn-dark rounded-pill">Đăng Bình Luận</button>
+              <div>Đánh giá ★☆☆☆☆</div>
+              <button type="submit" class="btn btn-dark rounded-pill">Đăng bình luận</button>
             </div>
           </form>
         </div>
@@ -120,52 +124,74 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import api, { authService } from "../../Configs/api";
 
-export default {
-  data() {
-    return {
-      product: null,
-      currentImage: '',
-      quantity: 1,
-      activeTab: 'desc',
-      reviews: [],
-      newReview: { name: '', text: '' }
-    };
-  },
-  async mounted() {
-    const route = useRoute();
-    const productId = route.params.id;
+const route = useRoute();
+const productId = route.params.id;
 
-    try {
-      const response = await axios.get(`https://api.example.com/products/${productId}`);
-      this.product = response.data;
-      this.currentImage = this.product.images?.[0] || this.product.imageUrl;
+const product = ref(null);
+const images = ref([]);
+const priceHistories = ref([]);
+const promotion = ref(null);
 
-      const reviewsResponse = await axios.get(`https://api.example.com/products/${productId}/reviews`);
-      this.reviews = reviewsResponse.data;
-    } catch (error) {
-      console.error('Lỗi khi tải dữ liệu:', error);
-    }
-  },
-  methods: {
-    increaseQty() {
-      this.quantity++;
-    },
-    decreaseQty() {
-      if (this.quantity > 1) this.quantity--;
-    },
-    submitReview() {
-      if (this.newReview.name && this.newReview.text) {
-        this.reviews.push({ ...this.newReview });
-        this.newReview.name = '';
-        this.newReview.text = '';
-      }
-    }
+const currentImage = ref('');
+const currentPrice = ref(0);
+const quantity = ref(1);
+const activeTab = ref('desc');
+
+const reviews = ref([]);
+const newReview = ref({ name: '', text: '' });
+
+onMounted(async () => {
+  try {
+    const res = await api.get(`/ProductItems/detail/${productId}`);
+    console.log("Kết quả trả về từ API chi tiết sản phẩm:", res.data);
+
+    product.value = res.data.productItem;
+    images.value = res.data.images || [];
+    priceHistories.value = res.data.priceHistories || [];
+    promotion.value = res.data.promotions?.[0] || null;
+
+    currentImage.value = images.value?.[0]?.imageUrl || product.value.imageUrl;
+    currentPrice.value = priceHistories.value?.[0]?.price || 0;
+
+    reviews.value = [
+      { name: "Huy", text: "Sản phẩm tốt" },
+      { name: "Ngọc", text: "Chất lượng ok, sẽ mua lần nữa" }
+    ];
+  } catch (err) {
+    console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
-};
+});
+
+
+function increaseQty() {
+  quantity.value++;
+}
+
+function decreaseQty() {
+  if (quantity.value > 1) quantity.value--;
+}
+
+function submitReview() {
+  if (newReview.value.name && newReview.value.text) {
+    reviews.value.push({ ...newReview.value });
+    newReview.value.name = '';
+    newReview.value.text = '';
+  }
+}
+
+function formatPrice(price) {
+  return price.toLocaleString('vi-VN') + '₫';
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('vi-VN');
+}
 </script>
 
 <style scoped>

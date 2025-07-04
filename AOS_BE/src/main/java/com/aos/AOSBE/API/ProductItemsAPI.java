@@ -20,11 +20,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.PriceHistoriesDTOS;
+import com.aos.AOSBE.DTOS.ProductImagesDTOS;
+import com.aos.AOSBE.DTOS.ProductItemDetailDTO;
 import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.DTOS.PromotionProductDTOS;
 import com.aos.AOSBE.DTOS.filterAdvanceDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
+import com.aos.AOSBE.Mapper.ProductImagesMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Mapper.PromotionProductMapper;
+import com.aos.AOSBE.Service.PriceHistoriesService;
+import com.aos.AOSBE.Service.ProductImagesService;
 import com.aos.AOSBE.Service.ProductItemsService;
+import com.aos.AOSBE.Service.PromotionProductsService;
 
 @RestController
 @RequestMapping("/api")
@@ -35,6 +45,24 @@ public class ProductItemsAPI {
 
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
+
+	@Autowired
+	private ProductImagesService productImagesService;
+
+	@Autowired
+	private ProductImagesMapper productImagesMapper;
+
+	@Autowired
+	private PriceHistoriesService priceHistoriesService;
+
+	@Autowired
+	private PriceHistoriesMapper priceHistoriesMapper;
+
+	@Autowired
+	private PromotionProductsService promotionProductsService;
+
+	@Autowired
+	private PromotionProductMapper promotionProductMapper;
 
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
@@ -175,5 +203,30 @@ public class ProductItemsAPI {
 		}
 
 	}
+	@GetMapping("/ProductItems/detail/{id}")
+public ResponseEntity<?> getProductItemDetail(@PathVariable int id) {
+	try {
+		ProductItems productItem = productItemsService.productItemsFindById(id)
+				.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
+		ProductItemsDTOS productItemDTO = productItemsMapper.mapper(productItem);
+
+		List<ProductImagesDTOS> images = productImagesService.findByProductItemsId(id).stream()
+				.map(productImagesMapper::mapper).collect(Collectors.toList());
+
+		List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findByProductItemsId(id).stream()
+				.map(priceHistoriesMapper::mapper).collect(Collectors.toList());
+
+		List<PromotionProductDTOS> promotions = promotionProductsService.findByProductItemsId(id).stream()
+				.map(promotionProductMapper::mapper).collect(Collectors.toList());
+
+		ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, priceHistories, promotions);
+
+		return ResponseEntity.ok(detail);
+
+	} catch (Exception e) {
+		return ResponseEntity.badRequest().body(Map.of("message", "Lỗi: " + e.getMessage()));
+	}
+}
+	
 }
