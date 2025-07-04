@@ -63,13 +63,7 @@ public class Returns {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "order_product_item_id")
     private OrderItems orderItems;
-
-
-
-
-
 }

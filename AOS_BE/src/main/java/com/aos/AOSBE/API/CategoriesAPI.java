@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,15 +35,18 @@ public class CategoriesAPI {
 	private CategoriesMapper categoriesMapper;
 
 	@GetMapping("/admin/Categories")
-	public ResponseEntity<List<CategoriesDTOS>> getAllCategoriesApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllCategoriesApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<CategoriesDTOS> categories = new ArrayList<CategoriesDTOS>();
-		categoriesService.categoriesFindAll(page, size, filters).forEach(e -> {
-			categories.add(categoriesMapper.mapper(e));
-		});
-		return ResponseEntity.ok(categories);
+		Page<Categories> pageResult = categoriesService.categoriesFindAll(page, size, filters);
+		List<CategoriesDTOS> categories = pageResult.getContent().stream().map(categoriesMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", categories);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
+
 	}
 
 	@GetMapping("/admin/Categories/{id}")

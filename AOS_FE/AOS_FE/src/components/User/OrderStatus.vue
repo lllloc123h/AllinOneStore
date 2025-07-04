@@ -83,7 +83,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import fakeOrder from '../../assets/fakeOrder.json'
+import axios from "axios";
+import api, { authService } from "../../Configs/api";
 
 const order = ref(null)
 const statusIndex = ref(0)
@@ -105,10 +106,55 @@ const statusMap = {
 const route = useRoute()
 const maDon = route.params.id
 
-onMounted(() => {
-  order.value = fakeOrder
-  statusIndex.value = statusMap[order.value.trangThai] ?? 0
-})
+onMounted(async () => {
+  try {
+    const res = await api.get(`/Orders/detail/${maDon}`)
+    const orderData = res.data;
+
+    order.value = {
+      maDon: orderData.order.id,
+      ngayDat: orderData.order.createdAt,
+      trangThai: orderData.order.shippingStatus,
+      ghiChu: orderData.order.note,
+      tongTien: orderData.order.finalTotal,
+
+      khachHang: {
+        ten: orderData.orderInfor?.fullName || 'N/A',
+        diaChi: orderData.orderInfor?.address || 'N/A',
+        sdt: orderData.orderInfor?.phone || 'N/A'
+      },
+      vanChuyen: {
+        ten: orderData.order.shippingMethods?.name || 'N/A',
+        maVanDon: 'Đang cập nhật'
+      },
+      thanhToan: {
+        phuongThuc: orderData.order.paymentMethods?.name || 'N/A',
+        trangThai: orderData.order.paymentStatus
+      },
+      sanPham: orderData.items.map(i => ({
+        anh: i.image || 'no-image.png',
+        ten: i.name,
+        soLuong: i.qty,
+        gia: i.price
+      })),
+      lichSu: [
+        {
+          thoiGian: orderData.order.createdAt,
+          noiDung: `Đơn hàng được tạo`
+        },
+        ...(orderData.order.shippedDate ? [{
+          thoiGian: orderData.order.shippedDate,
+          noiDung: `Đơn hàng đã giao`
+        }] : [])
+      ]
+    }
+
+    statusIndex.value = statusMap[order.value.trangThai] ?? 0;
+  } catch (error) {
+    console.error('Lỗi khi lấy chi tiết đơn hàng', error);
+  }
+});
+
 
 const formatDate = d => new Date(d).toLocaleDateString('vi-VN')
 const formatDateTime = d => new Date(d).toLocaleString('vi-VN')

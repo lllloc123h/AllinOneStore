@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,10 +22,10 @@ public class OrderItemsService {
 	@Autowired
 	private OrderItemsRepository orderItemsRepository;
 
-	public List<OrderItems> orderItemsFindAll(int page, int size, Map<String, Object> filters) {
+	public Page<OrderItems> orderItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<OrderItems> spec = specBuilder.buildFilter(filters);
-		return orderItemsRepository.findAll(spec, pageable).getContent();
+		return orderItemsRepository.findAll(spec, pageable);
 	}
 
 	@Transactional

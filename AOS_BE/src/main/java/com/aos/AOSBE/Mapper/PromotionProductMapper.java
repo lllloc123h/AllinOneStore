@@ -1,41 +1,31 @@
 package com.aos.AOSBE.Mapper;
 
-import java.time.LocalDateTime;
-import com.aos.AOSBE.DTOS.*;
-import com.aos.AOSBE.Entity.*;
-import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.aos.AOSBE.DTOS.PromotionProductDTOS;
+import com.aos.AOSBE.Entity.PromotionProducts;
+import com.aos.AOSBE.Service.ProductItemsService;
+import com.aos.AOSBE.Service.PromotionsService;
+
 @Component
 public class PromotionProductMapper {
 	@Autowired
 	private ProductItemsService productItemsService;
 	@Autowired
 	private PromotionsService promotionsService;
-	
-	public PromotionProductDTOS mapper(PromotionProduct entity) {
-		return new PromotionProductDTOS(
-				    entity.getId(),
-				    entity.getRequireQty(),
-				    entity.isGift(),
-				    entity.getCostShare(),
-				    entity.getCreatedAt(),
-				    entity.getUpdatedAt(),
-				    entity.getProductItems().getId(),
-				    entity.getPromotions().getId()
-			);
+
+	public PromotionProductDTOS mapper(PromotionProducts entity) {
+		return new PromotionProductDTOS(entity.getId(), entity.getRequireQty(), entity.isGift(), entity.getCostShare(),
+				entity.getCreatedAt(), entity.getUpdatedAt(), entity.getProductItems().getId(),
+				entity.getPromotions().getId());
 	}
-	public PromotionProduct mapperToObject(PromotionProductDTOS entity) {
-		return new PromotionProduct(
-					entity.getId(),
-					entity.getRequireQty(),
-					entity.isGift(),
-					entity.getCostShare(),
-					entity.getCreatedAt(),
-					entity.getUpdatedAt(),
-					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null)
-			);
+
+	public PromotionProducts mapperToObject(PromotionProductDTOS entity) {
+		return new PromotionProducts(entity.getId(), entity.getRequireQty(), entity.isGift(), entity.getCostShare(),
+				entity.getCreatedAt(), entity.getUpdatedAt(),
+				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
+				promotionsService.promotionsFindById(entity.getPromotions()).orElse(null));
 	}
-	
+
 }

@@ -36,16 +36,10 @@ public class PromotionProducts {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
     @ManyToOne
     @JoinColumn(name = "promotion_id")
     private Promotions promotions;
-
-
-
-
-
 }

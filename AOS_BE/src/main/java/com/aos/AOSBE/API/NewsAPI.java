@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +35,17 @@ public class NewsAPI {
 	private NewsMapper newsMapper;
 
 	@GetMapping("/admin/News")
-	public ResponseEntity<List<NewsDTOS>> getAllNewsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllNewsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
+		Page<News> pageResult = newsService.newsFindAll(page, size, filters);
+		List<NewsDTOS> news = pageResult.getContent().stream().map(newsMapper::mapper).collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", news);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 
-		List<NewsDTOS> news = new ArrayList<NewsDTOS>();
-		newsService.newsFindAll(page, size, filters).forEach(e -> {
-			news.add(newsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(news);
 	}
 
 	@GetMapping("/admin/News/{id}")

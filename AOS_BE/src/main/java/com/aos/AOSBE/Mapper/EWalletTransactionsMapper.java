@@ -14,14 +14,14 @@ public class EWalletTransactionsMapper {
 
 	public EWalletTransactionsDTOS mapper(EWalletTransactions entity) {
 		return new EWalletTransactionsDTOS(entity.getId(), entity.getAmount(), entity.getTransactionType(),
-				entity.getRelatedWalletId(), entity.getDescription(), entity.getCreatedAt(), entity.getOrderId(),
-				entity.getStatus(), entity.getEWallets().getId());
+				entity.getOrderId(), entity.getStatus(), entity.getRelatedWalletId(), entity.getDescription(),
+				entity.getCreatedAt(), entity.getEWallets().getId());
 	}
 
 	public EWalletTransactions mapperToObject(EWalletTransactionsDTOS entity) {
 		return new EWalletTransactions(entity.getId(), entity.getAmount(), entity.getTransactionType(),
-				entity.getRelatedWalletId(), entity.getDescription(), entity.getCreatedAt(), entity.getOrderId(),
-				entity.getStatus(), eWalletsService.eWalletsFindById(entity.getEWallets()));
+				entity.getOrderId(), entity.getStatus(), entity.getRelatedWalletId(), entity.getDescription(),
+				entity.getCreatedAt(), eWalletsService.eWalletsFindById(entity.getEWallets()));
 	}
 
 }

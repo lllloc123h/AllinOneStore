@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +35,17 @@ public class ShippingMethodsAPI {
 	private ShippingMethodsMapper shippingMethodsMapper;
 
 	@GetMapping("/admin/ShippingMethods")
-	public ResponseEntity<List<ShippingMethodsDTOS>> getAllShippingMethodsApi(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
-			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+	public ResponseEntity<?> getAllShippingMethodsApi(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<ShippingMethodsDTOS> shippingMethods = new ArrayList<ShippingMethodsDTOS>();
-		shippingMethodsService.shippingMethodsFindAll(page, size, filters).forEach(e -> {
-			shippingMethods.add(shippingMethodsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(shippingMethods);
+		Page<ShippingMethods> pageResult = shippingMethodsService.shippingMethodsFindAll(page, size, filters);
+		List<ShippingMethodsDTOS> shippingMethods = pageResult.getContent().stream().map(shippingMethodsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", shippingMethods);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/ShippingMethods/{id}")

@@ -63,7 +63,6 @@ public class Orders {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
@@ -73,9 +72,4 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "shipping_method_id")
     private ShippingMethods shippingMethods;
-
-
-
-
-
 }

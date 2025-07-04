@@ -367,13 +367,13 @@ GO
 -- Liên kết một số sản phẩm cụ thể với các khuyến mãi đã có
 -- Giả sử product_item_id 1 (Áo thun M, trắng) và promotion_id 4 (Mua 2 áo thun tặng 1)
 -- Giả sử product_item_id 5 (Sơ mi trắng M) và promotion_id 5 (Siêu combo 3 áo sơ mi)
-INSERT INTO promotion_products (id, promotion_id, product_item_id, require_qty, is_gift, cost_share, created_at, updated_at)
+INSERT INTO promotion_products ( promotion_id, product_item_id, require_qty, is_gift, cost_share, created_at, updated_at)
 VALUES
-(1, 4, 1, 2, 0, 0.00, GETDATE(), GETDATE()), -- Áo thun unisex mùa hè (item 1) tham gia KM 'Mua 2 áo thun tặng 1'
-(2, 4, 2, 2, 0, 0.00, GETDATE(), GETDATE()), -- Áo thun L, đen (item 2) cũng tham gia KM 'Mua 2 áo thun tặng 1'
-(3, 5, 5, 3, 0, 0.00, GETDATE(), GETDATE()), -- Áo sơ mi trắng basic (item 5) tham gia KM 'Siêu combo 3 áo sơ mi'
-(4, 5, 6, 3, 0, 0.00, GETDATE(), GETDATE()), -- Áo sơ mi caro đỏ đen (item 6) cũng tham gia KM 'Siêu combo 3 áo sơ mi'
-(5, 8, 5, 1, 0, 0.00, GETDATE(), GETDATE()); -- Áo sơ mi trắng basic (item 5) tham gia KM 'Mua 1 tặng 1 khăn cổ'
+( 4, 1, 2, 0, 0.00, GETDATE(), GETDATE()), -- Áo thun unisex mùa hè (item 1) tham gia KM 'Mua 2 áo thun tặng 1'
+( 4, 2, 2, 0, 0.00, GETDATE(), GETDATE()), -- Áo thun L, đen (item 2) cũng tham gia KM 'Mua 2 áo thun tặng 1'
+( 5, 5, 3, 0, 0.00, GETDATE(), GETDATE()), -- Áo sơ mi trắng basic (item 5) tham gia KM 'Siêu combo 3 áo sơ mi'
+( 5, 6, 3, 0, 0.00, GETDATE(), GETDATE()), -- Áo sơ mi caro đỏ đen (item 6) cũng tham gia KM 'Siêu combo 3 áo sơ mi'
+( 8, 5, 1, 0, 0.00, GETDATE(), GETDATE()); -- Áo sơ mi trắng basic (item 5) tham gia KM 'Mua 1 tặng 1 khăn cổ'
 GO
 
 -- Thêm dữ liệu cho bảng returns

@@ -27,16 +27,10 @@ public class Authorities {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-   
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Roles roles;
-
-
-
-
-
 }

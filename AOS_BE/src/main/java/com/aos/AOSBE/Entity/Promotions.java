@@ -62,5 +62,4 @@ public class Promotions {
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-
 }

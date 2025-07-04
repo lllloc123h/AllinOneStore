@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -68,21 +70,15 @@ public class AccountsAPI {
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
-		accountsService.accountsFindWithFilter(page, size, filters).forEach(e -> {
-			accounts.add(accountsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(accounts);
-	}
+		Page<Accounts> pageResult = accountsService.accountsFindAll(page, size, filters);
+		List<AccountsDTOS> accounts = pageResult.getContent().stream().map(accountsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", accounts);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 
-//	@GetMapping("/admin/Accounts")
-//	public ResponseEntity<?> getAllAccountsApi(@RequestParam(defaultValue = "0") int page,
-//			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
-//		filters.remove("page");
-//		filters.remove("size");
-//		List<Accounts> accounts = accountsService.accountsFindWithFilter(page, size, filters);
-//		return ResponseEntity.ok(accounts);
-//	}
+	}
 
 	@GetMapping("/test")
 	public ResponseEntity<?> test() {

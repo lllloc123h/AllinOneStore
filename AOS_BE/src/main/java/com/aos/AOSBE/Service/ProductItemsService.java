@@ -23,10 +23,10 @@ public class ProductItemsService {
 	@Autowired
 	private ProductItemsRepository productItemsRepository;
 
-	public List<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
+	public Page<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<ProductItems> spec = specBuilder.buildFilter(filters);
-		return productItemsRepository.findAll(spec, pageable).getContent();
+		return productItemsRepository.findAll(spec, pageable);
 	}
 
 	public List<ProductItems> productItemsFindAllHaveSkuLike(String skuLike) {

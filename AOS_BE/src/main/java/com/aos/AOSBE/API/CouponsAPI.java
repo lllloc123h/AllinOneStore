@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,15 +35,18 @@ public class CouponsAPI {
 	private CouponsMapper couponsMapper;
 
 	@GetMapping("/admin/Coupons")
-	public ResponseEntity<List<CouponsDTOS>> getAllCouponsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllCouponsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<CouponsDTOS> coupons = new ArrayList<CouponsDTOS>();
-		couponsService.couponsFindAll(page, size, filters).forEach(e -> {
-			coupons.add(couponsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(coupons);
+		Page<Coupons> pageResult = couponsService.couponsFindAll(page, size, filters);
+		List<CouponsDTOS> coupons = pageResult.getContent().stream().map(couponsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", coupons);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
+
 	}
 
 	@GetMapping("/admin/Coupons/{id}")

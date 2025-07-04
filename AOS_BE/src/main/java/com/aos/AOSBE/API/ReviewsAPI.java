@@ -1,10 +1,12 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,15 +35,17 @@ public class ReviewsAPI {
 	private ReviewsMapper reviewsMapper;
 
 	@GetMapping("/admin/Reviews")
-	public ResponseEntity<List<ReviewsDTOS>> getAllReviewsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllReviewsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
-		List<ReviewsDTOS> reviews = new ArrayList<ReviewsDTOS>();
-		reviewsService.reviewsFindAll(page, size, filters).forEach(e -> {
-			reviews.add(reviewsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(reviews);
+		Page<Reviews> pageResult = reviewsService.reviewsFindAll(page, size, filters);
+		List<ReviewsDTOS> reviews = pageResult.getContent().stream().map(reviewsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", reviews);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/admin/Reviews/{id}")

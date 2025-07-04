@@ -25,10 +25,10 @@ public class BaseProductsService {
 	@Autowired
 	private BaseProductsMapper baseProductsMapper;
 
-	public List<BaseProducts> baseProductsFindAll(int page, int size, Map<String, Object> filters) {
+	public Page<BaseProducts> baseProductsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<BaseProducts> spec = specBuilder.buildFilter(filters);
-		return baseProductsRepository.findAll(spec, pageable).getContent();
+return baseProductsRepository.findAll(spec, pageable);
 	}
 
 	@Transactional

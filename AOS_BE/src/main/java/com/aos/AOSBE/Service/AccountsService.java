@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,10 +40,10 @@ public class AccountsService {
 
 	PasswordEncoder passwordEncoder;
 
-	public List<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
+	public Page<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<Accounts> spec = specBuilder.buildFilter(filters);
-		return accountsRepository.findAll(spec, pageable).getContent();
+		return accountsRepository.findAll(spec, pageable);
 	}
 
 	public List<Accounts> accountsFindWithFilter(int page, int size, Map<String, Object> filters) {

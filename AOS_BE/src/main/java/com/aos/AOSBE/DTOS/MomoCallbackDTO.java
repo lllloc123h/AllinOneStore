@@ -11,7 +11,8 @@ public class MomoCallbackDTO {
 	private String orderInfo;
 	private String orderType;
 	private String transId;
-	private int resultCode; // 0 = success
+	private int resultCode; // 0 = success 9000: Timeout or failure. 1006: Canceled or user did not complete
+							// the payment.
 	private String message;
 	private String payType;
 	private String responseTime;

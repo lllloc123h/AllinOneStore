@@ -1,11 +1,13 @@
 package com.aos.AOSBE.API;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.GhnDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.GhnDTO;
 import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
@@ -35,22 +38,26 @@ public class OrderItemsAPI {
 
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
+
 	@PostMapping("/webhook/status")
 	public ResponseEntity<String> getStatus(@RequestBody GhnDTO entity) {
 		System.out.println(entity);
 		return ResponseEntity.ok("Success");
 	}
+
 	@GetMapping("/admin/OrderItems")
-	public ResponseEntity<List<OrderItemsDTOS>> getAllOrderItemsApi(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<?> getAllOrderItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
+		Page<OrderItems> pageResult = orderItemsService.orderItemsFindAll(page, size, filters);
+		List<OrderItemsDTOS> orderItems = pageResult.getContent().stream().map(orderItemsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", orderItems);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 
-		List<OrderItemsDTOS> orderItems = new ArrayList<OrderItemsDTOS>();
-		orderItemsService.orderItemsFindAll(page, size, filters).forEach(e -> {
-			orderItems.add(orderItemsMapper.mapper(e));
-		});
-		return ResponseEntity.ok(orderItems);
 	}
 
 	@GetMapping("/admin/OrderItems/{id}")
