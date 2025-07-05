@@ -67,7 +67,7 @@ api.interceptors.response.use(
 const tokenRef = ref(localStorage.getItem('jwtToken'))
 const authService = {
   login(email, password) {
-    console.log({ email, password })
+    // console.log({ email, password })
     return api.post('/Accounts/login', { email, password })
       .then(async (response) => {
         localStorage.setItem('jwtToken', response.data.token);

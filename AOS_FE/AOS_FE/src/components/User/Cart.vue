@@ -91,7 +91,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { authService, cartService } from '../../Configs/api'
-
+import { finalHandleCartProgress, handleUpdateQuantityCartWhileLogin } from "../../Configs/cart";
 const router = useRouter()
 
 // Giỏ hàng từ server
@@ -104,7 +104,6 @@ const selectedItems = ref([])
 async function loadCart() {
   try {
     const response = await cartService.getCart();
-    console.log(response)
     if (authService.isLogged()) {
       cart.value = response.map(item => ({
         id: item.id,
@@ -164,7 +163,9 @@ function removeItem(item) {
 // Tăng số lượng
 function increaseQty(item) {
   if (authService.isLogged()) {
-
+    console.log("DEBUGADDING CART", item)
+    handleUpdateQuantityCartWhileLogin(item, "increase")
+    // router.push('/cart')
     item.quantity++
   } else {
     let tempLocalList = JSON.parse(localStorage.getItem('cart')) ?? [];
@@ -187,6 +188,8 @@ function increaseQty(item) {
 // Giảm số lượng hoặc xóa
 function decreaseQty(item) {
   if (item.quantity > 1) {
+
+    handleUpdateQuantityCartWhileLogin(item, "decrease")
     item.quantity--
     // TODO: Gọi API cập nhật nếu backend hỗ trợ
   } else {
