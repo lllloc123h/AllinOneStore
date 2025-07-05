@@ -188,11 +188,10 @@ function increaseQty(item) {
 // Giảm số lượng hoặc xóa
 function decreaseQty(item) {
   if (item.quantity > 1) {
-
-    handleUpdateQuantityCartWhileLogin(item, "decrease")
     item.quantity--
     // TODO: Gọi API cập nhật nếu backend hỗ trợ
   } else {
+    handleUpdateQuantityCartWhileLogin(item, "decrease")
     removeItem(item)
   }
 }
