@@ -382,7 +382,7 @@ create table
 		product_item_id int not null,
 		promotion_id int,
 		qty int not null,
-		cost decimal(18, 2) not null,
+		price_at_buy decimal(18, 2) not null,
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,
 		total AS (qty * selling_price) PERSISTED,

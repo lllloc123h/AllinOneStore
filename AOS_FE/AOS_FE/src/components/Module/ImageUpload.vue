@@ -44,8 +44,8 @@
 
 .close-image {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 12px;
+  right: 12px;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.9);
   border: none;
@@ -53,6 +53,13 @@
   width: 28px;
   height: 28px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px #0002;
+  font-size: 18px;
+  padding: 0;
+  transition: background 0.2s;
 }
 </style>
 
@@ -77,77 +84,245 @@
     </div>
     <input type="file" id="file" multiple @change="onFilesChange" />
   </label>
+  <!-- ...existing code... -->
   <div class="row mt-4 g-4">
     <h3>Ảnh đã tải lên :</h3>
-    <div class="col-3" v-for="(item, index) in imageView" :key="index">
+    <div class="col-3" v-for="(item, index) in fileView" :key="index">
       <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
-        <!-- Bo góc ảnh luôn -->
         <button class="close-image" @click="removeItem(index)">x</button>
         <img
+          v-if="item.type === 'image'"
           class="card-img rounded-4 custom-shadow"
           style="height: 450px; object-fit: cover"
           :src="item.url"
           alt="Card image"
         />
+        <video
+          v-else
+          class="card-img rounded-4 custom-shadow"
+          style="height: 220px; object-fit: cover"
+          :src="item.url"
+          controls
+        ></video>
+        <div
+          v-if="!item.valid"
+          style="
+            color: red;
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #fff8;
+          "
+        >
+          Sai kích thước
+        </div>
       </div>
     </div>
-    <button @click="uploadImages">Tải ảnh lên</button>
+    <button
+      @click="uploadAllFiles"
+      :disabled="!canUpload || isUploading"
+      style="min-width: 120px; position: relative"
+    >
+      <span v-if="!isUploading">Upload</span>
+      <span v-else>
+        <svg
+          style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px"
+          viewBox="0 0 50 50"
+        >
+          <circle
+            cx="25"
+            cy="25"
+            r="20"
+            fill="none"
+            stroke="#10c6c3"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-dasharray="31.4 31.4"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 25 25"
+              to="360 25 25"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </svg>
+        Đang upload...
+      </span>
+    </button>
   </div>
+  <div v-if="errorMsg" style="color: red; margin-top: 8px">{{ errorMsg }}</div>
+  <!-- ...existing code... -->
 </template>
 <script setup>
 import { ref } from "vue";
-import { storage } from "../../Configs/firebase";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import axios from "axios";
 
-let lastFilePath = "";
-let lastDownloadUrl = "";
-const imageUrls = ref([]);
-const imageView = ref([]);
+const props = defineProps({
+  maxImages: { type: Number, default: 5 },
+  maxVideos: { type: Number, default: 2 },
+  folder: { type: String, default: "profiles" },
+  widthImg: { type: Number, default: 350 },
+  heightImg: { type: Number, default: 450 },
+  videoDuration: { type: Number, default: 60 }, // Giây
+});
+
+const fileView = ref([]); // [{file, url, valid, type}]
+const canUpload = ref(false);
+const errorMsg = ref("");
 const emit = defineEmits(["update-avatar", "update-main-image-url"]);
+const isUploading = ref(false);
+
 const removeItem = (index) => {
-  const removed = imageView.value.splice(index, 1);
+  const removed = fileView.value.splice(index, 1);
   if (removed.length && removed[0].url) {
     URL.revokeObjectURL(removed[0].url);
   }
+  checkCanUpload();
 };
 
 function onFilesChange(event) {
+  errorMsg.value = "";
   const files = Array.from(event.target.files);
 
-  // Xoá URL cũ để tránh memory leak
-  imageView.value.forEach((url) => URL.revokeObjectURL(url));
+  // Đếm số ảnh và video đã có
+  const currentImages = fileView.value.filter((f) => f.type === "image").length;
+  const currentVideos = fileView.value.filter((f) => f.type === "video").length;
 
-  // Tạo URL mới
-  imageView.value = files
-    .filter((file) => file.type.startsWith("image/"))
-    .map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }));
-}
-async function uploadImages() {
-  if (!imageView.value.length) return;
+  // Đếm số file hợp lệ sẽ thêm
+  let newImages = 0;
+  let newVideos = 0;
+  files.forEach((file) => {
+    if (file.type.startsWith("image/")) newImages++;
+    else if (file.type.startsWith("video/")) newVideos++;
+  });
 
-  for (const { file } of imageView.value) {
-    const filePath = `images/${Date.now()}_${file.name}`;
-    const fileRef = storageRef(storage, filePath);
-    try {
-      await uploadBytes(fileRef, file);
-      const url = await getDownloadURL(fileRef);
-      imageUrls.value.push(url);
-      lastFilePath = file.name;
-      lastDownloadUrl = url;
-
-      console.log("Uploaded:", url);
-    } catch (err) {
-      console.error("Upload error:", err);
-    }
+  if (currentImages + newImages > props.maxImages) {
+    errorMsg.value = `Chỉ được chọn tối đa ${props.maxImages} ảnh!`;
+    return;
+  }
+  if (currentVideos + newVideos > props.maxVideos) {
+    errorMsg.value = `Chỉ được chọn tối đa ${props.maxVideos} video!`;
+    return;
   }
 
-  emit("update-main-image-url", {
-    filePath: lastFilePath,
-    downloadUrl: lastDownloadUrl,
+  let checked = 0;
+
+  files.forEach((file) => {
+    const url = URL.createObjectURL(file);
+    if (file.type.startsWith("image/")) {
+      const img = new window.Image();
+      img.onload = function () {
+        checked++;
+        if (img.width === props.widthImg && img.height === props.heightImg) {
+          fileView.value.push({ file, url, valid: true, type: "image" });
+        } else {
+          fileView.value.push({ file, url, valid: false, type: "image" });
+        }
+        if (checked === files.length) checkCanUpload();
+      };
+      img.onerror = function () {
+        checked++;
+        fileView.value.push({ file, url, valid: false, type: "image" });
+        if (checked === files.length) checkCanUpload();
+      };
+      img.src = url;
+    } else if (file.type.startsWith("video/")) {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = function () {
+        checked++;
+        if (video.duration <= props.videoDuration) {
+          fileView.value.push({ file, url, valid: true, type: "video" });
+        } else {
+          fileView.value.push({ file, url, valid: false, type: "video" });
+        }
+        if (checked === files.length) checkCanUpload();
+      };
+      video.onerror = function () {
+        checked++;
+        fileView.value.push({ file, url, valid: false, type: "video" });
+        if (checked === files.length) checkCanUpload();
+      };
+      video.src = url;
+    } else {
+      checked++;
+      if (checked === files.length) checkCanUpload();
+    }
   });
-  emit("update-avatar", imageUrls.value);
 }
+
+function checkCanUpload() {
+  canUpload.value =
+    fileView.value.length > 0 && fileView.value.every((item) => item.valid);
+  if (!canUpload.value) {
+    errorMsg.value = "Tất cả ảnh phải đúng 350x450px và video < 60s!";
+  } else {
+    errorMsg.value = "";
+  }
+}
+
+async function uploadAllFiles() {
+  errorMsg.value = "";
+  isUploading.value = true;
+  const validFiles = fileView.value.filter((item) => item.valid);
+  if (!validFiles.length) {
+    errorMsg.value = "Không có file hợp lệ để upload!";
+    isUploading.value = false;
+    return [];
+  }
+  const results = [];
+  for (const item of validFiles) {
+    const formData = new FormData();
+    formData.append("file", item.file);
+    formData.append("upload_preset", "upload_preset");
+    formData.append("folder", props.folder); // dùng props.folder
+    try {
+      const endpoint =
+        item.type === "image"
+          ? "https://api.cloudinary.com/v1_1/da2v8uqir/image/upload"
+          : "https://api.cloudinary.com/v1_1/da2v8uqir/video/upload";
+      const response = await axios.post(endpoint, formData);
+      results.push({
+        type: item.type,
+        url: response.data.secure_url,
+        public_id: response.data.public_id,
+      });
+    } catch (err) {
+      errorMsg.value = "Upload thất bại!";
+      isUploading.value = false;
+      return [];
+    }
+  }
+  errorMsg.value = "Upload thành công!";
+  fileView.value = [];
+  canUpload.value = false;
+  isUploading.value = false;
+  return results;
+}
+
+// expose hàm cho cha gọi
+defineExpose({ uploadAllFiles });
+
+// import { ref } from "vue";
+// import ImageUpload from "./ImageUpload.vue";
+// const imageUploadRef = ref();
+
+// async function handleCreateProduct() {
+//   // Gọi upload ở component con
+//   const uploadResults = await imageUploadRef.value.uploadAllFiles();
+//   if (!uploadResults.length) {
+//     // Báo lỗi hoặc return
+//     return;
+//   }
+//   // Tiếp tục gửi API tạo sản phẩm, truyền kèm danh sách ảnh/video đã upload
+//   // ...
+// }
+
+// component cha sẽ như thế này
+// <ImageUpload :max-images="3" :max-videos="1" folder="products" heightImg= widthImg= videoDuration= ref="imageUploadRef" />
 </script>

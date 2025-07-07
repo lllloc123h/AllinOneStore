@@ -1,6 +1,5 @@
 package com.aos.AOSBE.Mapper;
 
-import java.time.LocalDateTime;
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
@@ -19,7 +18,7 @@ public class OrderItemsMapper {
 		return new OrderItemsDTOS(
 				    entity.getId(),
 				    entity.getQty(),
-				    entity.getCost(),
+				    entity.getPriceAtBuy(),
 				    entity.isGift(),
 				    entity.getSellingPrice(),
 				    entity.getTotal(),
@@ -35,7 +34,7 @@ public class OrderItemsMapper {
 		return new OrderItems(
 					entity.getId(),
 					entity.getQty(),
-					entity.getCost(),
+					entity.getPriceAtBuy(),
 					entity.isGift(),
 					entity.getSellingPrice(),
 					entity.getTotal(),
