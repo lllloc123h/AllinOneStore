@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,5 +40,9 @@ public class ProductImagesService {
 	@Transactional
 	public void productImagesDeleteById(int id) {
 		productImagesRepository.deleteById(id);
+	}
+	@Transactional
+	public List<ProductImages> findByProductItemsId(int productItemId) {
+    return productImagesRepository.findByProductItems_Id(productItemId);
 	}
 }

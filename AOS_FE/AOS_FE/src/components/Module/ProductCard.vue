@@ -57,8 +57,7 @@
 
                 <!-- Bo góc ảnh luôn -->
                 <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-                    :src="props.product?.imageUrl || 'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'"
-                    alt="Card
+                    :src="props.product?.imageUrl || '../../assets/imgs/ao_bomber_nu.webp'" alt="Card
               image" />
 
                 <!-- Nội dung -->
@@ -77,22 +76,24 @@
 
                     <div class="d-flex justify-content-end">
                         <!-- From Uiverse.io by AKAspidey01 -->
-                        <div class="d-flex justify-content-end align-items-center gap-2">
-                        <button class="detail-button" @click="goToDetailPage(props.product.id)">
-                            Chi tiết
-                        </button>
-
-                        <div class="main-section rounded-4">
-                            <button class="first-button">Còn hàng</button>
-                            <button class="second-button" @click="openPopup(props.product)">
-                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                    </svg>
-                                3,4k đã bán
+                        <!-- GỢI Ý BỐ CỤC -->
+                        <div class="d-flex flex-column align-items-end gap-2 mt-3">
+                            <button class="detail-button" @click="goToDetailPage(props.product.id)">
+                                Chi tiết
                             </button>
+
+                            <div class="main-section rounded-4">
+                                <button class="first-button">Còn hàng</button>
+                                <button class="second-button" @click="openPopup(props.product)">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2"
+                                        fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+                                        <circle cx="9" cy="21" r="1"></circle>
+                                        <circle cx="20" cy="21" r="1"></circle>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6">
+                                        </path>
+                                    </svg>
+                                    3,4k đã bán
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -179,18 +180,25 @@ function formatPrice(price) {
     justify-content: center;
     transition-duration: 0.6s;
 }
+
 .detail-button {
     background: #0b5ed7;
     color: white;
     border: none;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1em;
-    min-height: 45px;
+    height: 45px;
     width: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.detail-button:hover {
+    background: #0846a8;
+    transform: translateY(-2px);
 }
 </style>

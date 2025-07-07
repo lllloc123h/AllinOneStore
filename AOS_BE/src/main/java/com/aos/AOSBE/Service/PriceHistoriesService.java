@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,5 +40,9 @@ public class PriceHistoriesService {
 	@Transactional
 	public void priceHistoriesDeleteById(int id) {
 		priceHistoriesRepository.deleteById(id);
+	}
+	@Transactional
+	public List<PriceHistories> findByProductItemsId(int productItemId) {
+    return priceHistoriesRepository.findByProductItems_Id(productItemId);
 	}
 }
