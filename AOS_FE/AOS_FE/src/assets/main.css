@@ -13,6 +13,10 @@ a,
   transition: 0.4s;
   padding: 3px;
 }
+.modal-content button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
 @media (hover: hover) {
   a:hover {
