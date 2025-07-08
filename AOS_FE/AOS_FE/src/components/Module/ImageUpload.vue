@@ -218,10 +218,15 @@ function onFilesChange(event) {
       const img = new window.Image();
       img.onload = function () {
         checked++;
-        if (img.width === props.widthImg && img.height === props.heightImg) {
+        if (props.widthImg === 0 && props.heightImg === 0) {
+          // Nếu ảnh không cần tỷ lệ
           fileView.value.push({ file, url, valid: true, type: "image" });
         } else {
-          fileView.value.push({ file, url, valid: false, type: "image" });
+          if (img.width === props.widthImg && img.height === props.heightImg) {
+            fileView.value.push({ file, url, valid: true, type: "image" });
+          } else {
+            fileView.value.push({ file, url, valid: false, type: "image" });
+          }
         }
         if (checked === files.length) checkCanUpload();
       };

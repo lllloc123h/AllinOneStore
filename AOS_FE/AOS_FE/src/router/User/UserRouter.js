@@ -13,16 +13,16 @@ export default [
         name: 'home',
         component: HomeView,
     },  
-    {
-        path: 'uploads',
-        name: 'uploads',
-        component: Upload,
-    },
-     {
-        path: 'uploads2',
-        name: 'uploads2',
-        component: Upload2,
-    },
+    // {
+    //     path: 'uploads',
+    //     name: 'uploads',
+    //     component: Upload,
+    // },
+    //  {
+    //     path: 'uploads2',
+    //     name: 'uploads2',
+    //     component: Upload2,
+    // },
     {
         path: 'products',
         // route level code-splitting
