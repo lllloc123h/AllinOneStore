@@ -117,7 +117,6 @@ public class OrdersAPI {
 			itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
 					pi.getSku(), productName, pi.getDescription()));
 		}
-
 		OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
 		return ResponseEntity.ok(response);
 	}

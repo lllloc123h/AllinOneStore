@@ -1,9 +1,7 @@
 package com.aos.AOSBE.DTOS;
-import jakarta.persistence.*;
 
 import java.time.*;
-import java.math.*;
-import java.util.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class OrderItemsDTOS {
     private int id;
     private int qty;
-    private double cost;
+    private double priceAtBuy;
     private boolean isGift;
     private double sellingPrice;
     private double total;
@@ -24,4 +22,6 @@ public class OrderItemsDTOS {
     private int orders;
     private int productItems;
     private int promotions;
+    private String comboGroup;
+    private String idComboGroup;
 }

@@ -83,8 +83,8 @@
             <!-- Bo góc ảnh luôn -->
             <img
               class="card-img rounded-4 custom-shadow"
-              style="height: 450px; object-fit: cover"
-              src="../../assets/imgs/Vàng nhạt và Xanh ngọc lam Nghệ thuật sắp chữ In đậm Tiệm cà phê Biểu trưng Cà phê.png"
+              style="object-fit: cover"
+              src="\src\assets\imgs\vay_yem_jean.png"
               alt="Card image"
             />
 
@@ -148,8 +148,8 @@
             <!-- Bo góc ảnh luôn -->
             <img
               class="card-img rounded-4 custom-shadow"
-              style="height: 450px; object-fit: cover"
-              src="../../assets/imgs/Vàng nhạt và Xanh ngọc lam Nghệ thuật sắp chữ In đậm Tiệm cà phê Biểu trưng Cà phê.png"
+              style="object-fit: cover"
+              src="\src\assets\imgs\vay_yem_jean.png"
               alt="Card image"
             />
 
@@ -213,8 +213,8 @@
             <!-- Bo góc ảnh luôn -->
             <img
               class="card-img rounded-4 custom-shadow"
-              style="height: 450px; object-fit: cover"
-              src="../../assets/imgs/Vàng nhạt và Xanh ngọc lam Nghệ thuật sắp chữ In đậm Tiệm cà phê Biểu trưng Cà phê.png"
+              style="object-fit: cover"
+              src="\src\assets\imgs\vay_yem_jean.png"
               alt="Card image"
             />
 
@@ -278,8 +278,8 @@
             <!-- Bo góc ảnh luôn -->
             <img
               class="card-img rounded-4 custom-shadow"
-              style="height: 450px; object-fit: cover"
-              src="../../assets/imgs/Vàng nhạt và Xanh ngọc lam Nghệ thuật sắp chữ In đậm Tiệm cà phê Biểu trưng Cà phê.png"
+              style="object-fit: cover"
+              src="\src\assets\imgs\vay_yem_jean.png"
               alt="Card image"
             />
 

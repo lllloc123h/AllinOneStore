@@ -1,6 +1,5 @@
 package com.aos.AOSBE.Mapper;
 
-import java.time.LocalDateTime;
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
@@ -19,7 +18,7 @@ public class OrderItemsMapper {
 		return new OrderItemsDTOS(
 				    entity.getId(),
 				    entity.getQty(),
-				    entity.getCost(),
+				    entity.getPriceAtBuy(),
 				    entity.isGift(),
 				    entity.getSellingPrice(),
 				    entity.getTotal(),
@@ -28,14 +27,16 @@ public class OrderItemsMapper {
 				    entity.getUpdatedAt(),
 				    entity.getOrders().getId(),
 				    entity.getProductItems().getId(),
-				    entity.getPromotions().getId()
+				    entity.getPromotions().getId(),
+				entity.getComboGroup(),
+				entity.getIdComboGroup()
 			);
 	}
 	public OrderItems mapperToObject(OrderItemsDTOS entity) {
 		return new OrderItems(
 					entity.getId(),
 					entity.getQty(),
-					entity.getCost(),
+					entity.getPriceAtBuy(),
 					entity.isGift(),
 					entity.getSellingPrice(),
 					entity.getTotal(),
@@ -44,7 +45,9 @@ public class OrderItemsMapper {
 					entity.getUpdatedAt(),
 					ordersService.ordersFindById(entity.getOrders()).orElse(null),
 					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null)
+					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null),
+					entity.getComboGroup(),
+				entity.getIdComboGroup()
 			);
 	}
 	
