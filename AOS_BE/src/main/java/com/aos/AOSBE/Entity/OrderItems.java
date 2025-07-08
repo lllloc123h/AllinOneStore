@@ -53,4 +53,8 @@ public class OrderItems {
     @ManyToOne
     @JoinColumn(name = "promotion_id")
     private Promotions promotions;
+    @JoinColumn(name = "combo_group")
+    private String comboGroup;
+    @JoinColumn(name = "id_combo_group")
+    private String idComboGroup;
 }

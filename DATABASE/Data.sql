@@ -154,12 +154,12 @@ VALUES
 (3, 100000, 'RECEIVE', 1, N'Tặng thưởng từ hệ thống', GETDATE());
 Go
 INSERT INTO cart_items (
-    account_id, product_item_id, qty, created_at, updated_at
+    account_id,combo_id,combo_group, product_item_id, qty, created_at, updated_at
 )
 VALUES
-(1, 2, 2, GETDATE(), GETDATE()),
-(2, 3, 1, GETDATE(), GETDATE()),
-(3, 1, 4, GETDATE(), GETDATE());
+(1,4,'2-1', 2, 2, GETDATE(), GETDATE()),
+(1,4,'2-1', 1, 2, GETDATE(), GETDATE()),
+(3,null,null, 1, 4, GETDATE(), GETDATE());
 GO
 -- INSERT payment_methods
 INSERT INTO payment_methods (name, description, is_active, created_at, updated_at)

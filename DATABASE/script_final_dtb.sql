@@ -305,7 +305,8 @@ create table
 		account_id int not null,
 		product_item_id int,
 		combo_id int null,
-		qty int,
+		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
+		qty int, 
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
@@ -360,7 +361,6 @@ create table
 		foreign key (payment_method_id) references payment_methods (id),
 		foreign key (shipping_method_id) references shipping_methods (id)
 	);
-
 GO
 create table
 	cancels (
@@ -380,7 +380,9 @@ create table
 		id int identity (1, 1) primary key,
 		order_id int not null,
 		product_item_id int not null,
-		promotion_id int,
+		promotion_id int,-- kiểm tra xem combo nào đã đc áp dụng để trừ vào usage limit 
+		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
+		id_combo_group varchar(36), -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
 		qty int not null,
 		price_at_buy decimal(18, 2) not null,
 		is_gift bit default 0,

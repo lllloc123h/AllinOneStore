@@ -44,4 +44,6 @@ public class CartItems {
 	@ManyToOne
 	@JoinColumn(name = "combo_id")
 	private Promotions promotions;
+	@JoinColumn(name= "combo_group")
+	private String comboGroup;
 }
