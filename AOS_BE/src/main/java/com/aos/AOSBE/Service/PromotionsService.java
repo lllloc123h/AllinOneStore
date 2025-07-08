@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,4 +41,9 @@ public class PromotionsService {
 	public void promotionsDeleteById(int id) {
 		promotionsRepository.deleteById(id);
 	}
+
+	public List<Promotions> promotionsFindByIsActiveTrue(int productItemId) {
+		return promotionsRepository.findActivePromotionsByProductItemId(productItemId);
+	}
+
 }

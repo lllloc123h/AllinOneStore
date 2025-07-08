@@ -33,4 +33,11 @@ public class PromotionProductsService {
     public List<PromotionProducts> findByProductItemsId(int productItemId) {
         return promotionProductsRepository.findByProductItems_Id(productItemId);
     }
+<<<<<<< Updated upstream
+=======
+    public List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId) {
+        return promotionProductsRepository.findPromotionProductsByPromotionId(promotionId);
+    }
+
+>>>>>>> Stashed changes
 }

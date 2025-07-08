@@ -11,14 +11,14 @@ public class PromotionsMapper {
 	public PromotionsDTOS mapper(Promotions entity) {
 		return new PromotionsDTOS(entity.getId(), entity.getName(), entity.getDescription(), entity.getType(),
 				entity.getDiscountType(), entity.getDiscountValue() != null ? entity.getDiscountValue() : 0.0,
-				entity.getComboPrice() != null ? entity.getComboPrice() : 0.0, entity.getUsageLimit(),
+				entity.getComboPrice() != null ? entity.getComboPrice() : 0.0, entity.getQty(),
 				entity.getStartAt(), entity.getEndAt(), entity.isActive(), entity.getCreatedAt(),
 				entity.getUpdatedAt());
 	}
 
 	public Promotions mapperToObject(PromotionsDTOS entity) {
 		return new Promotions(entity.getId(), entity.getName(), entity.getDescription(), entity.getType(),
-				entity.getDiscountType(), entity.getDiscountValue(), entity.getComboPrice(), entity.getUsageLimit(),
+				entity.getDiscountType(), entity.getDiscountValue(), entity.getComboPrice(), entity.getQty(),
 				entity.getStartAt(), entity.getEndAt(), entity.isActive(), entity.getCreatedAt(),
 				entity.getUpdatedAt());
 	}

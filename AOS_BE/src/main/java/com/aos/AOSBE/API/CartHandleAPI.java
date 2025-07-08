@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.CartItemsDTOS;
@@ -48,7 +49,6 @@ public class CartHandleAPI {
 				cartItemsService.cartItemsSave(cartItem);
 				return ResponseEntity.ok(cartItem);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
@@ -56,20 +56,37 @@ public class CartHandleAPI {
 	}
 
 	@PutMapping("/addToCart")
-	public ResponseEntity<?> updateCart(@RequestBody CartItemsDTOS entity) {
+	public ResponseEntity<?> updateCart(@RequestBody CartItemsDTOS entity,
+			@RequestParam("updateType") String updateType) {
 		try {
-//			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-//			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(userEmail,
-//					cartItem.getProductItems().getId());
-			CartItems itemIsExist = cartItemsService.cartItemsFindById(entity.getId()).orElse(null);
-			if (itemIsExist != null) {
-				itemIsExist.setQty(entity.getQty());
-				cartItemsService.cartItemsSave(itemIsExist);
+			// Find the existing cart item by ID
+			CartItems existingItem = cartItemsService.cartItemsFindById(entity.getId()).orElse(null);
+			if (existingItem != null) {
+				int currentQty = entity.getQty();
+				switch (updateType) {
+				case "increase":
+					existingItem.setQty(currentQty + 1);
+					cartItemsService.cartItemsSave(existingItem);
+					break;
+				case "decrease":
+					if (currentQty - 1 <= 0) {
+						cartItemsService.cartItemsDeleteById(entity.getId());
+						return ResponseEntity.ok(Map.of("message", "Item removed from cart"));
+					} else {
+						existingItem.setQty(currentQty - 1);
+						cartItemsService.cartItemsSave(existingItem);
+					}
+					break;
+				default:
+					return ResponseEntity.badRequest().body(Map.of("message", "Invalid update type"));
+				}
+				return ResponseEntity.ok(existingItem);
+			} else {
+				return ResponseEntity.status(404).body(Map.of("message", "Cart item not found"));
 			}
-			return ResponseEntity.ok(itemIsExist);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+			return ResponseEntity.status(500).body(Map.of("message", "An error occurred"));
 		}
 	}
 

@@ -1,6 +1,8 @@
 ### Java / Spring Boot ###
-/AOS_BE/target                            # Maven output
-/build/                             # Gradle output
+/AOS_BE/target/                      
+# Maven output
+/build/                              
+# Gradle output
 *.class
 *.jar
 *.war
@@ -8,11 +10,7 @@
 *.log
 *.tmp
 /target/
-target
-### Environment files ###
-.env
-.env.*                              # dotenv environment files for multiple environments
-*env
+target/
 
 ### Maven ###
 .mvn/
@@ -22,34 +20,45 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
+### Maven generated files ###
+**/META-INF
+**/MANIFEST.MF
+**/pom.properties
+
 ### Gradle ###
 .gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 gradle-app.setting
 
-### Vue.js / Node ###
+### Vue.js / Node.js ###
 node_modules/
 dist/
+dist-ssr/
 *.local
+vite.config.js
+vite.config.ts
+
+### Log files ###
 *.log
+logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-vite.config.js
-vite.config.ts
+lerna-debug.log*
 
-### OS / System files ###
-.DS_Store
-Thumbs.db
+### Environment Files ###
+.env
+.env.*
+*env
 
-### IDEs ###
-
+### IDEs / Editors ###
 # VS Code
 .vscode/
+!.vscode/extensions.json
 
-# IntelliJ
+# IntelliJ IDEA
 .idea/
 *.iml
 *.iws
@@ -60,23 +69,23 @@ out/
 .project
 .classpath
 .settings/
+.apt_generated/
+.factorypath
+.loadpath
 .metadata/
 .metadata/.plugins/
 .metadata/.mylyn/
 .metadata/.plugins/org.eclipse.*
-.apt_generated/
-.factorypath
-.loadpath
-.env
+
 ### Testing ###
 test-output/
+coverage/
 cypress/videos/
 cypress/screenshots/
-coverage/
 
-### Logs ###
-logs/
-*.log
+### OS / System files ###
+.DS_Store
+Thumbs.db
 
 ### Others ###
 /bin/

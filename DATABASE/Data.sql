@@ -54,32 +54,32 @@ INSERT INTO base_products (
     rating, is_active, created_at, updated_at
 )
 VALUES
-(N'Áo thun unisex mùa hè', N'Cotton 100%', 1, 'https://example.com/images/ao-thun1.jpg', 0, 120, 4, 1, GETDATE(), GETDATE()),
-(N'Áo thun trơn form rộng', N'Cotton lạnh', 1, 'https://example.com/images/ao-thun2.jpg', 0, 95, 5, 1, GETDATE(), GETDATE()),
-(N'Áo thun họa tiết Nhật Bản', N'Cotton lạnh', 1, 'https://example.com/images/ao-thun3.jpg', 0, 110, 4, 1, GETDATE(), GETDATE()),
-(N'Áo thun cổ tròn nam', N'Polyester', 1, 'https://example.com/images/ao-thun4.jpg', 0, 75, 5, 1, GETDATE(), GETDATE()),
+(N'Áo thun unisex mùa hè', N'Cotton 100%', 1, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 120, 4, 1, GETDATE(), GETDATE()),
+(N'Áo thun trơn form rộng', N'Cotton lạnh', 1, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 95, 5, 1, GETDATE(), GETDATE()),
+(N'Áo thun họa tiết Nhật Bản', N'Cotton lạnh', 1, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 110, 4, 1, GETDATE(), GETDATE()),
+(N'Áo thun cổ tròn nam', N'Polyester', 1, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 75, 5, 1, GETDATE(), GETDATE()),
 
-(N'Áo sơ mi trắng basic', N'Cotton', 2, 'https://example.com/images/somi1.jpg', 0, 90, 4, 1, GETDATE(), GETDATE()),
-(N'Áo sơ mi caro đỏ đen', N'Flannel', 2, 'https://example.com/images/somi2.jpg', 0, 65, 5, 1, GETDATE(), GETDATE()),
+(N'Áo sơ mi trắng basic', N'Cotton', 2, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 90, 4, 1, GETDATE(), GETDATE()),
+(N'Áo sơ mi caro đỏ đen', N'Flannel', 2, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 65, 5, 1, GETDATE(), GETDATE()),
 
-(N'Quần jean ống rộng nam', N'Denim', 3, 'https://example.com/images/jean1.jpg', 0, 80, 4, 1, GETDATE(), GETDATE()),
-(N'Quần jean rách gối', N'Denim co giãn', 3, 'https://example.com/images/jean2.jpg', 0, 60, 3, 1, GETDATE(), GETDATE()),
-(N'Jean nam trơn basic', N'Denim', 3, 'https://example.com/images/jean3.jpg', 0, 100, 4, 1, GETDATE(), GETDATE()),
-(N'Jean slim fit co giãn', N'Denim co giãn', 3, 'https://example.com/images/jean4.jpg', 0, 85, 5, 1, GETDATE(), GETDATE()),
+(N'Quần jean ống rộng nam', N'Denim', 3, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 80, 4, 1, GETDATE(), GETDATE()),
+(N'Quần jean rách gối', N'Denim co giãn', 3, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 60, 3, 1, GETDATE(), GETDATE()),
+(N'Jean nam trơn basic', N'Denim', 3, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 100, 4, 1, GETDATE(), GETDATE()),
+(N'Jean slim fit co giãn', N'Denim co giãn', 3, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 85, 5, 1, GETDATE(), GETDATE()),
 
-(N'Áo khoác bomber nam', N'Polyester', 4, 'https://example.com/images/khoac1.jpg', 0, 70, 4, 1, GETDATE(), GETDATE()),
-(N'Áo khoác dù chống nước', N'Nylon', 4, 'https://example.com/images/khoac2.jpg', 0, 40, 5, 1, GETDATE(), GETDATE()),
+(N'Áo khoác bomber nam', N'Polyester', 4, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 70, 4, 1, GETDATE(), GETDATE()),
+(N'Áo khoác dù chống nước', N'Nylon', 4, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 40, 5, 1, GETDATE(), GETDATE()),
 
-(N'Váy ngắn hoa nhí', N'Linen', 5, 'https://example.com/images/vay1.jpg', 0, 70, 5, 1, GETDATE(), GETDATE()),
-(N'Váy tennis nữ', N'Polyester', 5, 'https://example.com/images/vay2.jpg', 0, 65, 4, 1, GETDATE(), GETDATE()),
-(N'Váy caro chữ A', N'Kaki', 5, 'https://example.com/images/vay3.jpg', 0, 50, 4, 1, GETDATE(), GETDATE()),
-(N'Váy xếp ly thời trang', N'Linen', 5, 'https://example.com/images/vay4.jpg', 0, 45, 5, 1, GETDATE(), GETDATE()),
+(N'Váy ngắn hoa nhí', N'Linen', 5, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 70, 5, 1, GETDATE(), GETDATE()),
+(N'Váy tennis nữ', N'Polyester', 5, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 65, 4, 1, GETDATE(), GETDATE()),
+(N'Váy caro chữ A', N'Kaki', 5, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 50, 4, 1, GETDATE(), GETDATE()),
+(N'Váy xếp ly thời trang', N'Linen', 5, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 45, 5, 1, GETDATE(), GETDATE()),
 
-(N'Áo croptop tay phồng', N'Voan', 6, 'https://example.com/images/aokieu1.jpg', 0, 60, 4, 1, GETDATE(), GETDATE()),
-(N'Áo kiểu ren nữ tính', N'Ren', 6, 'https://example.com/images/aokieu2.jpg', 0, 35, 5, 1, GETDATE(), GETDATE()),
+(N'Áo croptop tay phồng', N'Voan', 6, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 60, 4, 1, GETDATE(), GETDATE()),
+(N'Áo kiểu ren nữ tính', N'Ren', 6, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 35, 5, 1, GETDATE(), GETDATE()),
 
-(N'Đầm body tay lỡ', N'Polyester', 7, 'https://example.com/images/dam1.jpg', 0, 40, 4, 1, GETDATE(), GETDATE()),
-(N'Đầm xòe dự tiệc', N'Lụa', 7, 'https://example.com/images/dam2.jpg', 0, 55, 5, 1, GETDATE(), GETDATE());
+(N'Đầm body tay lỡ', N'Polyester', 7, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 40, 4, 1, GETDATE(), GETDATE()),
+(N'Đầm xòe dự tiệc', N'Lụa', 7, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', 0, 55, 5, 1, GETDATE(), GETDATE());
 
 -- PRODUCT_ITEMS (biến thể sản phẩm)
 INSERT INTO product_items (
@@ -123,12 +123,12 @@ GO
 -- Giả sử product_item_id từ 1 đến 10 đã tồn tại
 INSERT INTO product_images (product_item_id, image_url, created_at, updated_at)
 VALUES
-(1, 'https://example.com/images/detail/1-1.jpg', GETDATE(), GETDATE()),
-(1, 'https://example.com/images/detail/1-2.jpg', GETDATE(), GETDATE()),
-(2, 'https://example.com/images/detail/2-1.jpg', GETDATE(), GETDATE()),
-(3, 'https://example.com/images/detail/3-1.jpg', GETDATE(), GETDATE()),
-(4, 'https://example.com/images/detail/4-1.jpg', GETDATE(), GETDATE()),
-(5, 'https://example.com/images/detail/5-1.jpg', GETDATE(), GETDATE());
+(1, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', GETDATE(), GETDATE()),
+(1, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', GETDATE(), GETDATE()),
+(2, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', GETDATE(), GETDATE()),
+(3, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', GETDATE(), GETDATE()),
+(4, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', GETDATE(), GETDATE()),
+(5, 'https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png', GETDATE(), GETDATE());
 GO
 -- Giả sử account_id = 1 đến 3 đã tồn tại
 INSERT INTO user_addresses (
@@ -154,12 +154,12 @@ VALUES
 (3, 100000, 'RECEIVE', 1, N'Tặng thưởng từ hệ thống', GETDATE());
 Go
 INSERT INTO cart_items (
-    account_id, product_item_id, qty, created_at, updated_at
+    account_id,combo_id,combo_group, product_item_id, qty, created_at, updated_at
 )
 VALUES
-(1, 2, 2, GETDATE(), GETDATE()),
-(2, 3, 1, GETDATE(), GETDATE()),
-(3, 1, 4, GETDATE(), GETDATE());
+(1,4,'2-1', 2, 2, GETDATE(), GETDATE()),
+(1,4,'2-1', 1, 2, GETDATE(), GETDATE()),
+(3,null,null, 1, 4, GETDATE(), GETDATE());
 GO
 -- INSERT payment_methods
 INSERT INTO payment_methods (name, description, is_active, created_at, updated_at)
@@ -192,7 +192,7 @@ VALUES
 GO
 INSERT INTO promotions (
     name, description, type, discount_type, discount_value,
-    combo_price, usage_limit, start_at, end_at,
+    combo_price, qty, start_at, end_at,
     is_active, created_at, updated_at
 )
 VALUES
@@ -208,7 +208,7 @@ VALUES
 (N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 'AMOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
 INSERT INTO promotions (
     name, description, type, discount_type, discount_value,
-    combo_price, usage_limit, start_at, end_at,
+    combo_price, qty, start_at, end_at,
     is_active, created_at, updated_at
 )
 VALUES
@@ -225,7 +225,7 @@ VALUES
 GO
 INSERT INTO coupons (
     code, description, discount_type, discount_value,
-    min_order_amount, max_discount_amount, usage_limit,
+    min_order_amount, max_discount_amount, qty,
     usage_per_customer, is_allow_voucher, is_active,
     customer_group, start_at, end_at, created_at, updated_at
 )
@@ -373,7 +373,7 @@ VALUES
 ( 4, 2, 2, 0, 0.00, GETDATE(), GETDATE()), -- Áo thun L, đen (item 2) cũng tham gia KM 'Mua 2 áo thun tặng 1'
 ( 5, 5, 3, 0, 0.00, GETDATE(), GETDATE()), -- Áo sơ mi trắng basic (item 5) tham gia KM 'Siêu combo 3 áo sơ mi'
 ( 5, 6, 3, 0, 0.00, GETDATE(), GETDATE()), -- Áo sơ mi caro đỏ đen (item 6) cũng tham gia KM 'Siêu combo 3 áo sơ mi'
-( 8, 5, 1, 0, 0.00, GETDATE(), GETDATE()); -- Áo sơ mi trắng basic (item 5) tham gia KM 'Mua 1 tặng 1 khăn cổ'
+( 8, 2, 1, 0, 0.00, GETDATE(), GETDATE()); -- Áo sơ mi trắng basic (item 5) tham gia KM 'Mua 1 tặng 1 khăn cổ'
 GO
 
 -- Thêm dữ liệu cho bảng returns

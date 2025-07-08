@@ -1,10 +1,7 @@
 package com.aos.AOSBE.Mapper;
 
-import java.time.LocalDateTime;
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
-import com.aos.AOSBE.Service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 @Component
 public class CouponsMapper {
@@ -18,7 +15,7 @@ public class CouponsMapper {
 				    entity.getDiscountValue(),
 				    entity.getMinOrderAmount(),
 				    entity.getMaxDiscountAmount(),
-				    entity.getUsageLimit(),
+				    entity.getQty(),
 				    entity.getUsagePerCustomer(),
 				    entity.isAllowVoucher(),
 				    entity.isActive(),
@@ -38,7 +35,7 @@ public class CouponsMapper {
 					entity.getDiscountValue(),
 					entity.getMinOrderAmount(),
 					entity.getMaxDiscountAmount(),
-					entity.getUsageLimit(),
+					entity.getQty(),
 					entity.getUsagePerCustomer(),
 					entity.isAllowVoucher(),
 					entity.isActive(),

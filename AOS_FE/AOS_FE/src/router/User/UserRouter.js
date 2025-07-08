@@ -5,13 +5,24 @@ import ProductDetails from '../../components/User/ProductDetails.vue'
 import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
 import OrderStatus from '../../components/User/OrderStatus.vue'
-
+import Upload from '../../components/Module/cloudinary.vue'
+import Upload2 from '../../components/Module/ImageUpload.vue'
 export default [
     {
         path: '',
         name: 'home',
         component: HomeView,
-    },
+    },  
+    // {
+    //     path: 'uploads',
+    //     name: 'uploads',
+    //     component: Upload,
+    // },
+    //  {
+    //     path: 'uploads2',
+    //     name: 'uploads2',
+    //     component: Upload2,
+    // },
     {
         path: 'products',
         // route level code-splitting

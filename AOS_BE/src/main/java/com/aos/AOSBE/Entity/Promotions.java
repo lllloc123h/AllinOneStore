@@ -45,8 +45,8 @@ public class Promotions {
 	@Column(name = "combo_price")
 	private Double comboPrice;
 
-	@Column(name = "usage_limit")
-	private int usageLimit;
+	@Column(name = "qty")
+	private int qty;
 
 	@Column(name = "start_at")
 	private LocalDateTime startAt;
