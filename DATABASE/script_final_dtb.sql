@@ -1,4 +1,4 @@
-﻿--create database all_in_store;
+﻿create database all_in_store;
 --drop database all_in_store
 use all_in_store
 go
@@ -238,7 +238,7 @@ CREATE TABLE
 		discount_type VARCHAR(20) CHECK (discount_type IN ('PERCENT', 'AMOUNT')),
 		discount_value DECIMAL(10, 2),
 		combo_price decimal(18, 2),
-		usage_limit int not null,
+		qty int not null,
 		start_at datetime default getdate (),
 		end_at datetime default getdate (),
 		is_active bit default 1,
@@ -361,6 +361,7 @@ create table
 		foreign key (payment_method_id) references payment_methods (id),
 		foreign key (shipping_method_id) references shipping_methods (id)
 	);
+
 GO
 create table
 	cancels (
@@ -430,8 +431,8 @@ CREATE TABLE
 		discount_value DECIMAL(10, 2) NOT NULL,
 		min_order_amount DECIMAL(10, 2),
 		max_discount_amount DECIMAL(10, 2),
-		usage_limit INT,
-		usage_per_customer INT,
+		qty INT,
+		usage_per_customer INT, -- số lần sử dụng coupon của khách hàng
 		is_allow_voucher bit default 0,
 		is_active BIT NOT NULL DEFAULT 1,
 		customer_group NVARCHAR (50),

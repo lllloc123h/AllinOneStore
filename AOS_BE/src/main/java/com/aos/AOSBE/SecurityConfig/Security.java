@@ -43,7 +43,8 @@ public class Security {
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
 						"/api/test", "/api/Accounts/verify-otp", "/api/BaseProducts/**", "/api/test",
 						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback",
-						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**"
+						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**",
+"/api/Promotions/**"
 //								,
 //								"/api/cart"
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")

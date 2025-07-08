@@ -33,7 +33,8 @@ public class PromotionProductsService {
     public List<PromotionProducts> findByProductItemsId(int productItemId) {
         return promotionProductsRepository.findByProductItems_Id(productItemId);
     }
-    public List<PromotionProducts> findActivePromotionProductsByPromotionId(int promotionId) {
-        return promotionProductsRepository.findActivePromotionProductsByPromotionId(promotionId);
+    public List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId) {
+        return promotionProductsRepository.findPromotionProductsByPromotionId(promotionId);
     }
+
 }

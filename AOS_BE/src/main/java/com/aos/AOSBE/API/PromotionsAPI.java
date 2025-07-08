@@ -5,6 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.DTOS.BaseProductsDTOS;
+import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.Entity.BaseProducts;
+import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Entity.PromotionProducts;
+import com.aos.AOSBE.Mapper.BaseProductsMapper;
+import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Service.PromotionProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +41,36 @@ public class PromotionsAPI {
 
 	@Autowired
 	private PromotionsMapper promotionsMapper;
+	@Autowired
+	private PromotionProductsService promotionProductsService;
+	@Autowired
+	private BaseProductsMapper baseProductsMapper;
+	@Autowired
+	private ProductItemsMapper productItemsMapper;
 
-	@GetMapping("/Promotions/{productItemId}")
-	public ResponseEntity<?> getAllPromotionByProductItemId(@PathVariable("productItemId") int productItemId) {
+	@GetMapping("/Promotions")
+	public ResponseEntity<?> getAllPromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
 		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrue(productItemId);
 		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
 		return ResponseEntity.ok(promotionsDTOS);
 	}
+	@GetMapping("/Promotions/{id}")
+	public ResponseEntity<?> getPromotionProductsByPromotionId(@PathVariable int id) {
+	 List<PromotionProducts> promotionProducts = promotionProductsService.findPromotionProductsByPromotionId(id);
+	 Map<BaseProducts,List<ProductItems>> map =
+			 promotionProducts.stream().collect(Collectors.groupingBy(pro -> pro.getProductItems().getBaseProducts(),
+					 Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())));
+
+		Map<BaseProductsDTOS, List<ProductItemsDTOS>> mapDtos = map.entrySet().stream()
+				.collect(Collectors.toMap(
+						entry -> baseProductsMapper.mapper(entry.getKey()),
+						entry -> entry.getValue().stream()
+								.map(productItemsMapper::mapper)
+								.collect(Collectors.toList())
+				));
+	 return ResponseEntity.ok(mapDtos);
+	}
+
 
 
 	@GetMapping("/admin/Promotions")

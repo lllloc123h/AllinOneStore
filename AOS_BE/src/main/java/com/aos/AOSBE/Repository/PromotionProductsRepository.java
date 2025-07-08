@@ -12,10 +12,8 @@ import com.aos.AOSBE.Entity.PromotionProducts;
 @Repository
 public interface PromotionProductsRepository extends JpaRepository<PromotionProducts, Integer> {
     List<PromotionProducts> findByProductItems_Id(int productItemId);
-//    @Query("SELECT pp FROM PromotionProducts pp WHERE pp.promotions.id = ?1")
-//    List<PromotionProducts> findByProductItemsId(int productItemId);
 
-    @Query("SELECT p FROM PromotionProducts p WHERE p.promotions.id = ?1 AND p.promotions.isActive = true")
-    List<PromotionProducts> findActivePromotionProductsByPromotionId(int promotionId);
+    @Query("SELECT pp FROM PromotionProducts pp WHERE pp.promotions.id = ?1 ")
+    List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId);
 }
 
