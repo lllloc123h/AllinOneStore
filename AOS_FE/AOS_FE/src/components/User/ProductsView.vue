@@ -184,9 +184,9 @@ const openModal = (product) => {
 const closeModal = () => {
   showModal.value = false;
 };
+//handle img with firebase storage
 // async function handleImg(mainImage) {
 //   const fileRef = storageRef(storage, "products/" + mainImage);
-
 //   try {
 //     const url = await getDownloadURL(fileRef);
 //     return url;
@@ -194,7 +194,6 @@ const closeModal = () => {
 //     return "https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media";
 //   }
 // }
-
 onMounted(() => {
   api
     .get("/VariantValues")
@@ -205,27 +204,22 @@ onMounted(() => {
       }
     })
     .catch((error) => console.log(error));
-
   api
     .get("/BaseProducts")
     .then(async (resp) => {
       console.log(resp.data);
       data.value = resp.data.totalPages;
-
       const rawProducts = resp.data;
-
+      //handle img with firebase storage
       // const updatedProducts = await Promise.all(
       //   rawProducts.map(async (product) => {
       //     const imageUrl = await handleImg(product.mainImage);
       //     return { ...product, imageUrl };
       //   })
       // );
-
       products.value = resp.data;
     })
     .catch((error) => console.log("Error loading base products:", error));
-
-
 });
 const itemCart = ref({
   id: '',
@@ -239,7 +233,6 @@ const itemCart = ref({
 const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
   if (quantity.value < selectedProduct.value.safetyStock) {
-    console.log("DEBUGADDING CART", itemCart.value)
     finalHandleCartProgress(itemCart.value)
     notification.success({
       message: 'Success',
@@ -254,7 +247,6 @@ const addToCart = () => {
     });
     closeModal();
   }
-
 };
 
 const fetchData = async () => {
@@ -275,16 +267,14 @@ const fetchData = async () => {
     );
     data.value = response.data.totalPages
     products.value = response.data.content;
-
     const rawProducts = response.data.content;
-
+    //handle img with firebase storage
     // const updatedProducts = await Promise.all(
     //   rawProducts.map(async (product) => {
     //     const imageUrl = await handleImg(product.mainImage);
     //     return { ...product, imageUrl };
     //   })
     // );
-
     // products.value = updatedProducts;
     // console.log(products.value);
   } catch (error) {

@@ -93,14 +93,8 @@ import { useRouter } from 'vue-router'
 import { authService, cartService } from '../../Configs/api'
 import { finalHandleCartProgress, handleUpdateQuantityCartWhileLogin } from "../../Configs/cart";
 const router = useRouter()
-
-// Giỏ hàng từ server
 const cart = ref([])
-
-// ID sản phẩm đã chọn
 const selectedItems = ref([])
-
-// Lấy giỏ hàng từ API
 async function loadCart() {
   try {
     const response = await cartService.getCart();
@@ -128,9 +122,6 @@ async function loadCart() {
       selectedItems.value = cart.value.map(item => item.productItems);
 
     }
-
-
-    // Select all items by default
   } catch (error) {
     console.error('Failed to load cart:', error);
   }
@@ -147,31 +138,21 @@ function removeItem(item) {
     // ✅ Call API to remove from backend
     // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`);
   } else {
-    // ✅ Update localStorage for guest user
     let tempCart = JSON.parse(localStorage.getItem('cart')) ?? [];
-
-    // Remove item from local cart
     tempCart = tempCart.filter(i => i.productItems !== item.productItemId);
-
-    // Save updated list
     localStorage.setItem('cart', JSON.stringify(tempCart));
   }
-  // TODO: Gọi API xóa nếu backend hỗ trợ
-  // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`)
 }
-
 // Tăng số lượng
 function increaseQty(item) {
   if (authService.isLogged()) {
-    console.log("DEBUGADDING CART", item)
     handleUpdateQuantityCartWhileLogin(item, "increase")
-    // router.push('/cart')
     item.quantity++
   } else {
     let tempLocalList = JSON.parse(localStorage.getItem('cart')) ?? [];
     tempLocalList = tempLocalList.map(cartItem => {
       if (cartItem.productItems === item.productItemId) {
-        cartItem.qty++; // Increase quantity
+        cartItem.qty++;
       }
       return cartItem;
     });
@@ -180,16 +161,13 @@ function increaseQty(item) {
     if (cartItem) {
       cartItem.quantity++;
     }
-
   }
-  // TODO: Gọi API cập nhật nếu backend hỗ trợ
 }
 
 // Giảm số lượng hoặc xóa
 function decreaseQty(item) {
   if (item.quantity > 1) {
     item.quantity--
-    // TODO: Gọi API cập nhật nếu backend hỗ trợ
   } else {
     handleUpdateQuantityCartWhileLogin(item, "decrease")
     removeItem(item)

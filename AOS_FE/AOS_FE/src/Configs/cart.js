@@ -53,8 +53,6 @@ async function handleUpdateQuantityCartWhileLogin(itemCart, updateType) {
             createdAt: '',
             updatedAt: '',
         }
-        console.log("DEBUGADDING CART", itemUpdate, updateType)
-        // await api.put('/addToCart', { itemUpdate, updateType });
         await api.put(
             '/addToCart?updateType=' + updateType, itemUpdate
         )

@@ -61,16 +61,13 @@ public class CartHandleAPI {
 		try {
 			// Find the existing cart item by ID
 			CartItems existingItem = cartItemsService.cartItemsFindById(entity.getId()).orElse(null);
-
 			if (existingItem != null) {
 				int currentQty = entity.getQty();
-
 				switch (updateType) {
 				case "increase":
 					existingItem.setQty(currentQty + 1);
 					cartItemsService.cartItemsSave(existingItem);
 					break;
-
 				case "decrease":
 					if (currentQty - 1 <= 0) {
 						cartItemsService.cartItemsDeleteById(entity.getId());
@@ -80,16 +77,13 @@ public class CartHandleAPI {
 						cartItemsService.cartItemsSave(existingItem);
 					}
 					break;
-
 				default:
 					return ResponseEntity.badRequest().body(Map.of("message", "Invalid update type"));
 				}
-
 				return ResponseEntity.ok(existingItem);
 			} else {
 				return ResponseEntity.status(404).body(Map.of("message", "Cart item not found"));
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body(Map.of("message", "An error occurred"));
