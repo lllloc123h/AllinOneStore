@@ -5,142 +5,28 @@
       <div class="col-lg-8">
         <table class="table table-borderless align-middle">
           <thead class="cart-header">
-            <tr class="border-1">
-              <!-- Checkbox cột -->
-              <th>
-                <input
-                  type="checkbox"
-                  :checked="isAllSelected"
-                  @change="toggleSelectAll"
-                />
-              </th>
-              <th class="text-start">Sản phẩm</th>
+            <tr>
+              <th></th>
+              <th></th> <!-- Checkbox cột -->
+              <th>Sản phẩm</th>
               <th>Giá</th>
               <th class="text-center">Số lượng</th>
-              <th style="width: 20%" class="text-end">Tổng</th>
-              <th></th>
+              <th class="text-end">Tổng</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in cart" :key="item.id" class="border-bottom">
               <td>
-                <input
-                  type="checkbox"
-                  v-model="selectedItems"
-                  :value="item.productItemId"
-                />
+                <button class="btn btn-sm text-danger" @click="removeItem(item)">
+                  ✕
+                </button>
               </td>
               <td>
-                <div class="d-flex position-relative align-items-center">
-                  <span
-                    class="position-relative mt-2 mb-2"
-                    style="height: 125px; width: 156px"
-                  >
-                    <img :src="item.image" class="img-thumbnail me-2" />
-                    <!-- Thay nút Ưu đãi -->
-                    <button
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModalToggle"
-                      class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      @click="openPromotionModal(item.id)"
-                      type="button"
-                    >
-                      <i class="bi bi-gift-fill"></i> Ưu đãi
-                    </button>
-                    <!-- Modal của Ưu đãiiiiiiiiiii -->
-                    <div
-                      class="modal fade"
-                      id="exampleModalToggle"
-                      aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel"
-                      tabindex="-1"
-                    >
-                      <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
-                              Ưu đãi hiện có
-                            </h1>
-                            <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
-                          </div>
-                          <div class="modal-body">
-                            <div v-for="item in promotions" :key="item.id" class="mb-3">
-                              <div class="card border-0 shadow-sm">
-                                <div class="card-body py-2 px-3">
-                                  <div class="d-flex align-items-center mb-1">
-                                    <span class="badge bg-warning text-dark me-2">
-                                      <i class="bi bi-gift-fill me-1"></i> Ưu đãi
-                                    </span>
-                                    <span class="fw-bold">{{ item.name }}</span>
-                                  </div>
-                                  <div class="text-muted" style="font-size: 0.97em">
-                                    {{ item.description }}
-                                  </div>
-                                  <div class="mt-1" style="font-size: 0.92em">
-                                    <span class="text-success"
-                                      >Còn lại: {{ item.qty }}</span
-                                    >
-                                    <span class="ms-3 text-secondary">
-                                      HSD: {{ new Date(item.endAt).toLocaleDateString() }}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button
-                              class="btn btn-primary"
-                              data-bs-target="#exampleModalToggle2"
-                              data-bs-toggle="modal"
-                            >
-                              Open second modal
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="modal fade"
-                      id="exampleModalToggle2"
-                      aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel2"
-                      tabindex="-1"
-                    >
-                      <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">
-                              Modal 2
-                            </h1>
-                            <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
-                          </div>
-                          <div class="modal-body">
-                            Hide this modal and show the first with the button below.
-                          </div>
-                          <div class="modal-footer">
-                            <button
-                              class="btn btn-primary"
-                              data-bs-target="#exampleModalToggle"
-                              data-bs-toggle="modal"
-                            >
-                              Back to first
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </span>
+                <input type="checkbox" v-model="selectedItems" :value="item.productItemId" />
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img :src="item.image" class="img-thumbnail me-2" style="width: 60px; height: 60px;" />
                   {{ item.name }}
                 </div>
               </td>
@@ -152,14 +38,7 @@
                   <button class="btn btn-sm" @click="increaseQty(item)">＋</button>
                 </div>
               </td>
-              <td class="text-end">
-                {{ (item.price * item.quantity).toLocaleString() }}₫
-              </td>
-              <td>
-                <button class="btn btn-sm text-danger" @click="removeItem(item)">
-                  ✕
-                </button>
-              </td>
+              <td class="text-end">{{ (item.price * item.quantity).toLocaleString() }}₫</td>
             </tr>
           </tbody>
         </table>
@@ -184,13 +63,8 @@
               <span>{{ selectedTotal.toLocaleString() }}₫</span>
             </li>
           </ul>
-          <button
-            class="btn btn-dark w-100"
-            :disabled="selectedItems.length === 0"
-            @click="checkout"
-          >
-            Thanh toán
-          </button>
+          <button class="btn btn-dark w-100" :disabled="selectedItems.length === 0" @click="checkout">Thanh
+            toán</button>
         </div>
       </div>
     </div>
@@ -199,11 +73,7 @@
     <div class="mt-5">
       <h5 class="mb-4">Bạn cũng có thể thích</h5>
       <div class="row">
-        <div
-          class="col-6 col-md-3"
-          v-for="(product, index) in suggestions"
-          :key="'suggestion-' + index"
-        >
+        <div class="col-6 col-md-3" v-for="(product, index) in suggestions" :key="'suggestion-' + index">
           <div class="text-center">
             <img :src="product.image" class="suggestion-img mb-2" />
             <div>{{ product.name }}</div>
@@ -217,112 +87,77 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
-import { authService, cartService } from "../../Configs/api";
-import {
-  finalHandleCartProgress,
-  handleUpdateQuantityCartWhileLogin,
-} from "../../Configs/cart";
-const router = useRouter();
-const cart = ref([]);
-const selectedItems = ref([]);
-const promotions = ref([]);
-function openPromotionModal(productItemId) {
-  promotions.value = [];
-  promotions.value.push({
-    id: 1,
-    name: "Giảm giá 10%",
-    description: "Giảm giá 10%",
-    type: "COMBO",
-    discountType: null,
-    discountValue: null,
-    comboPrice: null,
-    qty: 45,
-    startAt: "2023-01-01T00:00:00Z",
-    endAt: "2023-12-31T23:59:59Z",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  });
-}
-
-const isAllSelected = computed(
-  () =>
-    cart.value.length > 0 &&
-    cart.value.every((item) => selectedItems.value.includes(item.productItemId))
-);
-
-function toggleSelectAll(e) {
-  if (e.target.checked) {
-    selectedItems.value = cart.value.map((item) => item.productItemId);
-  } else {
-    selectedItems.value = [];
-  }
-}
+import { ref, computed, onMounted, watch } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { authService, cartService } from '../../Configs/api'
+import { finalHandleCartProgress, handleUpdateQuantityCartWhileLogin } from "../../Configs/cart";
+const router = useRouter()
+const cart = ref([])
+const selectedItems = ref([])
 async function loadCart() {
   try {
     const response = await cartService.getCart();
     if (authService.isLogged()) {
-      cart.value = response.map((item) => ({
+      cart.value = response.map(item => ({
         id: item.id,
         productItemId: item.productItems.id,
         name: item.productItems.name,
         price: item.productItems.price,
         quantity: item.qty,
-        image: item.productItems.image,
+        image: item.productItems.image
       }));
-      console.log(cart.value);
-      selectedItems.value = cart.value.map((item) => item.productItemId);
+      console.log(cart.value)
+      selectedItems.value = cart.value.map(item => item.productItemId);
+
     } else {
-      cart.value = response.map((item) => ({
+      cart.value = response.map(item => ({
         id: item.id,
         productItemId: item.productItemId,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        image: item.image,
+        image: item.image
       }));
-      selectedItems.value = cart.value.map((item) => item.productItems);
+      selectedItems.value = cart.value.map(item => item.productItems);
+
     }
   } catch (error) {
-    console.error("Failed to load cart:", error);
+    console.error('Failed to load cart:', error);
   }
 }
 
 // Xóa sản phẩm
 function removeItem(item) {
-  cart.value = cart.value.filter((i) => i.productItemId !== item.productItemId);
-  selectedItems.value = selectedItems.value.filter(
-    (productItemId) => productItemId !== item.productItemId
-  );
-  cart.value = cart.value.filter((i) => i.productItemId !== item.productItemId);
-  selectedItems.value = selectedItems.value.filter((id) => id !== item.productItemId);
+  cart.value = cart.value.filter(i => i.productItemId !== item.productItemId)
+  selectedItems.value = selectedItems.value.filter(productItemId => productItemId !== item.productItemId)
+  cart.value = cart.value.filter(i => i.productItemId !== item.productItemId);
+  selectedItems.value = selectedItems.value.filter(id => id !== item.productItemId);
 
   if (authService.isLogged()) {
     // ✅ Call API to remove from backend
     // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`);
   } else {
-    let tempCart = JSON.parse(localStorage.getItem("cart")) ?? [];
-    tempCart = tempCart.filter((i) => i.productItems !== item.productItemId);
-    localStorage.setItem("cart", JSON.stringify(tempCart));
+    let tempCart = JSON.parse(localStorage.getItem('cart')) ?? [];
+    tempCart = tempCart.filter(i => i.productItems !== item.productItemId);
+    localStorage.setItem('cart', JSON.stringify(tempCart));
   }
 }
 // Tăng số lượng
 function increaseQty(item) {
   if (authService.isLogged()) {
-    handleUpdateQuantityCartWhileLogin(item, "increase");
-    item.quantity++;
+    handleUpdateQuantityCartWhileLogin(item, "increase")
+    item.quantity++
   } else {
-    let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
-    tempLocalList = tempLocalList.map((cartItem) => {
+    let tempLocalList = JSON.parse(localStorage.getItem('cart')) ?? [];
+    tempLocalList = tempLocalList.map(cartItem => {
       if (cartItem.productItems === item.productItemId) {
         cartItem.qty++;
       }
       return cartItem;
     });
-    localStorage.setItem("cart", JSON.stringify(tempLocalList));
-    const cartItem = cart.value.find((c) => c.productItemId === item.productItemId);
+    localStorage.setItem('cart', JSON.stringify(tempLocalList));
+    const cartItem = cart.value.find(c => c.productItemId === item.productItemId);
     if (cartItem) {
       cartItem.quantity++;
     }
@@ -332,10 +167,10 @@ function increaseQty(item) {
 // Giảm số lượng hoặc xóa
 function decreaseQty(item) {
   if (item.quantity > 1) {
-    item.quantity--;
+    item.quantity--
   } else {
-    handleUpdateQuantityCartWhileLogin(item, "decrease");
-    removeItem(item);
+    handleUpdateQuantityCartWhileLogin(item, "decrease")
+    removeItem(item)
   }
 }
 
@@ -343,82 +178,38 @@ function decreaseQty(item) {
 const selectedTotal = computed(() => {
   if (authService.isLogged()) {
     return cart.value
-      .filter((item) => selectedItems.value.includes(item.productItemId))
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
+      .filter(item => selectedItems.value.includes(item.productItemId))
+      .reduce((sum, item) => sum + item.price * item.quantity, 0)
   } else {
     return cart.value
-      .filter((item) => selectedItems.value.includes(item.productItemId))
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
+      .filter(item => selectedItems.value.includes(item.productItemId))
+      .reduce((sum, item) => sum + item.price * item.quantity, 0)
   }
-});
+
+})
 
 // Gửi dữ liệu thanh toán
 function checkout() {
-  const selectedProducts = cart.value.filter((item) =>
+  const selectedProducts = cart.value.filter(item =>
     selectedItems.value.includes(item.productItemId)
-  );
+  )
   router.push({
-    name: "CheckoutPage",
+    name: 'CheckoutPage',
     query: {
-      products: JSON.stringify(selectedProducts),
-    },
+      products: JSON.stringify(selectedProducts)
+    }
   });
 }
 
 // Tải giỏ hàng khi trang được mount
 onMounted(() => {
-  loadCart();
-  // Thêm đơn hàng mẫu nếu cart rỗng (chỉ để test)
-  setTimeout(() => {
-    if (cart.value.length === 0) {
-      cart.value = [
-        {
-          id: 1,
-          productItemId: 101,
-          name: "Áo thun basic",
-          price: 120000,
-          quantity: 2,
-          image:
-            "https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png",
-        },
-
-        {
-          id: 3,
-          productItemId: 103,
-          name: "Váy yếm jean",
-          price: 300000,
-          quantity: 1,
-          image:
-            "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png",
-        },
-        {
-          id: 4,
-          productItemId: 103,
-          name: "Váy yếm jean",
-          price: 300000,
-          quantity: 1,
-          image:
-            "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png",
-        },
-        {
-          id: 6,
-          productItemId: 102,
-          name: "Quần jeans xanh",
-          price: 250000,
-          quantity: 1,
-          image:
-            "https://res.cloudinary.com/da2v8uqir/image/upload/v1751964597/qclbaowfuxqfbudyc5fh.jpg",
-        },
-      ];
-      selectedItems.value = cart.value.map((item) => item.productItemId);
-    }
-  }, 200);
-});
-
+  loadCart()
+})
 // watch(() => selectedItems.value, (newvalue) => {
 //   console.log(selectedProducts[newvalue])
 // })
 </script>
+
 
 <style scoped>
 img.img-thumbnail {
