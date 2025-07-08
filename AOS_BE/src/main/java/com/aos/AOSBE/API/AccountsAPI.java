@@ -77,7 +77,6 @@ public class AccountsAPI {
 		response.put("content", accounts);
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
-
 	}
 
 	@GetMapping("/test")
@@ -85,18 +84,6 @@ public class AccountsAPI {
 		return ResponseEntity.ok(authoritiesService.findAllByEmail("adminCUDE@gmail.com").stream()
 				.map(authority -> authority.getAccounts().getEmail()).toList());
 	}
-
-//	@GetMapping("/user/Accounts")
-//	public ResponseEntity<List<AccountsDTOS>> getAllAccountsApiUser(@RequestParam(defaultValue = "0") int page,
-//			@RequestParam(defaultValue = "5") int size) {
-//
-//		List<AccountsDTOS> accounts = new ArrayList<AccountsDTOS>();
-//		accountsService.accountsFindAll(page, size, filters).forEach(e -> {
-//			accounts.add(accountsMapper.mapper(e));
-//		});
-//		accounts.stream().forEach(e -> System.out.println(e.getEmail()));
-//		return ResponseEntity.ok(accounts);
-//	}
 
 	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
@@ -106,7 +93,6 @@ public class AccountsAPI {
 
 	@PostMapping("/admin/Accounts")
 	public ResponseEntity<Accounts> addNewAccounts(@RequestBody AccountsDTOS entity) {
-
 		Accounts saved = accountsService.accountsSave(accountsMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
 	}
@@ -152,7 +138,6 @@ public class AccountsAPI {
 		} catch (AuthenticationException e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Sai thông tin đăng nhập"));
 		}
-
 	}
 
 	@PostMapping("/Accounts/register")

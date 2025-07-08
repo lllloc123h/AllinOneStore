@@ -13,24 +13,29 @@ import com.aos.AOSBE.Repository.PromotionProductsRepository;
 @Service
 public class PromotionProductsService {
 
-    @Autowired
-    private PromotionProductsRepository promotionProductsRepository;
+	@Autowired
+	private PromotionProductsRepository promotionProductsRepository;
 
-    public Optional<PromotionProducts> findById(int id) {
-        return promotionProductsRepository.findById(id);
-    }
+	public Optional<PromotionProducts> findById(int id) {
+		return promotionProductsRepository.findById(id);
+	}
 
-    @Transactional
-    public PromotionProducts save(PromotionProducts entity) {
-        return promotionProductsRepository.save(entity);
-    }
+	@Transactional
+	public PromotionProducts save(PromotionProducts entity) {
+		return promotionProductsRepository.save(entity);
+	}
 
-    @Transactional
-    public void deleteById(int id) {
-        promotionProductsRepository.deleteById(id);
-    }
+	@Transactional
+	public void deleteById(int id) {
+		promotionProductsRepository.deleteById(id);
+	}
 
-    public List<PromotionProducts> findByProductItemsId(int productItemId) {
-        return promotionProductsRepository.findByProductItems_Id(productItemId);
-    }
+	public List<PromotionProducts> findByProductItemsId(int productItemId) {
+		return promotionProductsRepository.findByProductItems_Id(productItemId);
+	}
+
+	public List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId) {
+		return promotionProductsRepository.findPromotionProductsByPromotionId(promotionId);
+	}
+
 }

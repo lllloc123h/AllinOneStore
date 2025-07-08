@@ -1,9 +1,7 @@
 package com.aos.AOSBE.DTOS;
-import jakarta.persistence.*;
 
 import java.time.*;
-import java.math.*;
-import java.util.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ public class PromotionsDTOS {
     private String discountType;
     private double discountValue;
     private double comboPrice;
-    private int usageLimit;
+    private int qty;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private boolean isActive;
