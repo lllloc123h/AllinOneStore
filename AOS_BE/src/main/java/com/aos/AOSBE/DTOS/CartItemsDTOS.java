@@ -17,4 +17,5 @@ public class CartItemsDTOS {
 	private String accounts;
 	private int productItems;
 	private int promotions;
+	private String comboGroup;
 }

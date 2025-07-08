@@ -15,10 +15,7 @@ public interface PromotionProductsRepository extends JpaRepository<PromotionProd
 //    @Query("SELECT pp FROM PromotionProducts pp WHERE pp.promotions.id = ?1")
 //    List<PromotionProducts> findByProductItemsId(int productItemId);
 
-
-
-    @Query("SELECT p FROM PromotionProducts p WHERE p.productItems.id = ?1 AND p.promotions.isActive = true" +
-            " AND p.promotions.startAt <= CURRENT_DATE AND p.promotions.endAt >= CURRENT_DATE")
-    List<PromotionProducts> findActivePromotionProductsByProductItemId(int productItemId);
+    @Query("SELECT p FROM PromotionProducts p WHERE p.promotions.id = ?1 AND p.promotions.isActive = true")
+    List<PromotionProducts> findActivePromotionProductsByPromotionId(int promotionId);
 }
 

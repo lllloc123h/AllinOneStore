@@ -19,15 +19,26 @@ public class CartItemsMapper {
 	private PromotionsService promotionsService;
 
 	public CartItemsDTOS mapper(CartItems entity) {
-		return new CartItemsDTOS(entity.getId(), entity.getQty(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				entity.getAccounts().getEmail(), entity.getProductItems().getId(), entity.getPromotions().getId());
+		return new CartItemsDTOS(entity.getId(),
+				entity.getQty(),
+				entity.getCreatedAt(),
+				entity.getUpdatedAt(),
+				entity.getAccounts().getEmail(),
+				entity.getProductItems().getId(),
+				entity.getPromotions().getId(),
+				entity.getComboGroup());
 	}
 
 	public CartItems mapperToObject(CartItemsDTOS entity) {
-		return new CartItems(entity.getId(), entity.getQty(), entity.getCreatedAt(), entity.getUpdatedAt(),
+		return new CartItems(
+				entity.getId(),
+				entity.getQty(),
+				entity.getCreatedAt(),
+				entity.getUpdatedAt(),
 				accountsService.accountsFindByEmail(entity.getAccounts()).orElse(null),
 				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-				promotionsService.promotionsFindById(entity.getPromotions()).orElse(null));
+				promotionsService.promotionsFindById(entity.getPromotions()).orElse(null),
+				entity.getComboGroup());
 	}
 
 }

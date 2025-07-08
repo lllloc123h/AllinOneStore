@@ -27,7 +27,9 @@ public class OrderItemsMapper {
 				    entity.getUpdatedAt(),
 				    entity.getOrders().getId(),
 				    entity.getProductItems().getId(),
-				    entity.getPromotions().getId()
+				    entity.getPromotions().getId(),
+				entity.getComboGroup(),
+				entity.getIdComboGroup()
 			);
 	}
 	public OrderItems mapperToObject(OrderItemsDTOS entity) {
@@ -43,7 +45,9 @@ public class OrderItemsMapper {
 					entity.getUpdatedAt(),
 					ordersService.ordersFindById(entity.getOrders()).orElse(null),
 					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null)
+					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null),
+					entity.getComboGroup(),
+				entity.getIdComboGroup()
 			);
 	}
 	

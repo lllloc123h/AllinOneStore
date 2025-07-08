@@ -34,6 +34,14 @@ public class PromotionsAPI {
 	@Autowired
 	private PromotionsMapper promotionsMapper;
 
+	@GetMapping("/Promotions/{productItemId}")
+	public ResponseEntity<?> getAllPromotionByProductItemId(@PathVariable("productItemId") int productItemId) {
+		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrue(productItemId);
+		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
+		return ResponseEntity.ok(promotionsDTOS);
+	}
+
+
 	@GetMapping("/admin/Promotions")
 	public ResponseEntity<?> getAllPromotionsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {

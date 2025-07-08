@@ -22,4 +22,6 @@ public class OrderItemsDTOS {
     private int orders;
     private int productItems;
     private int promotions;
+    private String comboGroup;
+    private String idComboGroup;
 }
