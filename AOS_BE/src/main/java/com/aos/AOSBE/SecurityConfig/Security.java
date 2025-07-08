@@ -42,11 +42,13 @@ public class Security {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
 						"/api/test", "/api/Accounts/verify-otp", "/api/BaseProducts/**", "/api/test",
+
 						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback",
 						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**",
-"/api/Promotions/**"
+						"/api/Promotions/**"
 //								,
 //								"/api/cart"
+
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(info -> info.userService(customOAuth2UserService))
@@ -88,7 +90,7 @@ public class Security {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOriginPatterns(List.of("http://localhost:5173","https://allinstore.me"));
+		config.setAllowedOriginPatterns(List.of("http://localhost:5173", "https://allinstore.me"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
