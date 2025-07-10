@@ -80,13 +80,20 @@ public class ProductItemsAPI {
 
 	@GetMapping("/admin/ProductItems/{id}")
 	public ResponseEntity<ProductItems> getProductItemsByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
 		ProductItems productItems = (ProductItems) productItemsService.productItemsFindById(id)
 				.orElse(new ProductItems());
 		return ResponseEntity.ok(productItems);
+	}
+
+	@GetMapping("/admin/ProductItems/ByBaseProductId/{id}")
+	public ResponseEntity<?> getProductItemsByBaseProductIdIdApi(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @PathVariable int id) {
+		try {
+			Page<ProductItems> productItems = productItemsService.productItemsFindByBaseProductId(page, size, id);
+			return ResponseEntity.ok(productItems);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra" + e.getMessage()));
+		}
 	}
 
 	@PostMapping("/admin/ProductItems")
@@ -203,30 +210,31 @@ public class ProductItemsAPI {
 		}
 
 	}
+
 	@GetMapping("/ProductItems/detail/{id}")
-public ResponseEntity<?> getProductItemDetail(@PathVariable int id) {
-	try {
-		ProductItems productItem = productItemsService.productItemsFindById(id)
-				.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+	public ResponseEntity<?> getProductItemDetail(@PathVariable int id) {
+		try {
+			ProductItems productItem = productItemsService.productItemsFindById(id)
+					.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
-		ProductItemsDTOS productItemDTO = productItemsMapper.mapper(productItem);
+			ProductItemsDTOS productItemDTO = productItemsMapper.mapper(productItem);
 
-		List<ProductImagesDTOS> images = productImagesService.findByProductItemsId(id).stream()
-				.map(productImagesMapper::mapper).collect(Collectors.toList());
+			List<ProductImagesDTOS> images = productImagesService.findByProductItemsId(id).stream()
+					.map(productImagesMapper::mapper).collect(Collectors.toList());
 
-		List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findByProductItemsId(id).stream()
-				.map(priceHistoriesMapper::mapper).collect(Collectors.toList());
+			List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findByProductItemsId(id).stream()
+					.map(priceHistoriesMapper::mapper).collect(Collectors.toList());
 
-		List<PromotionProductDTOS> promotions = promotionProductsService.findByProductItemsId(id).stream()
-				.map(promotionProductMapper::mapper).collect(Collectors.toList());
+			List<PromotionProductDTOS> promotions = promotionProductsService.findByProductItemsId(id).stream()
+					.map(promotionProductMapper::mapper).collect(Collectors.toList());
 
-		ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, priceHistories, promotions);
+			ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, priceHistories, promotions);
 
-		return ResponseEntity.ok(detail);
+			return ResponseEntity.ok(detail);
 
-	} catch (Exception e) {
-		return ResponseEntity.badRequest().body(Map.of("message", "Lỗi: " + e.getMessage()));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Lỗi: " + e.getMessage()));
+		}
 	}
-}
-	
+
 }

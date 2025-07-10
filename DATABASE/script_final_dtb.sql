@@ -1,4 +1,4 @@
-﻿create database all_in_store;
+﻿--create database all_in_store;
 --drop database all_in_store
 use all_in_store
 go
@@ -84,7 +84,6 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 create table
 	roles (
@@ -93,7 +92,7 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	) 
-	go
+go
 create table
 	authorities (
 		id int identity (1, 5) primary key,
@@ -104,7 +103,7 @@ create table
 		foreign key (account_id) references accounts (id),
 		foreign key (role_id) references roles (id)
 	) 
-	GO
+GO
 create table
 	user_addresses (
 		id int identity (1, 1) primary key,
@@ -122,7 +121,6 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (account_id) references accounts (id)
 	);
-
 GO
 create table
 	catalogs (
@@ -131,7 +129,6 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 create table
 	categories (
@@ -142,7 +139,6 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (catalog_id) references catalogs (id)
 	);
-
 GO
 create table
 	base_products (
@@ -159,7 +155,6 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (category_id) references categories (id)
 	);
-
 GO
 create table
 	product_items (
@@ -178,7 +173,6 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (base_id) references base_products (id)
 	);
-
 GO
 create table
 	customs (
@@ -192,7 +186,6 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id)
 	);
-
 GO
 CREATE TABLE
 	user_logs (
@@ -205,7 +198,6 @@ CREATE TABLE
 		created_at DATETIME DEFAULT GETDATE (),
 		module NVARCHAR (100)
 	);
-
 GO
 create table
 	product_images (
@@ -216,7 +208,6 @@ create table
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id)
 	);
-
 GO
 create table
 	news (
@@ -227,7 +218,6 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 CREATE TABLE
 	promotions (
@@ -245,7 +235,6 @@ CREATE TABLE
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 CREATE TABLE
 	promotion_products (
@@ -260,7 +249,6 @@ CREATE TABLE
 		foreign key (product_item_id) references product_items (id),
 		foreign key (promotion_id) references promotions (id),
 	);
-
 GO
 create table
 	cost_histories (
@@ -270,7 +258,6 @@ create table
 		created_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id)
 	);
-
 GO
 create table
 	price_histories (
@@ -280,7 +267,6 @@ create table
 		created_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id)
 	);
-
 GO
 create table
 	reviews (
@@ -297,7 +283,6 @@ create table
 		foreign key (product_item_id) references product_items (id),
 		foreign key (account_id) references accounts (id)
 	);
-
 GO
 create table
 	cart_items (

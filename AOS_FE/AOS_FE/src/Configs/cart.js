@@ -50,6 +50,7 @@ async function handleUpdateQuantityCartWhileLogin(itemCart, updateType) {
             productItems: itemCart.productItemId,
             qty: itemCart.quantity,
             promotions: '',
+            comboGroup: '',
             createdAt: '',
             updatedAt: '',
         }
