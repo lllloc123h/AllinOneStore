@@ -25,7 +25,9 @@ public class ProductItemsMapper {
 				    entity.getSellEnd(),
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
-				    entity.getBaseProducts().getId()
+				    entity.getBaseProducts().getId(),
+					entity.getBaseProducts().getName(),
+					entity.getBaseProducts().getMaterial()
 			);
 	}
 	public ProductItems mapperToObject(ProductItemsDTOS entity) {

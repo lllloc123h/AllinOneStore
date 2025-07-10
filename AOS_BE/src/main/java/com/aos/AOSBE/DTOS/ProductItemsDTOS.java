@@ -25,4 +25,6 @@ public class ProductItemsDTOS {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int baseProducts;
+    private String name;
+    private String material;
 }
