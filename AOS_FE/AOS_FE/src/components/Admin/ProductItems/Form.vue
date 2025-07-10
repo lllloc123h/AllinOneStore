@@ -40,7 +40,7 @@
           </div>
           <div class="col-md-6 mb-2">
             <strong>Category ID:</strong> {{categoriesDropDownList.find(c => c.id === selectedProduct.categoryId)?.name
-              || 'Unknown' }}
+              || 'Unknown'}}
           </div>
 
         </div>
@@ -202,6 +202,7 @@ import { dropDown, dropDownVariant } from '../../../Configs/DropDownList.js'
 import ImageUpload from '../../Module/ImageUpload.vue'
 import { storage } from "../../../Configs/firebase.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import api from '../../../Configs/api.js'
 const props = defineProps({
   TableName: {
     type: String,
@@ -278,15 +279,15 @@ const itemToAddList = reactive({
   createdAt: '',
   updatedAt: '',
 })
-async function handleImg(mainImage) {
-  const fileRef = storageRef(storage, "products/" + mainImage);
-  try {
-    const url = await getDownloadURL(fileRef);
-    return url;
-  } catch (error) {
-    return "https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media";
-  }
-}
+// async function handleImg(mainImage) {
+//   const fileRef = storageRef(storage, "products/" + mainImage);
+//   try {
+//     const url = await getDownloadURL(fileRef);
+//     return url;
+//   } catch (error) {
+//     return "https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media";
+//   }
+// }
 const listDashBoard = [
   "Accounts",
   "Authorities",
@@ -327,6 +328,51 @@ const fetchData = async () => {
     }
   } catch (err) {
     console.error('Get failed:', err)
+  }
+}
+{/* <div class="variant-preview mt-4">
+  <h5 class="mb-3">Danh sách biến thể đã thêm:</h5>
+  <div v-if="list.length === 0" class="text-muted">Chưa có biến thể nào được thêm.</div>
+  <ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(item, index) in list"
+            :key="index">
+    <div class="d-flex align-items-center">
+      <img:src="item.imgPreview || previewMainImg" alt="Preview" class="me-3 rounded"
+                style="width: 50px; height: 50px; object-fit: cover;" />
+      <div>
+        <strong>{{ item.name }}</strong><br />
+        <small>
+          SKU: {{ item.sku }} |
+          Giá: {{ item.price }} |
+          SL: {{ item.qty }}
+        </small><br />
+        <small class="text-muted">Ảnh: {{ item.fileNameImgOfVariant || 'Không có' }}</small>
+      </div>
+    </div>
+    <button class="btn btn-sm btn-outline-danger" @click="removeVariant(index)">Xóa</button>
+</li>
+        </ul >
+      </div > */}
+
+
+async function getProductItems(id) {
+  if (!props.TableName) return
+  try {
+    const response = await api.get('/admin/ProductItems/ByBaseProductId/' + id)
+    if (response.data.content && response.data.content.length > 0) {
+      list.value = response.data.content.map(item => {
+        return {
+          ...item,
+          imgPreview: item.imgPreview || previewMainImg.value || '',
+          fileNameImgOfVariant: item.fileNameImgOfVariant || ''
+        }
+      })
+    } else {
+      list.value = []
+    }
+
+  } catch (error) {
+    console.error('Get failed:', error)
   }
 }
 function handleSubmit() {
@@ -409,7 +455,7 @@ async function selectBaseProduct(product) {
   selectedProduct.value = product
   itemToAddList.value = { ...product };
   itemToAddList.baseId = product.id;
-  previewMainImg.value = await handleImg(product.mainImage)
+  // previewMainImg.value = await handleImg(product.mainImage)
 }
 function selectColor(color) {
   selectedVarriantColor.value = color
@@ -440,9 +486,14 @@ watch([() => selectedVarriantColor.value, () => selectedVarriantSize.value], () 
 watch(() => mapSku.value, () => {
   selectedProduct.value.sku = mapSku.value
 })
+
+watch(() => selectedProduct.value, (newValue) => {
+  getProductItems(newValue.id);
+});
+
 watch(() => dropDownListBaseProduct.value, async () => {
   for (const product of dropDownListBaseProduct.value) {
-    product.mainImagePreviewImg = await handleImg(product.mainImage)
+    // product.mainImagePreviewImg = await handleImg(product.mainImage)
   }
 })
 </script>
