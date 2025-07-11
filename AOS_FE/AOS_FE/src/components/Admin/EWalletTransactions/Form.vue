@@ -45,6 +45,28 @@
         </div>
 
         <div class="mb-3">
+          <label :for="orderId" class="form-label text-capitalize">orderId</label>
+          <input
+            :id="orderId"
+            v-model="formData.orderId"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter orderId`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="status" class="form-label text-capitalize">status</label>
+          <input
+            :id="status"
+            v-model="formData.status"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter status`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="relatedWalletId" class="form-label text-capitalize">relatedWalletId</label>
           <input
             :id="relatedWalletId"
@@ -112,42 +134,12 @@
     			id: '',
     			amount: '',
     			transactionType: '',
+    			orderId: '',
+    			status: '',
     			relatedWalletId: '',
     			description: '',
     			createdAt: '',
     })
-
-    const listDashBoard = [
-    	"Accounts",
-    	"Authorities",
-    	"BaseProducts",
-    	"Cancels",
-    	"CartItems",
-    	"Catalogs",
-    	"Categories",
-    	"CostHistories",
-    	"Coupons",
-    	"News",
-    	"OrderItems",
-    	"Orders",
-    	"PaymentMethods",
-    	"PriceHistories",
-    	"ProductImages",
-    	"ProductItems",
-    	"PromotionProduct",
-    	"Promotions",
-    	"PurchaseOrderItems",
-    	"PurchaseOrders",
-    	"Returns",
-    	"Reviews",
-    	"Roles",
-    	"ShippingMethods",
-    	"UserAddresses",
-    	"VariantValues",
-    	"Variants",
-    ]
-
-
 
     async function submitUpdateForm() {
     console.log(formData)
@@ -159,7 +151,6 @@
       console.error('Insert failed:', error)
     }
   }
-
 
   async function submitForm() {
     console.log(formData)

@@ -105,38 +105,6 @@
     			createdAt: '',
     })
 
-    const listDashBoard = [
-    	"Accounts",
-    	"Authorities",
-    	"BaseProducts",
-    	"Cancels",
-    	"CartItems",
-    	"Catalogs",
-    	"Categories",
-    	"CostHistories",
-    	"Coupons",
-    	"News",
-    	"OrderItems",
-    	"Orders",
-    	"PaymentMethods",
-    	"PriceHistories",
-    	"ProductImages",
-    	"ProductItems",
-    	"PromotionProduct",
-    	"Promotions",
-    	"PurchaseOrderItems",
-    	"PurchaseOrders",
-    	"Returns",
-    	"Reviews",
-    	"Roles",
-    	"ShippingMethods",
-    	"UserAddresses",
-    	"VariantValues",
-    	"Variants",
-    ]
-
-
-
     async function submitUpdateForm() {
     console.log(formData)
     try {
@@ -147,7 +115,6 @@
       console.error('Insert failed:', error)
     }
   }
-
 
   async function submitForm() {
     console.log(formData)
