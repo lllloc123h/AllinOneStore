@@ -69,7 +69,10 @@
             <div class="modal-body">
               <div class="mb-3">
                 <label for="mainImageUrl" class="form-label text-capitalize">mainImageUrl</label>
-                <ImageUpload @update-main-image-url="onAvatarUpdate" />
+                <ImageUpload :max-images="1" :max-videos="1" folder="products" :heightImg="0" :widthImg="0"
+                  :videoDuration="60" ref="imageUploadRef" @result-uploaded="handleGetUploadUrl" />
+
+                <!-- <ImageUpload @update-main-image-url="onAvatarUpdate" /> -->
               </div>
               <div v-if="formData.mainImageUrl" class="mb-3">
                 <label class="form-label">Preview Avatar:</label>
@@ -163,7 +166,7 @@
             <div class="d-flex align-items-center">
               <img :src="item.imgPreview || previewMainImg" alt="Preview" class="me-3 rounded"
                 style="width: 50px; height: 50px; object-fit: cover;" />
-              <div>
+              <div>NAME:
                 <strong>{{ item.name }}</strong><br />
                 <small>
                   SKU: {{ item.sku }} |
@@ -173,16 +176,16 @@
                 <small class="text-muted">Ảnh: {{ item.fileNameImgOfVariant || 'Không có' }}</small>
               </div>
             </div>
-            <button class="btn btn-sm btn-outline-danger" @click="removeVariant(index)">Xóa</button>
+            <button class="btn btn-sm btn-outline-danger" @click="removeVariant(item.id)">Xóa</button>
           </li>
         </ul>
       </div>
 
-      <button @click="handleSubmit" :disabled="props.action === 'view'" class="btn btn-primary">
+      <!-- <button @click="handleSubmit" :disabled="props.action === 'view'" class="btn btn-primary">
         <span v-if="props.action === 'create'">Create</span>
         <span v-else-if="props.action === 'create'">Create</span>
         <span v-else>Update</span>
-      </button>
+      </button> -->
       <!-- </form> -->
     </div>
   </div>
@@ -203,6 +206,7 @@ import ImageUpload from '../../Module/ImageUpload.vue'
 import { storage } from "../../../Configs/firebase.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import api from '../../../Configs/api.js'
+import { notification } from "ant-design-vue";
 const props = defineProps({
   TableName: {
     type: String,
@@ -222,6 +226,8 @@ const formTableService = createCrudService(props.TableName);
 const mapSku = ref()
 const dropDownListVariants = ref([])
 const dropDownListBaseProduct = ref(new Map())
+const imageUploadRef = ref([])
+
 const selectedProduct = ref({
   id: '',
   baseId: '',
@@ -359,11 +365,13 @@ async function getProductItems(id) {
   if (!props.TableName) return
   try {
     const response = await api.get('/admin/ProductItems/ByBaseProductId/' + id)
+    console.log('Get ProductItems successful:', response.data.content)
     if (response.data.content && response.data.content.length > 0) {
       list.value = response.data.content.map(item => {
         return {
           ...item,
-          imgPreview: item.imgPreview || previewMainImg.value || '',
+          name: item.baseProducts.name,
+          imgPreview: item.imageUrl || previewMainImg.value || '',
           fileNameImgOfVariant: item.fileNameImgOfVariant || ''
         }
       })
@@ -382,13 +390,9 @@ function handleSubmit() {
     submitUpdateForm()
   }
 }
-function onAvatarUpdate(url) {
-  // formData.mainImageUrl = url.filePath;
-  previewImg.value = url.downloadUrl
-  // selectedProduct.value.imagePreview = url.downloadUrl
-  // selectedProduct.value.imageName = previewImg.value
-  selectedProduct.value.imgPreview = url.downloadUrl
-  selectedProduct.value.fileNameImgOfVariant = url.filePath
+const resultUpload = ref([])
+function handleGetUploadUrl(results) {
+  resultUpload.value = results;
 }
 async function submitUpdateForm() {
   console.log(formData)
@@ -400,8 +404,22 @@ async function submitUpdateForm() {
     console.error('Insert failed:', error)
   }
 }
-function removeVariant(index) {
-  list.value.splice(index, 1)
+async function removeVariant(index) {
+  try {
+    const response = await api.delete('/admin/ProductItems/' + index)
+    console.log('Remove variant successful:', response.data)
+  } catch (error) {
+    console.error('Remove variant failed:', error)
+    notification.error({
+      message: 'Error',
+      description: `Lỗi khi xóa biến thể: ${error.message}`,
+    });
+  }
+  getProductItems(selectedProduct.value.baseId);
+  notification.success({
+    message: 'Success',
+    description: `Biến thể đã được xóa thành công.`,
+  });
 }
 async function submitForm() {
   console.log(formData)
@@ -419,40 +437,53 @@ const openModal = (product) => {
   selectedProduct.value = { ...product };
   showModal.value = true;
   itemToAddList.value.baseId = product.id;
+  console.log('Selected Product:', product)
   selectedProduct.value.baseId = product.id;
+  selectedProduct.value.id = '';
   selectedProduct.value.price = 0;
   selectedProduct.value.cost = 0;
 };
 const closeModal = () => {
-  console.log(list.value)
   showModal.value = false;
 };
-const addToCart = () => {
-  list.value.push({
-    ...selectedProduct.value,
-    imgPreview: selectedProduct.value.imgPreview || previewImg.value || '',
-    fileNameImgOfVariant: selectedProduct.value.fileNameImgOfVariant || ''
-  })
-  // if (!selectedProduct.value || quantity.value <= 0) return;
-  // console.log(quantity.value, selectedProduct.value.safetyStock)
-  // if (quantity.value < selectedProduct.value.safetyStock) {
-  //   finalHandleCartProgress(itemCart.value)
-  //   notification.success({
-  //     message: 'Success',
-  //     description: `Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`,
-  //   });
-  //   closeModal();
-  // } else {
-  //   // alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
-  //   notification.success({
-  //     message: 'Danger',
-  //     description: `Số lượng tông không đủ`,
-  //   });
+function splitSku(itemCheck) {
+  return itemCheck.split('-')[itemCheck.split('-').length - 2] + "-" + itemCheck.split('-')[itemCheck.split('-').length - 1]
+}
+
+async function addToCart() {
+  const isContain = list.value.filter(item => splitSku(item.sku) === selectedProduct.value.sku)
+  if (isContain.length > 0) {
+    closeModal()
+    notification.error({
+      message: 'Error',
+      description: `Biến thể đã tồn tại trong danh sách. Vui lòng chọn biến thể khác.`,
+    });
+    return;
+  }
+  const resultImgUpload = resultUpload.value;
+
+
+  try {
+    const responseSaveProductItem = await api.post('/admin/ProductItems', selectedProduct.value);
+    console.log('Insert successful:', responseSaveProductItem.data)
+    // console.log({ id: '', productItems: responseSaveProductItem.data.id, imageUrl: resultImgUpload[0].url })
+    const responseSaveImg = await api.post('/admin/ProductImages', { id: '', productItems: responseSaveProductItem.data.id, imageUrl: resultImgUpload[0].url });
+    console.log('Insert successful:', responseSaveImg.data)
+  } catch (error) {
+    console.error('Insert failed:', error)
+    notification.error({
+      message: 'Error',
+      description: `Lỗi khi thêm biến thể: ${error.message}`,
+    });
+    return;
+  }
+  getProductItems(selectedProduct.value.baseId);
+
   closeModal();
-  // }
 };
 async function selectBaseProduct(product) {
   selectedProduct.value = product
+  selectedProduct.value.baseId = product.id
   itemToAddList.value = { ...product };
   itemToAddList.baseId = product.id;
   // previewMainImg.value = await handleImg(product.mainImage)
@@ -488,7 +519,7 @@ watch(() => mapSku.value, () => {
 })
 
 watch(() => selectedProduct.value, (newValue) => {
-  getProductItems(newValue.id);
+  getProductItems(newValue.baseId);
 });
 
 watch(() => dropDownListBaseProduct.value, async () => {
@@ -566,7 +597,6 @@ watch(() => dropDownListBaseProduct.value, async () => {
 }
 
 .variant-preview ul {
-  max-height: 300px;
   overflow-y: auto;
 }
 

@@ -1718,80 +1718,80 @@ VALUES
   );
 
 --delete from promotions
-INSERT INTO
-  promotions (
-    name,
-    description,
-    type,
-    discount_type,
-    discount_value,
-    combo_price,
-    usage_limit,
-    start_at,
-    end_at,
-    is_active
-  )
-VALUES
-  (
-    N'Giảm giá mùa hè',
-    N'Giảm giá 15% cho toàn bộ sản phẩm hè',
-    'DISCOUNT',
-    'PERCENT',
-    15.00,
-    NULL,
-    500,
-    GETDATE (),
-    DATEADD (month, 2, GETDATE ()),
-    1
-  ),
-  (
-    N'Combo áo đôi',
-    N'Mua áo polo nam và áo croptop nữ với giá ưu đãi',
-    'COMBO',
-    NULL,
-    NULL,
-    250000.00,
-    100,
-    GETDATE (),
-    DATEADD (month, 1, GETDATE ()),
-    1
-  ),
-  (
-    N'Khuyến mãi Flash Sale',
-    N'Giảm giá sốc 20% cho một số sản phẩm chọn lọc trong 24 giờ',
-    'DISCOUNT',
-    'PERCENT',
-    20.00,
-    NULL,
-    200,
-    GETDATE (),
-    DATEADD (day, 1, GETDATE ()),
-    1
-  ),
-  (
-    N'Mua 2 tặng 1',
-    N'Mua 2 quần short thể thao tặng 1 áo thun tay ngắn bé trai',
-    'COMBO',
-    NULL,
-    NULL,
-    NULL,
-    50,
-    GETDATE (),
-    DATEADD (month, 1, GETDATE ()),
-    1
-  ),
-  (
-    N'Ưu đãi thành viên mới',
-    N'Giảm 100k cho đơn hàng đầu tiên từ 500k',
-    'DISCOUNT',
-    'AMOUNT',
-    100000.00,
-    NULL,
-    1000,
-    GETDATE (),
-    DATEADD (year, 1, GETDATE ()),
-    1
-  );
+--INSERT INTO
+--  promotions (
+--    name,
+--    description,
+--    type,
+--    discount_type,
+--    discount_value,
+--    combo_price,
+--    usage_limit,
+--    start_at,
+--    end_at,
+--    is_active
+--  )
+--VALUES
+--  (
+--    N'Giảm giá mùa hè',
+--    N'Giảm giá 15% cho toàn bộ sản phẩm hè',
+--    'DISCOUNT',
+--    'PERCENT',
+--    15.00,
+--    NULL,
+--    500,
+--    GETDATE (),
+--    DATEADD (month, 2, GETDATE ()),
+--    1
+--  ),
+--  (
+--    N'Combo áo đôi',
+--    N'Mua áo polo nam và áo croptop nữ với giá ưu đãi',
+--    'COMBO',
+--    NULL,
+--    NULL,
+--    250000.00,
+--    100,
+--    GETDATE (),
+--    DATEADD (month, 1, GETDATE ()),
+--    1
+--  ),
+--  (
+--    N'Khuyến mãi Flash Sale',
+--    N'Giảm giá sốc 20% cho một số sản phẩm chọn lọc trong 24 giờ',
+--    'DISCOUNT',
+--    'PERCENT',
+--    20.00,
+--    NULL,
+--    200,
+--    GETDATE (),
+--    DATEADD (day, 1, GETDATE ()),
+--    1
+--  ),
+--  (
+--    N'Mua 2 tặng 1',
+--    N'Mua 2 quần short thể thao tặng 1 áo thun tay ngắn bé trai',
+--    'COMBO',
+--    NULL,
+--    NULL,
+--    NULL,
+--    50,
+--    GETDATE (),
+--    DATEADD (month, 1, GETDATE ()),
+--    1
+--  ),
+--  (
+--    N'Ưu đãi thành viên mới',
+--    N'Giảm 100k cho đơn hàng đầu tiên từ 500k',
+--    'DISCOUNT',
+--    'AMOUNT',
+--    100000.00,
+--    NULL,
+--    1000,
+--    GETDATE (),
+--    DATEADD (year, 1, GETDATE ()),
+--    1
+--  );
 
 --INSERT INTO Promotion_Products (id, promotion_id, product_item_id, require_qty, is_gift, cost_share)
 --SELECT 1, p.id, pi.id, NULL, 0, NULL

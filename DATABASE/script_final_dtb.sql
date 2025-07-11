@@ -100,8 +100,8 @@ create table
 		role_id int not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id),
-		foreign key (role_id) references roles (id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE,
+		foreign key (role_id) references roles (id) ON DELETE CASCADE
 	) 
 GO
 create table
@@ -119,7 +119,7 @@ create table
 		note nvarchar (255),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -137,7 +137,7 @@ create table
 		name nvarchar (100) unique,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (catalog_id) references catalogs (id)
+		foreign key (catalog_id) references catalogs (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -153,7 +153,7 @@ create table
 		is_active bit default 1,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (category_id) references categories (id)
+		foreign key (category_id) references categories (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -171,7 +171,7 @@ create table
 		sell_end datetime default getdate (),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (base_id) references base_products (id)
+		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -184,7 +184,7 @@ create table
 		design_name nvarchar (50) not null, -- mặt trước, mặt sau 
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO
 CREATE TABLE
@@ -206,7 +206,7 @@ create table
 		image_url varchar(255) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -246,8 +246,8 @@ CREATE TABLE
 		cost_share decimal(3, 2),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id),
-		foreign key (promotion_id) references promotions (id),
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (promotion_id) references promotions (id) ON DELETE CASCADE,
 	);
 GO
 create table
@@ -256,7 +256,7 @@ create table
 		product_item_id int not null,
 		cost decimal(18, 2) not null,
 		created_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -265,7 +265,7 @@ create table
 		product_item_id int not null,
 		price decimal(18, 2) not null,
 		created_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -280,8 +280,8 @@ create table
 		image_url3 nvarchar (255),
 		video_url varchar(255),
 		created_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id),
-		foreign key (account_id) references accounts (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE
 	);
 GO
 create table
@@ -295,8 +295,8 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
-		foreign key (account_id) references accounts (id),
-		foreign key (combo_id) references promotions(id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE,
+		foreign key (combo_id) references promotions(id) ON DELETE CASCADE
 	);
 
 GO
@@ -342,9 +342,9 @@ create table
 		order_infor nvarchar (max) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id),
-		foreign key (payment_method_id) references payment_methods (id),
-		foreign key (shipping_method_id) references shipping_methods (id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE,
+		foreign key (payment_method_id) references payment_methods (id) ON DELETE CASCADE,
+		foreign key (shipping_method_id) references shipping_methods (id) ON DELETE CASCADE
 	);
 
 GO
@@ -357,7 +357,7 @@ create table
 		status nvarchar (50) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (order_id) references orders (id)
+		foreign key (order_id) references orders (id) ON DELETE CASCADE
 	);
 
 GO
@@ -377,9 +377,9 @@ create table
 		coupon_code nvarchar (50),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (order_id) references orders (id),
-		foreign key (product_item_id) references product_items (id),
-		foreign key (promotion_id) references promotions (id)
+		foreign key (order_id) references orders (id) ON DELETE CASCADE,
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (promotion_id) references promotions (id) ON DELETE CASCADE
 	);
 
 GO
@@ -403,7 +403,7 @@ CREATE TABLE
 		processed_at DATETIME NULL,
 		created_at DATETIME DEFAULT GETDATE (),
 		updated_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (order_product_item_id) REFERENCES order_items (id)
+		FOREIGN KEY (order_product_item_id) REFERENCES order_items (id) ON DELETE CASCADE
 	);
 
 GO
@@ -445,7 +445,7 @@ create table
 		description nvarchar (max) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (variant_id) references variants (id)
+		foreign key (variant_id) references variants (id) ON DELETE CASCADE
 	);
 
 
@@ -458,7 +458,7 @@ CREATE TABLE
 		wallet_type NVARCHAR (10) CHECK (wallet_type IN ('REAL', 'VIRTUAL')),
 		is_active BIT DEFAULT 1,
 		created_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (account_id) REFERENCES accounts (id)
+		FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 	);
 GO
 CREATE TABLE
@@ -474,7 +474,7 @@ CREATE TABLE
 		related_wallet_id INT NULL,
 		description NVARCHAR (255),
 		created_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (wallet_id) REFERENCES e_wallets (id)
+		FOREIGN KEY (wallet_id) REFERENCES e_wallets (id) ON DELETE CASCADE
 	);
 
 INSERT INTO
