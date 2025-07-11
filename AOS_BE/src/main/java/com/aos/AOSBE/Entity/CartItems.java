@@ -46,4 +46,6 @@ public class CartItems {
 	private Promotions promotions;
 	@JoinColumn(name= "combo_group")
 	private String comboGroup;
+	@JoinColumn(name="combo_qty")
+	private Integer comboQty;
 }

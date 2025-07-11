@@ -19,7 +19,8 @@ const excludedPaths = [
   '/Accounts/verify-otp',
   '/BaseProducts',
   '/VariantValues',
-  '/openai/chat'
+  '/openai/chat',
+  '/cart'
 ]
 
 // Automatically attach token to each request
@@ -165,7 +166,8 @@ const cartService = {
           name: product?.name || 'Unknown Product',
           price: product?.price || 0,
           quantity: item.qty,
-          image: product?.image || 'no-image.png'
+          image: product?.image || 'no-image.png',
+          comboType : product?.comboType || 'normal',
         };
       });
 

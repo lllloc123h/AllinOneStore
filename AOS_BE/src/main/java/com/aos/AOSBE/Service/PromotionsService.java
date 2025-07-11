@@ -45,5 +45,8 @@ public class PromotionsService {
 	public List<Promotions> promotionsFindByIsActiveTrue(int productItemId) {
 		return promotionsRepository.findActivePromotionsByProductItemId(productItemId);
 	}
+	public Object[] promotionsFindFirstTypePromotionByProductItemId(int productItemId) {
+		return promotionsRepository.findFirstTypePromotionByProductItemId(productItemId);
+	}
 
 }

@@ -57,4 +57,6 @@ public class OrderItems {
     private String comboGroup;
     @JoinColumn(name = "id_combo_group")
     private String idComboGroup;
+    @JoinColumn(name="combo_qty")
+    private Integer comboQty;
 }

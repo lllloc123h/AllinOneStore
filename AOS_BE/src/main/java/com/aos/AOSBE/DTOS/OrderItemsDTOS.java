@@ -24,4 +24,5 @@ public class OrderItemsDTOS {
     private int promotions;
     private String comboGroup;
     private String idComboGroup;
+    private Integer comboQty;
 }
