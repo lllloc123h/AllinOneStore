@@ -38,7 +38,7 @@
                         @change="toggleSelectCombo(items)"
                       />
                       <div class="d-flex align-items-center">
-                        <i class="bi bi-tag-fill me-2"></i>
+                        <i class="bi bi-gift-fill mx-1"></i>
                         <span>
                           Combo: {{ items[0].promotions.name }} ({{ groupKey }})
                           <span class="text-muted ms-2">{{
@@ -52,6 +52,14 @@
                         title="Xóa toàn bộ combo"
                       >
                         <i class="bi bi-x-lg"></i>
+                      </button>
+                      <button
+                        class="btn btn-sm btn-outline-primary border-0"
+                        @click="openSpecificPromotionModal(items[0].promotions.id)"
+                        data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal"
+                      >
+                        Sửa combo
                       </button>
                     </div>
                     <div class="card-body p-0">
@@ -71,6 +79,27 @@
                         >
                           +
                         </button>
+                        <span class="fw-bold text-danger ms-auto">
+                          <!-- Nếu có comboPrice và > 0 thì tính tổng giá combo -->
+                          <template
+                            v-if="
+                              items[0].promotions &&
+                              items[0].promotions.type === 'COMBO' &&
+                              items[0].promotions.comboPrice > 0
+                            "
+                          >
+                            Tổng:
+                            {{
+                              (
+                                items[0].promotions.comboPrice * items[0].comboQty
+                              ).toLocaleString()
+                            }}đ
+                          </template>
+                          <!-- Nếu không phải combo thì hiển thị giá thông thường -->
+                          <template v-else>
+                            {{ (items[0].price * items[0].comboQty).toLocaleString() }}đ
+                          </template>
+                        </span>
                       </div>
                       <!-- Danh sách sản phẩm trong combo -->
                       <table class="table mb-0">
@@ -110,14 +139,9 @@
                 </td>
               </tr>
             </template>
-
             <tr v-for="item in singleProducts" :key="item.id" class="border-bottom">
               <td>
-                <input
-                  type="checkbox"
-                  v-model="selectedItems"
-                  :value="item.productItemId"
-                />
+                <input type="checkbox" v-model="selectedItems" :value="item.id" />
               </td>
               <td>
                 <div class="d-flex position-relative align-items-center">
@@ -130,20 +154,22 @@
 
                     <!-- Thay nút Ưu đãi -->
                     <button
-                      v-if="item.promotions.type === 'COMBO' && item.comboGroup == ''"
+                      v-if="item.promotions.type === 'COMBO'"
                       data-bs-toggle="modal"
                       data-bs-target="#exampleModalToggle"
                       class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                       @click="openPromotionModal(item.productItemId)"
                       type="button"
                     >
-                      <i class="bi bi-tag-fill"></i> Ưu đãi
+                      <i class="bi bi-gift-fill"></i>Ưu đãi
                     </button>
                     <span
-                      v-else-if="item.comboType === 'DISCOUNT'"
+                      v-else-if="item.promotions.type === 'DISCOUNT'"
                       class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
                     >
-                      <i class="bi bi-gift-fill"></i> Đang giảm giá
+                      <i class="bi bi-tag-fill"></i>-{{
+                        (item.promotions.discountValue / item.price) * 100
+                      }}%
                     </span>
 
                     <!-- Modal của Ưu đãiiiiiiiiiii -->
@@ -335,8 +361,7 @@
                                                 @click="decreaseComboQty(item)"
                                                 :disabled="
                                                   !selectedComboItems[item.id] ||
-                                                  selectedComboItems[item.id] <= 0 ||
-                                                  productItemIdRef == item.id
+                                                  selectedComboItems[item.id] <= 0
                                                 "
                                               >
                                                 -
@@ -388,7 +413,11 @@
               </td>
               <td>{{ item.name }}</td>
               <td>{{ item.sku }}</td>
-              <td>{{ item.price.toLocaleString() }}₫</td>
+              <td v-if="item.promotions.type == 'DISCOUNT'">
+                <del>{{ item.price.toLocaleString() }}đ</del>
+                {{ (item.price - item.promotions.discountValue).toLocaleString() }}₫
+              </td>
+              <td class="text-end" v-else>{{ item.price.toLocaleString() }}₫</td>
               <td class="text-center">
                 <div class="d-inline-flex align-items-center border rounded px-2">
                   <button class="btn btn-sm" @click="decreaseQty(item)">−</button>
@@ -396,8 +425,16 @@
                   <button class="btn btn-sm" @click="increaseQty(item)">＋</button>
                 </div>
               </td>
-              <td class="text-end">
-                {{ (item.price * item.quantity).toLocaleString() }}₫
+              <td v-if="item.promotions.type == 'DISCOUNT'" class="text-end">
+                {{
+                  (
+                    (item.price - item.promotions.discountValue) *
+                    item.quantity
+                  ).toLocaleString()
+                }}₫
+              </td>
+              <td class="text-end" v-else>
+                {{ (item.price * item.quantity).toLocaleString() }}
               </td>
               <td>
                 <button class="btn btn-sm text-danger" @click="removeItem(item)">
@@ -420,12 +457,12 @@
             </li>
             <li class="d-flex justify-content-between py-1">
               <span>Giảm Giá</span>
-              <span>—</span>
+              <span>- {{ totalDiscount.toLocaleString() }}₫</span>
             </li>
             <hr />
             <li class="d-flex justify-content-between fw-bold py-1">
               <span>Tổng Cộng</span>
-              <span>{{ selectedTotal.toLocaleString() }}₫</span>
+              <span>{{ (selectedTotal - totalDiscount).toLocaleString() }}₫</span>
             </li>
           </ul>
           <button
@@ -463,7 +500,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { authService, cartService } from "../../Configs/api";
+import api, { authService, cartService } from "../../Configs/api";
 import {
   finalHandleCartProgress,
   handleUpdateQuantityCartWhileLogin,
@@ -484,6 +521,8 @@ const comboGroups = computed(() => {
       groups[item.comboGroup].push(item);
     }
   });
+  console.log("Combo groups:", groups);
+
   return groups;
 });
 const singleProducts = computed(() =>
@@ -491,36 +530,95 @@ const singleProducts = computed(() =>
     (item) => !item.comboGroup || !item.promotions || item.promotions.type !== "COMBO"
   )
 );
+const totalDiscount = computed(() => {
+  let sum = 0;
+  const countedComboGroups = new Set();
+
+  // Gom nhóm comboGroup + promotions.id
+  const allComboGroups = {};
+  cart.value.forEach((item) => {
+    if (item.comboGroup && item.promotions && item.promotions.type === "COMBO") {
+      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+      if (!allComboGroups[groupKey]) allComboGroups[groupKey] = [];
+      allComboGroups[groupKey].push(item);
+    }
+  });
+
+  cart.value.forEach((item) => {
+    if (!selectedItems.value.includes(item.id)) return;
+
+    // DISCOUNT
+    if (item.promotions && item.promotions.type === "DISCOUNT") {
+      sum += item.promotions.discountValue * item.quantity;
+      return;
+    }
+
+    // COMBO: chỉ tính giảm giá cho 1 lần duy nhất mỗi comboGroup+promotionId
+    if (
+      item.promotions &&
+      item.promotions.type === "COMBO" &&
+      item.promotions.comboPrice > 0
+    ) {
+      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+      if (
+        !countedComboGroups.has(groupKey) &&
+        allComboGroups[groupKey] &&
+        allComboGroups[groupKey].every((i) => selectedItems.value.includes(i.id))
+      ) {
+        const comboQty = item.comboQty || 1;
+        const totalOrigin = allComboGroups[groupKey].reduce(
+          (s, i) => s + i.price * (i.quantity || comboQty),
+          0
+        );
+        const totalCombo = item.promotions.comboPrice * comboQty;
+        sum += totalOrigin - totalCombo;
+        countedComboGroups.add(groupKey);
+      }
+    }
+  });
+
+  return sum;
+});
 function isComboSelected(items) {
+  console.log("lựa chọn item : ", selectedItems.value);
   // Trả về true nếu tất cả sản phẩm trong combo đều đã được chọn
-  return items.every((item) => selectedItems.value.includes(item.productItemId));
+  return items.every((item) => selectedItems.value.includes(item.id));
 }
 function toggleSelectCombo(items) {
+  // toggleSelectCombo
   const allSelected = isComboSelected(items);
   if (allSelected) {
-    // Bỏ chọn tất cả sản phẩm trong combo
     selectedItems.value = selectedItems.value.filter(
-      (id) => !items.some((item) => item.productItemId === id)
+      (id) => !items.some((item) => item.id === id)
     );
   } else {
-    // Thêm tất cả sản phẩm trong combo vào selectedItems
     const idsToAdd = items
-      .map((item) => item.productItemId)
+      .map((item) => item.id)
       .filter((id) => !selectedItems.value.includes(id));
     selectedItems.value = [...selectedItems.value, ...idsToAdd];
   }
 }
 function increaseComboGroupQty(items) {
-  items.forEach((item) => {
-    item.comboQty = (item.comboQty || 1) + 1;
-    item.quantity = item.comboQty;
+  console.log("items: ", items);
+
+  // Lấy id cart của các item trong comboGroup này
+  const cartIds = items.map((i) => i.id);
+  cart.value.forEach((item) => {
+    if (item.comboGroup === items[0].comboGroup && cartIds.includes(item.id)) {
+      item.comboQty = (item.comboQty || 1) + 1;
+      item.quantity = item.comboQty;
+    }
   });
 }
+
 function decreaseComboGroupQty(items) {
   if (items[0].comboQty > 1) {
-    items.forEach((item) => {
-      item.comboQty = item.comboQty - 1;
-      item.quantity = item.comboQty;
+    const cartIds = items.map((i) => i.id);
+    cart.value.forEach((item) => {
+      if (item.comboGroup === items[0].comboGroup && cartIds.includes(item.id)) {
+        item.comboQty = item.comboQty - 1;
+        item.quantity = item.comboQty;
+      }
     });
   }
 }
@@ -537,152 +635,39 @@ function openPromotionModal(productItemId) {
   promotions.value = [];
   productItemIdRef.value = productItemId;
   console.log("Open promotion modal for item:", productItemId);
-
-  promotions.value.push(
-    {
-      id: 1,
-      name: "Giảm giá 10%",
-      description: "Mua combo 3 sản phẩm bất kỳ được giảm giá 10%",
-      type: "COMBO",
-      discountType: null,
-      discountValue: null,
-      comboPrice: 4500000,
-      qty: 45,
-      startAt: "2023-01-01T00:00:00Z",
-      endAt: "2023-12-31T23:59:59Z",
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: 2,
-      name: "Giảm giá 50%",
-      description: "Mua combo 3 sản phẩm bất kỳ được giảm giá 10%",
-      type: "COMBO",
-      discountType: null,
-      discountValue: null,
-      comboPrice: 4500000,
-      qty: 45,
-      startAt: "2023-01-01T00:00:00Z",
-      endAt: "2023-12-31T23:59:59Z",
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-  );
+  api
+    .get(`/Promotions?productItemId=${productItemId}`)
+    .then((response) => {
+      promotions.value = response.data;
+      console.log("Promotions for item:", productItemId, promotions.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching promotions:", error);
+    });
 }
 function openSpecificPromotionModal(promotionId) {
   groupProducts.value = [];
   console.log("Open specific promotion modal for promotion:", productItemIdRef.value);
-
-  groupProducts.value.push(
-    {
-      baseProduct: {
-        id: 2,
-        name: "Áo thun trơn form rộng",
-        material: "Cotton lạnh",
-        mainImageUrl:
-          "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png",
-        turnBuy: 95,
-        rating: 5,
-        createdAt: "2025-07-07T15:00:32.69",
-        updatedAt: "2025-07-07T15:00:32.69",
-        categories: "Áo thun",
-        active: true,
-        custom: false,
-      },
-      items: [
-        {
-          id: 3,
-          cost: 65000.0,
-          price: 160000.0,
-          turnBuy: 70,
-          description: "Áo thun XL, xám",
-          sku: "XL-Màu trắng",
-          safetyStock: 10,
-          qty: 5,
-          sellStart: "2025-07-07T15:00:32.69",
-          sellEnd: null,
-          createdAt: "2025-07-07T15:00:32.69",
-          updatedAt: "2025-07-07T15:00:32.69",
-          baseProducts: 2,
-        },
-        {
-          id: 6,
-          cost: 65000.0,
-          price: 160000.0,
-          turnBuy: 70,
-          description: "Áo thun XL, xám",
-          sku: "XL-Màu trắng",
-          safetyStock: 10,
-          qty: 5,
-          sellStart: "2025-07-07T15:00:32.69",
-          sellEnd: null,
-          createdAt: "2025-07-07T15:00:32.69",
-          updatedAt: "2025-07-07T15:00:32.69",
-          baseProducts: 2,
-        },
-      ],
-    },
-    {
-      baseProduct: {
-        id: 1,
-        name: "Áo thun unisex mùa hè",
-        material: "Cotton 100%",
-        mainImageUrl:
-          "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png",
-        turnBuy: 120,
-        rating: 4,
-        createdAt: "2025-07-07T15:00:32.69",
-        updatedAt: "2025-07-07T15:00:32.69",
-        categories: "Áo thun",
-        active: true,
-        custom: false,
-      },
-      items: [
-        {
-          id: 1,
-          cost: 60000.0,
-          price: 150000.0,
-          turnBuy: 80,
-          description: "Áo thun M, trắng",
-          sku: "M-Màu trắng",
-          safetyStock: 10,
-          qty: 2,
-          sellStart: "2025-07-07T15:00:32.69",
-          sellEnd: null,
-          createdAt: "2025-07-07T15:00:32.69",
-          updatedAt: "2025-07-07T15:00:32.69",
-          baseProducts: 1,
-        },
-        {
-          id: 2,
-          cost: 60000.0,
-          price: 150000.0,
-          turnBuy: 60,
-          description: "Áo thun L, đen",
-          sku: "L-Màu đen",
-          safetyStock: 10,
-          qty: 2,
-          sellStart: "2025-07-07T15:00:32.69",
-          sellEnd: null,
-          createdAt: "2025-07-07T15:00:32.69",
-          updatedAt: "2025-07-07T15:00:32.69",
-          baseProducts: 1,
-        },
-      ],
-    }
-  );
-  // Tự động set số lượng tối đa cho item trùng id
-  if (productItemIdRef.value) {
-    groupProducts.value.forEach((group) => {
-      group.items.forEach((item) => {
-        if (item.id === productItemIdRef.value) {
-          selectedComboItems.value[item.id] = item.qty;
-        }
-      });
+  api
+    .get(`/Promotions/${promotionId}`)
+    .then((response) => {
+      groupProducts.value = response.data;
+      console.log("Group products for promotion:", promotionId, groupProducts.value);
+      // Tự động set số lượng tối đa cho item trùng id
+      // Tự động set số lượng  cho item trùng id
+      if (productItemIdRef.value) {
+        groupProducts.value.forEach((group) => {
+          group.items.forEach((item) => {
+            if (item.id === productItemIdRef.value) {
+              selectedComboItems.value[item.id] = 1; // Mặc định chọn 1 sản phẩm
+            }
+          });
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching specific promotion:", error);
     });
-  }
 }
 // Hàm kiểm tra tổng số lượng đã chọn có đủ cho tất cả nhóm sản phẩm
 function calculateTotalQuantity() {
@@ -749,12 +734,12 @@ function decreaseComboQty(item) {
 const isAllSelected = computed(
   () =>
     cart.value.length > 0 &&
-    cart.value.every((item) => selectedItems.value.includes(item.productItemId))
+    cart.value.every((item) => selectedItems.value.includes(item.id))
 );
 
 function toggleSelectAll(e) {
   if (e.target.checked) {
-    selectedItems.value = cart.value.map((item) => item.productItemId);
+    selectedItems.value = cart.value.map((item) => item.id);
   } else {
     selectedItems.value = [];
   }
@@ -777,7 +762,7 @@ async function loadCart() {
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
       }));
-      selectedItems.value = cart.value.map((item) => item.productItemId);
+      selectedItems.value = cart.value.map((item) => item.id);
     } else {
       cart.value = response.map((item) => ({
         id: item.id,
@@ -800,10 +785,8 @@ async function loadCart() {
 
 // Xóa sản phẩm
 function removeItem(item) {
-  cart.value = cart.value.filter((i) => i.productItemId !== item.productItemId);
-  selectedItems.value = selectedItems.value.filter(
-    (productItemId) => productItemId !== item.productItemId
-  );
+  cart.value = cart.value.filter((i) => i.id !== item.id);
+  selectedItems.value = selectedItems.value.filter((id) => id !== item.id);
   cart.value = cart.value.filter((i) => i.productItemId !== item.productItemId);
   selectedItems.value = selectedItems.value.filter((id) => id !== item.productItemId);
 
@@ -817,53 +800,122 @@ function removeItem(item) {
   }
 }
 // Tăng số lượng
+// Tăng số lượng sản phẩm đơn lẻ
 function increaseQty(item) {
+  // Nếu là sản phẩm combo thì không xử lý ở đây
+  if (item.comboGroup) return;
+
   if (authService.isLogged()) {
     handleUpdateQuantityCartWhileLogin(item, "increase");
-    item.quantity++;
+    // Tìm đúng item theo id cart
+    const cartItem = cart.value.find((c) => c.id === item.id);
+    if (cartItem) cartItem.quantity++;
   } else {
     let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
     tempLocalList = tempLocalList.map((cartItem) => {
-      if (cartItem.productItems === item.productItemId) {
+      if (cartItem.id === item.id) {
         cartItem.qty++;
       }
       return cartItem;
     });
     localStorage.setItem("cart", JSON.stringify(tempLocalList));
-    const cartItem = cart.value.find((c) => c.productItemId === item.productItemId);
-    if (cartItem) {
-      cartItem.quantity++;
-    }
+    const cartItem = cart.value.find((c) => c.id === item.id);
+    if (cartItem) cartItem.quantity++;
   }
 }
 
-// Giảm số lượng hoặc xóa
+// Giảm số lượng hoặc xóa sản phẩm đơn lẻ
 function decreaseQty(item) {
+  // Nếu là sản phẩm combo thì không xử lý ở đây
+  if (item.comboGroup) return;
+
   if (item.quantity > 1) {
-    item.quantity--;
+    if (authService.isLogged()) {
+      handleUpdateQuantityCartWhileLogin(item, "decrease");
+      const cartItem = cart.value.find((c) => c.id === item.id);
+      if (cartItem) cartItem.quantity--;
+    } else {
+      let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
+      tempLocalList = tempLocalList.map((cartItem) => {
+        if (cartItem.id === item.id && cartItem.qty > 1) {
+          cartItem.qty--;
+        }
+        return cartItem;
+      });
+      localStorage.setItem("cart", JSON.stringify(tempLocalList));
+      const cartItem = cart.value.find((c) => c.id === item.id);
+      if (cartItem) cartItem.quantity--;
+    }
   } else {
     handleUpdateQuantityCartWhileLogin(item, "decrease");
     removeItem(item);
   }
 }
 
-// Tính tổng tiền sản phẩm được chọn
 const selectedTotal = computed(() => {
-  if (authService.isLogged()) {
-    return cart.value
-      .filter((item) => selectedItems.value.includes(item.productItemId))
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
-  } else {
-    return cart.value
-      .filter((item) => selectedItems.value.includes(item.productItemId))
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }
-});
+  let sum = 0;
+  const countedComboGroups = new Set();
 
+  // Gom nhóm comboGroup + promotions.id
+  const allComboGroups = {};
+  cart.value.forEach((item) => {
+    if (item.comboGroup && item.promotions && item.promotions.type === "COMBO") {
+      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+      if (!allComboGroups[groupKey]) allComboGroups[groupKey] = [];
+      allComboGroups[groupKey].push(item);
+    }
+  });
+
+  cart.value.forEach((item) => {
+    if (!selectedItems.value.includes(item.id)) return;
+
+    // SẢN PHẨM LẺ: không có comboGroup
+    if (!item.comboGroup) {
+      // Nếu là DISCOUNT
+      if (item.promotions && item.promotions.type === "DISCOUNT") {
+        sum += (item.price - item.promotions.discountValue) * item.quantity;
+      } else {
+        sum += item.price * item.quantity;
+      }
+      return;
+    }
+
+    // SẢN PHẨM COMBO
+    if (
+      item.promotions &&
+      item.promotions.type === "COMBO" &&
+      item.promotions.comboPrice > 0
+    ) {
+      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+      if (countedComboGroups.has(groupKey)) return;
+
+      // Nếu đủ combo: cộng comboPrice * comboQty
+      if (
+        allComboGroups[groupKey] &&
+        allComboGroups[groupKey].every((i) => selectedItems.value.includes(i.id))
+      ) {
+        sum += item.promotions.comboPrice * (item.comboQty || 1);
+        countedComboGroups.add(groupKey);
+        return;
+      } else {
+        // Nếu chưa đủ combo: cộng giá lẻ từng sản phẩm đã chọn trong nhóm này
+        allComboGroups[groupKey].forEach((i) => {
+          if (selectedItems.value.includes(i.id)) {
+            sum += i.price * i.quantity;
+          }
+        });
+        countedComboGroups.add(groupKey);
+        return;
+      }
+    }
+  });
+
+  return sum;
+});
 // Gửi dữ liệu thanh toán
 function checkout() {
   const selectedProducts = cart.value.filter((item) =>
-    selectedItems.value.includes(item.productItemId)
+    selectedItems.value.includes(item.id)
   );
   router.push({
     name: "CheckoutPage",

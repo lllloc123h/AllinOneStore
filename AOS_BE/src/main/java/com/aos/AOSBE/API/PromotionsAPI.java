@@ -57,10 +57,10 @@ public class PromotionsAPI {
 		return ResponseEntity.ok(promotionsDTOS);
 
 	}
-	@GetMapping("/Promotions/type")
-	public ResponseEntity<?> getFirstTypePromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
-		return ResponseEntity.ok(promotionsService.promotionsFindFirstTypePromotionByProductItemId(productItemId));
-	}
+//	@GetMapping("/Promotions/type")
+//	public ResponseEntity<?> getFirstTypePromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
+//		return ResponseEntity.ok(promotionsService.promotionsFindFirstTypePromotionByProductItemId(productItemId));
+//	}
 	@GetMapping("/Promotions/{id}")
 	public ResponseEntity<?> getPromotionProductsByPromotionId(@PathVariable int id) {
 		List<PromotionProducts> promotionProducts = promotionProductsService.findPromotionProductsByPromotionId(id);
@@ -68,16 +68,13 @@ public class PromotionsAPI {
 				promotionProducts.stream()
 						.peek(pro -> {
 							ProductItems item = pro.getProductItems();
-							if (item.getId() == pro.getProductItems().getId()) {
-								item.setQty(pro.getRequireQty());
-							}
-						})
+                            item.setQty(pro.getRequireQty());
+                        })
 						.collect(Collectors.groupingBy(
 								pro -> pro.getProductItems().getBaseProducts(),
 								Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())
 						));
-
-
+		
 		List<GroupProductDTO> listGroups = map.entrySet().stream().map(entry -> {
 			GroupProductDTO groupProductDTO = new GroupProductDTO();
 			groupProductDTO.setBaseProduct(groupProductMapper.mapperToBaseProductsDTOS(entry.getKey()));

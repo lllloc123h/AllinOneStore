@@ -20,14 +20,19 @@ const excludedPaths = [
   '/BaseProducts',
   '/VariantValues',
   '/openai/chat',
-  '/cart'
+  '/cart',
+  '/Promotions/',
+  '/Promotions'
 ]
 
 // Automatically attach token to each request
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwtToken');
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
-  const isExcluded = excludedPaths.some(path => config.url.includes(path) && !config.url.includes("/admin"));
+  // Trong interceptor:
+const isExcluded = excludedPaths.some(path =>
+  path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path)
+);
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
 
 

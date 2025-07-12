@@ -235,7 +235,6 @@ CREATE TABLE
 		name NVARCHAR (100),
 		description NVARCHAR (255),
 		type VARCHAR(30) CHECK (type IN ('DISCOUNT', 'COMBO')),
-		discount_type VARCHAR(20) CHECK (discount_type IN ('PERCENT', 'AMOUNT')),
 		discount_value DECIMAL(10, 2),
 		combo_price decimal(18, 2),
 		qty int not null,
