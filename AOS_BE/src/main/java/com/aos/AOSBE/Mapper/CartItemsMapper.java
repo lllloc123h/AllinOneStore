@@ -36,7 +36,8 @@ public class CartItemsMapper {
 				entity.getProductItems().getId(),
 				entity.getPromotions(),
 				entity.getComboGroup(),
-				entity.getComboQty());
+				entity.getComboQty(),
+				entity.getComboGroupId());
 	}
 
 	public CartItems mapperToObject(CartItemsDTOS entity) {
@@ -49,7 +50,8 @@ public class CartItemsMapper {
 				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
 				entity.getPromotions(),
 				entity.getComboGroup(),
-				entity.getComboQty());
+				entity.getComboQty(),
+				entity.getComboGroupId());
 	}
 
 }

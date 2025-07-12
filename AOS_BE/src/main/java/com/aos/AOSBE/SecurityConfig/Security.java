@@ -52,7 +52,7 @@ public class Security {
 						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**",
 						"/api/Promotions/**",
 
-								"/api/cart"
+								"/api/cart/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

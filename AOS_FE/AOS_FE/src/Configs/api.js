@@ -21,6 +21,7 @@ const excludedPaths = [
   '/VariantValues',
   '/openai/chat',
   '/cart',
+  '/cart/addCombo',
   '/Promotions/',
   '/Promotions'
 ]
@@ -82,9 +83,13 @@ const authService = {
 
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
+              toast.success('Đăng nhập thành công !')
+
         router.push(localStorage.getItem('redirectTo') || '/')
       })
-      .catch(error => console.log('Đăng nhập thất bại ', error.response))
+      .catch(error => {
+              toast.warning('Đăng nhập thất bại !')
+        console.log('Đăng nhập thất bại ', error.response)})
   }
   ,
 

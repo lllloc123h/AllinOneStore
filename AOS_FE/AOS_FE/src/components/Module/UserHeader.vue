@@ -46,8 +46,8 @@
         </ul>
         <ul class="col-6"></ul>
         <ul class="navbar-nav mb-2 mb-lg-0 col-3">
-          <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/cart">
+          <li class="nav-item mx-2">
+            <RouterLink class="nav-link position-relative" aria-current="page" to="/cart">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -60,9 +60,14 @@
                   d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"
                 />
               </svg>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge"
+              >
+                1
+              </span>
             </RouterLink>
           </li>
-          <li class="nav-item">
+          <li class="nav-item mx-2">
             <a class="nav-link" aria-current="page" href="">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -117,6 +122,7 @@
   </nav>
 </template>
 <script setup>
+// ...existing code...
 import { computed, watch } from "vue";
 import { authService } from "../../Configs/api";
 const isLogged = computed(() => {
@@ -262,3 +268,6 @@ section .section-title {
   padding: 24px 46px 24px 26px;
 }
 </style>
+/* Badge nhỏ cho icon giỏ hàng */ .cart-badge { font-size: 0.75rem; padding: 2px 6px;
+min-width: 18px; height: 18px; line-height: 1; display: flex; align-items: center;
+justify-content: center; }

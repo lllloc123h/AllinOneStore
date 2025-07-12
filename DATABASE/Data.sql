@@ -90,7 +90,7 @@ VALUES
 -- Áo thun
 (1, 60000, 150000, 80, N'Áo thun M, trắng', 'TSHIRT1-M-WHITE', 10, 50, GETDATE(), NULL, GETDATE(), GETDATE()),
 (1, 60000, 150000, 60, N'Áo thun L, đen', 'TSHIRT1-L-BLACK', 10, 40, GETDATE(), NULL, GETDATE(), GETDATE()),
-(2, 65000, 160000, 70, N'Áo thun XL, xám', 'TSHIRT2-XL-GREY', 10, 35, GETDATE(), NULL, GETDATE(), GETDATE()),
+(2, 65000, 160000, 70, N'Áo thun XL, xám', 'TSHIRT2-XL-RED', 10, 35, GETDATE(), NULL, GETDATE(), GETDATE()),
 (3, 70000, 160000, 55, N'Áo Nhật Bản M', 'TS-JPN-M', 10, 40, GETDATE(), NULL, GETDATE(), GETDATE()),
 (4, 68000, 155000, 60, N'Cổ tròn L', 'TS-ROUND-L', 10, 35, GETDATE(), NULL, GETDATE(), GETDATE()),
 
@@ -154,12 +154,12 @@ VALUES
 (3, 100000, 'RECEIVE', 1, N'Tặng thưởng từ hệ thống', GETDATE());
 Go
 INSERT INTO cart_items (
-    account_id,combo_id,combo_group, product_item_id, qty,combo_qty, created_at, updated_at
+    account_id,combo_id,combo_group, product_item_id, qty,combo_qty,combo_group_id, created_at, updated_at
 )
 VALUES
-(1,4,'2-1', 2, 1,1, GETDATE(), GETDATE()),
-(1,4,'2-1', 1, 1,1, GETDATE(), GETDATE()),
-(1,10,null,3, 1,null, GETDATE(), GETDATE()
+(1,4,'1-2', 1, 1,1,'31D1386F-E158-4361-A106-234978CF856C', GETDATE(), GETDATE()),
+(1,4,'1-2', 2, 1,1,'31D1386F-E158-4361-A106-234978CF856C', GETDATE(), GETDATE()),
+(1,10,null,3, 1,null,'490CAE2E-873A-43F0-94A3-985C83D5C3FE', GETDATE(), GETDATE()
 );
 GO
 -- INSERT payment_methods
@@ -200,7 +200,7 @@ VALUES
 (N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 10.00, NULL, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
 (N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 50000, NULL, 100, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
 (N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 30000, NULL, 500, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 0, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 210000, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
 (N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, 399000, 30, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
 (N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 15.00, NULL, 100, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
 (N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 20.00, NULL, 150, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),

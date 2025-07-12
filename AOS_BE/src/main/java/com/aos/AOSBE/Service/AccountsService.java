@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ public class AccountsService {
 	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 
-	PasswordEncoder passwordEncoder;
+
 
 	public Page<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -70,9 +71,10 @@ public class AccountsService {
 
 	@Transactional
 	public Accounts registerByEmail(RegisterRequestDTO registerRequestDTO) {
+		System.out.println("Registering user with email: " + registerRequestDTO);
 		Accounts accounts = new Accounts();
 		accounts.setEmail(registerRequestDTO.getEmail());
-		accounts.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+		accounts.setPassword(new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword()));
 		accounts.setPhone(registerRequestDTO.getPhone());
 		accounts.setFullname(registerRequestDTO.getFullname());
 		Authorities authority = new Authorities();
@@ -93,7 +95,7 @@ public class AccountsService {
 			throw new RuntimeException("Mật khẩu mới và xác nhận không khớp");
 		}
 
-		account.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+		account.setPassword(new BCryptPasswordEncoder().encode(dto.getNewPassword()));
 		accountsRepository.save(account);
 	}
 

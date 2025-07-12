@@ -212,11 +212,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">{{ selectedProduct?.name }}</h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    @view-detail="closeModal"
-                  ></button>
+                  <button type="button" class="btn-close" @click="closeModal"></button>
                 </div>
                 <div class="modal-body">
                   <img

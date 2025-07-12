@@ -54,7 +54,6 @@ const formData = reactive({
 async function handleLogin() {
   authService.login(formData.email, formData.password);
   await syncLocalCartToServer();
-  toast.success("Đăng nhập thành công !");
 }
 </script>
 <style scoped>

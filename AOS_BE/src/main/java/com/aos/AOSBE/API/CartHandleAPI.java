@@ -3,6 +3,8 @@ package com.aos.AOSBE.API;
 import java.util.List;
 import java.util.Map;
 
+import com.aos.AOSBE.DTOS.CreateComboDTO;
+import com.aos.AOSBE.Entity.Accounts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -105,6 +107,18 @@ public class CartHandleAPI {
 				cartItemsService.cartItemsDeleteById(id);
 			}
 			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+	@PostMapping("/cart/addCombo")
+	public ResponseEntity<?> addCombo(@RequestBody CreateComboDTO entity) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			cartItemsService.addCombo(entity, account);
+			return ResponseEntity.ok(Map.of("message", "Combo added successfully"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));

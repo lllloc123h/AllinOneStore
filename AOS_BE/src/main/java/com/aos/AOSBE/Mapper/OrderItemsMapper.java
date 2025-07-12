@@ -29,7 +29,7 @@ public class OrderItemsMapper {
 				    entity.getProductItems().getId(),
 				    entity.getPromotions().getId(),
 				entity.getComboGroup(),
-				entity.getIdComboGroup(),
+				entity.getComboGroupId(),
 				entity.getComboQty()
 			);
 	}
@@ -48,7 +48,7 @@ public class OrderItemsMapper {
 					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
 					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null),
 					entity.getComboGroup(),
-				entity.getIdComboGroup(),
+				entity.getComboGroupId(),
 				entity.getComboQty()
 			);
 	}

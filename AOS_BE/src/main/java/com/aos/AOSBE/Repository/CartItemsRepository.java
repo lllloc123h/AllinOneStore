@@ -15,4 +15,6 @@ public interface CartItemsRepository extends JpaRepository<CartItems, Integer>, 
 	Optional<CartItems> findByAccountsEmailAndProductItemsId(String email, int productItemsId);
 
 	List<CartItems> findByAccountsEmail(String email);
+
+	List<CartItems> findAllCartItemsByComboGroup(String comboGroup);
 }

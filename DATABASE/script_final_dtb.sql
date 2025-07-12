@@ -307,6 +307,7 @@ create table
 		combo_qty int null,--combo qty
 		combo_id int null,
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
+		combo_group_id UNIQUEIDENTIFIER  , -- để nhận diện combo nếu khác số lượng 
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
@@ -382,10 +383,10 @@ create table
 		order_id int not null,
 		product_item_id int not null,
 		qty int not null,
+		combo_qty int null, -- số lượng combo
 		promotion_id int,-- kiểm tra xem combo nào đã đc áp dụng để trừ vào usage limit 
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
-		id_combo_group varchar(36), -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
-		combo_qty int null, -- số lượng combo
+		combo_group_id UNIQUEIDENTIFIER, -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
 		price_at_buy decimal(18, 2) not null,
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,

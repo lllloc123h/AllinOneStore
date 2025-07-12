@@ -1,6 +1,7 @@
 package com.aos.AOSBE.Entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -48,4 +49,6 @@ public class CartItems {
 	private String comboGroup;
 	@JoinColumn(name="combo_qty")
 	private Integer comboQty;
+	@JoinColumn(name="combo_group_id")
+	private UUID comboGroupId;
 }

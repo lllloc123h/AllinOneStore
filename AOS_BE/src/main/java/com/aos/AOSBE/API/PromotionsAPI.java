@@ -74,7 +74,6 @@ public class PromotionsAPI {
 								pro -> pro.getProductItems().getBaseProducts(),
 								Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())
 						));
-		
 		List<GroupProductDTO> listGroups = map.entrySet().stream().map(entry -> {
 			GroupProductDTO groupProductDTO = new GroupProductDTO();
 			groupProductDTO.setBaseProduct(groupProductMapper.mapperToBaseProductsDTOS(entry.getKey()));

@@ -27,20 +27,21 @@
             <template v-for="(items, groupKey) in comboGroups" :key="'combo-' + groupKey">
               <tr>
                 <td colspan="8" class="p-0 border-0">
-                  <div class="card mb-3 border-warning shadow-sm">
+                  <div class="card mb-4 border-warning shadow-sm">
                     <div
                       class="card-header bg-warning bg-opacity-25 fw-bold text-danger d-flex align-items-center justify-content-between"
                     >
-                      <input
-                        type="checkbox"
-                        class="me-2"
-                        :checked="isComboSelected(items)"
-                        @change="toggleSelectCombo(items)"
-                      />
                       <div class="d-flex align-items-center">
+                        <input
+                          type="checkbox"
+                          class="me-2"
+                          :checked="isComboSelected(items)"
+                          @change="toggleSelectCombo(items)"
+                        />
                         <i class="bi bi-gift-fill mx-1"></i>
                         <span>
-                          Combo: {{ items[0].promotions.name }} ({{ groupKey }})
+                          <span class="badge bg-danger me-2">Combo</span>
+                          {{ items[0].promotions.name }}
                           <span class="text-muted ms-2">{{
                             items[0].promotions.description
                           }}</span>
@@ -49,26 +50,17 @@
                       <button
                         class="btn btn-sm btn-outline-danger"
                         @click="removeComboGroup(groupKey)"
-                        title="Xóa toàn bộ combo"
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
-                      <button
-                        class="btn btn-sm btn-outline-primary border-0"
-                        @click="openSpecificPromotionModal(items[0].promotions.id)"
-                        data-bs-target="#exampleModalToggle2"
-                        data-bs-toggle="modal"
-                      >
-                        Sửa combo
-                      </button>
                     </div>
-                    <div class="card-body p-0">
-                      <!-- Số lượng combo -->
-                      <div class="d-flex align-items-center p-3">
+                    <div class="card-body p-0 bg-light rounded-bottom">
+                      <div class="d-flex align-items-center p-2">
                         <span class="me-2">Số lượng combo:</span>
                         <button
                           class="btn btn-sm btn-outline-secondary"
                           @click="decreaseComboGroupQty(items)"
+                          :disabled="items[0].comboQty <= 1"
                         >
                           -
                         </button>
@@ -80,57 +72,54 @@
                           +
                         </button>
                         <span class="fw-bold text-danger ms-auto">
-                          <!-- Nếu có comboPrice và > 0 thì tính tổng giá combo -->
-                          <template
-                            v-if="
-                              items[0].promotions &&
-                              items[0].promotions.type === 'COMBO' &&
-                              items[0].promotions.comboPrice > 0
-                            "
-                          >
-                            Tổng:
+                          Tổng:
+                          <template v-if="items[0].promotions.comboPrice > 0">
                             {{
                               (
                                 items[0].promotions.comboPrice * items[0].comboQty
                               ).toLocaleString()
-                            }}đ
+                            }}₫
                           </template>
-                          <!-- Nếu không phải combo thì hiển thị giá thông thường -->
                           <template v-else>
-                            {{ (items[0].price * items[0].comboQty).toLocaleString() }}đ
+                            <span class="text-muted">Tính tại quầy</span>
                           </template>
                         </span>
                       </div>
-                      <!-- Danh sách sản phẩm trong combo -->
-                      <table class="table mb-0">
+                      <table class="table table-borderless align-middle mb-0">
                         <tbody>
-                          <tr v-for="item in items" :key="item.id" class="border-bottom">
+                          <tr v-for="item in items" :key="item.id" class="align-middle">
                             <td>
-                              <!-- <input
-                                type="checkbox"
-                                v-model="selectedItems"
-                                :value="item.productItemId"
-                              /> -->
+                              <img
+                                :src="item.image"
+                                class="img-thumbnail"
+                                style="
+                                  width: 100px;
+                                  height: 125px;
+                                  object-fit: cover;
+                                  border-radius: 8px;
+                                "
+                              />
                             </td>
                             <td>
-                              <div class="d-flex align-items-center">
-                                <img
-                                  :src="item.image"
-                                  class="img-thumbnail me-2"
-                                  style="height: 125px; width: 100px"
-                                />
-                              </div>
+                              <div class="fw-bold">{{ item.name }}</div>
+                              <div class="small text-muted">{{ item.sku }}</div>
                             </td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.sku }}</td>
-                            <td>{{ item.price.toLocaleString() }}₫</td>
-                            <td class="text-center">
-                              <span class="mx-2">{{ item.quantity }}</span>
-                            </td>
+                            <td class="text-center">{{ item.quantity }}</td>
                             <td class="text-end">
-                              {{ (item.price * item.quantity).toLocaleString() }}₫
+                              <template v-if="items[0].promotions.comboPrice > 0">
+                                <span
+                                  v-if="
+                                    item.price !== undefined &&
+                                    item.quantity !== undefined
+                                  "
+                                >
+                                  {{ (item.price * item.quantity).toLocaleString() }}₫
+                                </span>
+                              </template>
+                              <template v-else>
+                                <span class="text-muted">Tính tại quầy</span>
+                              </template>
                             </td>
-                            <td></td>
                           </tr>
                         </tbody>
                       </table>
@@ -456,13 +445,13 @@
               <span>{{ selectedTotal.toLocaleString() }}₫</span>
             </li>
             <li class="d-flex justify-content-between py-1">
-              <span>Giảm Giá</span>
-              <span>- {{ totalDiscount.toLocaleString() }}₫</span>
+              <span>Đã Giảm Giá</span>
+              <span>{{ totalDiscount.toLocaleString() }}₫</span>
             </li>
             <hr />
             <li class="d-flex justify-content-between fw-bold py-1">
               <span>Tổng Cộng</span>
-              <span>{{ (selectedTotal - totalDiscount).toLocaleString() }}₫</span>
+              <span>{{ selectedTotal.toLocaleString() }}₫</span>
             </li>
           </ul>
           <button
@@ -513,16 +502,15 @@ const groupProducts = ref([]);
 const productItemIdRef = ref({});
 const promotonIdRef = ref(null);
 const comboGroups = computed(() => {
-  // Nhóm các sản phẩm có comboGroup và promotions.type === 'COMBO'
+  // Gom nhóm combo chỉ theo comboGroupId
   const groups = {};
   cart.value.forEach((item) => {
-    if (item.comboGroup && item.promotions && item.promotions.type === "COMBO") {
-      if (!groups[item.comboGroup]) groups[item.comboGroup] = [];
-      groups[item.comboGroup].push(item);
+    if (item.comboGroupId && item.promotions && item.promotions.type === "COMBO") {
+      const groupKey = item.comboGroupId;
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(item);
     }
   });
-  console.log("Combo groups:", groups);
-
   return groups;
 });
 const singleProducts = computed(() =>
@@ -533,12 +521,11 @@ const singleProducts = computed(() =>
 const totalDiscount = computed(() => {
   let sum = 0;
   const countedComboGroups = new Set();
-
-  // Gom nhóm comboGroup + promotions.id
+  // Gom nhóm combo theo comboGroupId
   const allComboGroups = {};
   cart.value.forEach((item) => {
-    if (item.comboGroup && item.promotions && item.promotions.type === "COMBO") {
-      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+    if (item.comboGroupId && item.promotions && item.promotions.type === "COMBO") {
+      const groupKey = item.comboGroupId;
       if (!allComboGroups[groupKey]) allComboGroups[groupKey] = [];
       allComboGroups[groupKey].push(item);
     }
@@ -553,13 +540,13 @@ const totalDiscount = computed(() => {
       return;
     }
 
-    // COMBO: chỉ tính giảm giá cho 1 lần duy nhất mỗi comboGroup+promotionId
+    // COMBO: chỉ tính giảm giá cho 1 lần duy nhất mỗi comboGroupId
     if (
       item.promotions &&
       item.promotions.type === "COMBO" &&
       item.promotions.comboPrice > 0
     ) {
-      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+      const groupKey = item.comboGroupId;
       if (
         !countedComboGroups.has(groupKey) &&
         allComboGroups[groupKey] &&
@@ -576,7 +563,6 @@ const totalDiscount = computed(() => {
       }
     }
   });
-
   return sum;
 });
 function isComboSelected(items) {
@@ -605,8 +591,9 @@ function increaseComboGroupQty(items) {
   const cartIds = items.map((i) => i.id);
   cart.value.forEach((item) => {
     if (item.comboGroup === items[0].comboGroup && cartIds.includes(item.id)) {
+      const tempQty = item.quantity / item.comboQty; // 3/1
       item.comboQty = (item.comboQty || 1) + 1;
-      item.quantity = item.comboQty;
+      item.quantity = tempQty + item.quantity;
     }
   });
 }
@@ -616,8 +603,9 @@ function decreaseComboGroupQty(items) {
     const cartIds = items.map((i) => i.id);
     cart.value.forEach((item) => {
       if (item.comboGroup === items[0].comboGroup && cartIds.includes(item.id)) {
+        const tempQty = item.quantity / item.comboQty; // 3/1
         item.comboQty = item.comboQty - 1;
-        item.quantity = item.comboQty;
+        item.quantity = item.quantity - tempQty;
       }
     });
   }
@@ -647,6 +635,7 @@ function openPromotionModal(productItemId) {
 }
 function openSpecificPromotionModal(promotionId) {
   groupProducts.value = [];
+  promotonIdRef.value = promotionId;
   console.log("Open specific promotion modal for promotion:", productItemIdRef.value);
   api
     .get(`/Promotions/${promotionId}`)
@@ -709,6 +698,7 @@ function handleProcessCombo() {
         selectedList.push({
           itemId: item.id,
           quantity: qty,
+          promotionId: promotonIdRef.value, // Lấy promotionId từ modal
         });
       }
     });
@@ -717,7 +707,16 @@ function handleProcessCombo() {
     cartId: cart.value.find((c) => c.productItemId === productItemIdRef.value)?.id, // Lấy id từ cart nếu có
     items: selectedList,
   };
-  console.log("Dữ liệu gửi về BE:", finalData);
+  api
+    .post("/cart/addCombo", finalData)
+    .then((response) => {
+      console.log("Combo processed successfully:", response.data);
+      // Cập nhật lại giỏ hàng sau khi gửi
+      loadCart();
+    })
+    .catch((error) => {
+      console.error("Error processing combo:", error);
+    });
   // Gửi selectedList về backend ở đây
 }
 
@@ -761,6 +760,7 @@ async function loadCart() {
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
+        comboGroupId: item.comboGroupId, // Thêm comboGroupId nếu có
       }));
       selectedItems.value = cart.value.map((item) => item.id);
     } else {
@@ -775,6 +775,7 @@ async function loadCart() {
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
+        comboGroupId: item.comboGroupId, // Thêm comboGroupId nếu co
       }));
       selectedItems.value = cart.value.map((item) => item.productItems);
     }
@@ -855,12 +856,11 @@ function decreaseQty(item) {
 const selectedTotal = computed(() => {
   let sum = 0;
   const countedComboGroups = new Set();
-
-  // Gom nhóm comboGroup + promotions.id
+  // Gom nhóm combo theo comboGroupId
   const allComboGroups = {};
   cart.value.forEach((item) => {
-    if (item.comboGroup && item.promotions && item.promotions.type === "COMBO") {
-      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+    if (item.comboGroupId && item.promotions && item.promotions.type === "COMBO") {
+      const groupKey = item.comboGroupId;
       if (!allComboGroups[groupKey]) allComboGroups[groupKey] = [];
       allComboGroups[groupKey].push(item);
     }
@@ -869,8 +869,8 @@ const selectedTotal = computed(() => {
   cart.value.forEach((item) => {
     if (!selectedItems.value.includes(item.id)) return;
 
-    // SẢN PHẨM LẺ: không có comboGroup
-    if (!item.comboGroup) {
+    // SẢN PHẨM LẺ: không có comboGroupId
+    if (!item.comboGroupId) {
       // Nếu là DISCOUNT
       if (item.promotions && item.promotions.type === "DISCOUNT") {
         sum += (item.price - item.promotions.discountValue) * item.quantity;
@@ -886,7 +886,7 @@ const selectedTotal = computed(() => {
       item.promotions.type === "COMBO" &&
       item.promotions.comboPrice > 0
     ) {
-      const groupKey = `${item.comboGroup}_${item.promotions.id}`;
+      const groupKey = item.comboGroupId;
       if (countedComboGroups.has(groupKey)) return;
 
       // Nếu đủ combo: cộng comboPrice * comboQty
@@ -909,7 +909,6 @@ const selectedTotal = computed(() => {
       }
     }
   });
-
   return sum;
 });
 // Gửi dữ liệu thanh toán
@@ -928,62 +927,6 @@ function checkout() {
 // Tải giỏ hàng khi trang được mount
 onMounted(() => {
   loadCart();
-  // Thêm đơn hàng mẫu nếu cart rỗng (chỉ để test)
-  // setTimeout(() => {
-  //   if (cart.value.length === 0) {
-  //     cart.value = [
-  //       {
-  //         id: 1,
-  //         productItemId: 1,
-  //         name: "Áo thun basic",
-  //         sku: "Xanh-M",
-  //         price: 120000,
-  //         quantity: 2,
-  //         image:
-  //           "https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png",
-  //         comboType: "DISCOUNT",
-  //       },
-
-  //       {
-  //         id: 3,
-  //         productItemId: 3,
-  //         name: "Váy yếm jean",
-  //         sku: "Xanh-M",
-
-  //         price: 300000,
-  //         quantity: 1,
-  //         image:
-  //           "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png",
-  //         comboType: "COMBO",
-  //       },
-  //       {
-  //         id: 4,
-  //         productItemId: 103,
-  //         name: "Váy yếm jean",
-  //         sku: "Xanh-M",
-
-  //         price: 300000,
-  //         quantity: 1,
-  //         image:
-  //           "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png",
-  //         comboType: "",
-  //       },
-  //       {
-  //         id: 6,
-  //         productItemId: 102,
-  //         name: "Quần jeans xanh",
-  //         sku: "Xanh-M",
-
-  //         price: 250000,
-  //         quantity: 1,
-  //         image:
-  //           "https://res.cloudinary.com/da2v8uqir/image/upload/v1751964597/qclbaowfuxqfbudyc5fh.jpg",
-  //         comboType: "COMBO",
-  //       },
-  //     ];
-  //     selectedItems.value = cart.value.map((item) => item.productItemId);
-  //   }
-  // }, 200);
 });
 
 // watch(() => selectedItems.value, (newvalue) => {
