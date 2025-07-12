@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.EWalletsDTOS;
-import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Mapper.EWalletsMapper;
 import com.aos.AOSBE.Service.AccountsService;
@@ -59,8 +58,7 @@ public class EWalletsAPI {
 		try {
 
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts user = accountsService.accountsFindByEmail(userEmail).orElse(null);
-			EWallets eWallets = eWalletsService.eWalletsFindByAccountId(user.getId()).orElse(null);
+			EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
 			if (eWallets != null) {
 				return ResponseEntity.ok(eWallets);
 			} else {
@@ -72,12 +70,11 @@ public class EWalletsAPI {
 	}
 
 	@GetMapping("/admin/EWallets/{id}")
-	public ResponseEntity<EWallets> getEWalletsByIdApi(@PathVariable int id) {
+	public ResponseEntity<EWallets> getEWalletsByIdApi(@PathVariable String id) {
 		// try{
 		// }catch(Exception e){
 		// }
-
-		EWallets eWallets = (EWallets) eWalletsService.eWalletsFindById(id);
+		EWallets eWallets = (EWallets) eWalletsService.eWalletsFindById(id).orElse(null);
 		return ResponseEntity.ok(eWallets);
 	}
 
@@ -88,10 +85,22 @@ public class EWalletsAPI {
 		return ResponseEntity.ok(saved);
 	}
 
-	@PutMapping("/admin/EWallets/{id}")
-	public ResponseEntity<?> updateEWallets(@PathVariable int id, @RequestBody EWalletsDTOS entity) {
+	@PostMapping("/user/EWallets")
+	public ResponseEntity<?> addNewUserEWallets(@RequestBody EWalletsDTOS entity) {
 		try {
-			EWallets isExist = eWalletsService.eWalletsFindById(id);
+
+			EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(saved);
+
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
+		}
+	}
+
+	@PutMapping("/admin/EWallets/{id}")
+	public ResponseEntity<?> updateEWallets(@PathVariable String id, @RequestBody EWalletsDTOS entity) {
+		try {
+			EWallets isExist = eWalletsService.eWalletsFindById(id).orElse(null);
 			if (isExist != null) {
 				EWallets update = eWalletsMapper.mapperToObject(entity);
 				eWalletsService.eWalletsSave(update);
@@ -106,7 +115,7 @@ public class EWalletsAPI {
 	}
 
 	@DeleteMapping("/admin/EWallets/{id}")
-	public ResponseEntity<Void> deleteEWallets(@PathVariable int id) {
+	public ResponseEntity<Void> deleteEWallets(@PathVariable String id) {
 		eWalletsService.eWalletsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}

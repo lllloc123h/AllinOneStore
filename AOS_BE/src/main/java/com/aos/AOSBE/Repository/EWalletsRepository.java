@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.aos.AOSBE.Entity.EWallets;
 
 @Repository
-public interface EWalletsRepository extends JpaRepository<EWallets, Integer>, JpaSpecificationExecutor<EWallets> {
+public interface EWalletsRepository extends JpaRepository<EWallets, String>, JpaSpecificationExecutor<EWallets> {
 
 	@Query("SELECT a FROM EWallets a  WHERE a.accounts.email = ?1 ")
 	Optional<EWallets> findByAccountEmail(String userEmail);

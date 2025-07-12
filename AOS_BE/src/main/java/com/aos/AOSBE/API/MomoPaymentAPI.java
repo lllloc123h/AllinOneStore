@@ -72,8 +72,8 @@ public class MomoPaymentAPI {
 		String requestId = UUID.randomUUID().toString();
 		String returnUrl = "http://localhost:5173/AllinOneStore/momo/return";
 		String notifyUrl = domain + "/api/e-wallet/callback";
-
-		transaction.setEWallets(user.getId());
+		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
+		transaction.setEWallets(eWallets.getId());
 		transaction.setAmount(dto.getAmount().doubleValue());
 		transaction.setTransactionType("TOP_UP");
 		transaction.setRelatedWalletId(user.getId());
@@ -136,9 +136,10 @@ public class MomoPaymentAPI {
 		if (order == null) {
 			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra: Không tìm thấy Order"));
 		}
+		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
 		order.setPaymentStatus("PENDING");
 		Orders updated = ordersService.ordersSave(order);
-		transaction.setEWallets(user.getId());
+		transaction.setEWallets(eWallets.getId());
 		transaction.setAmount(dto.getFinalToTal().doubleValue());
 		transaction.setTransactionType("MOMOPAY");
 		transaction.setRelatedWalletId(user.getId());
@@ -197,7 +198,8 @@ public class MomoPaymentAPI {
 						transaction.setStatus("SUCCESS");
 						eWalletTransactionsService.eWalletTransactionsSave(transaction);
 						// 4. Update e-wallet balance
-						EWallets userWallet = eWalletsService.eWalletsFindById(transaction.getEWallets().getId());
+						EWallets userWallet = eWalletsService.eWalletsFindById(transaction.getEWallets().getId())
+								.orElse(null);
 						if (userWallet != null) {
 							double newBalance = userWallet.getBalance() + transaction.getAmount();
 							userWallet.setBalance(newBalance);

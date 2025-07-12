@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EWallets {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
 	
     @Column(name = "id")
-    private int id;
+    private String id;
 	
     @Column(name = "balance")
     private double balance;
@@ -30,6 +30,9 @@ public class EWallets {
 	
     @Column(name = "is_active")
     private boolean isActive;
+	
+    @Column(name = "code_activce")
+    private String codeActivce;
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;

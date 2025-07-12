@@ -28,7 +28,7 @@ public class EWalletTransactionsService {
 		return eWalletTransactionsRepository.findAll(spec, pageable);
 	}
 
-	public List<EWalletTransactions> eWalletTransactionsFindByEwalletId(int id) {
+	public List<EWalletTransactions> eWalletTransactionsFindByEwalletId(String id) {
 		return eWalletTransactionsRepository.findByEwalletId(id);
 	}
 

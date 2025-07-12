@@ -17,6 +17,7 @@ public class EWalletsMapper {
 				    entity.getBalance(),
 				    entity.getWalletType(),
 				    entity.isActive(),
+				    entity.getCodeActivce(),
 				    entity.getCreatedAt(),
 				    entity.getAccounts().getId()
 			);
@@ -27,6 +28,7 @@ public class EWalletsMapper {
 					entity.getBalance(),
 					entity.getWalletType(),
 					entity.isActive(),
+					entity.getCodeActivce(),
 					entity.getCreatedAt(),
 					accountsService.accountsFindById(entity.getAccounts()).orElse(null)
 			);
