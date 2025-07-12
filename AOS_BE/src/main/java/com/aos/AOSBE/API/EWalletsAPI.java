@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,22 +21,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.CommonFunctions.CommonFunctions;
 import com.aos.AOSBE.DTOS.EWalletsDTOS;
+import com.aos.AOSBE.DTOS.VerifyEWalletsDTOS;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Mapper.EWalletsMapper;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.EWalletsService;
+import com.aos.AOSBE.Service.EmailService;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class EWalletsAPI {
+
+	@Autowired
+	private EmailService emailService;
 	@Autowired
 	private EWalletsService eWalletsService;
 	@Autowired
 	AccountsService accountsService;
 	@Autowired
 	private EWalletsMapper eWalletsMapper;
+
+	@Autowired
+	private JavaMailSender mailSender;
 
 	@GetMapping("/admin/EWallets")
 	public ResponseEntity<?> getAllEWalletsApiAdminRole(@RequestParam(defaultValue = "0") int page,
@@ -88,9 +98,34 @@ public class EWalletsAPI {
 	@PostMapping("/user/EWallets")
 	public ResponseEntity<?> addNewUserEWallets(@RequestBody EWalletsDTOS entity) {
 		try {
-
+			CommonFunctions commonFunctions = new CommonFunctions();
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			entity.setAccounts(userEmail);
+			entity.setActive(false);
+			entity.setBalance(0);
+			entity.setCodeActivce(commonFunctions.generateVerificationCode());
+			entity.setWalletType("REAL");
+			emailService.sendVerificationEWallet(mailSender, userEmail, commonFunctions.generateVerificationCode());
 			EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
 			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
+		}
+	}
+
+	@PostMapping("/user/EWallets")
+	public ResponseEntity<?> verifyNewUserEWallets(@RequestBody VerifyEWalletsDTOS entity) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			EWallets ewallet = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
+			if (ewallet != null && ewallet.isActive() == false
+					&& entity.getCodeActivce().equals(ewallet.getCodeActivce())) {
+				ewallet.setActive(true);
+				EWallets saved = eWalletsService.eWalletsSave(ewallet);
+				return ResponseEntity.ok(saved);
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: Không tìm thấy Ewallet"));
+			}
 
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
