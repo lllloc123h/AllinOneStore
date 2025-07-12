@@ -95,42 +95,42 @@ public class EWalletsAPI {
 		return ResponseEntity.ok(saved);
 	}
 
-	@PostMapping("/user/EWallets")
-	public ResponseEntity<?> addNewUserEWallets(@RequestBody EWalletsDTOS entity) {
-		try {
-			CommonFunctions commonFunctions = new CommonFunctions();
-			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			entity.setAccounts(userEmail);
-			entity.setActive(false);
-			entity.setBalance(0);
-			entity.setCodeActivce(commonFunctions.generateVerificationCode());
-			entity.setWalletType("REAL");
-			emailService.sendVerificationEWallet(mailSender, userEmail, commonFunctions.generateVerificationCode());
-			EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
-			return ResponseEntity.ok(saved);
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
-		}
-	}
-
-	@PostMapping("/user/EWallets")
-	public ResponseEntity<?> verifyNewUserEWallets(@RequestBody VerifyEWalletsDTOS entity) {
-		try {
-			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			EWallets ewallet = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
-			if (ewallet != null && ewallet.isActive() == false
-					&& entity.getCodeActivce().equals(ewallet.getCodeActivce())) {
-				ewallet.setActive(true);
-				EWallets saved = eWalletsService.eWalletsSave(ewallet);
-				return ResponseEntity.ok(saved);
-			} else {
-				return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: Không tìm thấy Ewallet"));
-			}
-
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
-		}
-	}
+//	@PostMapping("/user/EWallets")
+//	public ResponseEntity<?> addNewUserEWallets(@RequestBody EWalletsDTOS entity) {
+//		try {
+//			CommonFunctions commonFunctions = new CommonFunctions();
+//			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//			entity.setAccounts(userEmail);
+//			entity.setActive(false);
+//			entity.setBalance(0);
+//			entity.setCodeActivce(commonFunctions.generateVerificationCode());
+//			entity.setWalletType("REAL");
+//			emailService.sendVerificationEWallet(mailSender, userEmail, commonFunctions.generateVerificationCode());
+//			EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
+//			return ResponseEntity.ok(saved);
+//		} catch (Exception e) {
+//			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
+//		}
+//	}
+//
+//	@PostMapping("/user/EWallets")
+//	public ResponseEntity<?> verifyNewUserEWallets(@RequestBody VerifyEWalletsDTOS entity) {
+//		try {
+//			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//			EWallets ewallet = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
+//			if (ewallet != null && ewallet.isActive() == false
+//					&& entity.getCodeActivce().equals(ewallet.getCodeActivce())) {
+//				ewallet.setActive(true);
+//				EWallets saved = eWalletsService.eWalletsSave(ewallet);
+//				return ResponseEntity.ok(saved);
+//			} else {
+//				return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: Không tìm thấy Ewallet"));
+//			}
+//
+//		} catch (Exception e) {
+//			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
+//		}
+//	}
 
 	@PutMapping("/admin/EWallets/{id}")
 	public ResponseEntity<?> updateEWallets(@PathVariable String id, @RequestBody EWalletsDTOS entity) {

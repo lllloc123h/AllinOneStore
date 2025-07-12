@@ -382,3 +382,22 @@ INSERT INTO returns (order_product_item_id, qty, reason, image_url1, image_url2,
 VALUES
 (1, 1, N'Không vừa size', 'https://example.com/returns/return1-1.jpg', NULL, NULL, 'https://example.com/returns/return1.mp4', 0, 199000.00, 'EXCHANGE', NULL, N'PENDING', NULL, GETDATE(), GETDATE());
 GO
+
+
+
+INSERT INTO news (image, is_home, description, created_at, updated_at)
+VALUES
+-- Tin khuyến mãi & sự kiện
+('https://example.com/news/newyear_sale.jpg', 1, N'Tưng bừng đón năm mới – giảm giá 30% toàn bộ sản phẩm!', GETDATE(), GETDATE()),
+('https://example.com/news/black_friday.jpg', 1, N'Black Friday - săn deal sốc giảm đến 70% chỉ trong 3 ngày!', GETDATE(), GETDATE()),
+('https://example.com/news/flash_sale.jpg', 0, N'Flash Sale mỗi ngày lúc 12h trưa – Sản phẩm giá hủy diệt!', GETDATE(), GETDATE()),
+
+-- Tin thời trang & sản phẩm mới
+('https://example.com/news/summer_collection.jpg', 1, N'Khám phá BST mùa hè trẻ trung, năng động với nhiều mẫu mã mới.', GETDATE(), GETDATE()),
+('https://example.com/news/fashion_tips.jpg', 0, N'5 mẹo phối đồ cực chất bạn không thể bỏ qua mùa này.', GETDATE(), GETDATE()),
+('https://example.com/news/new_arrivals.jpg', 1, N'Hàng mới về mỗi tuần – Cập nhật xu hướng nhanh nhất!', GETDATE(), GETDATE()),
+
+-- Tin thương hiệu & cộng đồng
+('https://example.com/news/charity.jpg', 0, N'Thương hiệu đồng hành cùng chiến dịch "Áo ấm đến trường".', GETDATE(), GETDATE()),
+('https://example.com/news/celebrity_collab.jpg', 1, N'Kết hợp cùng người nổi tiếng: BST độc quyền chỉ có tại đây.', GETDATE(), GETDATE()),
+('https://example.com/news/recycle_program.jpg', 0, N'Chương trình tái chế đồ cũ – Góp phần bảo vệ môi trường.', GETDATE(), GETDATE());
