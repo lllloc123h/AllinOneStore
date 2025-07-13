@@ -1,14 +1,21 @@
 package com.aos.AOSBE.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-@Component
+@Service
 public class EmailService {
+	private final JavaMailSender mailSender;
+
+	@Autowired
+	public EmailService(JavaMailSender mailSender) {
+		this.mailSender = mailSender;
+	}
 
 	public void sendVerificationEmail(JavaMailSender mailSender, String toEmail, String token) {
 		String subject = "Account Verification";
@@ -31,7 +38,7 @@ public class EmailService {
 		}
 	}
 
-	public void sendVerificationEWallet(JavaMailSender mailSender, String toEmail, String token) {
+	public void sendVerificationEWallet(String toEmail, String token) {
 		String subject = "Ewallet All-In-One Store Verification";
 
 		String htmlContent = "<html>" + "<body>" + "<p>Please enter the code to verify your ewalt:</p>"

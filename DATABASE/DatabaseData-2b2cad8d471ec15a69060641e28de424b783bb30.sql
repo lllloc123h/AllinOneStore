@@ -1716,7 +1716,18 @@ VALUES
     1,
     NULL
   );
+  -- INSERT payment_methods
+INSERT INTO payment_methods (name, description, is_active, created_at, updated_at)
+VALUES 
+(N'Thanh toán khi nhận hàng (COD)', N'Thanh toán khi nhận hàng', 1, GETDATE(), GETDATE()),
+(N'Thanh toán qua ví điện tử', N'Sử dụng ví tích hợp trong hệ thống', 1, GETDATE(), GETDATE());
 
+-- INSERT shipping_methods
+INSERT INTO shipping_methods (name, description, is_active, created_at, updated_at)
+VALUES 
+(N'Giao hàng tiêu chuẩn', N'Giao trong 2-5 ngày làm việc', 1, GETDATE(), GETDATE()),
+(N'Giao hàng nhanh', N'Giao trong 24h nội thành', 1, GETDATE(), GETDATE());
+GO
 --delete from promotions
 --INSERT INTO
 --  promotions (

@@ -2,7 +2,12 @@
 --drop database all_in_store
 use all_in_store
 go
+use all_in_store
+go
 exec usp_DropTablesAndConstraints;
+go
+exec usp_DropTablesAndConstraints;
+go
 DROP TABLE IF EXISTS order_items;
 
 DROP TABLE IF EXISTS returns;
@@ -452,11 +457,12 @@ create table
 GO
 CREATE TABLE
 	e_wallets (
-		id INT IDENTITY (1, 1) PRIMARY KEY,
+		id nvarchar(40) PRIMARY KEY,
 		account_id INT NOT NULL UNIQUE,
 		balance DECIMAL(18, 2) DEFAULT 0 CHECK (balance >= 0),
 		wallet_type NVARCHAR (10) CHECK (wallet_type IN ('REAL', 'VIRTUAL')),
 		is_active BIT DEFAULT 1,
+		code_activce nvarchar(max),
 		created_at DATETIME DEFAULT GETDATE (),
 		FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 	);
@@ -464,7 +470,7 @@ GO
 CREATE TABLE
 	e_wallet_transactions (
 		id INT IDENTITY (1, 1) PRIMARY KEY,
-		wallet_id INT NOT NULL,
+		wallet_id nvarchar(40) NOT NULL,
 		amount DECIMAL(18, 2) NOT NULL,
 		transaction_type NVARCHAR (50) CHECK (
 			transaction_type IN ('TOP_UP', 'PURCHASE', 'WITHDRAW', 'RECEIVE')
@@ -495,6 +501,36 @@ INSERT INTO
 VALUES
 	(
 		'adminCUDE@gmail.com',
+		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+		'admin',
+		NULL,
+		'0866843926',
+		0.00,
+		'Bạc',
+		20.00,
+		20,
+		20,
+		'2025-06-05 00:00:00.000',
+		'2025-06-05 00:00:00.000'
+	);
+INSERT INTO
+	accounts (
+		email,
+		password,
+		fullname,
+		avatar_url,
+		phone,
+		average_order_value,
+		user_rank,
+		total_spent,
+		total_order,
+		loyalty_point,
+		created_at,
+		updated_at
+	)
+VALUES
+	(
+		'nkha79323@gmail.com',
 		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
 		'admin',
 		NULL,

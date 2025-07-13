@@ -99,6 +99,7 @@ async function fetchInfor() {
     try {
         const response = await api.get(`EWallets`)
         const transactionResponse = await api.get(`EWalletTransactions`)
+        console.log(response.data)
         const transactions = transactionResponse.data
         totalTopup.value = transactions
             .filter(txn => txn.transactionType === 'TOP_UP')
