@@ -371,7 +371,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'ao_polo_nam.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     100,
     4,
@@ -388,7 +388,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'ao_khoac_bomber.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     75,
     5,
@@ -405,7 +405,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'ao_thun_dai_tay_nam.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     90,
     4,
@@ -422,7 +422,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'ao_vest_nam.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     30,
     5,
@@ -439,7 +439,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'ao_hoodie_nam.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     110,
     4,
@@ -457,7 +457,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'quan_kaki_nam.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     85,
     4,
@@ -474,7 +474,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'quan_short_nam_the_thao.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     130,
     4,
@@ -491,7 +491,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'quan_au_nam_slimfit.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     60,
     5,
@@ -508,7 +508,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'quan_jogger_nam.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     95,
     4,
@@ -525,7 +525,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'quan_jean_rach.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     50,
     3,
@@ -543,7 +543,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'ao_thun_croptop.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     160,
     4,
@@ -560,7 +560,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'ao_len_nu.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     70,
     5,
@@ -577,7 +577,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'ao_cardigan_nu.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     80,
     4,
@@ -594,7 +594,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'ao_kieu_nu.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     105,
     4,
@@ -611,7 +611,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'ao_bomber_nu.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     45,
     4,
@@ -629,7 +629,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'vay_dam_suong.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     90,
     4,
@@ -646,7 +646,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'vay_chu_a_ngan.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     115,
     4,
@@ -663,7 +663,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'chan_vay_xep_ly.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     70,
     5,
@@ -680,7 +680,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'dam_du_tiec.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     55,
     5,
@@ -697,7 +697,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'vay_yem_jean.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     80,
     4,
@@ -715,7 +715,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'bo_be_trai_nang_dong.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     120,
     4,
@@ -732,7 +732,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'ao_thun_be_trai_ngan_tay.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     140,
     4,
@@ -749,7 +749,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'quan_jean_rach_be_trai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     70,
     4,
@@ -766,7 +766,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'ao_khoac_ni_be_trai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     60,
     5,
@@ -783,7 +783,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'bo_the_thao_be_trai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     90,
     4,
@@ -801,7 +801,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'vay_be_gai_xoe_hoa.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     110,
     5,
@@ -818,7 +818,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'bo_be_gai_de_thuong.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     130,
     4,
@@ -852,7 +852,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'dam_cong_chua_be_gai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     65,
     5,
@@ -869,7 +869,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'quan_legging_be_gai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
     0,
     150,
     4,
@@ -1269,7 +1269,7 @@ INSERT INTO
   product_images (product_item_id, image_url)
 SELECT
   id,
-  'ao_polo_nam_trang_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1277,7 +1277,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_polo_nam_trang_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1285,7 +1285,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_polo_nam_den_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1293,7 +1293,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_polo_nam_den_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1301,7 +1301,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_bomber_nam_den_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1309,7 +1309,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_bomber_nam_den_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1317,7 +1317,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_thun_dai_tay_nam_xam_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1325,7 +1325,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_thun_dai_tay_nam_xam_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1333,7 +1333,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'quan_kaki_nam_xanh_dam_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1341,7 +1341,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'quan_kaki_nam_xanh_dam_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1349,7 +1349,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'vay_suong_caro_trang_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1357,7 +1357,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'vay_suong_caro_trang_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1373,7 +1373,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_kieu_so_mi_nu_trang_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1381,7 +1381,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'bo_be_trai_xanh_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1389,7 +1389,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'bo_be_trai_xanh_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1397,7 +1397,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'vay_be_gai_hong_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1405,7 +1405,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'vay_be_gai_hong_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
@@ -1421,7 +1421,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_croptop_nu_trang_2.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
 FROM
   product_items
 WHERE
