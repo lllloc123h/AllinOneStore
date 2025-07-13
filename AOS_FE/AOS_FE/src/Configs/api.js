@@ -28,8 +28,6 @@ api.interceptors.request.use(config => {
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
   const isExcluded = excludedPaths.some(path => config.url.includes(path) && !config.url.includes("/admin"));
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
-
-
   // neu url ngoai le 
   if (!isExcluded) {
     const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();

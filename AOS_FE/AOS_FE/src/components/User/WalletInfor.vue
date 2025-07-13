@@ -4,7 +4,13 @@
         <p class="text-muted">Quản lý số dư và giao dịch của bạn</p>
 
         <div class="row text-center mb-4">
-            <div class="col-md-4">
+            <div v-if="walletNotFound" class="col-md-4 text-center">
+                <p class="text-danger">Bạn chưa có ví điện tử.</p>
+
+                <button class="btn btn-primary" @click="showModal = true">Tạo ví mới</button>
+            </div>
+
+            <div v-else="walletNotFound" class="col-md-4">
                 <div class="card shadow-sm p-3">
                     <h4 class="text-primary">{{ formatCurrency(wallet.balance || 0) }}</h4>
                     <button class="btn btn-outline-primary btn-sm mt-2" @click="MomoTopUp">+ Nạp tiền</button>
@@ -25,7 +31,25 @@
                 </div>
             </div>
         </div>
-
+        <div v-if="showModal" class="modal d-block" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tạo ví mới</h5>
+                        <button type="button" class="btn-close" @click="showModal = false"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" v-model="formDataWallet.id" class="form-control mb-3"
+                            placeholder="Nhập ID ví (tùy chọn)">
+                        <p>Bạn có chắc chắn muốn tạo ví mới?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @click="showModal = false">Hủy</button>
+                        <button class="btn btn-primary" @click="createWallet">Tạo ví</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Thông tin ví -->
         <div class="card mb-4">
             <div class="card-header">Tổng quan ví</div>
@@ -33,10 +57,39 @@
                 <div class="col-md-6">
                     <p><strong>ID Ví:</strong> {{ wallet.id }}</p>
                     <p><strong>Trạng thái:</strong>
-                        <span class="badge bg-success" v-if="wallet.status === 'active'">Đang hoạt động</span>
+                        <span class="badge" :class="wallet.active === true ? 'bg-success' : 'bg-warning'">
+                            {{ wallet.active === true ? 'Đang hoạt động' : 'Chưa xác minh' }}
+                        </span>
                     </p>
+
+                    <!-- Show verify button if not active -->
+                    <div v-if="wallet.active === false">
+                        <button class="btn btn-outline-primary btn-sm mt-2" @click="showVerifyModal = true">
+                            Xác minh ví
+                        </button>
+                    </div>
                     <p><strong>Ngày tạo:</strong> {{ formatDate(wallet.createdAt) }}</p>
                     <p><strong>Cập nhật lần cuối:</strong> {{ formatDate(wallet.updatedAt) }}</p>
+                </div>
+                <!-- Verify Modal -->
+                <div v-if="showVerifyModal" class="modal d-block" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Xác minh ví</h5>
+                                <button type="button" class="btn-close" @click="showVerifyModal = false"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Nhập mã xác minh đã gửi đến email/SMS:</p>
+                                <input type="text" v-model="verifyCode" class="form-control"
+                                    placeholder="Mã xác minh" />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" @click="showVerifyModal = false">Hủy</button>
+                                <button class="btn btn-primary" @click="verifyWallet">Xác minh</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-6">
@@ -45,7 +98,8 @@
                         <li class="list-group-item" v-for="(txn, index) in recentTransactions" :key="index">
                             <div class="d-flex justify-content-between">
                                 <span>{{ txn.description }} ({{ formatDate(txn.date) }})</span>
-                                <span> {{ txn.status === 'PENDING' ? 'Giao dịch quá hạn' : "Nạp tiền thành công" }}</span>
+                                <span> {{ txn.status === 'PENDING' ? 'Giao dịch quá hạn' : "Nạp tiền thành công"
+                                }}</span>
                                 <strong :class="txn.amount > 0 ? 'text-success' : 'text-danger'">
                                     {{ formatCurrency(txn.amount) }}
                                 </strong>
@@ -79,8 +133,78 @@ const totalSpent = ref(0)
 const recentTransactions = ref([])
 const topupUpdated = ref('')
 const spentUpdated = ref('')
-
+const walletNotFound = ref(false)
 const router = useRouter()
+const showModal = ref(false)
+const showVerifyModal = ref(false)
+const verifyCode = ref('')
+import { notification } from "ant-design-vue";
+// thisis the structure of the wallet object
+//  private String id;
+// 	private double balance;
+// 	private String walletType;
+// 	private boolean isActive;
+// 	private String codeActivce;
+// 	private LocalDateTime createdAt;
+// 	private String accounts;
+const formDataWallet = ref(
+    {
+        id: '',
+        createdAt: '',
+        accounts: '',
+        walletType: 'REAL',
+        isActive: false,
+        codeActivce: ''
+    }
+)
+async function verifyWallet() {
+    if (!verifyCode.value) {
+        notification.warning({
+            message: "Thiếu mã",
+            description: "Vui lòng nhập mã xác minh.",
+        })
+        return
+    }
+
+    try {
+        const response = await api.post(`/user/VerifyEWallets`, {
+            codeActivce: verifyCode.value,
+            accounts: ''
+        })
+        wallet.value = response.data
+        showVerifyModal.value = false
+        verifyCode.value = ''
+
+        notification.success({
+            message: "Thành công",
+            description: "Ví đã được xác minh thành công.",
+        })
+    } catch (error) {
+        console.error('Lỗi xác minh:', error)
+        notification.error({
+            message: "Lỗi",
+            description: "Mã xác minh không hợp lệ hoặc đã hết hạn.",
+        })
+    }
+}
+async function createWallet() {
+    try {
+        if (!formDataWallet.value.id || !/^[a-zA-Z0-9_-]+$/.test(formDataWallet.value.id)) {
+            notification.error({
+                message: "Lỗi",
+                description: `ID KHÔNG HỢP LỆ. Vui lòng nhập ID chỉ chứa chữ cái, số, dấu gạch ngang hoặc gạch dưới.`,
+            });
+            return
+        }
+        const response = await api.post(`/user/EWallets`, { ...formDataWallet.value }) // adjust body if needed
+        wallet.value = response.data
+        walletNotFound.value = false
+        showModal.value = false
+    } catch (error) {
+        console.error('Lỗi khi tạo ví:', error)
+        alert('Không thể tạo ví. Vui lòng thử lại.')
+    }
+}
 
 function formatDate(dateStr) {
     if (!dateStr) return ''
@@ -99,7 +223,9 @@ async function fetchInfor() {
     try {
         const response = await api.get(`EWallets`)
         const transactionResponse = await api.get(`EWalletTransactions`)
-        console.log(response.data)
+        console.log(response.data.active)
+        walletNotFound.value = false
+        showVerifyModal.value = !response.data.active
         const transactions = transactionResponse.data
         totalTopup.value = transactions
             .filter(txn => txn.transactionType === 'TOP_UP')
@@ -119,7 +245,11 @@ async function fetchInfor() {
         // console.log(transactionResponse.data)
         wallet.value = response.data
     } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu ví:", error)
+        if (error.response && error.response.data.message === "404") {
+            walletNotFound.value = true
+        } else {
+            console.error("Lỗi khi lấy dữ liệu ví:", error)
+        }
     }
 }
 
@@ -143,5 +273,19 @@ onMounted(fetchInfor)
 
 .list-group-item {
     font-weight: 500;
+}
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+}
+
+.modal-dialog {
+    margin: auto;
 }
 </style>
