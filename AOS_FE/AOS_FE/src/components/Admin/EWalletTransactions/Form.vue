@@ -155,7 +155,7 @@
   async function submitForm() {
     console.log(formData)
     try {
-      const response = await formTableService.post(formData)
+      const response = await formTableService.create(formData)
       console.log('Insert successful:', response.data)
       router.push(`/Admin/${props.TableName}`)
     } catch (error) {

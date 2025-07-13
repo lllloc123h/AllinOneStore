@@ -23,6 +23,17 @@
           />
         </div>
         <div class="mb-3">
+          <label :for="comboGroup" class="form-label text-capitalize">comboGroup</label>
+          <input
+            :id="comboGroup"
+            v-model="formData.comboGroup"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter comboGroup`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="qty" class="form-label text-capitalize">qty</label>
           <input
             :id="qty"
@@ -77,42 +88,11 @@
 
     const formData = reactive({
     			id: '',
+    			comboGroup: '',
     			qty: '',
     			createdAt: '',
     			updatedAt: '',
     })
-
-    const listDashBoard = [
-    	"Accounts",
-    	"Authorities",
-    	"BaseProducts",
-    	"Cancels",
-    	"CartItems",
-    	"Catalogs",
-    	"Categories",
-    	"CostHistories",
-    	"Coupons",
-    	"News",
-    	"OrderItems",
-    	"Orders",
-    	"PaymentMethods",
-    	"PriceHistories",
-    	"ProductImages",
-    	"ProductItems",
-    	"PromotionProduct",
-    	"Promotions",
-    	"PurchaseOrderItems",
-    	"PurchaseOrders",
-    	"Returns",
-    	"Reviews",
-    	"Roles",
-    	"ShippingMethods",
-    	"UserAddresses",
-    	"VariantValues",
-    	"Variants",
-    ]
-
-
 
     async function submitUpdateForm() {
     console.log(formData)
@@ -125,11 +105,10 @@
     }
   }
 
-
   async function submitForm() {
     console.log(formData)
     try {
-      const response = await formTableService.post(formData)
+      const response = await formTableService.create(formData)
       console.log('Insert successful:', response.data)
       router.push(`/Admin/${props.TableName}`)
     } catch (error) {

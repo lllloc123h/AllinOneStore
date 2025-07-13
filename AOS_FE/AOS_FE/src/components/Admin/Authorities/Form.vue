@@ -70,38 +70,6 @@
     			updatedAt: '',
     })
 
-    const listDashBoard = [
-    	"Accounts",
-    	"Authorities",
-    	"BaseProducts",
-    	"Cancels",
-    	"CartItems",
-    	"Catalogs",
-    	"Categories",
-    	"CostHistories",
-    	"Coupons",
-    	"News",
-    	"OrderItems",
-    	"Orders",
-    	"PaymentMethods",
-    	"PriceHistories",
-    	"ProductImages",
-    	"ProductItems",
-    	"PromotionProduct",
-    	"Promotions",
-    	"PurchaseOrderItems",
-    	"PurchaseOrders",
-    	"Returns",
-    	"Reviews",
-    	"Roles",
-    	"ShippingMethods",
-    	"UserAddresses",
-    	"VariantValues",
-    	"Variants",
-    ]
-
-
-
     async function submitUpdateForm() {
     console.log(formData)
     try {
@@ -113,11 +81,10 @@
     }
   }
 
-
   async function submitForm() {
     console.log(formData)
     try {
-      const response = await formTableService.post(formData)
+      const response = await formTableService.create(formData)
       console.log('Insert successful:', response.data)
       router.push(`/Admin/${props.TableName}`)
     } catch (error) {
