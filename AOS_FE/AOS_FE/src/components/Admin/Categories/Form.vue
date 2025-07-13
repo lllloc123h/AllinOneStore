@@ -78,7 +78,6 @@ async function submitUpdateForm() {
   console.log(formData)
   try {
     const response = await formTableService.update(props.id, formData)
-    console.log('Update successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   } catch (error) {
     console.error('Update failed:', error)
@@ -89,7 +88,6 @@ async function submitForm() {
   console.log(formData)
   try {
     const response = await formTableService.create(formData)
-    console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   } catch (error) {
     console.error('Insert failed:', error)
@@ -116,7 +114,6 @@ async function fetchData() {
 onMounted(async () => {
   await fetchData()
   dropDownListCatalog.value = (await dropDown('admin/Catalogs')).content
-  console.log('Catalogs:', dropDownListCatalog.value)
 })
 
 watch(() => props.id, fetchData)

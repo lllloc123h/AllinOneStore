@@ -176,7 +176,6 @@ const selectedProduct = ref(null);
 const quantity = ref(1);
 
 const openModal = (product) => {
-  console.log(product);
   selectedProduct.value = product;
   showModal.value = true;
   itemCart.value.productItems = product.productItemId;
@@ -208,7 +207,6 @@ onMounted(() => {
   api
     .get("/BaseProducts")
     .then(async (resp) => {
-      console.log(resp.data);
       data.value = resp.data.totalPages;
       const rawProducts = resp.data;
       //handle img with firebase storage
@@ -278,7 +276,6 @@ const fetchData = async () => {
       })
     );
     products.value = updatedProducts;
-    console.log(products.value);
   } catch (error) {
     console.error("Error fetching variants:", error);
   }

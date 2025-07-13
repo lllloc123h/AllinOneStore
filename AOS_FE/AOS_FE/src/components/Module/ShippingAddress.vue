@@ -153,7 +153,6 @@ export default {
     async removeAddress(id) {
       try {
         const res = await api.delete(`/UserAddresses/${id}`)
-        console.log(res.data)
         this.fetchData()
       } catch (err) {
         console.log(err.message)

@@ -8,11 +8,7 @@
             <tr class="border-1">
               <!-- Checkbox cột -->
               <th>
-                <input
-                  type="checkbox"
-                  :checked="isAllSelected"
-                  @change="toggleSelectAll"
-                />
+                <input type="checkbox" :checked="isAllSelected" @change="toggleSelectAll" />
               </th>
               <th class="text-start">Sản phẩm</th>
               <th>Giá</th>
@@ -24,49 +20,28 @@
           <tbody>
             <tr v-for="item in cart" :key="item.id" class="border-bottom">
               <td>
-                <input
-                  type="checkbox"
-                  v-model="selectedItems"
-                  :value="item.productItemId"
-                />
+                <input type="checkbox" v-model="selectedItems" :value="item.productItemId" />
               </td>
               <td>
                 <div class="d-flex position-relative align-items-center">
-                  <span
-                    class="position-relative mt-2 mb-2"
-                    style="height: 125px; width: 156px"
-                  >
+                  <span class="position-relative mt-2 mb-2" style="height: 125px; width: 156px">
                     <img :src="item.image" class="img-thumbnail me-2" />
                     <!-- Thay nút Ưu đãi -->
-                    <button
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModalToggle"
+                    <button data-bs-toggle="modal" data-bs-target="#exampleModalToggle"
                       class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      @click="openPromotionModal(item.id)"
-                      type="button"
-                    >
+                      @click="openPromotionModal(item.id)" type="button">
                       <i class="bi bi-gift-fill"></i> Ưu đãi
                     </button>
                     <!-- Modal của Ưu đãiiiiiiiiiii -->
-                    <div
-                      class="modal fade"
-                      id="exampleModalToggle"
-                      aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel"
-                      tabindex="-1"
-                    >
+                    <div class="modal fade" id="exampleModalToggle" aria-hidden="true"
+                      aria-labelledby="exampleModalToggleLabel" tabindex="-1">
                       <div class="modal-dialog modal-lg modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
                               Ưu đãi hiện có
                             </h1>
-                            <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
                             <div v-for="item in promotions" :key="item.id" class="mb-3">
@@ -82,9 +57,7 @@
                                     {{ item.description }}
                                   </div>
                                   <div class="mt-1" style="font-size: 0.92em">
-                                    <span class="text-success"
-                                      >Còn lại: {{ item.qty }}</span
-                                    >
+                                    <span class="text-success">Còn lại: {{ item.qty }}</span>
                                     <span class="ms-3 text-secondary">
                                       HSD: {{ new Date(item.endAt).toLocaleDateString() }}
                                     </span>
@@ -94,46 +67,29 @@
                             </div>
                           </div>
                           <div class="modal-footer">
-                            <button
-                              class="btn btn-primary"
-                              data-bs-target="#exampleModalToggle2"
-                              data-bs-toggle="modal"
-                            >
+                            <button class="btn btn-primary" data-bs-target="#exampleModalToggle2"
+                              data-bs-toggle="modal">
                               Open second modal
                             </button>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div
-                      class="modal fade"
-                      id="exampleModalToggle2"
-                      aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel2"
-                      tabindex="-1"
-                    >
+                    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true"
+                      aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
                       <div class="modal-dialog modal-lg modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">
                               Modal 2
                             </h1>
-                            <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
                             Hide this modal and show the first with the button below.
                           </div>
                           <div class="modal-footer">
-                            <button
-                              class="btn btn-primary"
-                              data-bs-target="#exampleModalToggle"
-                              data-bs-toggle="modal"
-                            >
+                            <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
                               Back to first
                             </button>
                           </div>
@@ -184,11 +140,7 @@
               <span>{{ selectedTotal.toLocaleString() }}₫</span>
             </li>
           </ul>
-          <button
-            class="btn btn-dark w-100"
-            :disabled="selectedItems.length === 0"
-            @click="checkout"
-          >
+          <button class="btn btn-dark w-100" :disabled="selectedItems.length === 0" @click="checkout">
             Thanh toán
           </button>
         </div>
@@ -199,11 +151,7 @@
     <div class="mt-5">
       <h5 class="mb-4">Bạn cũng có thể thích</h5>
       <div class="row">
-        <div
-          class="col-6 col-md-3"
-          v-for="(product, index) in suggestions"
-          :key="'suggestion-' + index"
-        >
+        <div class="col-6 col-md-3" v-for="(product, index) in suggestions" :key="'suggestion-' + index">
           <div class="text-center">
             <img :src="product.image" class="suggestion-img mb-2" />
             <div>{{ product.name }}</div>
@@ -272,7 +220,6 @@ async function loadCart() {
         quantity: item.qty,
         image: item.productItems.image,
       }));
-      console.log(cart.value);
       selectedItems.value = cart.value.map((item) => item.productItemId);
     } else {
       cart.value = response.map((item) => ({

@@ -365,7 +365,6 @@ async function getProductItems(id) {
   if (!props.TableName) return
   try {
     const response = await api.get('/admin/ProductItems/ByBaseProductId/' + id)
-    console.log('Get ProductItems successful:', response.data.content)
     if (response.data.content && response.data.content.length > 0) {
       list.value = response.data.content.map(item => {
         return {
@@ -398,7 +397,6 @@ async function submitUpdateForm() {
   console.log(formData)
   try {
     const response = await formTableService.update(props.id, formData)
-    console.log('Insert successful:', response.data)
     router.push(`/Admin/${props.TableName}`)
   } catch (error) {
     console.error('Insert failed:', error)
@@ -407,7 +405,6 @@ async function submitUpdateForm() {
 async function removeVariant(index) {
   try {
     const response = await api.delete('/admin/ProductItems/' + index)
-    console.log('Remove variant successful:', response.data)
   } catch (error) {
     console.error('Remove variant failed:', error)
     notification.error({
@@ -465,10 +462,7 @@ async function addToCart() {
 
   try {
     const responseSaveProductItem = await api.post('/admin/ProductItems', selectedProduct.value);
-    console.log('Insert successful:', responseSaveProductItem.data)
-    // console.log({ id: '', productItems: responseSaveProductItem.data.id, imageUrl: resultImgUpload[0].url })
     const responseSaveImg = await api.post('/admin/ProductImages', { id: '', productItems: responseSaveProductItem.data.id, imageUrl: resultImgUpload[0].url });
-    console.log('Insert successful:', responseSaveImg.data)
   } catch (error) {
     console.error('Insert failed:', error)
     notification.error({

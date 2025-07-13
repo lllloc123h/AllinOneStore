@@ -51,7 +51,6 @@ function closePopup() {
 async function momoTopUp() {
     try {
         const response = await api.post(`/e-wallet/topup`, { userId: - 1, amount: topUpAmount.value })
-        console.log(response.data)
         payURL.value = response.data;
         showPopUp.value = true
     } catch (err) {

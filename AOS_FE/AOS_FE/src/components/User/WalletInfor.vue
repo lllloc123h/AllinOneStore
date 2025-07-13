@@ -99,7 +99,7 @@
                             <div class="d-flex justify-content-between">
                                 <span>{{ txn.description }} ({{ formatDate(txn.date) }})</span>
                                 <span> {{ txn.status === 'PENDING' ? 'Giao dịch quá hạn' : "Nạp tiền thành công"
-                                }}</span>
+                                    }}</span>
                                 <strong :class="txn.amount > 0 ? 'text-success' : 'text-danger'">
                                     {{ formatCurrency(txn.amount) }}
                                 </strong>
@@ -223,7 +223,6 @@ async function fetchInfor() {
     try {
         const response = await api.get(`EWallets`)
         const transactionResponse = await api.get(`EWalletTransactions`)
-        console.log(response.data.active)
         walletNotFound.value = false
         showVerifyModal.value = !response.data.active
         const transactions = transactionResponse.data
