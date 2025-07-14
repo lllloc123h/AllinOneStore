@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,6 +56,8 @@ public class OrderItems {
     private Promotions promotions;
     @JoinColumn(name = "combo_group")
     private String comboGroup;
-    @JoinColumn(name = "id_combo_group")
-    private String idComboGroup;
+    @JoinColumn(name = "combo_group_id")
+    private UUID comboGroupId;
+    @JoinColumn(name="combo_qty")
+    private Integer comboQty;
 }

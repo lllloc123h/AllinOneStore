@@ -1,10 +1,8 @@
 <template>
   <div class="container-fluid row">
     <div class="aside col-2">
-      <Dashboard :listDashBoard="listDashBoard"></Dashboard>
+      <Dashboard ></Dashboard>
     </div>
-    
-    
     <div class="article col-10">
       <h1>
         EWallets
@@ -24,6 +22,7 @@ import Table from "../../Module/Table.vue";
 import Dashboard from "../../Module/DashBoard.vue";
 import { useRouter } from 'vue-router'
 import { ref, reactive, watch } from 'vue'
+
 import FilterDropDown from "../../Module/FilterDropDown.vue";
 const router = useRouter()
   const props = defineProps({

@@ -23,6 +23,17 @@
           />
         </div>
         <div class="mb-3">
+          <label :for="id" class="form-label text-capitalize">id</label>
+          <input
+            :id="id"
+            v-model="formData.id"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter id`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="balance" class="form-label text-capitalize">balance</label>
           <input
             :id="balance"
@@ -52,6 +63,17 @@
             type="text"
             class="form-control"
             :placeholder="`Enter isActive`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="codeActivce" class="form-label text-capitalize">codeActivce</label>
+          <input
+            :id="codeActivce"
+            v-model="formData.codeActivce"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter codeActivce`"
           />
         </div>
 
@@ -102,40 +124,9 @@
     			balance: '',
     			walletType: '',
     			isActive: '',
+    			codeActivce: '',
     			createdAt: '',
     })
-
-    const listDashBoard = [
-    	"Accounts",
-    	"Authorities",
-    	"BaseProducts",
-    	"Cancels",
-    	"CartItems",
-    	"Catalogs",
-    	"Categories",
-    	"CostHistories",
-    	"Coupons",
-    	"News",
-    	"OrderItems",
-    	"Orders",
-    	"PaymentMethods",
-    	"PriceHistories",
-    	"ProductImages",
-    	"ProductItems",
-    	"PromotionProduct",
-    	"Promotions",
-    	"PurchaseOrderItems",
-    	"PurchaseOrders",
-    	"Returns",
-    	"Reviews",
-    	"Roles",
-    	"ShippingMethods",
-    	"UserAddresses",
-    	"VariantValues",
-    	"Variants",
-    ]
-
-
 
     async function submitUpdateForm() {
     console.log(formData)
@@ -148,11 +139,10 @@
     }
   }
 
-
   async function submitForm() {
     console.log(formData)
     try {
-      const response = await formTableService.post(formData)
+      const response = await formTableService.create(formData)
       console.log('Insert successful:', response.data)
       router.push(`/Admin/${props.TableName}`)
     } catch (error) {

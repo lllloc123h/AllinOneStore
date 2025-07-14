@@ -36,8 +36,6 @@ public class Promotions {
 	@Column(name = "type")
 	private String type;
 
-	@Column(name = "discount_type")
-	private String discountType;
 
 	@Column(name = "discount_value")
 	private Double discountValue;

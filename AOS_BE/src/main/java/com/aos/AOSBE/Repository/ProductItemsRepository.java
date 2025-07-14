@@ -18,6 +18,9 @@ public interface ProductItemsRepository
 	@Query("SELECT a FROM ProductItems a WHERE a.sku like  ?1 ")
 	List<ProductItems> findBySkuLike(String skuLike);
 
+	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1 ")
+	Page<ProductItems> findByBaseProductsId(Pageable pageable, int id);
+
 	// Add custom query methods here if needed
 	@Query("SELECT MIN(p.price),MAX(p.price) FROM ProductItems p WHERE p.baseProducts.id = ?1")
 	List<Double> findMinAndMaxPriceByBaseId(int id);

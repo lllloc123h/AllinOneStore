@@ -90,7 +90,7 @@ VALUES
 -- Áo thun
 (1, 60000, 150000, 80, N'Áo thun M, trắng', 'TSHIRT1-M-WHITE', 10, 50, GETDATE(), NULL, GETDATE(), GETDATE()),
 (1, 60000, 150000, 60, N'Áo thun L, đen', 'TSHIRT1-L-BLACK', 10, 40, GETDATE(), NULL, GETDATE(), GETDATE()),
-(2, 65000, 160000, 70, N'Áo thun XL, xám', 'TSHIRT2-XL-GREY', 10, 35, GETDATE(), NULL, GETDATE(), GETDATE()),
+(2, 65000, 160000, 70, N'Áo thun XL, xám', 'TSHIRT2-XL-RED', 10, 35, GETDATE(), NULL, GETDATE(), GETDATE()),
 (3, 70000, 160000, 55, N'Áo Nhật Bản M', 'TS-JPN-M', 10, 40, GETDATE(), NULL, GETDATE(), GETDATE()),
 (4, 68000, 155000, 60, N'Cổ tròn L', 'TS-ROUND-L', 10, 35, GETDATE(), NULL, GETDATE(), GETDATE()),
 
@@ -154,12 +154,13 @@ VALUES
 (3, 100000, 'RECEIVE', 1, N'Tặng thưởng từ hệ thống', GETDATE());
 Go
 INSERT INTO cart_items (
-    account_id,combo_id,combo_group, product_item_id, qty, created_at, updated_at
+    account_id,combo_id,combo_group, product_item_id, qty,combo_qty,combo_group_id, created_at, updated_at
 )
 VALUES
-(1,4,'2-1', 2, 2, GETDATE(), GETDATE()),
-(1,4,'2-1', 1, 2, GETDATE(), GETDATE()),
-(3,null,null, 1, 4, GETDATE(), GETDATE());
+(1,4,'1-2', 1, 1,1,'31D1386F-E158-4361-A106-234978CF856C', GETDATE(), GETDATE()),
+(1,4,'1-2', 2, 1,1,'31D1386F-E158-4361-A106-234978CF856C', GETDATE(), GETDATE()),
+(1,10,null,3, 1,null,'490CAE2E-873A-43F0-94A3-985C83D5C3FE', GETDATE(), GETDATE()
+);
 GO
 -- INSERT payment_methods
 INSERT INTO payment_methods (name, description, is_active, created_at, updated_at)
@@ -191,23 +192,23 @@ VALUES
  N'Đã thanh toán', N'Giao sớm càng tốt', 30, 320000, N'[{"item":"Jean size 32","qty":1}, {"item":"Váy xếp ly","qty":1}]', GETDATE(), GETDATE());
 GO
 INSERT INTO promotions (
-    name, description, type, discount_type, discount_value,
+    name, description, type, discount_value,
     combo_price, qty, start_at, end_at,
     is_active, created_at, updated_at
 )
 VALUES
-(N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 'PERCENT', 10.00, NULL, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 'AMOUNT', 50000, NULL, 100, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 'AMOUNT', 30000, NULL, 500, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, NULL, 0, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, NULL, 399000, 30, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 'PERCENT', 15.00, NULL, 100, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 'PERCENT', 20.00, NULL, 150, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Mua 1 tặng 1 khăn cổ', N'Khuyến mãi phụ kiện kèm áo sơ mi', 'COMBO', NULL, NULL, 0, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 'PERCENT', 30.00, NULL, 50, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 'AMOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
+(N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 10.00, NULL, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 50000, NULL, 100, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 30000, NULL, 500, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 210000, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, 399000, 30, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 15.00, NULL, 100, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 20.00, NULL, 150, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 1 tặng 1 khăn cổ', N'Khuyến mãi phụ kiện kèm áo sơ mi', 'COMBO', NULL, 0, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 30.00, NULL, 50, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
 INSERT INTO promotions (
-    name, description, type, discount_type, discount_value,
+    name, description, type, discount_value,
     combo_price, qty, start_at, end_at,
     is_active, created_at, updated_at
 )
@@ -382,3 +383,22 @@ INSERT INTO returns (order_product_item_id, qty, reason, image_url1, image_url2,
 VALUES
 (1, 1, N'Không vừa size', 'https://example.com/returns/return1-1.jpg', NULL, NULL, 'https://example.com/returns/return1.mp4', 0, 199000.00, 'EXCHANGE', NULL, N'PENDING', NULL, GETDATE(), GETDATE());
 GO
+
+
+
+INSERT INTO news (image, is_home, description, created_at, updated_at)
+VALUES
+-- Tin khuyến mãi & sự kiện
+('https://example.com/news/newyear_sale.jpg', 1, N'Tưng bừng đón năm mới – giảm giá 30% toàn bộ sản phẩm!', GETDATE(), GETDATE()),
+('https://example.com/news/black_friday.jpg', 1, N'Black Friday - săn deal sốc giảm đến 70% chỉ trong 3 ngày!', GETDATE(), GETDATE()),
+('https://example.com/news/flash_sale.jpg', 0, N'Flash Sale mỗi ngày lúc 12h trưa – Sản phẩm giá hủy diệt!', GETDATE(), GETDATE()),
+
+-- Tin thời trang & sản phẩm mới
+('https://example.com/news/summer_collection.jpg', 1, N'Khám phá BST mùa hè trẻ trung, năng động với nhiều mẫu mã mới.', GETDATE(), GETDATE()),
+('https://example.com/news/fashion_tips.jpg', 0, N'5 mẹo phối đồ cực chất bạn không thể bỏ qua mùa này.', GETDATE(), GETDATE()),
+('https://example.com/news/new_arrivals.jpg', 1, N'Hàng mới về mỗi tuần – Cập nhật xu hướng nhanh nhất!', GETDATE(), GETDATE()),
+
+-- Tin thương hiệu & cộng đồng
+('https://example.com/news/charity.jpg', 0, N'Thương hiệu đồng hành cùng chiến dịch "Áo ấm đến trường".', GETDATE(), GETDATE()),
+('https://example.com/news/celebrity_collab.jpg', 1, N'Kết hợp cùng người nổi tiếng: BST độc quyền chỉ có tại đây.', GETDATE(), GETDATE()),
+('https://example.com/news/recycle_program.jpg', 0, N'Chương trình tái chế đồ cũ – Góp phần bảo vệ môi trường.', GETDATE(), GETDATE());

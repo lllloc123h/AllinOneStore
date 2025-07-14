@@ -1,9 +1,7 @@
 package com.aos.AOSBE.DTOS;
-import jakarta.persistence.*;
 
-import java.time.*;
-import java.math.*;
-import java.util.*;
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EWalletsDTOS {
-    private int id;
-    private double balance;
-    private String walletType;
-    private boolean isActive;
-    private LocalDateTime createdAt;
-    private int accounts;
+	private String id;
+	private double balance;
+	private String walletType;
+	private boolean isActive;
+	private String codeActivce;
+	private LocalDateTime createdAt;
+	private String accounts;
 }

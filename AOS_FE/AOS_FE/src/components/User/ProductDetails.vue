@@ -31,10 +31,12 @@
       <div class="col-lg-5 col-md-12">
         <h2 class="fw-semibold mb-1">{{ product.name }}</h2>
 
-        <!-- Giá hiện tại -->
-        <p class="text-danger fs-4 fw-bold">
-          {{ formatPrice(currentPrice) }} 
-          <small class="text-muted">| ★★★★☆ ({{ reviews.length }} lượt mua)</small>
+        <!-- Giá hiện tại và giảm giá -->
+        <p class="fs-4 fw-bold">
+          <span class="text-danger">{{ formatPrice(discountedPrice) }}</span>
+          <del class="text-muted ms-2" v-if="promotion">{{ formatPrice(currentPrice) }}</del>
+          <small class="text-danger ms-2" v-if="promotion">-{{ promotion.promotions.discountPercent }}%</small>
+          <small class="text-muted">| ★★★★☆ ({{ reviews.length }} review)</small>
         </p>
 
         <p class="text-muted mb-3">{{ product.material }}</p>
@@ -50,14 +52,17 @@
 
         <!-- Số lượng và nút -->
         <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <div class="d-flex align-items-center border rounded-pill px-3"
-               style="height: 48px; flex: 1 1 120px; min-width: 100px; max-width: 160px;">
-            <button @click="decreaseQty" class="btn btn-sm px-3 py-0 border-0">−</button>
-            <span class="mx-3 fw-medium">{{ quantity }}</span>
-            <button @click="increaseQty" class="btn btn-sm px-3 py-0 border-0">+</button>
+          <div class="d-flex align-items-center justify-content-center border rounded-pill"
+              style="height: 48px; min-width: 120px; max-width: 160px; padding: 0 8px;">
+            <button @click="decreaseQty"
+                    class="btn btn-sm border-0 px-2 py-1 fs-5"
+                    style="background-color: transparent;">−</button>
+            <span class="fw-medium fs-5 mx-2">{{ quantity }}</span>
+            <button @click="increaseQty"
+                    class="btn btn-sm border-0 px-2 py-1 fs-5"
+                    style="background-color: transparent;">+</button>
           </div>
-
-          <button class="text-white flex-grow-1" style="background-color: #e9cebd; border-radius: 999px; border: none; height: 48px;">
+          <button @click="addToCart" class="flex-grow-1 text-white add-to-cart-btn">
             Thêm vào giỏ
           </button>
         </div>
@@ -88,7 +93,11 @@
       <div class="tab-content border border-top-0 p-4 bg-light-subtle">
         <div v-show="activeTab === 'desc'">
           <h6 class="fw-bold">{{ product.name }}</h6>
-          <p>{{ product.material }}</p>
+          <p><strong>Chất liệu:</strong> {{ product.material }}</p>
+          <p><strong>Mô tả:</strong> {{ product.description || 'Chưa có mô tả' }}</p>
+          <p><strong>Mã sản phẩm:</strong> {{ product.sku }}</p>
+          <p><strong>Tồn kho:</strong> {{ product.qty }} sản phẩm</p>
+          <p><strong>Lượt mua:</strong> {{ product.turnBuy }} lượt</p>
         </div>
 
         <div v-show="activeTab === 'review'">
@@ -125,9 +134,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import api, { authService } from "../../Configs/api";
+import api from "../../Configs/api";
+import { finalHandleCartProgress } from "../../Configs/cart";
+import { notification } from "ant-design-vue";
 
 const route = useRoute();
 const productId = route.params.id;
@@ -144,6 +155,13 @@ const activeTab = ref('desc');
 
 const reviews = ref([]);
 const newReview = ref({ name: '', text: '' });
+
+const discountedPrice = computed(() => {
+  if (promotion.value && promotion.value.discountPercent) {
+    return Math.round(currentPrice.value * (1 - promotion.value.discountPercent / 100));
+  }
+  return currentPrice.value;
+});
 
 onMounted(async () => {
   try {
@@ -192,10 +210,63 @@ function formatDate(dateStr) {
   const d = new Date(dateStr);
   return d.toLocaleDateString('vi-VN');
 }
+
+const itemCart = ref({
+  id: "",
+  accounts: "", // nếu cần tài khoản đăng nhập thì gắn ID user ở đây
+  productItems: "",
+  promotions: "",
+  comboGroup: "",
+  qty: "",
+  createdAt: "",
+  updatedAt: "",
+});
+
+const addToCart = () => {
+  if (!product.value || quantity.value <= 0) return;
+
+  // Set dữ liệu cho itemCart
+  itemCart.value.productItems = product.value.id;
+  itemCart.value.qty = quantity.value;
+
+  if (quantity.value < product.value.safetyStock) {
+    finalHandleCartProgress(itemCart.value);
+    notification.success({
+      message: "Thành công",
+      description: `Đã thêm ${quantity.value} x ${product.value.name} vào giỏ hàng`,
+    });
+  } else {
+    notification.error({
+      message: "Thất bại",
+      description: `Số lượng tồn không đủ!`,
+    }); 
+  }
+};
 </script>
 
 <style scoped>
 .img-thumbnail.border-primary {
   border-width: 3px !important;
 }
+del {
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+.add-to-cart-btn {
+  background-color: #e9cebd;
+  color: white;
+  border-radius: 999px;
+  border: none;
+  height: 48px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.add-to-cart-btn:hover {
+  filter: brightness(1.08);
+  cursor: pointer;
+}
+
+
 </style>

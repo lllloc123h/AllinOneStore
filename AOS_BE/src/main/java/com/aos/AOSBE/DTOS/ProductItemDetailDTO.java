@@ -13,5 +13,5 @@ public class ProductItemDetailDTO {
     private ProductItemsDTOS productItem;
     private List<ProductImagesDTOS> images;
     private List<PriceHistoriesDTOS> priceHistories;
-    private List<PromotionProductDTOS> promotions;
+    private List<PromotionsDTOS> promotions;
 }

@@ -9,7 +9,9 @@ const listDashBoard = [
     "Categories",
     "CostHistories",
     "Coupons",
-    "Custom",
+    "Customs",
+    "EWalletTransactions",
+    "EWallets",
     "News",
     "OrderItems",
     "Orders",
@@ -17,10 +19,8 @@ const listDashBoard = [
     "PriceHistories",
     "ProductImages",
     "ProductItems",
-    "PromotionProduct",
+    "PromotionProducts",
     "Promotions",
-    "PurchaseOrderItems",
-    "PurchaseOrders",
     "Returns",
     "Reviews",
     "Roles",
@@ -212,24 +212,64 @@ export default [
         props: route => ({ TableName: 'Coupons', action: 'update', id: route.params.id,})
     },
   	{
-        path: 'Custom',
-        component: import('../../components/Admin/Custom/index.vue'),
-        props: route => ({ TableName: 'Custom'})
+        path: 'Customs',
+        component: import('../../components/Admin/Customs/index.vue'),
+        props: route => ({ TableName: 'Customs'})
     },
     {
-        path: 'Custom/create',
-        component:  () => import('../../components/Admin/Custom/Form.vue'),
-        props: route => ({ TableName: 'Custom', action: 'create'})
+        path: 'Customs/create',
+        component:  () => import('../../components/Admin/Customs/Form.vue'),
+        props: route => ({ TableName: 'Customs', action: 'create'})
     },
     {
-        path: 'Custom/view/:id',
-        component:  () => import('../../components/Admin/Custom/Form.vue'),
-        props: route => ({ TableName: 'Custom', action: 'view', id: route.params.id,})
+        path: 'Customs/view/:id',
+        component:  () => import('../../components/Admin/Customs/Form.vue'),
+        props: route => ({ TableName: 'Customs', action: 'view', id: route.params.id,})
     },
     {
-        path: 'Custom/update/:id',
-        component:  () => import('../../components/Admin/Custom/Form.vue'),
-        props: route => ({ TableName: 'Custom', action: 'update', id: route.params.id,})
+        path: 'Customs/update/:id',
+        component:  () => import('../../components/Admin/Customs/Form.vue'),
+        props: route => ({ TableName: 'Customs', action: 'update', id: route.params.id,})
+    },
+  	{
+        path: 'EWalletTransactions',
+        component: import('../../components/Admin/EWalletTransactions/index.vue'),
+        props: route => ({ TableName: 'EWalletTransactions'})
+    },
+    {
+        path: 'EWalletTransactions/create',
+        component:  () => import('../../components/Admin/EWalletTransactions/Form.vue'),
+        props: route => ({ TableName: 'EWalletTransactions', action: 'create'})
+    },
+    {
+        path: 'EWalletTransactions/view/:id',
+        component:  () => import('../../components/Admin/EWalletTransactions/Form.vue'),
+        props: route => ({ TableName: 'EWalletTransactions', action: 'view', id: route.params.id,})
+    },
+    {
+        path: 'EWalletTransactions/update/:id',
+        component:  () => import('../../components/Admin/EWalletTransactions/Form.vue'),
+        props: route => ({ TableName: 'EWalletTransactions', action: 'update', id: route.params.id,})
+    },
+  	{
+        path: 'EWallets',
+        component: import('../../components/Admin/EWallets/index.vue'),
+        props: route => ({ TableName: 'EWallets'})
+    },
+    {
+        path: 'EWallets/create',
+        component:  () => import('../../components/Admin/EWallets/Form.vue'),
+        props: route => ({ TableName: 'EWallets', action: 'create'})
+    },
+    {
+        path: 'EWallets/view/:id',
+        component:  () => import('../../components/Admin/EWallets/Form.vue'),
+        props: route => ({ TableName: 'EWallets', action: 'view', id: route.params.id,})
+    },
+    {
+        path: 'EWallets/update/:id',
+        component:  () => import('../../components/Admin/EWallets/Form.vue'),
+        props: route => ({ TableName: 'EWallets', action: 'update', id: route.params.id,})
     },
   	{
         path: 'News',
@@ -372,24 +412,24 @@ export default [
         props: route => ({ TableName: 'ProductItems', action: 'update', id: route.params.id,})
     },
   	{
-        path: 'PromotionProduct',
-        component: import('../../components/Admin/PromotionProduct/index.vue'),
-        props: route => ({ TableName: 'PromotionProduct'})
+        path: 'PromotionProducts',
+        component: import('../../components/Admin/PromotionProducts/index.vue'),
+        props: route => ({ TableName: 'PromotionProducts'})
     },
     {
-        path: 'PromotionProduct/create',
-        component:  () => import('../../components/Admin/PromotionProduct/Form.vue'),
-        props: route => ({ TableName: 'PromotionProduct', action: 'create'})
+        path: 'PromotionProducts/create',
+        component:  () => import('../../components/Admin/PromotionProducts/Form.vue'),
+        props: route => ({ TableName: 'PromotionProducts', action: 'create'})
     },
     {
-        path: 'PromotionProduct/view/:id',
-        component:  () => import('../../components/Admin/PromotionProduct/Form.vue'),
-        props: route => ({ TableName: 'PromotionProduct', action: 'view', id: route.params.id,})
+        path: 'PromotionProducts/view/:id',
+        component:  () => import('../../components/Admin/PromotionProducts/Form.vue'),
+        props: route => ({ TableName: 'PromotionProducts', action: 'view', id: route.params.id,})
     },
     {
-        path: 'PromotionProduct/update/:id',
-        component:  () => import('../../components/Admin/PromotionProduct/Form.vue'),
-        props: route => ({ TableName: 'PromotionProduct', action: 'update', id: route.params.id,})
+        path: 'PromotionProducts/update/:id',
+        component:  () => import('../../components/Admin/PromotionProducts/Form.vue'),
+        props: route => ({ TableName: 'PromotionProducts', action: 'update', id: route.params.id,})
     },
   	{
         path: 'Promotions',
@@ -410,46 +450,6 @@ export default [
         path: 'Promotions/update/:id',
         component:  () => import('../../components/Admin/Promotions/Form.vue'),
         props: route => ({ TableName: 'Promotions', action: 'update', id: route.params.id,})
-    },
-  	{
-        path: 'PurchaseOrderItems',
-        component: import('../../components/Admin/PurchaseOrderItems/index.vue'),
-        props: route => ({ TableName: 'PurchaseOrderItems'})
-    },
-    {
-        path: 'PurchaseOrderItems/create',
-        component:  () => import('../../components/Admin/PurchaseOrderItems/Form.vue'),
-        props: route => ({ TableName: 'PurchaseOrderItems', action: 'create'})
-    },
-    {
-        path: 'PurchaseOrderItems/view/:id',
-        component:  () => import('../../components/Admin/PurchaseOrderItems/Form.vue'),
-        props: route => ({ TableName: 'PurchaseOrderItems', action: 'view', id: route.params.id,})
-    },
-    {
-        path: 'PurchaseOrderItems/update/:id',
-        component:  () => import('../../components/Admin/PurchaseOrderItems/Form.vue'),
-        props: route => ({ TableName: 'PurchaseOrderItems', action: 'update', id: route.params.id,})
-    },
-  	{
-        path: 'PurchaseOrders',
-        component: import('../../components/Admin/PurchaseOrders/index.vue'),
-        props: route => ({ TableName: 'PurchaseOrders'})
-    },
-    {
-        path: 'PurchaseOrders/create',
-        component:  () => import('../../components/Admin/PurchaseOrders/Form.vue'),
-        props: route => ({ TableName: 'PurchaseOrders', action: 'create'})
-    },
-    {
-        path: 'PurchaseOrders/view/:id',
-        component:  () => import('../../components/Admin/PurchaseOrders/Form.vue'),
-        props: route => ({ TableName: 'PurchaseOrders', action: 'view', id: route.params.id,})
-    },
-    {
-        path: 'PurchaseOrders/update/:id',
-        component:  () => import('../../components/Admin/PurchaseOrders/Form.vue'),
-        props: route => ({ TableName: 'PurchaseOrders', action: 'update', id: route.params.id,})
     },
   	{
         path: 'Returns',

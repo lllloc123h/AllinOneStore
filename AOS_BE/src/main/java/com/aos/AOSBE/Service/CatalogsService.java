@@ -36,6 +36,10 @@ public class CatalogsService {
 		return catalogsRepository.findById(id);
 	}
 
+	public Optional<Catalogs> catalogsFindByCatalogName(String Name) {
+		return catalogsRepository.findByCatalogName(Name);
+	}
+
 	@Transactional
 	public void catalogsDeleteById(int id) {
 		catalogsRepository.deleteById(id);

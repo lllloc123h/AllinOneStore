@@ -32,9 +32,11 @@ public class CouponsService {
 		return couponsRepository.save(coupons);
 	}
 
+	@Transactional(readOnly = true)
 	public Optional<Coupons> couponsFindById(int id) {
-		return couponsRepository.findById(id);
+	    return couponsRepository.findById(id);
 	}
+
 
 	@Transactional
 	public void couponsDeleteById(int id) {

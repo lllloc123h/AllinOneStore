@@ -1,10 +1,8 @@
 <template>
   <div class="container-fluid row">
     <div class="aside col-2">
-      <Dashboard :listDashBoard="listDashBoard"></Dashboard>
+      <Dashboard ></Dashboard>
     </div>
-    
-    
     <div class="article col-10">
       <h1>
         EWalletTransactions
@@ -24,6 +22,7 @@ import Table from "../../Module/Table.vue";
 import Dashboard from "../../Module/DashBoard.vue";
 import { useRouter } from 'vue-router'
 import { ref, reactive, watch } from 'vue'
+
 import FilterDropDown from "../../Module/FilterDropDown.vue";
 const router = useRouter()
   const props = defineProps({
@@ -66,13 +65,13 @@ const router = useRouter()
           	{ name: 'amountFrom', type: 'number' },
           	{ name: 'amountTo', type: 'number' },
           	{ name: 'transactionType', type: 'text' },
+          	{ name: 'orderId', type: 'text' },
+          	{ name: 'status', type: 'text' },
           	{ name: 'relatedWalletIdFrom', type: 'number' },
           	{ name: 'relatedWalletIdTo', type: 'number' },
           	{ name: 'description', type: 'text' },
           	{ name: 'createdAtFrom', type: 'datetime-local' },
           	{ name: 'createdAtTo', type: 'datetime-local' },
-          	{ name: 'orderId', type: 'text' },
-          	{ name: 'status', type: 'text' },
  
 ]
 
@@ -80,11 +79,11 @@ const filters = ref({
   			id: '',
   			amount: '',
   			transactionType: '',
+  			orderId: '',
+  			status: '',
   			relatedWalletId: '',
   			description: '',
   			createdAt: '',
-  			orderId: '',
-  			status: '',
 })
   
   

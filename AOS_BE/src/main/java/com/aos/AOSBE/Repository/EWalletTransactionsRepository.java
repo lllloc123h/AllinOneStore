@@ -17,5 +17,5 @@ public interface EWalletTransactionsRepository
 	Optional<EWalletTransactions> findByOrderId(String orderId);
 
 	@Query("SELECT a FROM EWalletTransactions a  WHERE a.eWallets.id = ?1 ")
-	List<EWalletTransactions> findByEwalletId(int ewalletId);
+	List<EWalletTransactions> findByEwalletId(String ewalletId);
 }

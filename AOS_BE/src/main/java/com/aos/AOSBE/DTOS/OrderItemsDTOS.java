@@ -1,6 +1,7 @@
 package com.aos.AOSBE.DTOS;
 
 import java.time.*;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,5 +24,6 @@ public class OrderItemsDTOS {
     private int productItems;
     private int promotions;
     private String comboGroup;
-    private String idComboGroup;
+    private UUID comboGroupId;
+    private Integer comboQty;
 }
