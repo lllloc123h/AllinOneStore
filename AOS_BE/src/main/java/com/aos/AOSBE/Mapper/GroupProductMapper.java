@@ -5,6 +5,7 @@ import com.aos.AOSBE.DTOS.BaseProductsDTOS;
 import com.aos.AOSBE.DTOS.ProductItemsDTOS;
 import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import com.aos.AOSBE.Service.BaseProductsService;
 import com.aos.AOSBE.Service.CategoriesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class GroupProductMapper {
     private CategoriesService categoriesService;
     @Autowired
     private HandleListSkuToFilter handleListSkuToFilter;
+    @Autowired
+    private PromotionProductsRepository promotionProductsRepository;
     public BaseProductsDTOS mapperToBaseProductsDTOS(BaseProducts entity) {
         return new BaseProductsDTOS(entity.getId(),
                 entity.getName(),
@@ -30,7 +33,7 @@ public class GroupProductMapper {
                 entity.getCategories().getName());
     }
 
-    public ProductItemsDTOS mapperToProductItemDTO(ProductItems entity) {
+    public ProductItemsDTOS mapperToProductItemDTO(ProductItems entity,int promotionId) {
         return new ProductItemsDTOS(
                 entity.getId(),
                 entity.getCost(),
@@ -44,7 +47,8 @@ public class GroupProductMapper {
                 entity.getSellEnd(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
-                entity.getBaseProducts().getId()
+                entity.getBaseProducts().getId(),
+                promotionProductsRepository.findAllByProductItems_IdAndPromotions_Id(entity.getId(),promotionId).isGift()
         );
     }
 }

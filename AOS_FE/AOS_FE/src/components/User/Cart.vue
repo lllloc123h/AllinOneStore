@@ -117,7 +117,9 @@
                     <button v-if="item.promotions?.type === 'COMBO'" data-bs-toggle="modal"
                       data-bs-target="#exampleModalToggle"
                       class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      @click="openPromotionModal(item.productItemId)" type="button">
+                      @click="openPromotionModal(item)"
+                      type="button"
+                    >
                       <i class="bi bi-gift-fill"></i>Ưu đãi
                     </button>
                     <span v-else-if="item.promotions?.type === 'DISCOUNT'"
@@ -245,39 +247,69 @@
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        <tr v-for="item in group.items" :key="item.id">
+                                        <tr
+                                          v-for="item in group.items"
+                                          :key="item.id"
+                                          :class="item.isGift ? 'table-success' : ''"
+                                        >
                                           <td>
                                             <input type="checkbox" :checked="selectedComboItems[item.id] > 0" disabled
                                               name="combo-item-checkbox" :value="item.id" />
                                           </td>
-                                          <td>{{ group.baseProduct.name }}</td>
+                                          <td>
+                                            <div class="d-flex align-items-center">
+                                              {{ group.baseProduct.name }}
+                                              <span
+                                                v-if="item.isGift"
+                                                style="background-color: red"
+                                                class="badge ms-2"
+                                                ><i class="bi bi-gift-fill"></i> Quà
+                                                tặng</span
+                                              >
+                                            </div>
+                                          </td>
                                           <td>{{ item.sku }}</td>
                                           <td class="text-danger fw-bold">
                                             {{ item.price.toLocaleString() }}₫
                                           </td>
                                           <td>
-                                            <div class="d-flex align-items-center">
-                                              <button class="btn btn-sm btn-outline-secondary"
-                                                @click="decreaseComboQty(item)" :disabled="!selectedComboItems[item.id] ||
-                                                  selectedComboItems[item.id] <= 0
-                                                  ">
-                                                -
-                                              </button>
-                                              <span class="mx-2">{{
-                                                selectedComboItems[item.id] || 0
+                                            <template v-if="item.isGift">
+                                              <span class="fw-bold text-success">{{
+                                                item.qty
                                               }}</span>
-                                              <button class="btn btn-sm btn-outline-secondary"
-                                                @click="increaseComboQty(item, group)" :disabled="selectedComboItems[item.id] >=
-                                                  item.qty ||
-                                                  getBaseProductTotalQty(group) >=
-                                                  item.qty
-                                                  ">
-                                                +
-                                              </button>
-                                            </div>
-                                            <div class="small text-muted">
-                                              Tối đa: {{ item.qty }}
-                                            </div>
+                                            </template>
+                                            <template v-else>
+                                              <div class="d-flex align-items-center">
+                                                <button
+                                                  class="btn btn-sm btn-outline-secondary"
+                                                  @click="decreaseComboQty(item)"
+                                                  :disabled="
+                                                    !selectedComboItems[item.id] ||
+                                                    selectedComboItems[item.id] <= 0
+                                                  "
+                                                >
+                                                  -
+                                                </button>
+                                                <span class="mx-2">{{
+                                                  selectedComboItems[item.id] || 0
+                                                }}</span>
+                                                <button
+                                                  class="btn btn-sm btn-outline-secondary"
+                                                  @click="increaseComboQty(item, group)"
+                                                  :disabled="
+                                                    selectedComboItems[item.id] >=
+                                                      item.qty ||
+                                                    getBaseProductTotalQty(group) >=
+                                                      item.qty
+                                                  "
+                                                >
+                                                  +
+                                                </button>
+                                              </div>
+                                              <div class="small text-muted">
+                                                Tối đa: {{ item.qty }}
+                                              </div>
+                                            </template>
                                           </td>
                                         </tr>
                                       </tbody>
@@ -576,15 +608,17 @@ function removeComboGroupId(items) {
     localStorage.setItem("cart", JSON.stringify(tempLocalList));
   }
 }
-function openPromotionModal(productItemId) {
+const cartIdOfOpenPromotionModal = ref(null);
+function openPromotionModal(item) {
   promotions.value = [];
-  productItemIdRef.value = productItemId;
-  console.log("Open promotion modal for item:", productItemId);
+  cartIdOfOpenPromotionModal.value = item.id;
+  productItemIdRef.value = item.productItemId;
+  console.log("Open promotion modal for item:", item.productItemId);
   api
-    .get(`/Promotions?productItemId=${productItemId}`)
+    .get(`/Promotions?productItemId=${item.productItemId}`)
     .then((response) => {
       promotions.value = response.data;
-      console.log("Promotions for item:", productItemId, promotions.value);
+      console.log("Promotions for item:", item.productItemId, promotions.value);
     })
     .catch((error) => {
       console.error("Error fetching promotions:", error);
@@ -599,13 +633,15 @@ function openSpecificPromotionModal(promotionId) {
     .then((response) => {
       groupProducts.value = response.data;
       console.log("Group products for promotion:", promotionId, groupProducts.value);
-      // Tự động set số lượng tối đa cho item trùng id
       // Tự động set số lượng  cho item trùng id
       if (productItemIdRef.value) {
         groupProducts.value.forEach((group) => {
           group.items.forEach((item) => {
             if (item.id === productItemIdRef.value) {
               selectedComboItems.value[item.id] = 1; // Mặc định chọn 1 sản phẩm
+            }
+            if (item.isGift) {
+              selectedComboItems.value[item.id] = item.qty; //  chọn sản phẩm tặng kèm
             }
           });
         });
@@ -661,9 +697,11 @@ function handleProcessCombo() {
     });
   });
   const finalData = {
-    cartId: cart.value.find((c) => c.productItemId === productItemIdRef.value)?.id, // Lấy id từ cart nếu có
+    cartId: cartIdOfOpenPromotionModal.value, // Lấy id từ cart nếu có
     items: selectedList,
   };
+  console.log("Dữ liệu combo:", finalData);
+
   api
     .post("/cart/addCombo", finalData)
     .then((response) => {

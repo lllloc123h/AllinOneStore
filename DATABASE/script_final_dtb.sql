@@ -298,6 +298,7 @@ create table
 		combo_id int null,
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
 		combo_group_id UNIQUEIDENTIFIER  , -- để nhận diện combo nếu khác số lượng 
+		is_gift bit null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),

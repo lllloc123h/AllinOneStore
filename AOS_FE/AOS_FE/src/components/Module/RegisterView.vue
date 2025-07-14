@@ -117,12 +117,15 @@ const sendOTP = () => {
     .catch((erorr) => toast.error(erorr.response?.data?.message));
 };
 const verified = () => {
-  toast.success("Đăng ký thành công!");
-  authService.login(userRegister.value.email, userRegister.value.password);
-  userRegister.value.email = "";
-  userRegister.value.password = "";
-  userRegister.value.fullname = "";
-  userRegister.value.confirmPassword = "";
+  setTimeout(() => {
+    authService.login(userRegister.value.email, userRegister.value.password);
+    userRegister.value.email = "";
+    userRegister.value.password = "";
+    userRegister.value.fullname = "";
+    userRegister.value.confirmPassword = "";
+    userRegister.value.phone = "";
+    showOption.value = false;
+  }, 1000);
 };
 </script>
 <style scoped>

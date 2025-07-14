@@ -1,9 +1,10 @@
 package com.aos.AOSBE.DTOS;
-
-import java.time.LocalDateTime;
-
 import com.aos.AOSBE.Entity.BaseProducts;
+import jakarta.persistence.*;
 
+import java.time.*;
+import java.math.*;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,8 +30,9 @@ public class ProductItemsDTOS {
 	private String material;
 	private String imageUrl;
 	private BaseProducts baseProducts;
+    private Boolean isGift;
 
-	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
+    public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
 			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
 			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl) {
 		super();

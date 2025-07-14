@@ -10,6 +10,7 @@ import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Repository.ProductItemsRepository;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,8 @@ public class CartItemsService {
 private ProductItemsRepository productItemsRepository;
 @Autowired
 private PromotionsRepository promotionsRepository;
+@Autowired
+private PromotionProductsRepository promotionProductsRepository;
 	public Page<CartItems> cartItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<CartItems> spec = specBuilder.buildFilter(filters);
@@ -53,7 +56,6 @@ private PromotionsRepository promotionsRepository;
 	public void cartItemsDeleteById(int id) {
 		cartItemsRepository.deleteById(id);
 	}
-
 	public CartItems cartFindByAccountEmailAndProductItemId(String email, int id) {
 		return cartItemsRepository.findByAccountsEmailAndProductItemsId(email, id).orElse(null);
 	}
@@ -94,12 +96,12 @@ private PromotionsRepository promotionsRepository;
 					cartItem.setQty(item.getQuantity());
 					cartItem.setComboGroupId(uuid);
 					cartItem.setComboQty(1);
+					cartItem.setIsGift(promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
 					cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 					cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
 					cartItemsRepository.save(cartItem);
 				}
 			}
-
 		} else {
 			UUID uuid = UUID.randomUUID();
 			for (CreateComboDTO.Items item : entity.getItems()){
@@ -109,6 +111,7 @@ private PromotionsRepository promotionsRepository;
 				cartItem.setQty(item.getQuantity());
 				cartItem.setComboGroupId(uuid);
 				cartItem.setComboQty(1);
+				cartItem.setIsGift(promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
 				cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 				cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
 				cartItemsRepository.save(cartItem);
@@ -116,7 +119,6 @@ private PromotionsRepository promotionsRepository;
 
 		}
 	}
-
 	public List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroup) {
 		return cartItemsRepository.findCartItemsByAccountsAndComboGroupId(accounts ,comboGroup);
 	}
