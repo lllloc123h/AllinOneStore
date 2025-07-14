@@ -14,7 +14,6 @@ public class PromotionsDTOS {
     private String name;
     private String description;
     private String type;
-    private String discountType;
     private double discountValue;
     private double comboPrice;
     private int qty;

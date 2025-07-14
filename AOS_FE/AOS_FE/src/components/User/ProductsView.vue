@@ -5,38 +5,21 @@
       <div class="col-3">
         <h3><span class="line"></span>Phân loại</h3>
         <div class="filter-section">
-          <div
-            v-for="(items, groupName, index) in mapVarriants"
-            :key="groupName"
-            class="filter-group"
-          >
+          <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="filter-group">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  :data-bs-target="'#flush-collapseOne-' + index"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseOne"
-                >
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  :data-bs-target="'#flush-collapseOne-' + index" aria-expanded="false"
+                  aria-controls="flush-collapseOne">
                   <h3><span class="line"></span> {{ groupName }}</h3>
                 </button>
               </h2>
-              <div
-                :id="'flush-collapseOne-' + index"
-                class="accordion-collapse collapse"
-                data-bs-parent="#accordionFlushExample"
-              >
+              <div :id="'flush-collapseOne-' + index" class="accordion-collapse collapse"
+                data-bs-parent="#accordionFlushExample">
                 <ul class="filter-list">
                   <li v-for="item in items" :key="item.id">
                     <label>
-                      <input
-                        type="checkbox"
-                        :name="groupName"
-                        :value="item.signalSku"
-                        v-model="selected[groupName]"
-                      />
+                      <input type="checkbox" :name="groupName" :value="item.signalSku" v-model="selected[groupName]" />
                       {{ item.description }}
                     </label>
                   </li>
@@ -51,48 +34,20 @@
             <h3><span class="line"></span> Khoảng giá</h3>
             <ul class="filter-list">
               <li>
-                <label
-                  ><input
-                    type="radio"
-                    name="price"
-                    v-model="selectedPrice"
-                    value="100-200"
-                  />
-                  100k - 200k</label
-                >
+                <label><input type="radio" name="price" v-model="selectedPrice" value="100-200" />
+                  100k - 200k</label>
               </li>
               <li>
-                <label
-                  ><input
-                    type="radio"
-                    name="price"
-                    v-model="selectedPrice"
-                    value="200-500"
-                  />
-                  200k - 500k</label
-                >
+                <label><input type="radio" name="price" v-model="selectedPrice" value="200-500" />
+                  200k - 500k</label>
               </li>
               <li>
-                <label
-                  ><input
-                    type="radio"
-                    name="price"
-                    v-model="selectedPrice"
-                    value="500-700"
-                  />
-                  500k - 700k</label
-                >
+                <label><input type="radio" name="price" v-model="selectedPrice" value="500-700" />
+                  500k - 700k</label>
               </li>
               <li>
-                <label
-                  ><input
-                    type="radio"
-                    name="price"
-                    v-model="selectedPrice"
-                    value=">700"
-                  />
-                  &gt; 700k</label
-                >
+                <label><input type="radio" name="price" v-model="selectedPrice" value=">700" />
+                  &gt; 700k</label>
               </li>
             </ul>
             <hr class="divider" />
@@ -101,20 +56,17 @@
             <h3><span class="line"></span> Đánh giá</h3>
             <ul class="filter-list">
               <li>
-                <label
-                  ><input type="checkbox" name="rating" value="5" />
+                <label><input type="checkbox" name="rating" value="5" />
                   <span class="stars">★★★★★</span> (5)
                 </label>
               </li>
               <li>
-                <label
-                  ><input type="checkbox" name="rating" value="4" />
+                <label><input type="checkbox" name="rating" value="4" />
                   <span class="stars">★★★★☆</span> (4+)
                 </label>
               </li>
               <li>
-                <label
-                  ><input type="checkbox" name="rating" value="3" />
+                <label><input type="checkbox" name="rating" value="3" />
                   <span class="stars">★★★☆☆</span> (3+)
                 </label>
               </li>
@@ -128,68 +80,30 @@
         <div class="searchBox mt-4">
           <input class="searchInput" type="text" name="" placeholder="Search something" />
           <button class="searchButton" href="#">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="29"
-              height="29"
-              viewBox="0 0 29 29"
-              fill="none"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
               <g clip-path="url(#clip0_2_17)">
                 <g filter="url(#filter0_d_2_17)">
                   <path
                     d="M23.7953 23.9182L19.0585 19.1814M19.0585 19.1814C19.8188 18.4211 20.4219 17.5185 20.8333 16.5251C21.2448 15.5318 21.4566 14.4671 21.4566 13.3919C21.4566 12.3167 21.2448 11.252 20.8333 10.2587C20.4219 9.2653 19.8188 8.36271 19.0585 7.60242C18.2982 6.84214 17.3956 6.23905 16.4022 5.82759C15.4089 5.41612 14.3442 5.20435 13.269 5.20435C12.1938 5.20435 11.1291 5.41612 10.1358 5.82759C9.1424 6.23905 8.23981 6.84214 7.47953 7.60242C5.94407 9.13789 5.08145 11.2204 5.08145 13.3919C5.08145 15.5634 5.94407 17.6459 7.47953 19.1814C9.01499 20.7168 11.0975 21.5794 13.269 21.5794C15.4405 21.5794 17.523 20.7168 19.0585 19.1814Z"
-                    stroke="white"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    shape-rendering="crispEdges"
-                  ></path>
+                    stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                    shape-rendering="crispEdges"></path>
                 </g>
               </g>
               <defs>
-                <filter
-                  id="filter0_d_2_17"
-                  x="-0.418549"
-                  y="3.70435"
-                  width="29.7139"
-                  height="29.7139"
-                  filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
-                >
+                <filter id="filter0_d_2_17" x="-0.418549" y="3.70435" width="29.7139" height="29.7139"
+                  filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                   <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
-                  <feColorMatrix
-                    in="SourceAlpha"
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                    result="hardAlpha"
-                  ></feColorMatrix>
+                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                    result="hardAlpha"></feColorMatrix>
                   <feOffset dy="4"></feOffset>
                   <feGaussianBlur stdDeviation="2"></feGaussianBlur>
                   <feComposite in2="hardAlpha" operator="out"></feComposite>
-                  <feColorMatrix
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                  ></feColorMatrix>
-                  <feBlend
-                    mode="normal"
-                    in2="BackgroundImageFix"
-                    result="effect1_dropShadow_2_17"
-                  ></feBlend>
-                  <feBlend
-                    mode="normal"
-                    in="SourceGraphic"
-                    in2="effect1_dropShadow_2_17"
-                    result="shape"
-                  ></feBlend>
+                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix>
+                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2_17"></feBlend>
+                  <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2_17" result="shape"></feBlend>
                 </filter>
                 <clipPath id="clip0_2_17">
-                  <rect
-                    width="28.0702"
-                    height="28.0702"
-                    fill="white"
-                    transform="translate(0.403503 0.526367)"
-                  ></rect>
+                  <rect width="28.0702" height="28.0702" fill="white" transform="translate(0.403503 0.526367)"></rect>
                 </clipPath>
               </defs>
             </svg>
@@ -202,30 +116,18 @@
             <ProductCard :product="product" @view-detail="openModal" />
           </div>
 
-          <div
-            v-if="showModal"
-            class="modal fade show d-block"
-            tabindex="-1"
-            style="background-color: rgba(0, 0, 0, 0.5)"
-          >
+          <div v-if="showModal" class="modal fade show d-block" tabindex="-1"
+            style="background-color: rgba(0, 0, 0, 0.5)">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">{{ selectedProduct?.name }}</h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    @view-detail="closeModal"
-                  ></button>
+                  <button type="button" class="btn-close" @view-detail="closeModal"></button>
                 </div>
                 <div class="modal-body">
-                  <img
-                    :src="
-                      selectedProduct?.imageUrl ||
-                      'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'
-                    "
-                    class="img-fluid mb-3"
-                  />
+                  <img :src="selectedProduct?.imageUrl ||
+                    'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'
+                    " class="img-fluid mb-3" />
                   <p>{{ selectedProduct?.description }}</p>
                   <p><strong>Giá:</strong> {{ selectedProduct?.price || "---" }} VND</p>
                   <p>
@@ -233,13 +135,7 @@
                   </p>
                   <p><strong>Biến thể:</strong> {{ selectedProduct?.sku || "---" }}</p>
                   <label for="qtyInput">Số lượng:</label>
-                  <input
-                    v-model="quantity"
-                    type="number"
-                    id="qtyInput"
-                    min="1"
-                    class="form-control w-25"
-                  />
+                  <input v-model="quantity" type="number" id="qtyInput" min="1" class="form-control w-25" />
                 </div>
                 <div class="modal-footer">
                   <button class="btn btn-secondary" @click="closeModal">Đóng</button>
@@ -248,11 +144,7 @@
               </div>
             </div>
           </div>
-          <PageNavigative
-            :totalPage="data"
-            v-model:currentPage="pageIndex"
-            v-model:currentSize="pageSize"
-          />
+          <PageNavigative :totalPage="data" v-model:currentPage="pageIndex" v-model:currentSize="pageSize" />
         </div>
       </div>
     </div>
@@ -284,7 +176,6 @@ const selectedProduct = ref(null);
 const quantity = ref(1);
 
 const openModal = (product) => {
-  console.log(product);
   selectedProduct.value = product;
   showModal.value = true;
   itemCart.value.productItems = product.productItemId;
@@ -316,7 +207,6 @@ onMounted(() => {
   api
     .get("/BaseProducts")
     .then(async (resp) => {
-      console.log(resp.data);
       data.value = resp.data.totalPages;
       const rawProducts = resp.data;
       //handle img with firebase storage
@@ -335,6 +225,7 @@ const itemCart = ref({
   accounts: "",
   productItems: "",
   promotions: "",
+  comboGroup: "",
   qty: "",
   createdAt: "",
   updatedAt: "",
@@ -385,7 +276,6 @@ const fetchData = async () => {
       })
     );
     products.value = updatedProducts;
-    console.log(products.value);
   } catch (error) {
     console.error("Error fetching variants:", error);
   }

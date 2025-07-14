@@ -1,8 +1,13 @@
-﻿create database all_in_store;
+﻿--create database all_in_store;
 --drop database all_in_store
 use all_in_store
 go
+use all_in_store
+go
 exec usp_DropTablesAndConstraints;
+go
+exec usp_DropTablesAndConstraints;
+go
 DROP TABLE IF EXISTS order_items;
 
 DROP TABLE IF EXISTS returns;
@@ -84,7 +89,6 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 create table
 	roles (
@@ -93,7 +97,7 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	) 
-	go
+go
 create table
 	authorities (
 		id int identity (1, 5) primary key,
@@ -101,10 +105,10 @@ create table
 		role_id int not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id),
-		foreign key (role_id) references roles (id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE,
+		foreign key (role_id) references roles (id) ON DELETE CASCADE
 	) 
-	GO
+GO
 create table
 	user_addresses (
 		id int identity (1, 1) primary key,
@@ -120,9 +124,8 @@ create table
 		note nvarchar (255),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	catalogs (
@@ -131,7 +134,6 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 create table
 	categories (
@@ -140,9 +142,8 @@ create table
 		name nvarchar (100) unique,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (catalog_id) references catalogs (id)
+		foreign key (catalog_id) references catalogs (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	base_products (
@@ -157,9 +158,8 @@ create table
 		is_active bit default 1,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (category_id) references categories (id)
+		foreign key (category_id) references categories (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	product_items (
@@ -176,9 +176,8 @@ create table
 		sell_end datetime default getdate (),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (base_id) references base_products (id)
+		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	customs (
@@ -190,9 +189,8 @@ create table
 		design_name nvarchar (50) not null, -- mặt trước, mặt sau 
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
-
 GO
 CREATE TABLE
 	user_logs (
@@ -205,7 +203,6 @@ CREATE TABLE
 		created_at DATETIME DEFAULT GETDATE (),
 		module NVARCHAR (100)
 	);
-
 GO
 create table
 	product_images (
@@ -214,9 +211,8 @@ create table
 		image_url varchar(255) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	news (
@@ -227,7 +223,6 @@ create table
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 CREATE TABLE
 	promotions (
@@ -235,7 +230,6 @@ CREATE TABLE
 		name NVARCHAR (100),
 		description NVARCHAR (255),
 		type VARCHAR(30) CHECK (type IN ('DISCOUNT', 'COMBO')),
-		discount_type VARCHAR(20) CHECK (discount_type IN ('PERCENT', 'AMOUNT')),
 		discount_value DECIMAL(10, 2),
 		combo_price decimal(18, 2),
 		qty int not null,
@@ -245,7 +239,6 @@ CREATE TABLE
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
-
 GO
 CREATE TABLE
 	promotion_products (
@@ -257,10 +250,9 @@ CREATE TABLE
 		cost_share decimal(3, 2),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id),
-		foreign key (promotion_id) references promotions (id),
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (promotion_id) references promotions (id) ON DELETE CASCADE,
 	);
-
 GO
 create table
 	cost_histories (
@@ -268,9 +260,8 @@ create table
 		product_item_id int not null,
 		cost decimal(18, 2) not null,
 		created_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	price_histories (
@@ -278,9 +269,8 @@ create table
 		product_item_id int not null,
 		price decimal(18, 2) not null,
 		created_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	reviews (
@@ -294,24 +284,25 @@ create table
 		image_url3 nvarchar (255),
 		video_url varchar(255),
 		created_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id),
-		foreign key (account_id) references accounts (id)
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE
 	);
-
 GO
 create table
 	cart_items (
 		id int identity (1, 1) primary key,
 		account_id int not null,
 		product_item_id int,
+		qty int, 
+		combo_qty int null,--combo qty
 		combo_id int null,
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
-		qty int, 
+		combo_group_id UNIQUEIDENTIFIER  , -- để nhận diện combo nếu khác số lượng 
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
-		foreign key (account_id) references accounts (id),
-		foreign key (combo_id) references promotions(id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE,
+		foreign key (combo_id) references promotions(id) ON DELETE CASCADE
 	);
 
 GO
@@ -357,9 +348,9 @@ create table
 		order_infor nvarchar (max) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id),
-		foreign key (payment_method_id) references payment_methods (id),
-		foreign key (shipping_method_id) references shipping_methods (id)
+		foreign key (account_id) references accounts (id) ON DELETE CASCADE,
+		foreign key (payment_method_id) references payment_methods (id) ON DELETE CASCADE,
+		foreign key (shipping_method_id) references shipping_methods (id) ON DELETE CASCADE
 	);
 
 GO
@@ -372,7 +363,7 @@ create table
 		status nvarchar (50) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (order_id) references orders (id)
+		foreign key (order_id) references orders (id) ON DELETE CASCADE
 	);
 
 GO
@@ -381,10 +372,11 @@ create table
 		id int identity (1, 1) primary key,
 		order_id int not null,
 		product_item_id int not null,
+		qty int not null,
+		combo_qty int null, -- số lượng combo
 		promotion_id int,-- kiểm tra xem combo nào đã đc áp dụng để trừ vào usage limit 
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
-		id_combo_group varchar(36), -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
-		qty int not null,
+		combo_group_id UNIQUEIDENTIFIER, -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
 		price_at_buy decimal(18, 2) not null,
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,
@@ -392,9 +384,9 @@ create table
 		coupon_code nvarchar (50),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (order_id) references orders (id),
-		foreign key (product_item_id) references product_items (id),
-		foreign key (promotion_id) references promotions (id)
+		foreign key (order_id) references orders (id) ON DELETE CASCADE,
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (promotion_id) references promotions (id) ON DELETE CASCADE
 	);
 
 GO
@@ -418,7 +410,7 @@ CREATE TABLE
 		processed_at DATETIME NULL,
 		created_at DATETIME DEFAULT GETDATE (),
 		updated_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (order_product_item_id) REFERENCES order_items (id)
+		FOREIGN KEY (order_product_item_id) REFERENCES order_items (id) ON DELETE CASCADE
 	);
 
 GO
@@ -460,26 +452,27 @@ create table
 		description nvarchar (max) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		foreign key (variant_id) references variants (id)
+		foreign key (variant_id) references variants (id) ON DELETE CASCADE
 	);
 
 
 GO
 CREATE TABLE
 	e_wallets (
-		id INT IDENTITY (1, 1) PRIMARY KEY,
+		id nvarchar(40) PRIMARY KEY,
 		account_id INT NOT NULL UNIQUE,
 		balance DECIMAL(18, 2) DEFAULT 0 CHECK (balance >= 0),
 		wallet_type NVARCHAR (10) CHECK (wallet_type IN ('REAL', 'VIRTUAL')),
 		is_active BIT DEFAULT 1,
+		code_activce nvarchar(max),
 		created_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (account_id) REFERENCES accounts (id)
+		FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 	);
 GO
 CREATE TABLE
 	e_wallet_transactions (
 		id INT IDENTITY (1, 1) PRIMARY KEY,
-		wallet_id INT NOT NULL,
+		wallet_id nvarchar(40) NOT NULL,
 		amount DECIMAL(18, 2) NOT NULL,
 		transaction_type NVARCHAR (50) CHECK (
 			transaction_type IN ('TOP_UP', 'PURCHASE', 'WITHDRAW', 'RECEIVE')
@@ -489,7 +482,7 @@ CREATE TABLE
 		related_wallet_id INT NULL,
 		description NVARCHAR (255),
 		created_at DATETIME DEFAULT GETDATE (),
-		FOREIGN KEY (wallet_id) REFERENCES e_wallets (id)
+		FOREIGN KEY (wallet_id) REFERENCES e_wallets (id) ON DELETE CASCADE
 	);
 
 INSERT INTO
@@ -510,6 +503,36 @@ INSERT INTO
 VALUES
 	(
 		'adminCUDE@gmail.com',
+		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+		'admin',
+		NULL,
+		'0866843926',
+		0.00,
+		'Bạc',
+		20.00,
+		20,
+		20,
+		'2025-06-05 00:00:00.000',
+		'2025-06-05 00:00:00.000'
+	);
+INSERT INTO
+	accounts (
+		email,
+		password,
+		fullname,
+		avatar_url,
+		phone,
+		average_order_value,
+		user_rank,
+		total_spent,
+		total_order,
+		loyalty_point,
+		created_at,
+		updated_at
+	)
+VALUES
+	(
+		'nkha79323@gmail.com',
 		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
 		'admin',
 		NULL,

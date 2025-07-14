@@ -28,39 +28,14 @@
                             class="btn btn-primary me-2 row-6">View</button>
                         <button type="button" @click="goToEdit(item.id)"
                             class="btn btn-primary me-2 row-6">Edit</button>
-                        <button type="button" @click="" class="btn btn-danger row-6">Delete</button>
+                        <button type="button" @click="deleteById(item.id)" class="btn btn-danger row-6">Delete</button>
 
                     </td>
                 </tr>
             </tbody>
         </table>
-
         <div v-if="!data.length && !loading && !error" class="text-muted">
         </div>
-        <!-- <div class="pageselect">
-            <select id="pageSize" class="form-select" v-model="currentSize">
-                <option :value="5">5</option>
-                <option :value="10">10</option>
-                <option :value="15">15</option>
-            </select>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item" :class="{ disabled: currentPage === 0 }">
-                        <a class="page-link" href="#" aria-label="Previous"
-                            @click.prevent="currentPage > 0 && updateCurrentPage(currentPage - 1)">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-
-                    <li class="page-item" :class="{ disabled: data.length < currentSize }">
-                        <a class="page-link" href="#" aria-label="Next"
-                            @click.prevent="data.length >= currentSize && updateCurrentPage(currentPage + 1)">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div> -->
         <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
         </PageNavigative>
     </div>
@@ -169,6 +144,17 @@ function goToView(id) {
 }
 function goToEdit(id) {
     router.push(`/Admin/${props.TableName}/update/${id}`)
+}
+
+function deleteById(id) {
+    indexTableService.delete(id)
+        .then(() => {
+            console.log('Delete successful');
+            fetchData(); // Refresh data after deletion
+        })
+        .catch(error => {
+            console.error('Delete failed:', error);
+        });
 }
 const data = ref([])
 const columns = ref([])

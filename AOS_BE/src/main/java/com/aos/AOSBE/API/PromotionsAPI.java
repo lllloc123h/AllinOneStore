@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.BaseProductsDTOS;
-import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.DTOS.GroupProductDTO;
 import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.PromotionProducts;
 import com.aos.AOSBE.Mapper.BaseProductsMapper;
+import com.aos.AOSBE.Mapper.GroupProductMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Service.PromotionProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,6 @@ import com.aos.AOSBE.Service.PromotionsService;
 public class PromotionsAPI {
 	@Autowired
 	private PromotionsService promotionsService;
-
 	@Autowired
 	private PromotionsMapper promotionsMapper;
 	@Autowired
@@ -47,28 +46,43 @@ public class PromotionsAPI {
 	private BaseProductsMapper baseProductsMapper;
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
+    @Autowired
+    private GroupProductMapper groupProductMapper;
+
 
 	@GetMapping("/Promotions")
 	public ResponseEntity<?> getAllPromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
 		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrue(productItemId);
 		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
 		return ResponseEntity.ok(promotionsDTOS);
+
 	}
+//	@GetMapping("/Promotions/type")
+//	public ResponseEntity<?> getFirstTypePromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
+//		return ResponseEntity.ok(promotionsService.promotionsFindFirstTypePromotionByProductItemId(productItemId));
+//	}
 	@GetMapping("/Promotions/{id}")
 	public ResponseEntity<?> getPromotionProductsByPromotionId(@PathVariable int id) {
-	 List<PromotionProducts> promotionProducts = promotionProductsService.findPromotionProductsByPromotionId(id);
-	 Map<BaseProducts,List<ProductItems>> map =
-			 promotionProducts.stream().collect(Collectors.groupingBy(pro -> pro.getProductItems().getBaseProducts(),
-					 Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())));
+		List<PromotionProducts> promotionProducts = promotionProductsService.findPromotionProductsByPromotionId(id);
+		Map<BaseProducts, List<ProductItems>> map =
+				promotionProducts.stream()
+						.peek(pro -> {
+							ProductItems item = pro.getProductItems();
+                            item.setQty(pro.getRequireQty());
+                        })
+						.collect(Collectors.groupingBy(
+								pro -> pro.getProductItems().getBaseProducts(),
+								Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())
+						));
+		List<GroupProductDTO> listGroups = map.entrySet().stream().map(entry -> {
+			GroupProductDTO groupProductDTO = new GroupProductDTO();
+			groupProductDTO.setBaseProduct(groupProductMapper.mapperToBaseProductsDTOS(entry.getKey()));
+			groupProductDTO.setItems(entry.getValue().stream().map(groupProductMapper::mapperToProductItemDTO).toList());
+			return groupProductDTO;
+		}).toList();
 
-		Map<BaseProductsDTOS, List<ProductItemsDTOS>> mapDtos = map.entrySet().stream()
-				.collect(Collectors.toMap(
-						entry -> baseProductsMapper.mapper(entry.getKey()),
-						entry -> entry.getValue().stream()
-								.map(productItemsMapper::mapper)
-								.collect(Collectors.toList())
-				));
-	 return ResponseEntity.ok(mapDtos);
+
+	 return ResponseEntity.ok(listGroups);
 	}
 
 

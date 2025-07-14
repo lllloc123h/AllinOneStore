@@ -9,5 +9,5 @@ import com.aos.AOSBE.Entity.VariantValues;
 @Repository
 public interface VariantValuesRepository
 		extends JpaRepository<VariantValues, Integer>, JpaSpecificationExecutor<VariantValues> {
-	// Add custom query methods here if needed
+	VariantValues findBySignalSku(String signalSku);
 }

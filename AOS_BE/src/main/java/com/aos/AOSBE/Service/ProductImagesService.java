@@ -41,8 +41,8 @@ public class ProductImagesService {
 	public void productImagesDeleteById(int id) {
 		productImagesRepository.deleteById(id);
 	}
-	@Transactional
+
 	public List<ProductImages> findByProductItemsId(int productItemId) {
-    return productImagesRepository.findByProductItems_Id(productItemId);
+		return productImagesRepository.findByProductItemsId(productItemId);
 	}
 }

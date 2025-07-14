@@ -32,20 +32,16 @@ public class EWalletsService {
 		return eWalletsRepository.save(eWallets);
 	}
 
-	public EWallets eWalletsFindById(int id) {
-		return eWalletsRepository.findById(id).orElse(null);
-	}
-
-//	public EWallets eWalletsFindByAccountEmail(String userEmail) {
-//		return eWalletsRepository.findByAccountEmail(userEmail).orElse(null);
-//	}
-
-	public Optional<EWallets> eWalletsFindByAccountId(int id) {
+	public Optional<EWallets> eWalletsFindById(String id) {
 		return eWalletsRepository.findById(id);
 	}
 
+	public Optional<EWallets> eWalletsFindByAccountEmail(String userEmail) {
+		return eWalletsRepository.findByAccountEmail(userEmail);
+	}
+
 	@Transactional
-	public void eWalletsDeleteById(int id) {
+	public void eWalletsDeleteById(String id) {
 		eWalletsRepository.deleteById(id);
 	}
 }

@@ -23,6 +23,28 @@
           />
         </div>
         <div class="mb-3">
+          <label :for="comboGroup" class="form-label text-capitalize">comboGroup</label>
+          <input
+            :id="comboGroup"
+            v-model="formData.comboGroup"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter comboGroup`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label :for="idComboGroup" class="form-label text-capitalize">idComboGroup</label>
+          <input
+            :id="idComboGroup"
+            v-model="formData.idComboGroup"
+            type="text"
+            class="form-control"
+            :placeholder="`Enter idComboGroup`"
+          />
+        </div>
+
+        <div class="mb-3">
           <label :for="qty" class="form-label text-capitalize">qty</label>
           <input
             :id="qty"
@@ -34,13 +56,13 @@
         </div>
 
         <div class="mb-3">
-          <label :for="cost" class="form-label text-capitalize">cost</label>
+          <label :for="priceAtBuy" class="form-label text-capitalize">priceAtBuy</label>
           <input
-            :id="cost"
-            v-model="formData.cost"
+            :id="priceAtBuy"
+            v-model="formData.priceAtBuy"
             type="number"
             class="form-control"
-            :placeholder="`Enter cost`"
+            :placeholder="`Enter priceAtBuy`"
           />
         </div>
 
@@ -132,8 +154,10 @@
 
     const formData = reactive({
     			id: '',
+    			comboGroup: '',
+    			idComboGroup: '',
     			qty: '',
-    			cost: '',
+    			priceAtBuy: '',
     			isGift: '',
     			sellingPrice: '',
     			total: '',
@@ -141,38 +165,6 @@
     			createdAt: '',
     			updatedAt: '',
     })
-
-    const listDashBoard = [
-    	"Accounts",
-    	"Authorities",
-    	"BaseProducts",
-    	"Cancels",
-    	"CartItems",
-    	"Catalogs",
-    	"Categories",
-    	"CostHistories",
-    	"Coupons",
-    	"News",
-    	"OrderItems",
-    	"Orders",
-    	"PaymentMethods",
-    	"PriceHistories",
-    	"ProductImages",
-    	"ProductItems",
-    	"PromotionProduct",
-    	"Promotions",
-    	"PurchaseOrderItems",
-    	"PurchaseOrders",
-    	"Returns",
-    	"Reviews",
-    	"Roles",
-    	"ShippingMethods",
-    	"UserAddresses",
-    	"VariantValues",
-    	"Variants",
-    ]
-
-
 
     async function submitUpdateForm() {
     console.log(formData)
@@ -185,11 +177,10 @@
     }
   }
 
-
   async function submitForm() {
     console.log(formData)
     try {
-      const response = await formTableService.post(formData)
+      const response = await formTableService.create(formData)
       console.log('Insert successful:', response.data)
       router.push(`/Admin/${props.TableName}`)
     } catch (error) {

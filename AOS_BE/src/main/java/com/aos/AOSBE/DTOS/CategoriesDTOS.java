@@ -1,9 +1,7 @@
 package com.aos.AOSBE.DTOS;
-import jakarta.persistence.*;
 
-import java.time.*;
-import java.math.*;
-import java.util.*;
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoriesDTOS {
-    private int id;
-    private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private int catalogs;
+	private int id;
+	private String name;
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
+	private String catalogs;
 }

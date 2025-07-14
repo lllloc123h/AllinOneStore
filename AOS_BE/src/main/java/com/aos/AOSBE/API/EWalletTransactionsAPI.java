@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.EWalletTransactionsDTOS;
-import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWalletTransactions;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Mapper.EWalletTransactionsMapper;
@@ -65,8 +64,7 @@ public class EWalletTransactionsAPI {
 			@RequestParam(defaultValue = "5") int size) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts user = accountsService.accountsFindByEmail(userEmail).orElse(null);
-			EWallets eWallets = eWalletsService.eWalletsFindByAccountId(user.getId()).orElse(null);
+			EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
 			List<EWalletTransactionsDTOS> eWalletTransactions = new ArrayList<EWalletTransactionsDTOS>();
 			eWalletTransactionsService.eWalletTransactionsFindByEwalletId(eWallets.getId()).forEach(e -> {
 				eWalletTransactions.add(eWalletTransactionsMapper.mapper(e));

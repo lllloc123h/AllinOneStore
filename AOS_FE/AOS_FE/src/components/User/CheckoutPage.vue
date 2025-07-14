@@ -1,135 +1,356 @@
 <template>
-
-    <body class="bg-light">
-        <div class="container my-5">
+    <div class="checkout-page bg-light py-5">
+        <div class="container">
             <div class="row">
-                <!-- Form -->
-                <div class="col-md-7">
-                    <div class="form-container">
-                        <div class="d-flex mb-4">
-                            <div class="tab-header me-2">Cá nhân</div>
-                            <div class="tab-header text-muted me-2">Thanh toán</div>
-                            <div class="tab-header text-muted">Xác nhận</div>
+                <!-- Cột form -->
+                <div class="col-lg-7">
+                    <div class="form-box p-4 bg-white rounded shadow-sm">
+                        <!-- Tabs -->
+                        <div class="d-flex mb-4 step-tabs">
+                            <div class="tab" :class="{ active: currentTab === 0 }" @click="currentTab = 0">1. Cá nhân
+                            </div>
+                            <div class="tab" :class="{ active: currentTab === 1 }" @click="currentTab = 1">2. Thanh toán
+                            </div>
+                            <div class="tab" :class="{ active: currentTab === 2 }" @click="currentTab = 2">3. Xác nhận
+                            </div>
                         </div>
-                        <form>
-                            <div class="mb-3">
-                                <label class="form-label">Họ Và Tên Người Nhận</label>
-                                <input type="text" class="form-control" />
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label class="form-label">Địa Chỉ Email</label>
-                                    <input type="email" class="form-control" />
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">Số Điện Thoại Người Nhận</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Địa Chỉ</label>
-                                <input type="text" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Tỉnh/Thành Phố</label>
-                                <input type="text" class="form-control" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Quê Quán*</label>
-                                <input type="text" class="form-control" />
-                            </div>
+
+                        <!-- Tab 1: Cá nhân -->
+                        <div v-if="currentTab === 0">
                             <div class="mb-4">
-                                <label class="form-label">Mã Bưu Điện *</label>
-                                <input type="text" class="form-control" />
+                                <label class="form-label fw-bold text-danger d-flex align-items-center">
+                                    <i class="bi bi-geo-alt-fill me-2"></i> Địa Chỉ Nhận Hàng
+                                </label>
+
+                                <div
+                                    class="bg-white p-3 border rounded d-flex justify-content-between align-items-center flex-wrap">
+                                    <div v-if="defaultAddressData">
+                                        <div class="fw-bold">
+                                            {{ defaultAddressData.recipientName }}
+                                            <span class="ms-2">(+84) {{ defaultAddressData.phone }}</span>
+                                        </div>
+                                        <div>
+                                            {{ defaultAddressData.street }}, {{ defaultAddressData.ward }},
+                                            {{ defaultAddressData.district }}, {{ defaultAddressData.province }}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-light text-danger border border-danger me-3"
+                                            v-if="defaultAddressData?.default">
+                                            Mặc Định
+                                        </span>
+                                        <button class="btn btn-link text-primary p-0" @click="goToAddress">Thay
+                                            Đổi</button>
+                                    </div>
+                                </div>
                             </div>
-                            <button type="submit" class="btn-next">Bước tiếp theo</button>
-                        </form>
+
+                            <div class="mb-3">
+                                <label class="form-label">Nhập mã giảm giá</label>
+                                <div class="input-group">
+                                    <input v-model="couponCodeInput" type="text" class="form-control"
+                                        placeholder="Nhập mã...">
+                                    <button class="btn btn-outline-secondary" type="button" @click="applyCoupon">Áp
+                                        dụng</button>
+                                </div>
+                                <div v-if="couponError" class="text-danger mt-1">{{ couponError }}</div>
+                                <div v-if="selectedCoupon" class="text-success mt-1">
+                                    Đã áp dụng mã: {{ selectedCoupon.code }} - Giảm {{ selectedCoupon.discountValue }}{{
+                                        selectedCoupon.discountType === 'PERCENT' ? '%' : '₫' }}
+                                </div>
+                                <div v-if="selectedCoupon && totalPrice < selectedCoupon.minOrderAmount"
+                                    class="text-warning mt-1">
+                                    * Đơn hàng chưa đủ {{ selectedCoupon.minOrderAmount.toLocaleString() }}₫ để áp dụng
+                                    mã
+                                </div>
+
+                            </div>
+
+
+                            <button class="btn btn-warning w-100 fw-bold" @click="currentTab = 1">Bước tiếp
+                                theo</button>
+                        </div>
+
+                        <!-- Tab 2: Thanh toán -->
+                        <div v-if="currentTab === 1">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Phương thức thanh toán</label>
+                                <div class="form-check" v-for="method in ['COD', 'MOMO']" :key="method">
+                                    <input type="radio" class="form-check-input" :value="method"
+                                        v-model="paymentMethod" />
+                                    <label class="form-check-label">
+                                        {{ method === 'COD' ? 'Thanh toán khi nhận hàng' : 'Ví MoMo' }}
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100 fw-bold" @click="currentTab = 2">Tiếp tục</button>
+                        </div>
+
+                        <!-- Tab 3: Xác nhận -->
+                        <div v-if="currentTab === 2">
+                            <h5 class="mb-3">Xác nhận đơn hàng</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Người nhận:</strong> {{ defaultAddressData?.recipientName || '—' }}</li>
+                                <li><strong>Số điện thoại:</strong> {{ defaultAddressData?.phone || '—' }}</li>
+                                <li><strong>Địa chỉ:</strong> {{ fullAddress }}</li>
+                                <li><strong>Giảm giá:</strong> {{ selectedCoupon?.code || 'Không áp dụng' }}</li>
+                                <li><strong>Thanh toán:</strong> {{ paymentMethod }}</li>
+                            </ul>
+
+                            <h6 class="mt-4">Danh sách sản phẩm</h6>
+                            <ul class="list-unstyled">
+                                <li v-for="item in selectedProducts" :key="item.id">
+                                    {{ item.name }} - SL: {{ item.quantity }} - {{ (item.price *
+                                        item.quantity).toLocaleString() }}₫
+                                </li>
+                            </ul>
+
+                            <button class="btn btn-success mt-3 w-100 fw-bold" @click="confirmOrder">Xác nhận đặt
+                                hàng</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Payment Summary -->
-                <div class="col-md-5">
-                    <div class="summary-box">
+                <!-- Cột tóm tắt -->
+                <div class="col-lg-5">
+                    <div class="summary-box p-4 bg-white rounded shadow-sm">
                         <h5 class="mb-3">Chi tiết thanh toán</h5>
-                        <div class="d-flex justify-content-between fw-bold border-bottom pb-2 mb-2">
-                            <span>Sản Phẩm</span><span>Số Lượng</span><span>Tổng</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Double Bed & Dressing</span><span>01</span><span>$180</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Double Bed & Dressing</span><span>01</span><span>$120</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Double Bed & Dressing</span><span>01</span><span>$100</span>
+                        <div v-for="item in selectedProducts" :key="item.id"
+                            class="d-flex justify-content-between mb-2">
+                            <span>{{ item.name }} x{{ item.quantity }}</span>
+                            <span>{{ (item.price * item.quantity).toLocaleString() }}₫</span>
                         </div>
                         <hr />
                         <div class="d-flex justify-content-between fw-bold">
-                            <span>Tổng</span><span>$400</span>
+                            <span>Tạm tính:</span>
+                            <span>{{ totalPrice.toLocaleString() }}₫</span>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <span>Phí Vận Chuyển</span><span>$100</span>
+                            <span>Giảm giá:</span>
+                            <span>-{{ discountAmount.toLocaleString() }}₫</span>
                         </div>
                         <hr />
-                        <div class="d-flex justify-content-between fw-bold fs-5">
-                            <span>Tổng Kết</span><span>$500</span>
+                        <div class="d-flex justify-content-between fs-5 fw-bold text-danger">
+                            <span>Tổng cộng:</span>
+                            <span>{{ finalPrice.toLocaleString() }}₫</span>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Popup thành công -->
+            <div v-if="showSuccess" class="popup-success">
+                <div class="popup-content text-center">
+                    <h4>Cảm ơn bạn đã đặt hàng!</h4>
+                    <p>Chúng tôi sẽ xử lý đơn hàng sớm nhất.</p>
+                    <button class="btn btn-primary" @click="router.push('/')">Về trang chủ</button>
+                </div>
+            </div>
         </div>
-    </body>
-
-
+    </div>
 </template>
+
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
-const route = useRoute();
-const selectedProducts = ref([]);
-if (route.query.products) {
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api, { authService } from '../../Configs/api'
+import { onBeforeRouteLeave } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+
+const currentTab = ref(0)
+const selectedProducts = ref([])
+const selectedCoupon = ref(null)
+const paymentMethod = ref('COD')
+const showSuccess = ref(false)
+const defaultAddressData = ref(null)
+
+const couponCodeInput = ref('')
+const couponError = ref('')
+
+// ==== Computed Properties ====
+const totalPrice = computed(() =>
+    selectedProducts.value.reduce((acc, item) => acc + item.price * item.quantity, 0)
+)
+
+const discountAmount = computed(() => {
+    const coupon = selectedCoupon.value
+    if (!coupon || totalPrice.value < coupon.minOrderAmount) return 0
+
+    if (coupon.discountType === 'PERCENT') {
+        const discount = (coupon.discountValue / 100) * totalPrice.value
+        return coupon.maxDiscountAmount
+            ? Math.min(discount, coupon.maxDiscountAmount)
+            : discount
+    }
+
+    return coupon.discountValue || 0
+})
+
+const finalPrice = computed(() => totalPrice.value - discountAmount.value)
+
+const fullAddress = computed(() => {
+    const addr = defaultAddressData.value
+    return addr ? `${addr.street}, ${addr.ward}, ${addr.district}, ${addr.province}` : ''
+})
+
+// ==== Methods ====
+
+function goToAddress() {
+    router.push({ name: 'shippingaddress', query: { fromCheckout: '1' } })
+}
+
+async function applyCoupon() {
+    couponError.value = ''
+    selectedCoupon.value = null
+
+    if (!couponCodeInput.value) {
+        couponError.value = 'Vui lòng nhập mã giảm giá.'
+        return
+    }
+
     try {
-        selectedProducts.value = JSON.parse(route.query.products)
-    } catch (error) {
-        console.error('Failed to parse selectedProducts:', error)
+        const { data } = await api.get('/Coupons/validate', {
+            params: { code: couponCodeInput.value }
+        })
+        selectedCoupon.value = data
+        localStorage.setItem('selectedCoupon', JSON.stringify(data))
+    } catch (err) {
+        couponError.value = err.response?.data || 'Mã giảm giá không hợp lệ.'
+        console.error(err)
     }
 }
-console.log(selectedProducts.value)
+
+async function confirmOrder() {
+    const token = authService.getToken()
+
+    if (!token) {
+        alert('Bạn cần đăng nhập trước khi đặt hàng.')
+        router.push({ name: 'login' })
+        return
+    }
+
+    try {
+        const payload = {
+            address: defaultAddressData.value,
+            couponCode: selectedCoupon.value?.code || null,
+            paymentMethod: paymentMethod.value,
+            products: selectedProducts.value,
+            totalAmount: finalPrice.value
+        }
+
+        const response = await api.post('/Orders', payload)
+        console.log('✅ Đặt hàng thành công:', payload)
+        alert('Đặt hàng thành công!')
+        console.log(response.data)
+        localStorage.removeItem('selectedCoupon')
+
+        showSuccess.value = true
+        localStorage.removeItem('checkoutProducts') // 🧹 Xoá khi đã đặt
+    } catch (err) {
+        console.error('🔥 Lỗi đặt hàng:', err.response?.data || err.message)
+        alert('Lỗi đặt hàng!')
+    }
+}
+
+// ==== Lifecycle ====
+
+onMounted(async () => {
+    if (route.query.products) {
+        try {
+            selectedProducts.value = JSON.parse(route.query.products)
+            localStorage.setItem('checkoutProducts', JSON.stringify(selectedProducts.value))
+        } catch (err) {
+            console.error('Lỗi phân tích sản phẩm:', err)
+        }
+    } else if (!selectedProducts.value.length && localStorage.getItem('checkoutProducts')) {
+        selectedProducts.value = JSON.parse(localStorage.getItem('checkoutProducts'))
+    }
+
+    // ✅ Load coupon từ localStorage nếu có
+    if (localStorage.getItem('selectedCoupon')) {
+        selectedCoupon.value = JSON.parse(localStorage.getItem('selectedCoupon'))
+    }
+
+    try {
+        const { data: addresses } = await api.get('/UserAddresses')
+        defaultAddressData.value = addresses.find(addr => addr.default) || addresses[0]
+    } catch (err) {
+        console.error('Lỗi lấy địa chỉ:', err)
+    }
+    const savedTab = localStorage.getItem('checkoutTab')
+    if (savedTab !== null) {
+        currentTab.value = parseInt(savedTab)
+    }
+
+    const savedMethod = localStorage.getItem('paymentMethod')
+    if (savedMethod) {
+        paymentMethod.value = savedMethod
+    }
+
+})
+onBeforeRouteLeave((to, from, next) => {
+    const isGoingToShipping = to.name === 'shippingaddress'
+
+    // Nếu KHÔNG phải đi đến trang địa chỉ (tức là rời khỏi hoàn toàn checkout)
+    if (!isGoingToShipping) {
+        // 🧹 Dọn sạch mọi thứ nếu thoát checkout
+        localStorage.removeItem('selectedCoupon')
+        localStorage.removeItem('checkoutProducts')
+
+        selectedCoupon.value = null
+        selectedProducts.value = []
+        paymentMethod.value = 'COD'
+        currentTab.value = 0
+    }
+
+    next()
+})
+
 </script>
+
+
+
 <style scoped>
-.tab-header {
-    background-color: #fdeee6;
+.checkout-page {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.tab {
+    flex: 1;
     padding: 1rem;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    font-weight: bold;
-}
-
-.form-container {
-    border: 1px solid #f0f0f0;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    background-color: white;
-}
-
-.summary-box {
-    border: 1px solid #f0f0f0;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background-color: #fffaf7;
-}
-
-.btn-next {
-    background-color: #fbd3bd;
-    border: none;
-    color: white;
-    padding: 0.5rem 1.5rem;
-    border-radius: 1rem;
-    font-weight: bold;
+    background: #eee;
+    text-align: center;
+    border-radius: 10px;
+    margin-right: 0.5rem;
+    font-weight: 600;
     cursor: pointer;
 }
 
-.btn-next:hover {
-    background-color: #f9b795;
+.tab.active {
+    background: #f38b4a;
+    color: white;
+}
+
+.summary-box {
+    background-color: #fffaf5;
+}
+
+.popup-success {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 400px;
+    width: 100%;
 }
 </style>

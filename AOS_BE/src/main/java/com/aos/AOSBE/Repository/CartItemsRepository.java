@@ -2,7 +2,9 @@ package com.aos.AOSBE.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import com.aos.AOSBE.Entity.Accounts;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -15,4 +17,8 @@ public interface CartItemsRepository extends JpaRepository<CartItems, Integer>, 
 	Optional<CartItems> findByAccountsEmailAndProductItemsId(String email, int productItemsId);
 
 	List<CartItems> findByAccountsEmail(String email);
+
+	List<CartItems> findAllCartItemsByComboGroup(String comboGroup);
+
+	List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroupId);
 }
