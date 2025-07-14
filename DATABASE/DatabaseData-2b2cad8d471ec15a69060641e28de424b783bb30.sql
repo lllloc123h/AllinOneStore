@@ -2416,3 +2416,64 @@ VALUES
   );
 
 GO
+INSERT INTO promotions (
+    name, description, type, discount_value,
+    combo_price, qty, start_at, end_at,
+    is_active, created_at, updated_at
+)
+VALUES
+(N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 10.00, NULL, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 50000, NULL, 100, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 30000, NULL, 500, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 210000, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, 399000, 30, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 15.00, NULL, 100, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 20.00, NULL, 150, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 1 tặng 1 khăn cổ', N'Khuyến mãi phụ kiện kèm áo sơ mi', 'COMBO', NULL, 0, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 30.00, NULL, 50, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
+INSERT INTO promotions (
+    name, description, type, discount_value,
+    combo_price, qty, start_at, end_at,
+    is_active, created_at, updated_at
+)
+VALUES
+(N'Combo mùa thu', N'Mua 2 áo khoác giá chỉ 599K', 'COMBO', NULL, NULL, 599000, 40, GETDATE(), DATEADD(DAY, 25, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Ưu đãi ví điện tử', N'Thanh toán bằng ví được giảm thêm 5%', 'DISCOUNT', 'PERCENT', 5.00, NULL, 300, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 25% áo nữ', N'Chỉ áp dụng danh mục Áo nữ', 'DISCOUNT', 'PERCENT', 25.00, NULL, 120, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua càng nhiều giảm càng sâu', N'Khuyến mãi theo cấp số nhân', 'DISCOUNT', 'PERCENT', 15.00, NULL, 200, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Siêu khuyến mãi cho thành viên VIP', N'Giảm 20% mọi đơn hàng cho VIP', 'DISCOUNT', 'PERCENT', 20.00, NULL, 50, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Quà tặng khách hàng trung thành', N'Mua đủ 5 đơn tặng 1 áo', 'COMBO', NULL, NULL, 0, 20, GETDATE(), DATEADD(DAY, 60, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Tặng tất cả voucher 30K', N'Sự kiện ngày hội thành viên', 'DISCOUNT', 'AMOUNT', 30000, NULL, 300, GETDATE(), DATEADD(DAY, 5, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Ưu đãi mùa lễ hội', N'Giảm 10% toàn bộ dịp lễ', 'DISCOUNT', 'PERCENT', 10.00, NULL, 150, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Gói combo Áo + Quần giá sốc', N'Trọn gói chỉ 350K', 'COMBO', NULL, NULL, 350000, 30, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Ưu đãi cuối tháng', N'Chốt sale giảm 12%', 'DISCOUNT', 'PERCENT', 12.00, NULL, 100, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE());
+GO
+INSERT INTO coupons (
+    code, description, discount_type, discount_value,
+    min_order_amount, max_discount_amount, qty,
+    usage_per_customer, is_allow_voucher, is_active,
+    customer_group, start_at, end_at, created_at, updated_at
+)
+VALUES
+('COUPON001', N'Mô tả coupon số 1', 'FREESHIP', 30000, 200000, 30000, 100, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 10, GETDATE()), GETDATE(), GETDATE()),
+('COUPON002', N'Mô tả coupon số 2', 'G-DISCOUNT', 31000, NULL, 31000, 101, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 11, GETDATE()), GETDATE(), GETDATE()),
+('COUPON003', N'Mô tả coupon số 3', 'G-DISCOUNT', 32000, 200000, 32000, 102, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 12, GETDATE()), GETDATE(), GETDATE()),
+('COUPON004', N'Mô tả coupon số 4', 'FREESHIP', 33000, NULL, 33000, 103, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 13, GETDATE()), GETDATE(), GETDATE()),
+('COUPON005', N'Mô tả coupon số 5', 'G-DISCOUNT', 34000, 200000, 34000, 104, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 14, GETDATE()), GETDATE(), GETDATE()),
+('COUPON006', N'Mô tả coupon số 6', 'G-DISCOUNT', 35000, NULL, 35000, 105, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 15, GETDATE()), GETDATE(), GETDATE()),
+('COUPON007', N'Mô tả coupon số 7', 'FREESHIP', 36000, 200000, 36000, 106, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 16, GETDATE()), GETDATE(), GETDATE()),
+('COUPON008', N'Mô tả coupon số 8', 'G-DISCOUNT', 37000, NULL, 37000, 107, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 17, GETDATE()), GETDATE(), GETDATE()),
+('COUPON009', N'Mô tả coupon số 9', 'G-DISCOUNT', 38000, 200000, 38000, 108, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 18, GETDATE()), GETDATE(), GETDATE()),
+('COUPON010', N'Mô tả coupon số 10', 'FREESHIP', 39000, NULL, 39000, 109, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 19, GETDATE()), GETDATE(), GETDATE()),
+('COUPON011', N'Mô tả coupon số 11', 'G-DISCOUNT', 40000, 200000, 40000, 110, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 20, GETDATE()), GETDATE(), GETDATE()),
+('COUPON012', N'Mô tả coupon số 12', 'G-DISCOUNT', 41000, NULL, 41000, 111, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 21, GETDATE()), GETDATE(), GETDATE()),
+('COUPON013', N'Mô tả coupon số 13', 'FREESHIP', 42000, 200000, 42000, 112, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 22, GETDATE()), GETDATE(), GETDATE()),
+('COUPON014', N'Mô tả coupon số 14', 'G-DISCOUNT', 43000, NULL, 43000, 113, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 23, GETDATE()), GETDATE(), GETDATE()),
+('COUPON015', N'Mô tả coupon số 15', 'G-DISCOUNT', 44000, 200000, 44000, 114, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 24, GETDATE()), GETDATE(), GETDATE()),
+('COUPON016', N'Mô tả coupon số 16', 'FREESHIP', 45000, NULL, 45000, 115, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 25, GETDATE()), GETDATE(), GETDATE()),
+('COUPON017', N'Mô tả coupon số 17', 'G-DISCOUNT', 46000, 200000, 46000, 116, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 26, GETDATE()), GETDATE(), GETDATE()),
+('COUPON018', N'Mô tả coupon số 18', 'G-DISCOUNT', 47000, NULL, 47000, 117, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 27, GETDATE()), GETDATE(), GETDATE()),
+('COUPON019', N'Mô tả coupon số 19', 'FREESHIP', 48000, 200000, 48000, 118, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 28, GETDATE()), GETDATE(), GETDATE()),
+('COUPON020', N'Mô tả coupon số 20', 'G-DISCOUNT', 49000, NULL, 49000, 119, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 29, GETDATE()), GETDATE(), GETDATE());
+GO

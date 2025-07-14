@@ -117,23 +117,20 @@
           </div>
 
           <div v-if="showModal" class="modal fade show d-block" tabindex="-1"
-            style="background-color: rgba(0, 0, 0, 0.5)">
+            style="background-color: rgba(0, 0, 0, 0.5)" role="dialog" aria-modal="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">{{ selectedProduct?.name }}</h5>
-                  <button type="button" class="btn-close" @view-detail="closeModal"></button>
+                  <button type="button" class="btn-close" @click="closeModal"></button>
                 </div>
                 <div class="modal-body">
-                  <img :src="selectedProduct?.imageUrl ||
-                    'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'
-                    " class="img-fluid mb-3" />
+                  <img :src="selectedProduct?.imageUrl" class="img-fluid mb-3 w-50" alt="Product Image" />
                   <p>{{ selectedProduct?.description }}</p>
                   <p><strong>Giá:</strong> {{ selectedProduct?.price || "---" }} VND</p>
-                  <p>
-                    <strong>Vật liệu:</strong> {{ selectedProduct?.material || "---" }}
-                  </p>
+                  <p><strong>Vật liệu:</strong> {{ selectedProduct?.material || "---" }}</p>
                   <p><strong>Biến thể:</strong> {{ selectedProduct?.sku || "---" }}</p>
+
                   <label for="qtyInput">Số lượng:</label>
                   <input v-model="quantity" type="number" id="qtyInput" min="1" class="form-control w-25" />
                 </div>
@@ -144,6 +141,7 @@
               </div>
             </div>
           </div>
+
           <PageNavigative :totalPage="data" v-model:currentPage="pageIndex" v-model:currentSize="pageSize" />
         </div>
       </div>
@@ -210,12 +208,12 @@ onMounted(() => {
       data.value = resp.data.totalPages;
       const rawProducts = resp.data;
       //handle img with firebase storage
-      const updatedProducts = await Promise.all(
-        rawProducts.map(async (product) => {
-          const imageUrl = product.mainImage;
-          return { ...product, imageUrl };
-        })
-      );
+      // const updatedProducts = await Promise.all(
+      //   rawProducts.map(async (product) => {
+      //     const imageUrl = product.mainImage;
+      //     return { ...product, imageUrl };
+      //   })
+      // );
       products.value = resp.data;
     })
     .catch((error) => console.log("Error loading base products:", error));
@@ -224,8 +222,14 @@ const itemCart = ref({
   id: "",
   accounts: "",
   productItems: "",
-  promotions: "",
+  promotions: null,
   comboGroup: "",
+  comboQty: "",
+  comboGroupId: "",
+  name: "",
+  mainImageUrl: "",
+  price: "",
+  sku: "",
   qty: "",
   createdAt: "",
   updatedAt: "",
@@ -233,6 +237,7 @@ const itemCart = ref({
 const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
   if (quantity.value < selectedProduct.value.safetyStock) {
+    console.log("itemCart", itemCart.value);
     finalHandleCartProgress(itemCart.value);
     notification.success({
       message: "Success",
@@ -291,14 +296,44 @@ watch(
 );
 </script>
 <style scoped>
-/* .product-flatform {
-  position: relative;
-
+/* Optional: center modal vertically */
+.modal.show.d-block {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  /* Bootstrap modal default */
 }
 
-.modal {
-  position: absolute;
-} */
+/* Optional: improve dark background */
+.modal.fade {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Optional: make image responsive and centered */
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Optional: custom quantity input width */
+#qtyInput {
+  max-width: 100px;
+}
+
+/* Optional: improve modal footer alignment on small screens */
+@media (max-width: 576px) {
+  .modal-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
 
 .filter-group h3 {
   font-size: 18px;
