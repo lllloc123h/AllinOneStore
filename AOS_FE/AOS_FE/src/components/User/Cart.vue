@@ -147,7 +147,7 @@
                       data-bs-toggle="modal"
                       data-bs-target="#exampleModalToggle"
                       class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      @click="openPromotionModal(item.productItemId)"
+                      @click="openPromotionModal(item)"
                       type="button"
                     >
                       <i class="bi bi-gift-fill"></i>Ưu đãi
@@ -707,15 +707,17 @@ function removeComboGroupId(items) {
     localStorage.setItem("cart", JSON.stringify(tempLocalList));
   }
 }
-function openPromotionModal(productItemId) {
+const cartIdOfOpenPromotionModal = ref(null);
+function openPromotionModal(item) {
   promotions.value = [];
-  productItemIdRef.value = productItemId;
-  console.log("Open promotion modal for item:", productItemId);
+  cartIdOfOpenPromotionModal.value = item.id;
+  productItemIdRef.value = item.productItemId;
+  console.log("Open promotion modal for item:", item.productItemId);
   api
-    .get(`/Promotions?productItemId=${productItemId}`)
+    .get(`/Promotions?productItemId=${item.productItemId}`)
     .then((response) => {
       promotions.value = response.data;
-      console.log("Promotions for item:", productItemId, promotions.value);
+      console.log("Promotions for item:", item.productItemId, promotions.value);
     })
     .catch((error) => {
       console.error("Error fetching promotions:", error);
@@ -794,9 +796,11 @@ function handleProcessCombo() {
     });
   });
   const finalData = {
-    cartId: cart.value.find((c) => c.productItemId === productItemIdRef.value)?.id, // Lấy id từ cart nếu có
+    cartId: cartIdOfOpenPromotionModal.value, // Lấy id từ cart nếu có
     items: selectedList,
   };
+  console.log("Dữ liệu combo:", finalData);
+
   api
     .post("/cart/addCombo", finalData)
     .then((response) => {

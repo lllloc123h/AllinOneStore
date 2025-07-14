@@ -122,6 +122,7 @@ public class CartHandleAPI {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			System.err.println(entity);
 			cartItemsService.addCombo(entity, account);
 			return ResponseEntity.ok(Map.of("message", "Combo added successfully"));
 		} catch (Exception e) {
