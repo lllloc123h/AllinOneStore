@@ -3,6 +3,7 @@ package com.aos.AOSBE.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.aos.AOSBE.DTOS.CreateComboDTO;
 import com.aos.AOSBE.Entity.Accounts;
@@ -40,7 +41,7 @@ private PromotionsRepository promotionsRepository;
 	public List<CartItems> cartItemsFindAccounts(String email) {
 		return cartItemsRepository.findByAccountsEmail(email);
 	}
-
+	@Transactional
 	public CartItems cartItemsSave(CartItems cartItems) {
 		return cartItemsRepository.save(cartItems);
 	}
@@ -48,7 +49,7 @@ private PromotionsRepository promotionsRepository;
 	public Optional<CartItems> cartItemsFindById(int id) {
 		return cartItemsRepository.findById(id);
 	}
-
+	@Transactional
 	public void cartItemsDeleteById(int id) {
 		cartItemsRepository.deleteById(id);
 	}
@@ -65,18 +66,48 @@ private PromotionsRepository promotionsRepository;
 		}
 		String comboGroupString = String.join("-", comboGroup);
 		List<CartItems> cartItems = cartItemsRepository.findAllCartItemsByComboGroup(comboGroupString);
+		// kiểm tra comboGroup đã tồn tại chưa
 		if (cartItems.size() > 0) {
-			for (CartItems cartItem : cartItems) {
-				cartItem.setQty(cartItem.getQty() + cartItem.getComboQty());
-				cartItem.setComboQty(cartItem.getComboQty() + 1);
-				cartItemsRepository.save(cartItem);
+			// kiểm tra số lượng ở các item trong combo
+			boolean flag = true;
+			for (int i = 0; i < cartItems.size(); i++) {
+				int tempQty = cartItems.get(i).getQty()/cartItems.get(i).getComboQty();
+				if (tempQty != entity.getItems().get(i).getQuantity()) {
+					flag = false;
+					break;
+				}
 			}
+			if (flag) {
+				// nếu số lượng bằng thì tặng 1 đơn vị
+				for (int i = 0; i < cartItems.size(); i++) {
+					cartItems.get(i).setComboQty(cartItems.get(i).getComboQty() + 1);
+					cartItems.get(i).setQty(cartItems.get(i).getQty()+entity.getItems().get(i).getQuantity());
+					cartItemsRepository.save(cartItems.get(i));
+				}
+			} else {
+				// không bằng thì tạo mới combo
+				UUID uuid = UUID.randomUUID();
+				for (CreateComboDTO.Items item : entity.getItems()){
+					CartItems cartItem = new CartItems();
+					cartItem.setAccounts(account);
+					cartItem.setComboGroup(comboGroupString);
+					cartItem.setQty(item.getQuantity());
+					cartItem.setComboGroupId(uuid);
+					cartItem.setComboQty(1);
+					cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
+					cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
+					cartItemsRepository.save(cartItem);
+				}
+			}
+
 		} else {
+			UUID uuid = UUID.randomUUID();
 			for (CreateComboDTO.Items item : entity.getItems()){
 				CartItems cartItem = new CartItems();
 				cartItem.setAccounts(account);
 				cartItem.setComboGroup(comboGroupString);
 				cartItem.setQty(item.getQuantity());
+				cartItem.setComboGroupId(uuid);
 				cartItem.setComboQty(1);
 				cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 				cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
@@ -85,4 +116,17 @@ private PromotionsRepository promotionsRepository;
 
 		}
 	}
+
+	public List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroup) {
+		return cartItemsRepository.findCartItemsByAccountsAndComboGroupId(accounts ,comboGroup);
+	}
+	public void deleteCombo(Accounts account,UUID comboGroupId) {
+		List<CartItems> cartItems = cartItemsRepository.findCartItemsByAccountsAndComboGroupId(account,comboGroupId);
+		if (cartItems.size() > 0) {
+			for (CartItems item : cartItems) {
+				cartItemsRepository.delete(item);
+			}
+		}
+	}
+
 }

@@ -66,6 +66,12 @@ api.interceptors.response.use(
       // } else 
       if (status === 403) {
         router.push('/403')
+      }else if(status === 401 && response.data.message.includes('Token đã hết hạn')) {
+        localStorage.removeItem('jwtToken')
+        router.push('/login')
+                setTimeout(()=>{
+          toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+        },500)
       }
     }
     return Promise.reject(err)
@@ -83,7 +89,9 @@ const authService = {
 
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
-              toast.success('Đăng nhập thành công !')
+             setTimeout(() => {
+          toast.success('Đăng nhập thành công !');
+             },1000)
 
         router.push(localStorage.getItem('redirectTo') || '/')
       })

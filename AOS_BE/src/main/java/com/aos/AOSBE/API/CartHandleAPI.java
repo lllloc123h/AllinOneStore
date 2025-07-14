@@ -2,8 +2,11 @@ package com.aos.AOSBE.API;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 import com.aos.AOSBE.DTOS.CreateComboDTO;
+import com.aos.AOSBE.DTOS.UpdateComboDTO;
 import com.aos.AOSBE.Entity.Accounts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +46,8 @@ public class CartHandleAPI {
 			CartItems cartItem = cartItemsMapper.mapperToObject(entity);
 			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(userEmail,
 					cartItem.getProductItems().getId());
-			if (item != null) {
+
+			if (item != null && item.getComboGroupId() == null) {
 				item.setQty(item.getQty() + cartItem.getQty());
 				cartItemsService.cartItemsSave(item);
 				return ResponseEntity.ok(item);
@@ -59,28 +63,28 @@ public class CartHandleAPI {
 
 	@PutMapping("/addToCart")
 	public ResponseEntity<?> updateCart(@RequestBody CartItemsDTOS entity,
-			@RequestParam("updateType") String updateType) {
+										@RequestParam("updateType") String updateType) {
 		try {
 			// Find the existing cart item by ID
 			CartItems existingItem = cartItemsService.cartItemsFindById(entity.getId()).orElse(null);
 			if (existingItem != null) {
 				int currentQty = entity.getQty();
 				switch (updateType) {
-				case "increase":
-					existingItem.setQty(currentQty + 1);
-					cartItemsService.cartItemsSave(existingItem);
-					break;
-				case "decrease":
-					if (currentQty - 1 <= 0) {
-						cartItemsService.cartItemsDeleteById(entity.getId());
-						return ResponseEntity.ok(Map.of("message", "Item removed from cart"));
-					} else {
-						existingItem.setQty(currentQty - 1);
+					case "increase":
+						existingItem.setQty(currentQty + 1);
 						cartItemsService.cartItemsSave(existingItem);
-					}
-					break;
-				default:
-					return ResponseEntity.badRequest().body(Map.of("message", "Invalid update type"));
+						break;
+					case "decrease":
+						if (currentQty - 1 <= 0) {
+							cartItemsService.cartItemsDeleteById(entity.getId());
+							return ResponseEntity.ok(Map.of("message", "Item removed from cart"));
+						} else {
+							existingItem.setQty(currentQty - 1);
+							cartItemsService.cartItemsSave(existingItem);
+						}
+						break;
+					default:
+						return ResponseEntity.badRequest().body(Map.of("message", "Invalid update type"));
 				}
 				return ResponseEntity.ok(existingItem);
 			} else {
@@ -112,6 +116,7 @@ public class CartHandleAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+
 	@PostMapping("/cart/addCombo")
 	public ResponseEntity<?> addCombo(@RequestBody CreateComboDTO entity) {
 		try {
@@ -125,4 +130,40 @@ public class CartHandleAPI {
 		}
 	}
 
+	@PutMapping("/cart/updateComboQty")
+	public ResponseEntity<?> updateComboQty(@RequestBody UpdateComboDTO entity) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			List<CartItems> listCartItems = cartItemsService.findCartItemsByAccountsAndComboGroupId(account, entity.getComboGroupId());
+			for (CartItems cartItems : listCartItems) {
+				int tempQty = cartItems.getQty() / cartItems.getComboQty();
+				if (Objects.equals(entity.getType(), "decrease")){
+					cartItems.setQty(cartItems.getQty() - tempQty);
+				}else{
+					cartItems.setQty(cartItems.getQty() + tempQty);
+
+				}
+				cartItems.setComboQty(entity.getComboQty());
+				cartItemsService.cartItemsSave(cartItems);
+			}
+			return ResponseEntity.ok(Map.of("message", "Combo quantity updated successfully"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+
+	@DeleteMapping("/cart/deleteCombo/{comboGroupId}")
+	public ResponseEntity<?> deleteCombo(@PathVariable("comboGroupId") UUID comboGroupId) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+	cartItemsService.deleteCombo(account, comboGroupId);
+			return ResponseEntity.ok(Map.of("message", "Combo deleted successfully"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
 }

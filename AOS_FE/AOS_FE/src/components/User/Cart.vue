@@ -49,7 +49,7 @@
                       </div>
                       <button
                         class="btn btn-sm btn-outline-danger"
-                        @click="removeComboGroup(groupKey)"
+                        @click="removeComboGroupId(items)"
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
@@ -585,7 +585,7 @@ function toggleSelectCombo(items) {
   }
 }
 function increaseComboGroupQty(items) {
-  console.log("items: ", items);
+  console.log("items combo: ", items);
 
   // Lấy id cart của các item trong comboGroup này
   const cartIds = items.map((i) => i.id);
@@ -596,6 +596,33 @@ function increaseComboGroupQty(items) {
       item.quantity = tempQty + item.quantity;
     }
   });
+  if (authService.isLogged()) {
+    api
+      .put("/cart/updateComboQty", {
+        comboQty: items[0].comboQty,
+        comboGroupId: items[0].comboGroupId, // Gửi comboGroupId nếu có
+        type: "increase",
+      })
+      .then((response) => {
+        console.log("Combo quantity updated successfully:", response.data);
+        // Cập nhật lại giỏ hàng sau khi gửi
+        // loadCart();
+      })
+      .catch((error) => {
+        console.error("Error updating combo quantity:", error);
+      });
+  } else {
+    let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
+    tempLocalList = tempLocalList.map((cartItem) => {
+      if (cartIds.includes(cartItem.id)) {
+        const tempQty = cartItem.qty / cartItem.comboQty; // 3/1
+        cartItem.comboQty = cartItem.comboQty - 1;
+        cartItem.qty = cartItem.qty - tempQty;
+      }
+      return cartItem;
+    });
+    localStorage.setItem("cart", JSON.stringify(tempLocalList));
+  }
 }
 
 function decreaseComboGroupQty(items) {
@@ -608,16 +635,55 @@ function decreaseComboGroupQty(items) {
         item.quantity = item.quantity - tempQty;
       }
     });
+    if (authService.isLogged()) {
+      api
+        .put("/cart/updateComboQty", {
+          comboQty: items[0].comboQty,
+          comboGroupId: items[0].comboGroupId, // Gửi comboGroupId nếu có
+          type: "decrease",
+        })
+        .then((response) => {
+          console.log("Combo quantity updated successfully:", response.data);
+          // Cập nhật lại giỏ hàng sau khi gửi
+          // loadCart();
+        })
+        .catch((error) => {
+          console.error("Error updating combo quantity:", error);
+        });
+    } else {
+      let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
+      tempLocalList = tempLocalList.map((cartItem) => {
+        if (cartIds.includes(cartItem.id)) {
+          const tempQty = cartItem.qty / cartItem.comboQty; // 3/1
+          cartItem.comboQty = cartItem.comboQty - 1;
+          cartItem.qty = cartItem.qty - tempQty;
+        }
+        return cartItem;
+      });
+      localStorage.setItem("cart", JSON.stringify(tempLocalList));
+    }
   }
 }
-function removeComboGroup(groupKey) {
-  cart.value = cart.value.filter((item) => item.comboGroup !== groupKey);
-  selectedItems.value = selectedItems.value.filter(
-    (id) =>
-      !cart.value.find(
-        (item) => item.productItemId === id && item.comboGroup === groupKey
-      )
-  );
+function removeComboGroupId(items) {
+  console.log("Removing combo group:", items);
+  const cartIds = items.map((i) => i.id);
+  cart.value = cart.value.filter((item) => !cartIds.includes(item.id));
+  if (authService.isLogged()) {
+    api
+      .delete(`/cart/deleteCombo/${items[0].comboGroupId}`)
+      .then((response) => {
+        console.log("Combo group removed successfully:", response.data);
+        // Cập nhật lại giỏ hàng sau khi gửi
+        loadCart();
+      })
+      .catch((error) => {
+        console.error("Error removing combo group:", error);
+      });
+  } else {
+    let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
+    tempLocalList = tempLocalList.filter((item) => !cartIds.includes(item.id));
+    localStorage.setItem("cart", JSON.stringify(tempLocalList));
+  }
 }
 function openPromotionModal(productItemId) {
   promotions.value = [];
@@ -756,7 +822,7 @@ async function loadCart() {
         price: item.price,
         quantity: item.qty,
         image: item.mainImageUrl,
-        promotions: item.promotionType[0] || "",
+        promotions: item.promotions || "",
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
