@@ -19,14 +19,21 @@ const excludedPaths = [
   '/Accounts/verify-otp',
   '/BaseProducts',
   '/VariantValues',
-  '/openai/chat'
+  '/openai/chat',
+  '/cart',
+  '/cart/addCombo',
+  '/Promotions/',
+  '/Promotions'
 ]
 
 // Automatically attach token to each request
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwtToken');
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
-  const isExcluded = excludedPaths.some(path => config.url.includes(path) && !config.url.includes("/admin"));
+  // Trong interceptor:
+const isExcluded = excludedPaths.some(path =>
+  path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path)
+);
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
   // neu url ngoai le 
   if (!isExcluded) {
@@ -57,6 +64,12 @@ api.interceptors.response.use(
       // } else 
       if (status === 403) {
         router.push('/403')
+      }else if(status === 401 && response.data.message.includes('Token đã hết hạn')) {
+        localStorage.removeItem('jwtToken')
+        router.push('/login')
+                setTimeout(()=>{
+          toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+        },500)
       }
     }
     return Promise.reject(err)
@@ -74,9 +87,15 @@ const authService = {
 
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
+             setTimeout(() => {
+          toast.success('Đăng nhập thành công !');
+             },1000)
+
         router.push(localStorage.getItem('redirectTo') || '/')
       })
-      .catch(error => console.log('Đăng nhập thất bại ', error.response))
+      .catch(error => {
+              toast.warning('Đăng nhập thất bại !')
+        console.log('Đăng nhập thất bại ', error.response)})
   }
   ,
 
@@ -163,7 +182,8 @@ const cartService = {
           name: product?.name || 'Unknown Product',
           price: product?.price || 0,
           quantity: item.qty,
-          image: product?.image || 'no-image.png'
+          image: product?.image || 'no-image.png',
+          comboType : product?.comboType || 'normal',
         };
       });
 

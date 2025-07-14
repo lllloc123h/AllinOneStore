@@ -228,11 +228,12 @@ function checkCanUpload() {
   canUpload.value =
     fileView.value.length > 0 && fileView.value.every((item) => item.valid);
   if (!canUpload.value) {
-    errorMsg.value = "Tất cả ảnh phải đúng 350x450px và video < 60s!";
+    errorMsg.value = `Tất cả ảnh phải đúng ${props.widthImg}x${props.heightImg}px và video < ${props.videoDuration}s!`;
   } else {
     errorMsg.value = "";
   }
 }
+
 async function uploadAllFiles() {
   errorMsg.value = "";
   isUploading.value = true;

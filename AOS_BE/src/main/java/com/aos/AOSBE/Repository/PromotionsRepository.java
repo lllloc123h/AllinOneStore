@@ -15,6 +15,13 @@ public interface PromotionsRepository extends JpaRepository<Promotions, Integer>
 	// Add custom query methods here if needed
     // kiểm tra sản phẩm trong giỏ có thuộc combo nào không
     @Query("SELECT p.promotions FROM PromotionProducts p WHERE p.productItems.id = ?1 AND p.promotions.isActive = true" +
-            " AND p.promotions.startAt <= CURRENT_DATE AND p.promotions.endAt >= CURRENT_DATE")
+            " AND p.promotions.startAt <= CURRENT_TIMESTAMP AND p.promotions.endAt >= CURRENT_TIMESTAMP")
     List<Promotions> findActivePromotionsByProductItemId(int productItemId);
+    @Query(value = "SELECT TOP 1 p.type,p.discount_type,p.discount_value " +
+            "FROM promotion_products pp JOIN promotions p " +
+            "ON pp.promotion_id = p.id WHERE pp.product_item_id = 2 " +
+            "AND p.is_active = 1 A" +
+            "ND p.start_at <= CURRENT_TIMESTAMP " +
+            "AND p.end_at >= CURRENT_TIMESTAMP ", nativeQuery = true)
+    Object[] findFirstTypePromotionByProductItemId(int productItemId);
 }

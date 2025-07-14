@@ -230,7 +230,6 @@ CREATE TABLE
 		name NVARCHAR (100),
 		description NVARCHAR (255),
 		type VARCHAR(30) CHECK (type IN ('DISCOUNT', 'COMBO')),
-		discount_type VARCHAR(20) CHECK (discount_type IN ('PERCENT', 'AMOUNT')),
 		discount_value DECIMAL(10, 2),
 		combo_price decimal(18, 2),
 		qty int not null,
@@ -294,9 +293,11 @@ create table
 		id int identity (1, 1) primary key,
 		account_id int not null,
 		product_item_id int,
+		qty int, 
+		combo_qty int null,--combo qty
 		combo_id int null,
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
-		qty int, 
+		combo_group_id UNIQUEIDENTIFIER  , -- để nhận diện combo nếu khác số lượng 
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id),
@@ -371,10 +372,11 @@ create table
 		id int identity (1, 1) primary key,
 		order_id int not null,
 		product_item_id int not null,
+		qty int not null,
+		combo_qty int null, -- số lượng combo
 		promotion_id int,-- kiểm tra xem combo nào đã đc áp dụng để trừ vào usage limit 
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
-		id_combo_group varchar(36), -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
-		qty int not null,
+		combo_group_id UNIQUEIDENTIFIER, -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
 		price_at_buy decimal(18, 2) not null,
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,

@@ -126,8 +126,7 @@ public class AccountsAPI {
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
 		try {
 			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
-			Authentication authentication = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
 			UserDetails user = (UserDetails) authentication.getPrincipal();
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
 					user.getAuthorities());
@@ -136,6 +135,7 @@ public class AccountsAPI {
 			return ResponseEntity
 					.ok(Map.of("message", "Đăng nhập thành công", "token", token, "username", user.getAuthorities()));
 		} catch (AuthenticationException e) {
+			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Sai thông tin đăng nhập"));
 		}
 	}
@@ -158,6 +158,7 @@ public class AccountsAPI {
 			}
 			return ResponseEntity.badRequest().body(Map.of("message", "OTP sai hoặc OTP hết hạn!"));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra !"));
 		}
 	}
