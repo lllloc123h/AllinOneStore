@@ -32,9 +32,9 @@
                         <i class="bi bi-gift-fill mx-1"></i>
                         <span>
                           <span class="badge bg-danger me-2">Combo</span>
-                          {{ items[0].promotions.name }}
+                          {{ items[0].promotions?.name }}
                           <span class="text-muted ms-2">{{
-                            items[0].promotions.description
+                            items[0].promotions?.description
                           }}</span>
                         </span>
                       </div>
@@ -55,10 +55,10 @@
                         </button>
                         <span class="fw-bold text-danger ms-auto">
                           Tổng:
-                          <template v-if="items[0].promotions.comboPrice > 0">
+                          <template v-if="items[0].promotions?.comboPrice > 0">
                             {{
                               (
-                                items[0].promotions.comboPrice * items[0].comboQty
+                                items[0].promotions?.comboPrice * items[0].comboQty
                               ).toLocaleString()
                             }}₫
                           </template>
@@ -84,7 +84,7 @@
                             </td>
                             <td class="text-center">{{ item.quantity }}</td>
                             <td class="text-end">
-                              <template v-if="items[0].promotions.comboPrice > 0">
+                              <template v-if="items[0].promotions?.comboPrice > 0">
                                 <span v-if="
                                   item.price !== undefined &&
                                   item.quantity !== undefined
@@ -114,16 +114,16 @@
                     <img :src="item.image" class="img-thumbnail me-2" style="height: 125px; width: 156px" />
 
                     <!-- Thay nút Ưu đãi -->
-                    <button v-if="item.promotions.type === 'COMBO'" data-bs-toggle="modal"
+                    <button v-if="item.promotions?.type === 'COMBO'" data-bs-toggle="modal"
                       data-bs-target="#exampleModalToggle"
                       class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                       @click="openPromotionModal(item.productItemId)" type="button">
                       <i class="bi bi-gift-fill"></i>Ưu đãi
                     </button>
-                    <span v-else-if="item.promotions.type === 'DISCOUNT'"
+                    <span v-else-if="item.promotions?.type === 'DISCOUNT'"
                       class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
                       <i class="bi bi-tag-fill"></i>-{{
-                        (item.promotions.discountValue / item.price) * 100
+                        (item.promotions?.discountValue / item.price) * 100
                       }}%
                     </span>
 
@@ -301,9 +301,9 @@
               </td>
               <td>{{ item.name }}</td>
               <td>{{ item.sku }}</td>
-              <td v-if="item.promotions.type == 'DISCOUNT'">
+              <td v-if="item.promotions?.type == 'DISCOUNT'">
                 <del>{{ item.price.toLocaleString() }}đ</del>
-                {{ (item.price - item.promotions.discountValue).toLocaleString() }}₫
+                {{ (item.price - item.promotions?.discountValue).toLocaleString() }}₫
               </td>
               <td class="text-end" v-else>{{ item.price.toLocaleString() }}₫</td>
               <td class="text-center">
@@ -313,10 +313,10 @@
                   <button class="btn btn-sm" @click="increaseQty(item)">＋</button>
                 </div>
               </td>
-              <td v-if="item.promotions.type == 'DISCOUNT'" class="text-end">
+              <td v-if="item.promotions?.type == 'DISCOUNT'" class="text-end">
                 {{
                   (
-                    (item.price - item.promotions.discountValue) *
+                    (item.price - item.promotions?.discountValue) *
                     item.quantity
                   ).toLocaleString()
                 }}₫
@@ -713,7 +713,7 @@ async function loadCart() {
         price: item.price,
         quantity: item.qty,
         image: item.mainImageUrl,
-        promotions: item.promotions || "",
+        promotions: item.promotions || null,
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
@@ -728,7 +728,7 @@ async function loadCart() {
         price: item.price,
         quantity: item.qty,
         image: item.mainImageUrl,
-        promotions: item.promotions || "",
+        promotions: item.promotions || null,
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có

@@ -182,16 +182,6 @@ const openModal = (product) => {
 const closeModal = () => {
   showModal.value = false;
 };
-//handle img with firebase storage
-// async function handleImg(mainImage) {
-//   const fileRef = storageRef(storage, "products/" + mainImage);
-//   try {
-//     const url = await getDownloadURL(fileRef);
-//     return url;
-//   } catch (error) {
-//     return "https://res.cloudinary.com/da2v8uqir/image/upload/v1751943855/smzc8utvxiqvvvpzbdfp.png";
-//   }
-// }
 onMounted(() => {
   api
     .get("/VariantValues")
@@ -206,14 +196,6 @@ onMounted(() => {
     .get("/BaseProducts")
     .then(async (resp) => {
       data.value = resp.data.totalPages;
-      const rawProducts = resp.data;
-      //handle img with firebase storage
-      // const updatedProducts = await Promise.all(
-      //   rawProducts.map(async (product) => {
-      //     const imageUrl = product.mainImage;
-      //     return { ...product, imageUrl };
-      //   })
-      // );
       products.value = resp.data;
     })
     .catch((error) => console.log("Error loading base products:", error));
@@ -237,7 +219,6 @@ const itemCart = ref({
 const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
   if (quantity.value < selectedProduct.value.safetyStock) {
-    console.log("itemCart", itemCart.value);
     finalHandleCartProgress(itemCart.value);
     notification.success({
       message: "Success",
