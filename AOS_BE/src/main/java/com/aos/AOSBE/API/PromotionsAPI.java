@@ -69,6 +69,7 @@ public class PromotionsAPI {
 						.peek(pro -> {
 							ProductItems item = pro.getProductItems();
                             item.setQty(pro.getRequireQty());
+
                         })
 						.collect(Collectors.groupingBy(
 								pro -> pro.getProductItems().getBaseProducts(),
@@ -77,7 +78,7 @@ public class PromotionsAPI {
 		List<GroupProductDTO> listGroups = map.entrySet().stream().map(entry -> {
 			GroupProductDTO groupProductDTO = new GroupProductDTO();
 			groupProductDTO.setBaseProduct(groupProductMapper.mapperToBaseProductsDTOS(entry.getKey()));
-			groupProductDTO.setItems(entry.getValue().stream().map(groupProductMapper::mapperToProductItemDTO).toList());
+			groupProductDTO.setItems(entry.getValue().stream().map(proItem -> groupProductMapper.mapperToProductItemDTO(proItem,id)).toList());
 			return groupProductDTO;
 		}).toList();
 

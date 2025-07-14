@@ -328,7 +328,11 @@
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        <tr v-for="item in group.items" :key="item.id">
+                                        <tr
+                                          v-for="item in group.items"
+                                          :key="item.id"
+                                          :class="item.isGift ? 'table-success' : ''"
+                                        >
                                           <td>
                                             <input
                                               type="checkbox"
@@ -338,42 +342,60 @@
                                               :value="item.id"
                                             />
                                           </td>
-                                          <td>{{ group.baseProduct.name }}</td>
+                                          <td>
+                                            <div class="d-flex align-items-center">
+                                              {{ group.baseProduct.name }}
+                                              <span
+                                                v-if="item.isGift"
+                                                style="background-color: red"
+                                                class="badge ms-2"
+                                                ><i class="bi bi-gift-fill"></i> Quà
+                                                tặng</span
+                                              >
+                                            </div>
+                                          </td>
                                           <td>{{ item.sku }}</td>
                                           <td class="text-danger fw-bold">
                                             {{ item.price.toLocaleString() }}₫
                                           </td>
                                           <td>
-                                            <div class="d-flex align-items-center">
-                                              <button
-                                                class="btn btn-sm btn-outline-secondary"
-                                                @click="decreaseComboQty(item)"
-                                                :disabled="
-                                                  !selectedComboItems[item.id] ||
-                                                  selectedComboItems[item.id] <= 0
-                                                "
-                                              >
-                                                -
-                                              </button>
-                                              <span class="mx-2">{{
-                                                selectedComboItems[item.id] || 0
+                                            <template v-if="item.isGift">
+                                              <span class="fw-bold text-success">{{
+                                                item.qty
                                               }}</span>
-                                              <button
-                                                class="btn btn-sm btn-outline-secondary"
-                                                @click="increaseComboQty(item, group)"
-                                                :disabled="
-                                                  selectedComboItems[item.id] >=
-                                                    item.qty ||
-                                                  getBaseProductTotalQty(group) >=
-                                                    item.qty
-                                                "
-                                              >
-                                                +
-                                              </button>
-                                            </div>
-                                            <div class="small text-muted">
-                                              Tối đa: {{ item.qty }}
-                                            </div>
+                                            </template>
+                                            <template v-else>
+                                              <div class="d-flex align-items-center">
+                                                <button
+                                                  class="btn btn-sm btn-outline-secondary"
+                                                  @click="decreaseComboQty(item)"
+                                                  :disabled="
+                                                    !selectedComboItems[item.id] ||
+                                                    selectedComboItems[item.id] <= 0
+                                                  "
+                                                >
+                                                  -
+                                                </button>
+                                                <span class="mx-2">{{
+                                                  selectedComboItems[item.id] || 0
+                                                }}</span>
+                                                <button
+                                                  class="btn btn-sm btn-outline-secondary"
+                                                  @click="increaseComboQty(item, group)"
+                                                  :disabled="
+                                                    selectedComboItems[item.id] >=
+                                                      item.qty ||
+                                                    getBaseProductTotalQty(group) >=
+                                                      item.qty
+                                                  "
+                                                >
+                                                  +
+                                                </button>
+                                              </div>
+                                              <div class="small text-muted">
+                                                Tối đa: {{ item.qty }}
+                                              </div>
+                                            </template>
                                           </td>
                                         </tr>
                                       </tbody>
@@ -708,13 +730,15 @@ function openSpecificPromotionModal(promotionId) {
     .then((response) => {
       groupProducts.value = response.data;
       console.log("Group products for promotion:", promotionId, groupProducts.value);
-      // Tự động set số lượng tối đa cho item trùng id
       // Tự động set số lượng  cho item trùng id
       if (productItemIdRef.value) {
         groupProducts.value.forEach((group) => {
           group.items.forEach((item) => {
             if (item.id === productItemIdRef.value) {
               selectedComboItems.value[item.id] = 1; // Mặc định chọn 1 sản phẩm
+            }
+            if (item.isGift) {
+              selectedComboItems.value[item.id] = item.qty; //  chọn sản phẩm tặng kèm
             }
           });
         });

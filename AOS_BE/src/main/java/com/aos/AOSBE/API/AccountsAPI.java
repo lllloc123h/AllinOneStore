@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -35,10 +36,6 @@ import com.aos.AOSBE.DTOS.loginRequestDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.SecurityConfig.JwtUtil;
-import com.aos.AOSBE.Service.AccountsService;
-import com.aos.AOSBE.Service.AuthoritiesService;
-import com.aos.AOSBE.Service.EmailService;
-import com.aos.AOSBE.Service.OTPService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -64,6 +61,8 @@ public class AccountsAPI {
 	private AuthoritiesService authoritiesService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private CartItemsService cartItemsService;
 
 	@GetMapping("/admin/Accounts")
 	public ResponseEntity<?> getAllAccountsApi(@RequestParam(defaultValue = "0") int page,
@@ -125,15 +124,18 @@ public class AccountsAPI {
 	@PostMapping("/Accounts/login")
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
 		try {
+
 			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
-			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+				Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
 			UserDetails user = (UserDetails) authentication.getPrincipal();
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
 					user.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 			String token = jwtUtil.generateToken(user.getUsername());
 			return ResponseEntity
-					.ok(Map.of("message", "Đăng nhập thành công", "token", token, "username", user.getAuthorities()));
+					.ok(Map.of("message", "Đăng nhập thành công",
+							"token", token,
+							"cartSize",cartItemsService.cartItemsFindAccounts(entity.getEmail()).stream().reduce(0, (a, b) -> a + b.getQty(), Integer::sum)));
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Sai thông tin đăng nhập"));

@@ -84,19 +84,19 @@ const authService = {
     return api.post('/Accounts/login', { email, password })
       .then(async (response) => {
         localStorage.setItem('jwtToken', response.data.token);
+        localStorage.setItem('cartSize', response.data.cartSize);
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         // tokenRef.value = '1';
-
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
+        tokenRef.value = response.data.token;
              setTimeout(() => {
           toast.success('Đăng nhập thành công !');
              },1000)
-
         router.push(localStorage.getItem('redirectTo') || '/')
       })
       .catch(error => {
-              toast.warning('Đăng nhập thất bại !')
+              toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
         console.log('Đăng nhập thất bại ', error.response)})
   }
   ,
@@ -133,6 +133,11 @@ const authService = {
   ,
   logout() {
     localStorage.removeItem('jwtToken');
+    router.push('/');
+    setTimeout(() => {
+      toast.success('Đăng xuất thành công !');
+    }, 600);
+
     tokenRef.value = null;
     console.log('User logged out');
   },

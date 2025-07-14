@@ -37,7 +37,8 @@ public class CartItemsMapper {
 				entity.getPromotions(),
 				entity.getComboGroup(),
 				entity.getComboQty(),
-				entity.getComboGroupId());
+				entity.getComboGroupId(),
+				entity.getIsGift());
 	}
 
 	public CartItems mapperToObject(CartItemsDTOS entity) {
@@ -51,7 +52,8 @@ public class CartItemsMapper {
 				entity.getPromotions(),
 				entity.getComboGroup(),
 				entity.getComboQty(),
-				entity.getComboGroupId());
+				entity.getComboGroupId(),
+				entity.getIsGift());
 	}
 
 }
