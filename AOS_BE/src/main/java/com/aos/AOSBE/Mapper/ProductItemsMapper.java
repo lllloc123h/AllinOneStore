@@ -40,9 +40,7 @@ public class ProductItemsMapper {
 				    entity.getSellEnd(),
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
-				    entity.getBaseProducts().getId(),
-//					promotionProductsRepository.findAllByProductItems_Id(entity.getId()).isGift()
-				null
+				    entity.getBaseProducts().getId()
 			);
 		List<ProductImages> productImages = productImagesService.findByProductItemsId(entity.getId());
 		String imgURL = "";
@@ -56,12 +54,21 @@ public class ProductItemsMapper {
 				entity.getBaseProducts().getMaterial(), imgURL,
 				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null));
 	}
-
 	public ProductItems mapperToObject(ProductItemsDTOS entity) {
-		return new ProductItems(entity.getId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
-				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
-				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
+		return new ProductItems(
+				entity.getId(),
+				entity.getCost(),
+				entity.getPrice(),
+				entity.getTurnBuy(),
+				entity.getDescription(),
+				entity.getSku(),
+				entity.getSafetyStock(),
+				entity.getQty(),
+				entity.getSellStart(),
+				entity.getSellEnd(),
+				entity.getCreatedAt(),
+				entity.getUpdatedAt(),
 				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null));
 	}
-
+	
 }

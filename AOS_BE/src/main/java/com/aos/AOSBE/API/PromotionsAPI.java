@@ -55,12 +55,11 @@ public class PromotionsAPI {
 		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrue(productItemId);
 		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
 		return ResponseEntity.ok(promotionsDTOS);
-
 	}
 //	@GetMapping("/Promotions/type")
 //	public ResponseEntity<?> getFirstTypePromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
 //		return ResponseEntity.ok(promotionsService.promotionsFindFirstTypePromotionByProductItemId(productItemId));
-//	}
+
 	@GetMapping("/Promotions/{id}")
 	public ResponseEntity<?> getPromotionProductsByPromotionId(@PathVariable int id) {
 		List<PromotionProducts> promotionProducts = promotionProductsService.findPromotionProductsByPromotionId(id);

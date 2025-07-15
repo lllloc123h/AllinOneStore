@@ -48,7 +48,6 @@ private PromotionProductsRepository promotionProductsRepository;
 	public CartItems cartItemsSave(CartItems cartItems) {
 		return cartItemsRepository.save(cartItems);
 	}
-
 	public Optional<CartItems> cartItemsFindById(int id) {
 		return cartItemsRepository.findById(id);
 	}
@@ -59,6 +58,7 @@ private PromotionProductsRepository promotionProductsRepository;
 	public CartItems cartFindByAccountEmailAndProductItemId(String email, int id) {
 		return cartItemsRepository.findByAccountsEmailAndProductItemsId(email, id).orElse(null);
 	}
+
 	@Transactional
 	public void addCombo(CreateComboDTO entity, Accounts account) {
 		cartItemsRepository.deleteById(entity.getCartId());

@@ -8,6 +8,9 @@ import java.util.UUID;
 import com.aos.AOSBE.DTOS.CreateComboDTO;
 import com.aos.AOSBE.DTOS.UpdateComboDTO;
 import com.aos.AOSBE.Entity.Accounts;
+import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Service.PromotionProductsService;
+import com.aos.AOSBE.Service.PromotionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,15 +41,24 @@ public class CartHandleAPI {
 	CartItemsMapper cartItemsMapper;
 	@Autowired
 	AccountsService accountsService;
+	@Autowired
+	PromotionProductsService promotionProductsService;
+	@Autowired
+	PromotionsService promotionsService;
 
 	@PostMapping("/addToCart")
 	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			CartItems cartItem = cartItemsMapper.mapperToObject(entity);
-			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(userEmail,
+			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(
+					userEmail,
 					cartItem.getProductItems().getId());
-
+			List<Promotions> promotion = promotionsService.promotionsFindByIsActiveTrue(entity.getId());
+			if (!promotion.isEmpty()) {
+				item.setPromotions(promotion.get(0));
+				cartItem.setPromotions(promotion.get(0));
+			}
 			if (item != null && item.getComboGroupId() == null) {
 				item.setQty(item.getQty() + cartItem.getQty());
 				cartItemsService.cartItemsSave(item);

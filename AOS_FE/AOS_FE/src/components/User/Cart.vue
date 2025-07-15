@@ -8,7 +8,11 @@
             <tr class="border-1">
               <!-- Checkbox cột -->
               <th>
-                <input type="checkbox" :checked="isAllSelected" @change="toggleSelectAll" />
+                <input
+                  type="checkbox"
+                  :checked="isAllSelected"
+                  @change="toggleSelectAll"
+                />
               </th>
               <th class="text-start">Sản phẩm</th>
               <th>Tên</th>
@@ -25,40 +29,54 @@
                 <td colspan="8" class="p-0 border-0">
                   <div class="card mb-4 border-warning shadow-sm">
                     <div
-                      class="card-header bg-warning bg-opacity-25 fw-bold text-danger d-flex align-items-center justify-content-between">
+                      class="card-header bg-warning bg-opacity-25 fw-bold text-danger d-flex align-items-center justify-content-between"
+                    >
                       <div class="d-flex align-items-center">
-                        <input type="checkbox" class="me-2" :checked="isComboSelected(items)"
-                          @change="toggleSelectCombo(items)" />
+                        <input
+                          type="checkbox"
+                          class="me-2"
+                          :checked="isComboSelected(items)"
+                          @change="toggleSelectCombo(items)"
+                        />
                         <i class="bi bi-gift-fill mx-1"></i>
                         <span>
                           <span class="badge bg-danger me-2">Combo</span>
-                          {{ items[0].promotions?.name }}
+                          {{ items[0].promotions.name }}
                           <span class="text-muted ms-2">{{
-                            items[0].promotions?.description
+                            items[0].promotions.description
                           }}</span>
                         </span>
                       </div>
-                      <button class="btn btn-sm btn-outline-danger" @click="removeComboGroupId(items)">
+                      <button
+                        class="btn btn-sm btn-outline-danger"
+                        @click="removeComboGroupId(items)"
+                      >
                         <i class="bi bi-x-lg"></i>
                       </button>
                     </div>
                     <div class="card-body p-0 bg-light rounded-bottom">
                       <div class="d-flex align-items-center p-2">
                         <span class="me-2">Số lượng combo:</span>
-                        <button class="btn btn-sm btn-outline-secondary" @click="decreaseComboGroupQty(items)"
-                          :disabled="items[0].comboQty <= 1">
+                        <button
+                          class="btn btn-sm btn-outline-secondary"
+                          @click="decreaseComboGroupQty(items)"
+                          :disabled="items[0].comboQty <= 1"
+                        >
                           -
                         </button>
                         <span class="mx-2 fw-bold">{{ items[0].comboQty }}</span>
-                        <button class="btn btn-sm btn-outline-secondary" @click="increaseComboGroupQty(items)">
+                        <button
+                          class="btn btn-sm btn-outline-secondary"
+                          @click="increaseComboGroupQty(items)"
+                        >
                           +
                         </button>
                         <span class="fw-bold text-danger ms-auto">
                           Tổng:
-                          <template v-if="items[0].promotions?.comboPrice > 0">
+                          <template v-if="items[0].promotions.comboPrice > 0">
                             {{
                               (
-                                items[0].promotions?.comboPrice * items[0].comboQty
+                                items[0].promotions.comboPrice * items[0].comboQty
                               ).toLocaleString()
                             }}₫
                           </template>
@@ -71,12 +89,16 @@
                         <tbody>
                           <tr v-for="item in items" :key="item.id" class="align-middle">
                             <td>
-                              <img :src="item.image" class="img-thumbnail" style="
+                              <img
+                                :src="item.image"
+                                class="img-thumbnail"
+                                style="
                                   width: 100px;
                                   height: 125px;
                                   object-fit: cover;
                                   border-radius: 8px;
-                                " />
+                                "
+                              />
                             </td>
                             <td>
                               <div class="fw-bold">{{ item.name }}</div>
@@ -84,11 +106,13 @@
                             </td>
                             <td class="text-center">{{ item.quantity }}</td>
                             <td class="text-end">
-                              <template v-if="items[0].promotions?.comboPrice > 0">
-                                <span v-if="
-                                  item.price !== undefined &&
-                                  item.quantity !== undefined
-                                ">
+                              <template v-if="items[0].promotions.comboPrice > 0">
+                                <span
+                                  v-if="
+                                    item.price !== undefined &&
+                                    item.quantity !== undefined
+                                  "
+                                >
                                   {{ (item.price * item.quantity).toLocaleString() }}₫
                                 </span>
                               </template>
@@ -111,10 +135,16 @@
               <td>
                 <div class="d-flex position-relative align-items-center">
                   <span class="position-relative mt-2 mb-2">
-                    <img :src="item.image" class="img-thumbnail me-2" style="height: 125px; width: 156px" />
+                    <img
+                      :src="item.image"
+                      class="img-thumbnail me-2"
+                      style="height: 125px; width: 156px"
+                    />
 
                     <!-- Thay nút Ưu đãi -->
-                    <button v-if="item.promotions?.type === 'COMBO'" data-bs-toggle="modal"
+                    <button
+                      v-if="item.promotions.type === 'COMBO'"
+                      data-bs-toggle="modal"
                       data-bs-target="#exampleModalToggle"
                       class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                       @click="openPromotionModal(item)"
@@ -122,63 +152,96 @@
                     >
                       <i class="bi bi-gift-fill"></i>Ưu đãi
                     </button>
-                    <span v-else-if="item.promotions?.type === 'DISCOUNT'"
-                      class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+                    <span
+                      v-else-if="item.promotions.type === 'DISCOUNT'"
+                      class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
+                    >
                       <i class="bi bi-tag-fill"></i>-{{
-                        (item.promotions?.discountValue / item.price) * 100
+                        (item.promotions.discountValue / item.price) * 100
                       }}%
                     </span>
 
                     <!-- Modal của Ưu đãiiiiiiiiiii -->
-                    <div class="modal fade" id="exampleModalToggle" aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                    <div
+                      class="modal fade"
+                      id="exampleModalToggle"
+                      aria-hidden="true"
+                      aria-labelledby="exampleModalToggleLabel"
+                      tabindex="-1"
+                    >
                       <div class="modal-dialog modal-lg modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
                               Ưu đãi hiện có
                             </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
                           </div>
                           <div class="modal-body">
-                            <div v-for="item in promotions" :key="item.id" class="mb-3 row shadow-sm rounded-3">
+                            <div
+                              v-for="item in promotions"
+                              :key="item.id"
+                              class="mb-3 row shadow-sm rounded-3"
+                            >
                               <div class="col-10 card border-0">
                                 <div class="card-body py-3 px-4">
                                   <!-- Header: badge + tên + giá -->
-                                  <div class="d-flex justify-content-between align-items-center mb-2">
+                                  <div
+                                    class="d-flex justify-content-between align-items-center mb-2"
+                                  >
                                     <div class="d-flex align-items-center">
                                       <span class="badge bg-warning text-dark me-2">
                                         <i class="bi bi-gift-fill me-1"></i> Ưu đãi
                                       </span>
                                       <span class="fw-bold">{{ item.name }}</span>
                                     </div>
-                                    <div class="fw-bold text-danger" style="min-width: 100px; text-align: right">
+                                    <div
+                                      class="fw-bold text-danger"
+                                      style="min-width: 100px; text-align: right"
+                                    >
                                       {{ item.comboPrice.toLocaleString() }}đ
                                     </div>
                                   </div>
 
                                   <!-- Mô tả -->
-                                  <div class="text-muted text-start mb-3 mt-3"
-                                    style="font-size: 0.95em; white-space: pre-line">
+                                  <div
+                                    class="text-muted text-start mb-3 mt-3"
+                                    style="font-size: 0.95em; white-space: pre-line"
+                                  >
                                     {{ item.description }}
                                   </div>
 
                                   <!-- Info phụ -->
-                                  <div class="d-flex justify-content-between" style="font-size: 0.9em">
-                                    <span class="text-success">Còn lại: {{ item.qty }}</span>
-                                    <span class="text-secondary">HSD:
+                                  <div
+                                    class="d-flex justify-content-between"
+                                    style="font-size: 0.9em"
+                                  >
+                                    <span class="text-success"
+                                      >Còn lại: {{ item.qty }}</span
+                                    >
+                                    <span class="text-secondary"
+                                      >HSD:
                                       {{
                                         new Date(item.endAt).toLocaleDateString()
-                                      }}</span>
+                                      }}</span
+                                    >
                                   </div>
                                 </div>
                               </div>
                               <!-- Nút chuyển tab -->
                               <div class="col-2 text-end" style="padding: 0">
-                                <button style="width: 100%; height: 100%"
+                                <button
+                                  style="width: 100%; height: 100%"
                                   class="btn btn-sm btn-outline-primary border-0"
-                                  @click="openSpecificPromotionModal(item.id)" data-bs-target="#exampleModalToggle2"
-                                  data-bs-toggle="modal">
+                                  @click="openSpecificPromotionModal(item.id)"
+                                  data-bs-target="#exampleModalToggle2"
+                                  data-bs-toggle="modal"
+                                >
                                   Xem thêm
                                 </button>
                               </div>
@@ -190,32 +253,50 @@
                         </div>
                       </div>
                     </div>
-                    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+                    <div
+                      class="modal fade"
+                      id="exampleModalToggle2"
+                      aria-hidden="true"
+                      aria-labelledby="exampleModalToggleLabel2"
+                      tabindex="-1"
+                    >
                       <div class="modal-dialog modal-lg modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">
                               Modal 2
                             </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
                           </div>
                           <div class="modal-body">
                             <!-- Hiển thị groupProducts -->
                             <div v-if="groupProducts.length" class="mt-4">
                               <h3 class="mb-2">Sản phẩm trong combo</h3>
-                              <div v-for="(group, idx) in groupProducts" :key="'group-' + idx"
-                                class="card mb-4 shadow-sm border-0">
+                              <div
+                                v-for="(group, idx) in groupProducts"
+                                :key="'group-' + idx"
+                                class="card mb-4 shadow-sm border-0"
+                              >
                                 <div class="card-body">
                                   <!-- Thông tin combo -->
                                   <div class="d-flex align-items-center mb-3">
-                                    <img :src="group.baseProduct.mainImageUrl" alt="Ảnh sản phẩm" style="
+                                    <img
+                                      :src="group.baseProduct.mainImageUrl"
+                                      alt="Ảnh sản phẩm"
+                                      style="
                                         width: 125px;
                                         height: 156px;
                                         object-fit: cover;
                                         border-radius: 10px;
                                         background: #f8f8f8;
-                                      " class="me-3" />
+                                      "
+                                      class="me-3"
+                                    />
                                     <div>
                                       <div class="fw-bold" style="font-size: 1.1em">
                                         {{ group.baseProduct.name }}
@@ -253,8 +334,13 @@
                                           :class="item.isGift ? 'table-success' : ''"
                                         >
                                           <td>
-                                            <input type="checkbox" :checked="selectedComboItems[item.id] > 0" disabled
-                                              name="combo-item-checkbox" :value="item.id" />
+                                            <input
+                                              type="checkbox"
+                                              :checked="selectedComboItems[item.id] > 0"
+                                              disabled
+                                              name="combo-item-checkbox"
+                                              :value="item.id"
+                                            />
                                           </td>
                                           <td>
                                             <div class="d-flex align-items-center">
@@ -320,8 +406,13 @@
                             </div>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                              :disabled="!iscalculateTotalQuantity" @click="handleProcessCombo()">
+                            <button
+                              type="button"
+                              class="btn btn-secondary"
+                              data-bs-dismiss="modal"
+                              :disabled="!iscalculateTotalQuantity"
+                              @click="handleProcessCombo()"
+                            >
                               Xong
                             </button>
                           </div>
@@ -333,9 +424,9 @@
               </td>
               <td>{{ item.name }}</td>
               <td>{{ item.sku }}</td>
-              <td v-if="item.promotions?.type == 'DISCOUNT'">
+              <td v-if="item.promotions.type == 'DISCOUNT'">
                 <del>{{ item.price.toLocaleString() }}đ</del>
-                {{ (item.price - item.promotions?.discountValue).toLocaleString() }}₫
+                {{ (item.price - item.promotions.discountValue).toLocaleString() }}₫
               </td>
               <td class="text-end" v-else>{{ item.price.toLocaleString() }}₫</td>
               <td class="text-center">
@@ -345,10 +436,10 @@
                   <button class="btn btn-sm" @click="increaseQty(item)">＋</button>
                 </div>
               </td>
-              <td v-if="item.promotions?.type == 'DISCOUNT'" class="text-end">
+              <td v-if="item.promotions.type == 'DISCOUNT'" class="text-end">
                 {{
                   (
-                    (item.price - item.promotions?.discountValue) *
+                    (item.price - item.promotions.discountValue) *
                     item.quantity
                   ).toLocaleString()
                 }}₫
@@ -385,7 +476,11 @@
               <span>{{ selectedTotal.toLocaleString() }}₫</span>
             </li>
           </ul>
-          <button class="btn btn-dark w-100" :disabled="selectedItems.length === 0" @click="checkout">
+          <button
+            class="btn btn-dark w-100"
+            :disabled="selectedItems.length === 0"
+            @click="checkout"
+          >
             Thanh toán
           </button>
         </div>
@@ -396,7 +491,11 @@
     <div class="mt-5">
       <h5 class="mb-4">Bạn cũng có thể thích</h5>
       <div class="row">
-        <div class="col-6 col-md-3" v-for="(product, index) in suggestions" :key="'suggestion-' + index">
+        <div
+          class="col-6 col-md-3"
+          v-for="(product, index) in suggestions"
+          :key="'suggestion-' + index"
+        >
           <div class="text-center">
             <img :src="product.image" class="suggestion-img mb-2" />
             <div>{{ product.name }}</div>
@@ -517,6 +616,7 @@ function increaseComboGroupQty(items) {
       const tempQty = item.quantity / item.comboQty; // 3/1
       item.comboQty = (item.comboQty || 1) + 1;
       item.quantity = tempQty + item.quantity;
+      authService.updateCart(tempQty);
     }
   });
   if (authService.isLogged()) {
@@ -556,6 +656,7 @@ function decreaseComboGroupQty(items) {
         const tempQty = item.quantity / item.comboQty; // 3/1
         item.comboQty = item.comboQty - 1;
         item.quantity = item.quantity - tempQty;
+        authService.updateCart(-tempQty); // Giảm số lượng trong giỏ hàng
       }
     });
     if (authService.isLogged()) {
@@ -751,12 +852,14 @@ async function loadCart() {
         price: item.price,
         quantity: item.qty,
         image: item.mainImageUrl,
-        promotions: item.promotions || null,
+        promotions: item.promotions || "",
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
         comboGroupId: item.comboGroupId, // Thêm comboGroupId nếu có
       }));
+      authService.setCart(0);
+      authService.updateCart(cart.value.reduce((sum, item) => sum + item.quantity, 0));
       selectedItems.value = cart.value.map((item) => item.id);
     } else {
       cart.value = response.map((item) => ({
@@ -766,7 +869,7 @@ async function loadCart() {
         price: item.price,
         quantity: item.qty,
         image: item.mainImageUrl,
-        promotions: item.promotions || null,
+        promotions: item.promotions || "",
         sku: item.sku || "", // Thêm sku nếu có
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
@@ -787,8 +890,18 @@ function removeItem(item) {
   selectedItems.value = selectedItems.value.filter((id) => id !== item.productItemId);
 
   if (authService.isLogged()) {
-    // ✅ Call API to remove from backend
-    // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`);
+    //✅ Call API to remove from backend
+    api
+      .delete(`/cart/${item.id}`)
+      .then(() => {
+        console.log("Item removed successfully");
+        // Cập nhật lại giỏ hàng sau khi xóa
+        authService.updateCart(-item.quantity);
+        loadCart();
+      })
+      .catch((error) => {
+        console.error("Error removing item:", error);
+      });
   } else {
     let tempCart = JSON.parse(localStorage.getItem("cart")) ?? [];
     tempCart = tempCart.filter((i) => i.productItems !== item.productItemId);
@@ -805,7 +918,10 @@ function increaseQty(item) {
     handleUpdateQuantityCartWhileLogin(item, "increase");
     // Tìm đúng item theo id cart
     const cartItem = cart.value.find((c) => c.id === item.id);
-    if (cartItem) cartItem.quantity++;
+    if (cartItem) {
+      cartItem.quantity++;
+      authService.updateCart(1);
+    }
   } else {
     let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
     tempLocalList = tempLocalList.map((cartItem) => {
@@ -829,7 +945,10 @@ function decreaseQty(item) {
     if (authService.isLogged()) {
       handleUpdateQuantityCartWhileLogin(item, "decrease");
       const cartItem = cart.value.find((c) => c.id === item.id);
-      if (cartItem) cartItem.quantity--;
+      if (cartItem) {
+        cartItem.quantity--;
+        authService.updateCart(-1);
+      }
     } else {
       let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
       tempLocalList = tempLocalList.map((cartItem) => {

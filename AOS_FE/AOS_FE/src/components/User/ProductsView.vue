@@ -219,6 +219,7 @@ const itemCart = ref({
 const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
   if (quantity.value < selectedProduct.value.safetyStock) {
+    authService.updateCart(quantity.value);
     finalHandleCartProgress(itemCart.value);
     notification.success({
       message: "Success",
@@ -229,7 +230,7 @@ const addToCart = () => {
     // alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
     notification.success({
       message: "Danger",
-      description: `Số lượng tông không đủ`,
+      description: `Số lượng tồn không đủ`,
     });
     closeModal();
   }
