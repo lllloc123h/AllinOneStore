@@ -56,6 +56,8 @@ api.interceptors.response.use(
   err => {
     if (err.response) {
       const status = err.response.status
+      console.error('Response error:', err.response.data);
+      console.log('Response error status:', status);
       // if (status === 401) {
       //   localStorage.removeItem('jwtToken')
       //   toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
@@ -66,11 +68,13 @@ api.interceptors.response.use(
       // } else 
       if (status === 403) {
         router.push('/403')
-      }else if(status === 401 && response.data.message.includes('Token đã hết hạn')) {
+      }else if(status === 401 && err.response.data.includes('Token đã hết hạn')) {
         localStorage.removeItem('jwtToken')
+    cartSize.value = 0;
+    tokenRef.value = null;
         router.push('/login')
                 setTimeout(()=>{
-          toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+      alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
         },500)
       }
     }
@@ -78,6 +82,7 @@ api.interceptors.response.use(
   }
 )
 const tokenRef = ref(localStorage.getItem('jwtToken'))
+const cartSize = ref(localStorage.getItem('cartSize') ? parseInt(localStorage.getItem('cartSize')) : 0);
 const authService = {
   login(email, password) {
     // console.log({ email, password })
@@ -85,11 +90,13 @@ const authService = {
       .then(async (response) => {
         localStorage.setItem('jwtToken', response.data.token);
         localStorage.setItem('cartSize', response.data.cartSize);
+        cartSize.value = response.data.cartSize;
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         // tokenRef.value = '1';
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
         tokenRef.value = response.data.token;
+                        authService.isAdmin();
              setTimeout(() => {
           toast.success('Đăng nhập thành công !');
              },1000)
@@ -100,22 +107,34 @@ const authService = {
         console.log('Đăng nhập thất bại ', error.response)})
   }
   ,
-
   isLogged() {
     return tokenRef.value != null;
   }
   ,
+  getCartSize(){
+    return cartSize.value;
+  },
+  updateCart(qty){
+    cartSize.value += qty;
+    localStorage.setItem('cartSize', cartSize.value);
+  }
+  ,
+  setCart(qty){
+    cartSize.value = qty;
+    localStorage.setItem('cartSize', cartSize.value);
+  }
+  ,
   isAdmin() {
-    if (localStorage.getItem("jwtToken")) {
-      try {
-        const roles = authService.parseJwt(tokenRef.value).roles
-        return Array.isArray(roles) && roles.includes('ADMIN');
-      } catch (error) {
-        console.error('Invalid payload:', error);
-        return false;
-      }
+    if (tokenRef.value) {
+    try {
+      const roles = authService.parseJwt(tokenRef.value).roles;
+      return Array.isArray(roles) && roles.includes('ADMIN');
+    } catch (e) {
+      console.error('Invalid token:', e);
+      return false;
     }
-
+  }
+  return false;
   },
   getUserName() {
     if (localStorage.getItem("jwtToken")) {
@@ -137,7 +156,7 @@ const authService = {
     setTimeout(() => {
       toast.success('Đăng xuất thành công !');
     }, 600);
-
+    cartSize.value = 0;
     tokenRef.value = null;
     console.log('User logged out');
   },

@@ -207,6 +207,11 @@
             class="modal fade show d-block"
             tabindex="-1"
             style="background-color: rgba(0, 0, 0, 0.5)"
+<<<<<<< Updated upstream
+=======
+            role="dialog"
+            aria-modal="true"
+>>>>>>> Stashed changes
           >
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -216,6 +221,7 @@
                 </div>
                 <div class="modal-body">
                   <img
+<<<<<<< Updated upstream
                     :src="
                       selectedProduct?.imageUrl ||
                       'https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media&token=1e7dafd1-5898-4893-92cb-72342f849d07'
@@ -224,6 +230,17 @@
                   />
                   <p>{{ selectedProduct?.description }}</p>
                   <p><strong>Giá:</strong> {{ selectedProduct?.price || "---" }} VND</p>
+=======
+                    :src="selectedProduct?.imageUrl"
+                    class="img-fluid mb-3 w-50"
+                    alt="Product Image"
+                  />
+                  <p>{{ selectedProduct?.description }}</p>
+                  <p>
+                    <strong>Giá:</strong>
+                    {{ selectedProduct?.price.toLocaleString() || "---" }} VND
+                  </p>
+>>>>>>> Stashed changes
                   <p>
                     <strong>Vật liệu:</strong> {{ selectedProduct?.material || "---" }}
                   </p>
@@ -244,6 +261,10 @@
               </div>
             </div>
           </div>
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
           <PageNavigative
             :totalPage="data"
             v-model:currentPage="pageIndex"
@@ -338,6 +359,7 @@ const itemCart = ref({
 const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
   if (quantity.value < selectedProduct.value.safetyStock) {
+    authService.updateCart(quantity.value);
     finalHandleCartProgress(itemCart.value);
     notification.success({
       message: "Success",
@@ -348,7 +370,7 @@ const addToCart = () => {
     // alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
     notification.success({
       message: "Danger",
-      description: `Số lượng tông không đủ`,
+      description: `Số lượng tồn không đủ`,
     });
     closeModal();
   }

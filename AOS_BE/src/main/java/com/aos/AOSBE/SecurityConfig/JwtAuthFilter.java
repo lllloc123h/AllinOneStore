@@ -62,9 +62,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 response.setContentType("text/plain; charset=UTF-8");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("Token đã hết hạn");
-                e.getMessage();
+                e.printStackTrace();
                 return;
             }catch (Exception e) {
+                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("text/plain; charset=UTF-8");
                 response.setCharacterEncoding("UTF-8");

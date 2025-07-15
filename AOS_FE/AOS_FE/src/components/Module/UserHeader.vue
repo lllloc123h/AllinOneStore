@@ -63,7 +63,7 @@
               <span
                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge"
               >
-                1
+                {{ cartSize  }}
               </span>
             </RouterLink>
           </li>
@@ -131,6 +131,10 @@ const isLogged = computed(() => {
 const isAdmin = computed(() => {
   return !!authService.isAdmin();
 });
+const cartSize = computed(() => {
+  return authService.getCartSize();
+});
+
 const logout = () => {
   authService.logout();
 };

@@ -36,18 +36,10 @@ public class GroupProductMapper {
     public ProductItemsDTOS mapperToProductItemDTO(ProductItems entity,int promotionId) {
         return new ProductItemsDTOS(
                 entity.getId(),
-                entity.getCost(),
                 entity.getPrice(),
-                entity.getTurnBuy(),
                 entity.getDescription(),
                 handleListSkuToFilter.getDescriptionOfSku(entity.getSku()),
-                entity.getSafetyStock(),
                 entity.getQty(),
-                entity.getSellStart(),
-                entity.getSellEnd(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                entity.getBaseProducts().getId(),
                 promotionProductsRepository.findAllByProductItems_IdAndPromotions_Id(entity.getId(),promotionId).isGift()
         );
     }

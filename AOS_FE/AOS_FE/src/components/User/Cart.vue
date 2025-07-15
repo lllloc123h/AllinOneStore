@@ -106,7 +106,11 @@
                             </td>
                             <td class="text-center">{{ item.quantity }}</td>
                             <td class="text-end">
+<<<<<<< Updated upstream
                               <template v-if="items[0].promotions.comboPrice > 0">
+=======
+                              <template v-if="items[0].promotions?.comboPrice > 0">
+>>>>>>> Stashed changes
                                 <span
                                   v-if="
                                     item.price !== undefined &&
@@ -143,7 +147,11 @@
 
                     <!-- Thay nút Ưu đãi -->
                     <button
+<<<<<<< Updated upstream
                       v-if="item.promotions.type === 'COMBO'"
+=======
+                      v-if="item.promotions?.type === 'COMBO'"
+>>>>>>> Stashed changes
                       data-bs-toggle="modal"
                       data-bs-target="#exampleModalToggle"
                       class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -153,7 +161,11 @@
                       <i class="bi bi-gift-fill"></i>Ưu đãi
                     </button>
                     <span
+<<<<<<< Updated upstream
                       v-else-if="item.promotions.type === 'DISCOUNT'"
+=======
+                      v-else-if="item.promotions?.type === 'DISCOUNT'"
+>>>>>>> Stashed changes
                       class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
                     >
                       <i class="bi bi-tag-fill"></i>-{{
@@ -616,6 +628,7 @@ function increaseComboGroupQty(items) {
       const tempQty = item.quantity / item.comboQty; // 3/1
       item.comboQty = (item.comboQty || 1) + 1;
       item.quantity = tempQty + item.quantity;
+      authService.updateCart(tempQty);
     }
   });
   if (authService.isLogged()) {
@@ -655,6 +668,7 @@ function decreaseComboGroupQty(items) {
         const tempQty = item.quantity / item.comboQty; // 3/1
         item.comboQty = item.comboQty - 1;
         item.quantity = item.quantity - tempQty;
+        authService.updateCart(-tempQty); // Giảm số lượng trong giỏ hàng
       }
     });
     if (authService.isLogged()) {
@@ -856,6 +870,8 @@ async function loadCart() {
         comboQty: item.comboQty, // Thêm comboQty nếu có
         comboGroupId: item.comboGroupId, // Thêm comboGroupId nếu có
       }));
+      authService.setCart(0);
+      authService.updateCart(cart.value.reduce((sum, item) => sum + item.quantity, 0));
       selectedItems.value = cart.value.map((item) => item.id);
     } else {
       cart.value = response.map((item) => ({
@@ -886,8 +902,18 @@ function removeItem(item) {
   selectedItems.value = selectedItems.value.filter((id) => id !== item.productItemId);
 
   if (authService.isLogged()) {
-    // ✅ Call API to remove from backend
-    // await axios.delete(`http://localhost:8080/cart/delete/${item.id}`);
+    //✅ Call API to remove from backend
+    api
+      .delete(`/cart/${item.id}`)
+      .then(() => {
+        console.log("Item removed successfully");
+        // Cập nhật lại giỏ hàng sau khi xóa
+        authService.updateCart(-item.quantity);
+        loadCart();
+      })
+      .catch((error) => {
+        console.error("Error removing item:", error);
+      });
   } else {
     let tempCart = JSON.parse(localStorage.getItem("cart")) ?? [];
     tempCart = tempCart.filter((i) => i.productItems !== item.productItemId);
@@ -904,7 +930,10 @@ function increaseQty(item) {
     handleUpdateQuantityCartWhileLogin(item, "increase");
     // Tìm đúng item theo id cart
     const cartItem = cart.value.find((c) => c.id === item.id);
-    if (cartItem) cartItem.quantity++;
+    if (cartItem) {
+      cartItem.quantity++;
+      authService.updateCart(1);
+    }
   } else {
     let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
     tempLocalList = tempLocalList.map((cartItem) => {
@@ -928,7 +957,10 @@ function decreaseQty(item) {
     if (authService.isLogged()) {
       handleUpdateQuantityCartWhileLogin(item, "decrease");
       const cartItem = cart.value.find((c) => c.id === item.id);
-      if (cartItem) cartItem.quantity--;
+      if (cartItem) {
+        cartItem.quantity--;
+        authService.updateCart(-1);
+      }
     } else {
       let tempLocalList = JSON.parse(localStorage.getItem("cart")) ?? [];
       tempLocalList = tempLocalList.map((cartItem) => {

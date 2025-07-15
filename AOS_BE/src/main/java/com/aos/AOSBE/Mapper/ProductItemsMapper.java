@@ -27,13 +27,12 @@ public class ProductItemsMapper {
 				    entity.getSellEnd(),
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
-				    entity.getBaseProducts().getId(),
-//					promotionProductsRepository.findAllByProductItems_Id(entity.getId()).isGift()
-				null
+				    entity.getBaseProducts().getId()
 			);
 	}
 	public ProductItems mapperToObject(ProductItemsDTOS entity) {
 		return new ProductItems(
+<<<<<<< Updated upstream
 					entity.getId(),
 					entity.getCost(),
 					entity.getPrice(),
@@ -48,6 +47,21 @@ public class ProductItemsMapper {
 					entity.getUpdatedAt(),
 					baseProductsService.baseProductsFindById(entity.getBaseProducts()).orElse(null)
 			);
+=======
+				entity.getId(),
+				entity.getCost(),
+				entity.getPrice(),
+				entity.getTurnBuy(),
+				entity.getDescription(),
+				entity.getSku(),
+				entity.getSafetyStock(),
+				entity.getQty(),
+				entity.getSellStart(),
+				entity.getSellEnd(),
+				entity.getCreatedAt(),
+				entity.getUpdatedAt(),
+				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null));
+>>>>>>> Stashed changes
 	}
 	
 }

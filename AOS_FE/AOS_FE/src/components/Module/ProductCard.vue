@@ -76,7 +76,13 @@
             <i class="bi bi-star text-warning"></i>
             <span> (5,4k) revivews</span>
           </div>
+<<<<<<< Updated upstream
           <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
+=======
+          <h5 class="card-text">
+            <!--<del>450 000 VND</del>  -->{{ props.product.price }}
+          </h5>
+>>>>>>> Stashed changes
 
           <p class="card-text">{{ props.product.name }}</p>
 
