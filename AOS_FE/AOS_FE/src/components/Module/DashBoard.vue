@@ -126,6 +126,19 @@ const menuItems = [
                 path: '/Admin/EwalletTransactions'
             }
         ]
+    },
+    {
+        title: 'QUẢN LÝ KHUYẾN MÃI',
+        children: [
+            {
+                name: 'Quản lý Promotions',
+                path: '/Admin/Promotions'
+            },
+            {
+                name: 'Quản lý Promotions Products',
+                path: '/Admin/EwalletTransactions'
+            }
+        ]
     }
 ]
 </script>

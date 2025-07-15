@@ -9,7 +9,7 @@ export default function createCrudService(resource) {
                     cleanFilter[key] = FilterObject[key];
                 }
             });
-
+            console.log(resource)
             const params = {
                 page: page,
                 size: size,

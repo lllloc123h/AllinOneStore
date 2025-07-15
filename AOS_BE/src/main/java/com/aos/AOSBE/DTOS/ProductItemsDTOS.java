@@ -1,10 +1,9 @@
 package com.aos.AOSBE.DTOS;
-import com.aos.AOSBE.Entity.BaseProducts;
-import jakarta.persistence.*;
 
-import java.time.*;
-import java.math.*;
-import java.util.*;
+import java.time.LocalDateTime;
+
+import com.aos.AOSBE.Entity.BaseProducts;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +29,7 @@ public class ProductItemsDTOS {
 	private String material;
 	private String imageUrl;
 	private BaseProducts baseProducts;
-    private Boolean isGift;
+	private Boolean isGift;
 
 	public ProductItemsDTOS(int id, double price, String description, String sku, int qty, Boolean isGift) {
 		this.id = id;
@@ -41,7 +40,9 @@ public class ProductItemsDTOS {
 		this.isGift = isGift;
 	}
 
-	public ProductItemsDTOS(double cost, int id, double price, int turnBuy, String description, int safetyStock, String sku, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	public ProductItemsDTOS(double cost, int id, double price, int turnBuy, String description, int safetyStock,
+			String sku, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+			LocalDateTime updatedAt) {
 		this.cost = cost;
 		this.id = id;
 		this.price = price;
@@ -57,8 +58,8 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-							int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-							LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl) {
+			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -76,6 +77,30 @@ public class ProductItemsDTOS {
 		this.name = name;
 		this.material = material;
 		this.imageUrl = imageUrl;
+	}
+
+	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
+			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+			BaseProducts baseProducts) {
+		super();
+		this.id = id;
+		this.cost = cost;
+		this.price = price;
+		this.turnBuy = turnBuy;
+		this.description = description;
+		this.sku = sku;
+		this.safetyStock = safetyStock;
+		this.qty = qty;
+		this.sellStart = sellStart;
+		this.sellEnd = sellEnd;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.baseId = baseId;
+		this.name = name;
+		this.material = material;
+		this.imageUrl = imageUrl;
+		this.baseProducts = baseProducts;
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,

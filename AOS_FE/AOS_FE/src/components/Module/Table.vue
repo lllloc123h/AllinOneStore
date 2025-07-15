@@ -175,6 +175,7 @@ const fetchData = async () => {
         error.value = err.message
         data.value = []
         columns.value = []
+        console.error('Error fetching data:', err)
     } finally {
         loading.value = false
     }
