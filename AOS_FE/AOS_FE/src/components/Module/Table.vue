@@ -192,28 +192,25 @@ const columns = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const fetchData = async () => {
-  if (!props.TableName) return;
-  loading.value = true;
-  error.value = null;
-  try {
-    const responseIndexTable = await indexTableService.getAll(
-      currentPage.value,
-      currentSize.value,
-      props.FilterList
-    );
-    console.log(responseIndexTable);
-    const json = responseIndexTable.data.content;
-    totalPage.value = responseIndexTable.data.totalPages;
-    data.value = Array.isArray(json) ? json : [json];
-    columns.value = data.value.length ? Object.keys(data.value[0]) : [];
-  } catch (err) {
-    error.value = err.message;
-    data.value = [];
-    columns.value = [];
-  } finally {
-    loading.value = false;
-  }
-};
+    if (!props.TableName) return
+    loading.value = true
+    error.value = null
+    try {
+        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
+        console.log(responseIndexTable)
+        const json = responseIndexTable.data.content
+        totalPage.value = responseIndexTable.data.totalPages
+        data.value = Array.isArray(json) ? json : [json]
+        columns.value = data.value.length ? Object.keys(data.value[0]) : []
+    } catch (err) {
+        error.value = err.message
+        data.value = []
+        columns.value = []
+        console.error('Error fetching data:', err)
+    } finally {
+        loading.value = false
+    }
+}
 const totalPages = computed(() => {
   return Math.ceil(data.value.length / currentSize.value);
 });

@@ -1,10 +1,8 @@
 <template>
   <div class="container-fluid row">
     <div class="aside col-2">
-      <Dashboard :listDashBoard="listDashBoard"></Dashboard>
+      <Dashboard ></Dashboard>
     </div>
-    
-    
     <div class="article col-10">
       <h1>
         Promotions
@@ -24,6 +22,7 @@ import Table from "../../Module/Table.vue";
 import Dashboard from "../../Module/DashBoard.vue";
 import { useRouter } from 'vue-router'
 import { ref, reactive, watch } from 'vue'
+
 import FilterDropDown from "../../Module/FilterDropDown.vue";
 const router = useRouter()
   const props = defineProps({
@@ -66,13 +65,12 @@ const router = useRouter()
           	{ name: 'name', type: 'text' },
           	{ name: 'description', type: 'text' },
           	{ name: 'type', type: 'text' },
-          	{ name: 'discountType', type: 'text' },
           	{ name: 'discountValueFrom', type: 'number' },
           	{ name: 'discountValueTo', type: 'number' },
           	{ name: 'comboPriceFrom', type: 'number' },
           	{ name: 'comboPriceTo', type: 'number' },
-          	{ name: 'usageLimitFrom', type: 'number' },
-          	{ name: 'usageLimitTo', type: 'number' },
+          	{ name: 'qtyFrom', type: 'number' },
+          	{ name: 'qtyTo', type: 'number' },
           	{ name: 'startAtFrom', type: 'datetime-local' },
           	{ name: 'startAtTo', type: 'datetime-local' },
           	{ name: 'endAtFrom', type: 'datetime-local' },
@@ -90,10 +88,9 @@ const filters = ref({
   			name: '',
   			description: '',
   			type: '',
-  			discountType: '',
   			discountValue: '',
   			comboPrice: '',
-  			usageLimit: '',
+  			qty: '',
   			startAt: '',
   			endAt: '',
   			isActive: '',

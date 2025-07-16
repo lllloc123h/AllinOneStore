@@ -31,9 +31,9 @@ api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwtToken');
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
   // Trong interceptor:
-const isExcluded = excludedPaths.some(path =>
-  path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path)
-);
+  const isExcluded = excludedPaths.some(path =>
+    path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path) && !config.url.includes("/admin")
+  );
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
   // neu url ngoai le 
   if (!isExcluded) {
@@ -66,14 +66,14 @@ api.interceptors.response.use(
       // } else 
       if (status === 403) {
         router.push('/403')
-      }else if(status === 401 && err.response.data.includes('Token đã hết hạn')) {
+      } else if (status === 401 && err.response.data.includes('Token đã hết hạn')) {
         localStorage.removeItem('jwtToken')
-    cartSize.value = 0;
-    tokenRef.value = null;
+        cartSize.value = 0;
+        tokenRef.value = null;
         router.push('/login')
-                setTimeout(()=>{
-      alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
-        },500)
+        setTimeout(() => {
+          alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+        }, 500)
       }
     }
     return Promise.reject(err)
@@ -94,45 +94,46 @@ const authService = {
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
         tokenRef.value = response.data.token;
-                        authService.isAdmin();
-             setTimeout(() => {
+        authService.isAdmin();
+        setTimeout(() => {
           toast.success('Đăng nhập thành công !');
-             },1000)
+        }, 1000)
         router.push(localStorage.getItem('redirectTo') || '/')
       })
       .catch(error => {
-              toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
-        console.log('Đăng nhập thất bại ', error.response)})
+        toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
+        console.log('Đăng nhập thất bại ', error.response)
+      })
   }
   ,
   isLogged() {
     return tokenRef.value != null;
   }
   ,
-  getCartSize(){
+  getCartSize() {
     return cartSize.value;
   },
-  updateCart(qty){
+  updateCart(qty) {
     cartSize.value += qty;
     localStorage.setItem('cartSize', cartSize.value);
   }
   ,
-  setCart(qty){
+  setCart(qty) {
     cartSize.value = qty;
     localStorage.setItem('cartSize', cartSize.value);
   }
   ,
   isAdmin() {
     if (tokenRef.value) {
-    try {
-      const roles = authService.parseJwt(tokenRef.value).roles;
-      return Array.isArray(roles) && roles.includes('ADMIN');
-    } catch (e) {
-      console.error('Invalid token:', e);
-      return false;
+      try {
+        const roles = authService.parseJwt(tokenRef.value).roles;
+        return Array.isArray(roles) && roles.includes('ADMIN');
+      } catch (e) {
+        console.error('Invalid token:', e);
+        return false;
+      }
     }
-  }
-  return false;
+    return false;
   },
   getUserName() {
     if (localStorage.getItem("jwtToken")) {
@@ -207,7 +208,7 @@ const cartService = {
           price: product?.price || 0,
           quantity: item.qty,
           image: product?.image || 'no-image.png',
-          comboType : product?.comboType || 'normal',
+          comboType: product?.comboType || 'normal',
         };
       });
 
