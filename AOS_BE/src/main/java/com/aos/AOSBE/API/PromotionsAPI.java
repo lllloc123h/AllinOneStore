@@ -104,10 +104,6 @@ public class PromotionsAPI {
 
 	@GetMapping("/admin/Promotions/{id}")
 	public ResponseEntity<Promotions> getPromotionsByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
 		Promotions promotions = (Promotions) promotionsService.promotionsFindById(id).orElse(new Promotions());
 		return ResponseEntity.ok(promotions);
 	}
@@ -141,5 +137,4 @@ public class PromotionsAPI {
 		promotionsService.promotionsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
-
 }

@@ -82,23 +82,35 @@ api.interceptors.response.use(
 const tokenRef = ref(localStorage.getItem('jwtToken'))
 const cartSize = ref(localStorage.getItem('cartSize') ? parseInt(localStorage.getItem('cartSize')) : 0);
 const authService = {
-  login(email, password) {
+async login(email, password) {
     // console.log({ email, password })
     return api.post('/Accounts/login', { email, password })
       .then(async (response) => {
-        localStorage.setItem('jwtToken', response.data.token);
-        localStorage.setItem('cartSize', response.data.cartSize);
-        cartSize.value = response.data.cartSize;
+        const token = response.data.token;
+        const cartSizeValue = response.data.cartSize || 0;
+        
+        // Set token và cart size trước
+        localStorage.setItem('jwtToken', token);
+        localStorage.setItem('cartSize', cartSizeValue);
+        tokenRef.value = token;
+        cartSize.value = cartSizeValue;
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
-        // tokenRef.value = '1';
+        // Sync cart
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
-        tokenRef.value = response.data.token;
+        
+        // Check admin role
         authService.isAdmin();
+        
+        // Navigate
+        const redirectTo = localStorage.getItem('redirectTo') || '/';
+        localStorage.removeItem('redirectTo'); // Clear redirect after use
+        
         setTimeout(() => {
           toast.success('Đăng nhập thành công !');
-        }, 1000)
-        router.push(localStorage.getItem('redirectTo') || '/')
+        }, 500);
+        
+        await router.push(redirectTo);
       })
       .catch(error => {
         toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
