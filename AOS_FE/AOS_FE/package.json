@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
     "cropperjs": "^1.6.2",
+    "dayjs": "^1.11.13",
     "fabric": "^5.5.2",
     "firebase": "^11.9.1",
     "flatpickr": "^4.6.13",
