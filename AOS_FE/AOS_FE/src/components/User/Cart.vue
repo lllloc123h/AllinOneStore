@@ -37,6 +37,7 @@
                           class="me-2"
                           :checked="isComboSelected(items)"
                           @change="toggleSelectCombo(items)"
+                          :disabled="!isPromotionValid(items[0].promotions)"
                         />
                         <i class="bi bi-gift-fill mx-1"></i>
                         <span>
@@ -45,11 +46,32 @@
                           <span class="text-muted ms-2">{{
                             items[0].promotions.description
                           }}</span>
+                          <span
+                            v-if="!isPromotionValid(items[0].promotions)"
+                            class="badge ms-2"
+                            :class="{
+                              'bg-danger':
+                                getPromotionStatusMessage(items[0].promotions) ===
+                                'Hết hạn',
+                              'bg-warning':
+                                getPromotionStatusMessage(items[0].promotions) ===
+                                'Hết hàng',
+                              'bg-secondary':
+                                getPromotionStatusMessage(items[0].promotions) ===
+                                'Ngừng hoạt động',
+                              'bg-info':
+                                getPromotionStatusMessage(items[0].promotions) ===
+                                'Chưa bắt đầu',
+                            }"
+                          >
+                            {{ getPromotionStatusMessage(items[0].promotions) }}
+                          </span>
                         </span>
                       </div>
                       <button
                         class="btn btn-sm btn-outline-danger"
                         @click="removeComboGroupId(items)"
+                        :disabled="isPromotionValid(items[0].promotions)"
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
@@ -60,7 +82,10 @@
                         <button
                           class="btn btn-sm btn-outline-secondary"
                           @click="decreaseComboGroupQty(items)"
-                          :disabled="items[0].comboQty <= 1"
+                          :disabled="
+                            items[0].comboQty <= 1 ||
+                            !isPromotionValid(items[0].promotions)
+                          "
                         >
                           -
                         </button>
@@ -68,6 +93,7 @@
                         <button
                           class="btn btn-sm btn-outline-secondary"
                           @click="increaseComboGroupQty(items)"
+                          :disabled="!isPromotionValid(items[0].promotions)"
                         >
                           +
                         </button>
@@ -87,7 +113,17 @@
                       </div>
                       <table class="table table-borderless align-middle mb-0">
                         <tbody>
-                          <tr v-for="item in items" :key="item.id" class="align-middle">
+                          <tr
+                            v-for="item in items"
+                            :key="item.id"
+                            class="align-middle"
+                            :class="{
+                              'table-success bg-opacity-10': item.isGift,
+                              'table-secondary bg-opacity-10': !isPromotionValid(
+                                items[0].promotions
+                              ),
+                            }"
+                          >
                             <td>
                               <img
                                 :src="item.image"
@@ -101,7 +137,21 @@
                               />
                             </td>
                             <td>
-                              <div class="fw-bold">{{ item.name }}</div>
+                              <div class="fw-bold">
+                                {{ item.name }}
+                                <span
+                                  v-if="item.isGift"
+                                  class="badge bg-gradient bg-success ms-2 position-relative"
+                                >
+                                  <i class="bi bi-gift-fill me-1"></i>
+                                  Quà tặng
+                                  <span
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle"
+                                  >
+                                    <span class="visually-hidden">Miễn phí</span>
+                                  </span>
+                                </span>
+                              </div>
                               <div class="small text-muted">{{ item.sku }}</div>
                             </td>
                             <td class="text-center">{{ item.quantity }}</td>
@@ -113,7 +163,22 @@
                                     item.quantity !== undefined
                                   "
                                 >
-                                  {{ (item.price * item.quantity).toLocaleString() }}₫
+                                  <template v-if="item.isGift">
+                                    <div class="d-flex flex-column align-items-end">
+                                      <del class="text-muted small">
+                                        {{
+                                          (item.price * item.quantity).toLocaleString()
+                                        }}₫
+                                      </del>
+                                      <span class="text-success fw-bold">
+                                        <i class="bi bi-gift-fill me-1"></i>
+                                        Miễn phí
+                                      </span>
+                                    </div>
+                                  </template>
+                                  <template v-else>
+                                    {{ (item.price * item.quantity).toLocaleString() }}₫
+                                  </template>
                                 </span>
                               </template>
                               <template v-else>
@@ -535,6 +600,47 @@ const comboGroups = computed(() => {
   });
   return groups;
 });
+
+// Hàm kiểm tra promotion có còn hợp lệ không
+function isPromotionValid(promotion) {
+  if (!promotion) return false;
+
+  // Kiểm tra active
+  if (!promotion.active) return false;
+
+  // Kiểm tra số lượng
+  if (promotion.qty <= 0) return false;
+
+  // Kiểm tra thời gian
+  const now = new Date();
+  const startAt = new Date(promotion.startAt);
+  const endAt = new Date(promotion.endAt);
+
+  if (now < startAt || now > endAt) return false;
+
+  return true;
+}
+
+// Hàm lấy thông báo trạng thái promotion
+function getPromotionStatusMessage(promotion) {
+  if (!promotion) return "Không có thông tin";
+
+  // Kiểm tra active
+  if (!promotion.active) return "Không còn tồn tại";
+
+  // Kiểm tra số lượng
+  if (promotion.qty <= 0) return "Hết hàng";
+
+  // Kiểm tra thời gian
+  const now = new Date();
+  const startAt = new Date(promotion.startAt);
+  const endAt = new Date(promotion.endAt);
+
+  if (now < startAt) return "Chưa bắt đầu";
+  if (now > endAt) return "Hết hạn";
+
+  return "Đang hoạt động";
+}
 const singleProducts = computed(() =>
   cart.value.filter(
     (item) => !item.comboGroup || !item.promotions || item.promotions.type !== "COMBO"
@@ -589,10 +695,19 @@ const totalDiscount = computed(() => {
 });
 function isComboSelected(items) {
   console.log("lựa chọn item : ", selectedItems.value);
+  // Nếu promotion không hợp lệ thì không thể chọn
+  if (!isPromotionValid(items[0].promotions)) {
+    return false;
+  }
   // Trả về true nếu tất cả sản phẩm trong combo đều đã được chọn
   return items.every((item) => selectedItems.value.includes(item.id));
 }
 function toggleSelectCombo(items) {
+  // Nếu promotion không hợp lệ thì không cho phép thay đổi
+  if (!isPromotionValid(items[0].promotions)) {
+    return;
+  }
+
   // toggleSelectCombo
   const allSelected = isComboSelected(items);
   if (allSelected) {
@@ -857,6 +972,7 @@ async function loadCart() {
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
         comboGroupId: item.comboGroupId, // Thêm comboGroupId nếu có
+        isGift: item.isGift || false, // Thêm isGift nếu có
       }));
       authService.setCart(0);
       authService.updateCart(cart.value.reduce((sum, item) => sum + item.quantity, 0));
@@ -874,6 +990,7 @@ async function loadCart() {
         comboGroup: item.comboGroup, // Thêm comboGroup nếu có
         comboQty: item.comboQty, // Thêm comboQty nếu có
         comboGroupId: item.comboGroupId, // Thêm comboGroupId nếu co
+        isGift: item.isGift || false, // Thêm isGift nếu có
       }));
       selectedItems.value = cart.value.map((item) => item.productItems);
     }
