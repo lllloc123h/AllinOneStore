@@ -54,16 +54,14 @@
                                         dụng</button>
                                 </div>
                                 <div v-if="couponError" class="text-danger mt-1">{{ couponError }}</div>
-                                <div v-if="selectedCoupon" class="text-success mt-1">
+                                <div v-if="isCouponApplicable" class="text-success mt-1">
                                     Đã áp dụng mã: {{ selectedCoupon.code }} - Giảm {{ selectedCoupon.discountValue }}{{
                                         selectedCoupon.discountType === 'PERCENT' ? '%' : '₫' }}
                                 </div>
-                                <div v-if="selectedCoupon && totalPrice < selectedCoupon.minOrderAmount"
-                                    class="text-warning mt-1">
-                                    * Đơn hàng chưa đủ {{ selectedCoupon.minOrderAmount.toLocaleString() }}₫ để áp dụng
-                                    mã
+                                <div v-else-if="selectedCoupon" class="text-warning mt-1">
+                                    * Đơn hàng chưa đủ {{ selectedCoupon.minOrderAmount?.toLocaleString?.() || 0 }}₫ để
+                                    áp dụng mã
                                 </div>
-
                             </div>
 
 
@@ -175,18 +173,28 @@ const totalPrice = computed(() =>
 )
 
 const discountAmount = computed(() => {
-    const coupon = selectedCoupon.value
-    if (!coupon || totalPrice.value < coupon.minOrderAmount) return 0
+    const coupon = selectedCoupon.value;
+    const minOrder = coupon?.minOrderAmount ?? 0;
+
+    if (!coupon || totalPrice.value < minOrder) return 0;
 
     if (coupon.discountType === 'PERCENT') {
-        const discount = (coupon.discountValue / 100) * totalPrice.value
-        return coupon.maxDiscountAmount
+        const discount = ((coupon.discountValue ?? 0) / 100) * totalPrice.value;
+        return coupon.maxDiscountAmount != null
             ? Math.min(discount, coupon.maxDiscountAmount)
-            : discount
+            : discount;
     }
 
-    return coupon.discountValue || 0
-})
+    return coupon.discountValue ?? 0;
+});
+
+const isCouponApplicable = computed(() => {
+    const coupon = selectedCoupon.value;
+    if (!coupon) return false;
+    return totalPrice.value >= (coupon.minOrderAmount ?? 0);
+});
+
+
 
 const finalPrice = computed(() => totalPrice.value - discountAmount.value)
 
@@ -210,9 +218,14 @@ async function applyCoupon() {
         return
     }
 
+    const hasCombo = selectedProducts.value.some(item => item.isCombo === true)
+
     try {
         const { data } = await api.get('/Coupons/validate', {
-            params: { code: couponCodeInput.value }
+            params: {
+                code: couponCodeInput.value,
+                hasCombo: hasCombo
+            }
         })
         selectedCoupon.value = data
         localStorage.setItem('selectedCoupon', JSON.stringify(data))
@@ -221,6 +234,7 @@ async function applyCoupon() {
         console.error(err)
     }
 }
+
 
 async function confirmOrder() {
     const token = authService.getToken()

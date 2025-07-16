@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.CouponsDTOS;
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Mapper.CouponsMapper;
+import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Repository.CouponsRepository;
+import com.aos.AOSBE.Repository.OrdersRepository;
 import com.aos.AOSBE.Service.CouponsService;
 
 @RestController
@@ -40,6 +44,12 @@ public class CouponsAPI {
 	
 	@Autowired
 	private CouponsRepository couponsRepository;
+	
+	@Autowired
+	private AccountsRepository accountsRepository;
+	
+	@Autowired
+	private OrdersRepository ordersRepository;
 
 	@GetMapping("/admin/Coupons")
 	public ResponseEntity<?> getAllCouponsApi(@RequestParam(defaultValue = "0") int page,
@@ -97,7 +107,9 @@ public class CouponsAPI {
 	}
 	
 	@GetMapping("/Coupons/validate")
-	public ResponseEntity<?> validateCoupon(@RequestParam String code) {
+	public ResponseEntity<?> validateCoupon(@RequestParam String code,
+	                                        @RequestParam(defaultValue = "false") boolean hasCombo,
+	                                        Principal principal) {
 	    Optional<Coupons> couponOpt = couponsRepository.findByCode(code);
 
 	    if (couponOpt.isEmpty()) {
@@ -106,10 +118,55 @@ public class CouponsAPI {
 
 	    Coupons coupon = couponOpt.get();
 
+	    // 1. Đang hoạt động & chưa hết hạn
 	    if (!coupon.isActive() || coupon.getEndAt().isBefore(LocalDateTime.now())) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã giảm giá đã hết hạn hoặc không còn hiệu lực.");
+	        return ResponseEntity.badRequest().body("Mã giảm giá đã hết hạn hoặc không còn hiệu lực.");
 	    }
 
+	    // 2. Số lượng còn
+	    if (coupon.getQty() <= 0) {
+	        return ResponseEntity.badRequest().body("Mã giảm giá đã hết lượt sử dụng.");
+	    }
+
+	    // 3. Lấy user hiện tại
+	    String email = principal.getName();
+	    Optional<Accounts> userOpt = accountsRepository.findByEmail(email);
+	    if (userOpt.isEmpty()) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không tìm thấy người dùng.");
+	    }
+	    Accounts currentUser = userOpt.get();
+
+	    // 4. Kiểm tra hạng khách hàng
+	    Map<String, Integer> rankLevels = Map.of(
+	    	    "ALL", 0,
+	    	    "Đồng", 1,
+	    	    "Bạc", 2,
+	    	    "Vàng", 3,
+	    	    "Platinum", 4,
+	    	    "Kim cương", 5,
+	    	    "VIP", 6
+	    	);
+
+	    	int couponLevel = rankLevels.getOrDefault(coupon.getCustomerGroup(), 0);
+	    	int userLevel = rankLevels.getOrDefault(currentUser.getUserRank(), 0);
+
+	    	if (userLevel < couponLevel) {
+	    	    return ResponseEntity.badRequest().body("Mã này không áp dụng cho hạng của bạn.");
+	    	}
+
+
+	    // 5. Không cho dùng nếu có combo mà không cho phép voucher
+	    if (hasCombo && !coupon.isAllowVoucher()) {
+	        return ResponseEntity.badRequest().body("Mã này không áp dụng cùng lúc với combo giảm giá.");
+	    }
+	    
+	    // 5.5. Kiểm tra số lần sử dụng của khách hàng
+	    long usageCount = ordersRepository.countCouponUsage(Long.valueOf(currentUser.getId()), code);
+	    if (usageCount >= coupon.getUsagePerCustomer()) {
+	        return ResponseEntity.badRequest().body("Bạn đã sử dụng mã này đủ số lần cho phép.");
+	    }
+
+	    // 6. Trả lại DTO nếu hợp lệ
 	    CouponsDTOS dto = couponsMapper.mapper(coupon);
 	    return ResponseEntity.ok(dto);
 	}
