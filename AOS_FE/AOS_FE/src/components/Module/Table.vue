@@ -25,25 +25,13 @@
             {{ formatCell(key, item[key]) }}
           </td>
           <td class="row btn-holder">
-            <button
-              type="button"
-              @click="goToView(item.id)"
-              class="btn btn-primary me-2 row-6"
-            >
+            <button type="button" @click="goToView(item.id)" class="btn btn-primary me-2 row-6">
               View
             </button>
-            <button
-              type="button"
-              @click="goToEdit(item.id)"
-              class="btn btn-primary me-2 row-6"
-            >
+            <button type="button" @click="goToEdit(item.id)" class="btn btn-primary me-2 row-6">
               Edit
             </button>
-            <button
-              type="button"
-              @click="deleteById(item.id)"
-              class="btn btn-danger row-6"
-            >
+            <button type="button" @click="deleteById(item.id)" class="btn btn-danger row-6">
               Delete
             </button>
           </td>
@@ -51,16 +39,12 @@
       </tbody>
     </table>
     <div v-if="!data.length && !loading && !error" class="text-muted"></div>
-    <PageNavigative
-      :totalPage="totalPage"
-      v-model:currentPage="currentPage"
-      v-model:currentSize="currentSize"
-    >
+    <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
     </PageNavigative>
   </div>
 </template>
 <style>
-.pageselect > select#pageSize {
+.pageselect>select#pageSize {
   width: 50px;
 }
 
@@ -192,24 +176,23 @@ const columns = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const fetchData = async () => {
-    if (!props.TableName) return
-    loading.value = true
-    error.value = null
-    try {
-        const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
-        console.log(responseIndexTable)
-        const json = responseIndexTable.data.content
-        totalPage.value = responseIndexTable.data.totalPages
-        data.value = Array.isArray(json) ? json : [json]
-        columns.value = data.value.length ? Object.keys(data.value[0]) : []
-    } catch (err) {
-        error.value = err.message
-        data.value = []
-        columns.value = []
-        console.error('Error fetching data:', err)
-    } finally {
-        loading.value = false
-    }
+  if (!props.TableName) return
+  loading.value = true
+  error.value = null
+  try {
+    const responseIndexTable = await indexTableService.getAll(currentPage.value, currentSize.value, props.FilterList)
+    const json = responseIndexTable.data.content
+    totalPage.value = responseIndexTable.data.totalPages
+    data.value = Array.isArray(json) ? json : [json]
+    columns.value = data.value.length ? Object.keys(data.value[0]) : []
+  } catch (err) {
+    error.value = err.message
+    data.value = []
+    columns.value = []
+    console.error('Error fetching data:', err)
+  } finally {
+    loading.value = false
+  }
 }
 const totalPages = computed(() => {
   return Math.ceil(data.value.length / currentSize.value);

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -36,6 +35,11 @@ import com.aos.AOSBE.DTOS.loginRequestDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.SecurityConfig.JwtUtil;
+import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Service.AuthoritiesService;
+import com.aos.AOSBE.Service.CartItemsService;
+import com.aos.AOSBE.Service.EmailService;
+import com.aos.AOSBE.Service.OTPService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -72,6 +76,10 @@ public class AccountsAPI {
 		Page<Accounts> pageResult = accountsService.accountsFindAll(page, size, filters);
 		List<AccountsDTOS> accounts = pageResult.getContent().stream().map(accountsMapper::mapper)
 				.collect(Collectors.toList());
+//		List<AccountsDTOS> accountsResult = new ArrayList<>();
+//		accounts.forEach(e -> {
+//			accountsResult.put
+//		});
 		Map<String, Object> response = new HashMap<>();
 		response.put("content", accounts);
 		response.put("totalPages", pageResult.getTotalPages());
@@ -102,7 +110,18 @@ public class AccountsAPI {
 			Accounts isExist = accountsService.accountsFindById(id).orElse(null);
 			if (isExist != null) {
 				entity.setId(isExist.getId());
-				entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+				if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
+					// Check if password is already encoded or if it's a new password
+					if (!passwordEncoder.matches(passwordEncoder.encode(entity.getPassword()), isExist.getPassword())
+							&& !(entity.getPassword() == isExist.getPassword())) {
+						entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+					} else {
+						entity.setPassword(isExist.getPassword());
+					}
+				} else {
+					// Keep existing password if not provided
+					entity.setPassword(isExist.getPassword());
+				}
 				Accounts update = accountsMapper.mapperToObject(entity);
 				accountsService.accountsSave(update);
 				return ResponseEntity.ok().body(Map.of("measage", "Update successfuly", "update", update));
@@ -126,16 +145,16 @@ public class AccountsAPI {
 		try {
 
 			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
-				Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
+			Authentication authentication = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
 			UserDetails user = (UserDetails) authentication.getPrincipal();
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
 					user.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 			String token = jwtUtil.generateToken(user.getUsername());
-			return ResponseEntity
-					.ok(Map.of("message", "Đăng nhập thành công",
-							"token", token,
-							"cartSize",cartItemsService.cartItemsFindAccounts(entity.getEmail()).stream().reduce(0, (a, b) -> a + b.getQty(), Integer::sum)));
+			return ResponseEntity.ok(Map.of("message", "Đăng nhập thành công", "token", token, "cartSize",
+					cartItemsService.cartItemsFindAccounts(entity.getEmail()).stream().reduce(0,
+							(a, b) -> a + b.getQty(), Integer::sum)));
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Sai thông tin đăng nhập"));

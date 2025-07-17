@@ -27,6 +27,10 @@ public class RolesService {
 		return rolesRepository.findAll(spec, pageable);
 	}
 
+	public Optional<Roles> rolesFindByRolesName(String name) {
+		return rolesRepository.findByName(name);
+	}
+
 	@Transactional
 	public Roles rolesSave(Roles roles) {
 		return rolesRepository.save(roles);

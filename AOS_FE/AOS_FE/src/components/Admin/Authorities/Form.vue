@@ -1,19 +1,24 @@
 <template>
   <div class="container-fluid row">
     <div class="aside col-3">
-      <Dashboard :listDashBoard="listDashBoard"></Dashboard>
+      <Dashboard></Dashboard>
     </div>
     <div class="article col-9">
       <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
         <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
-          <label :for="id" class="form-label text-capitalize"></label>
+          <label for="id" class="form-label text-capitalize"></label>
           <input :id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
-            type="number" class="form-control" :placeholder="`Enter id`" />
+            type="number" class="form-control" placeholder="`Enter id`" readonly />
         </div>
 
-        <button type="submit" :disable="props.action == 'view'" class="btn btn-primary">
+        <!-- <div class="mb-3">
+          <label for="email" class="form-label text-capitalize">email</label>
+          <input :id="email" v-model="formData.accounts.email" type="email" class="form-control"
+            placeholder="`Enter email`" />
+        </div> -->
+
+        <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary">
           <span v-if="props.action === 'create'">Create</span>
-          <span v-else-if="props.action === 'create'">Create</span>
           <span v-else>Update</span>
         </button>
       </form>
@@ -32,6 +37,8 @@ const router = useRouter()
 import axios from 'axios'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { dropDown } from '../../../Configs/DropDownList.js'
+import api from '../../../Configs/api.js'
 const props = defineProps({
   TableName: {
     type: String,
@@ -48,11 +55,7 @@ const props = defineProps({
 })
 const formTableService = createCrudService(props.TableName);
 
-const formData = reactive({
-  id: '',
-  createdAt: '',
-  updatedAt: '',
-})
+const formData = ref({})
 
 async function submitUpdateForm() {
   console.log(formData)
@@ -73,10 +76,15 @@ async function submitForm() {
     console.error('Insert failed:', error)
   }
 }
+const dropListRoles = ref([]);
+
 const fetchData = async () => {
+  console.log('Fetching data for:', props.TableName)
+  console.log('Fetching data for:', props.id)
   if (!props.TableName) return
   try {
     const response = await formTableService.getById(props.id)
+    console.log('Response data:', response.data)
     response.data.createdAt = formatDate(response.data.createdAt)
     response.data.updatedAt = formatDate(response.data.updatedAt)
     Object.assign(formData, response.data)
@@ -85,6 +93,9 @@ const fetchData = async () => {
   }
 }
 
-onMounted(fetchData)
+onMounted(fetchData(),
+  dropListRoles.value = await dropDown('admin/Roles')
+
+)
 watch(() => props.id, fetchData)
 </script>

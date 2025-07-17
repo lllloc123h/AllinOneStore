@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aos.AOSBE.DTOS.AuthoritiesDTOS;
 import com.aos.AOSBE.Entity.Authorities;
 import com.aos.AOSBE.Mapper.AuthoritiesMapper;
+import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.AuthoritiesService;
 
 @RestController
@@ -30,6 +31,8 @@ import com.aos.AOSBE.Service.AuthoritiesService;
 public class AuthoritiesAPI {
 	@Autowired
 	private AuthoritiesService authoritiesService;
+	@Autowired
+	private AccountsService accountsService;
 
 	@Autowired
 	private AuthoritiesMapper authoritiesMapper;
@@ -50,18 +53,13 @@ public class AuthoritiesAPI {
 	}
 
 	@GetMapping("/admin/Authorities/{id}")
-	public ResponseEntity<Authorities> getAuthoritiesByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
-		Authorities authorities = (Authorities) authoritiesService.authoritiesFindById(id).orElse(new Authorities());
+	public ResponseEntity<?> getAuthoritiesByIdApi(@PathVariable int id) {
+		List<Authorities> authorities = authoritiesService.authoritiesFindByAccountsId(id);
 		return ResponseEntity.ok(authorities);
 	}
 
 	@PostMapping("/admin/Authorities")
 	public ResponseEntity<Authorities> addNewAuthorities(@RequestBody AuthoritiesDTOS entity) {
-
 		Authorities saved = authoritiesService.authoritiesSave(authoritiesMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
 	}
@@ -69,14 +67,17 @@ public class AuthoritiesAPI {
 	@PutMapping("/admin/Authorities/{id}")
 	public ResponseEntity<?> updateAuthorities(@PathVariable int id, @RequestBody AuthoritiesDTOS entity) {
 		try {
-			Authorities isExist = authoritiesService.authoritiesFindById(id).orElse(null);
-			if (isExist != null) {
-				Authorities update = authoritiesMapper.mapperToObject(entity);
+			List<Authorities> isListExist = authoritiesService.authoritiesFindByAccountsId(id);
+			isListExist.forEach(elementListExist -> {
+				authoritiesService.authoritiesDeleteById(elementListExist.getId());
+			});
+			entity.getListRoles().forEach(elementRole -> {
+				AuthoritiesDTOS temp = entity;
+				temp.setRoles(elementRole);
+				Authorities update = authoritiesMapper.mapperToObject(temp);
 				authoritiesService.authoritiesSave(update);
-				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
-			} else {
-				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
-			}
+			});
+			return ResponseEntity.ok(Map.of("measage", "Update successfuly"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));

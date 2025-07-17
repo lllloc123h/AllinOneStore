@@ -190,8 +190,6 @@
     </div>
   </div>
 </template>
-
-
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
 import { formatDate } from '../../Module/CommonsFunctions.js'
@@ -285,44 +283,7 @@ const itemToAddList = reactive({
   createdAt: '',
   updatedAt: '',
 })
-// async function handleImg(mainImage) {
-//   const fileRef = storageRef(storage, "products/" + mainImage);
-//   try {
-//     const url = await getDownloadURL(fileRef);
-//     return url;
-//   } catch (error) {
-//     return "https://firebasestorage.googleapis.com/v0/b/datn-cube.firebasestorage.app/o/products%2Fao_bomber_nu.webp?alt=media";
-//   }
-// }
-const listDashBoard = [
-  "Accounts",
-  "Authorities",
-  "BaseProducts",
-  "ProductItems",
-  "Cancels",
-  "CartItems",
-  "Catalogs",
-  "Categories",
-  "CostHistories",
-  "Coupons",
-  "News",
-  "OrderItems",
-  "Orders",
-  "PaymentMethods",
-  "PriceHistories",
-  "ProductImages",
-  "PromotionProduct",
-  "Promotions",
-  "PurchaseOrderItems",
-  "PurchaseOrders",
-  "Returns",
-  "Reviews",
-  "Roles",
-  "ShippingMethods",
-  "UserAddresses",
-  "VariantValues",
-  "Variants",
-]
+
 const fetchData = async () => {
   if (!props.TableName) return
   try {
@@ -336,30 +297,6 @@ const fetchData = async () => {
     console.error('Get failed:', err)
   }
 }
-{/* <div class="variant-preview mt-4">
-  <h5 class="mb-3">Danh sách biến thể đã thêm:</h5>
-  <div v-if="list.length === 0" class="text-muted">Chưa có biến thể nào được thêm.</div>
-  <ul class="list-group">
-    <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(item, index) in list"
-            :key="index">
-    <div class="d-flex align-items-center">
-      <img:src="item.imgPreview || previewMainImg" alt="Preview" class="me-3 rounded"
-                style="width: 50px; height: 50px; object-fit: cover;" />
-      <div>
-        <strong>{{ item.name }}</strong><br />
-        <small>
-          SKU: {{ item.sku }} |
-          Giá: {{ item.price }} |
-          SL: {{ item.qty }}
-        </small><br />
-        <small class="text-muted">Ảnh: {{ item.fileNameImgOfVariant || 'Không có' }}</small>
-      </div>
-    </div>
-    <button class="btn btn-sm btn-outline-danger" @click="removeVariant(index)">Xóa</button>
-</li>
-        </ul >
-      </div > */}
-
 
 async function getProductItems(id) {
   if (!props.TableName) return
