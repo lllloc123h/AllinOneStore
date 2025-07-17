@@ -47,10 +47,6 @@ const menuItems = [
                 path: '/Admin/Accounts'
             },
             {
-                name: 'Quản lý Authorities',
-                path: '/Admin/Authorities'
-            },
-            {
                 name: 'Quản lý Roles',
                 path: '/Admin/Roles'
             },
