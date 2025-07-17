@@ -31,33 +31,21 @@
                 <i v-else class="bi bi-x-circle-fill text-danger fs-5"></i>
               </span>
               <span v-else class="cell-content">
-                {{ formatCell(key, item[key]) }}
+                <!-- {{ formatCell(key, item[key]) }} -->
+                <span v-html="formatCell(key, item[key])"></span>
               </span>
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <button
-                  type="button"
-                  @click="goToView(item.id)"
-                  class="btn btn-info btn-sm action-btn"
-                  title="Xem chi tiết"
-                >
+                <button type="button" @click="goToView(item.id)" class="btn btn-info btn-sm action-btn"
+                  title="Xem chi tiết">
                   <i class="bi bi-eye"></i>
                 </button>
-                <button
-                  type="button"
-                  @click="goToEdit(item.id)"
-                  class="btn btn-warning btn-sm action-btn"
-                  title="Chỉnh sửa"
-                >
+                <button type="button" @click="goToEdit(item.id)" class="btn btn-warning btn-sm action-btn"
+                  title="Chỉnh sửa">
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                  type="button"
-                  @click="deleteById(item.id)"
-                  class="btn btn-danger btn-sm action-btn"
-                  title="Xóa"
-                >
+                <button type="button" @click="deleteById(item.id)" class="btn btn-danger btn-sm action-btn" title="Xóa">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -67,16 +55,12 @@
       </table>
     </div>
     <div v-if="!data.length && !loading && !error" class="text-muted"></div>
-    <PageNavigative
-      :totalPage="totalPage"
-      v-model:currentPage="currentPage"
-      v-model:currentSize="currentSize"
-    >
+    <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
     </PageNavigative>
   </div>
 </template>
 <style>
-.pageselect > select#pageSize {
+.pageselect>select#pageSize {
   width: 50px;
 }
 
@@ -360,6 +344,9 @@ function formatCell(key, value) {
     return value.join(", ");
   } else if (value === null || value === undefined) {
     return "N/A";
+  } else if (key.toLowerCase().includes("url") && typeof value === "string") {
+    console.log("Image URL:", value);
+    return `<img src="${value}" alt="image" style="max-width: 100px; max-height: 60px; object-fit: contain;" />`;
   }
   return value;
 }
