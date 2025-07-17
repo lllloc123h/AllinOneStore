@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import authJWTPlugins from './pulgins/authJWTPlugins'
 import '@fortawesome/fontawesome-free/css/all.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import Vue3Toastify, { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import Antd from 'ant-design-vue';

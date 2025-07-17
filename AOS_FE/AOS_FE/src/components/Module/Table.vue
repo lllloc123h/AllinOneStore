@@ -345,8 +345,14 @@ function formatCell(key, value) {
   } else if (value === null || value === undefined) {
     return "N/A";
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
-    console.log("Image URL:", value);
     return `<img src="${value}" alt="image" style="max-width: 100px; max-height: 60px; object-fit: contain;" />`;
+  } else if (key.toLowerCase().includes("rating")) {
+    const maxStars = 5;
+    let stars = "";
+    for (let i = 1; i <= maxStars; i++) {
+      stars += `<i class="bi ${i <= value ? 'bi-star-fill' : 'bi-star'}"></i>`;
+    }
+    return `<span class="text-warning">${stars}</span>`;
   }
   return value;
 }
