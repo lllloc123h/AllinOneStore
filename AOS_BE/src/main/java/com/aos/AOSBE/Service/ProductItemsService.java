@@ -1,10 +1,15 @@
 package com.aos.AOSBE.Service;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.DTOS.ProductItemsDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Repository.ProductItemsRepository;
 import com.aos.AOSBE.Repository.ProductItemsRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +29,20 @@ public class ProductItemsService {
 
   @Autowired
   private GenericSpecificationBuilder specBuilder;
+
+  public List<DiscountedProductDTOS> getDiscountedProducts() {
+    return productItemsRepository.getAllDiscountedProducts();
+  }
+
+  public Page<ProductItems> productItemsFindAll(
+    int page,
+    int size,
+    Map<String, Object> filters
+  ) {
+    Pageable pageable = PageRequest.of(page, size);
+    Specification<ProductItems> spec = specBuilder.buildFilter(filters);
+    return productItemsRepository.findAll(spec, pageable);
+  }
 
   @Autowired
   private ProductItemsRepository productItemsRepository;

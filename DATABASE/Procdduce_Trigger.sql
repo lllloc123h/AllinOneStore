@@ -1,4 +1,5 @@
-﻿use all_in_store go CREATE
+﻿use all_in_store go 
+CREATE
 OR
 ALTER PROCEDURE usp_DropTablesAndConstraints AS BEGIN
 SET

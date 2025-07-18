@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 
 @Repository
@@ -101,12 +102,28 @@ public interface ProductItemsRepository
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
 			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
+	
+	@Query("""
+	        SELECT new com.aos.AOSBE.DTOS.DiscountedProductDTOS(
+	            pi.id,
+	            bp.name,
+	            pi.price,
+	            promo.discountType,
+	            promo.name,
+	            promo.startAt,
+	            promo.endAt,
+	            img.imageUrl
+	        )
+	        FROM ProductItems pi
+	        JOIN pi.baseProducts bp
+	        JOIN PromotionProducts pp ON pi.id = pp.productItems.id
+	        JOIN pp.promotions promo
+	        LEFT JOIN ProductImages img ON img.productItems.id = pi.id
+	        WHERE promo.isActive = true
+	          AND promo.type = 'DISCOUNT'
+	          AND CURRENT_TIMESTAMP BETWEEN promo.startAt AND promo.endAt
+	    """)
+	    List<DiscountedProductDTOS> getAllDiscountedProducts();
 
-	List<ProductItems> findTop6ByBaseProducts_Categories_IdAndIdNot(Long categoryId, Long id);
-	@Query("SELECT pi FROM ProductItems pi " +
-       "WHERE pi.baseProducts.categories.id = :categoryId " +
-       "AND pi.id <> :productId")
-	Page<ProductItems> findRelatedItems(@Param("categoryId") Long categoryId,
-                                    @Param("productId") Long productId,
-                                    Pageable pageable);
+
 }

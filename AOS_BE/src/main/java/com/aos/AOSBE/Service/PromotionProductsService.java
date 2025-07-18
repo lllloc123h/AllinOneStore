@@ -1,6 +1,9 @@
 package com.aos.AOSBE.Service;
 
 import com.aos.AOSBE.Entity.PromotionProducts;
+import com.aos.AOSBE.Entity.PromotionProducts;
+import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,20 @@ public class PromotionProductsService {
   @Transactional
   public void deleteById(int id) {
     promotionProductsRepository.deleteById(id);
+  }
+
+  public List<PromotionProducts> findPromotionProductsByPromotionId(
+    int promotionId
+  ) {
+    return promotionProductsRepository.findPromotionProductsByPromotionId(
+      promotionId
+    );
+  }
+
+  public Page<PromotionProducts> promotionsFindAll(int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+
+    return promotionProductsRepository.findAll(pageable);
   }
 
   public List<PromotionProducts> findByProductItemsId(int productItemId) {

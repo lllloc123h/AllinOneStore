@@ -240,6 +240,7 @@ CREATE TABLE
 		updated_at datetime default getdate ()
 	);
 GO
+
 CREATE TABLE
 	promotion_products (
 		id INT IDENTITY PRIMARY KEY,
