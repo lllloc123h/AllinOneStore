@@ -3,9 +3,7 @@ package com.aos.AOSBE.Repository;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -149,13 +147,16 @@ public interface ProductItemsRepository
 
 	List<ProductItems> findTop6ByBaseProducts_Categories_IdAndIdNot(Long categoryId, Long id);
 
-	@Query("SELECT pi FROM ProductItems pi " + "WHERE pi.baseProducts.categories.id = :categoryId "
-			+ "AND pi.id <> :productId")
-	Page<ProductItems> findRelatedItems(@Param("categoryId") Long categoryId, @Param("productId") Long productId,
-			Pageable pageable);
-	List<ProductItems> findRelatedItems(Long categoryId, Long productId, PageRequest of);
+	@Query("""
+			    SELECT pi FROM ProductItems pi
+			    WHERE pi.baseProducts.categories.id = ?1
+			      AND pi.id <> ?2
+			""")
+	Page<ProductItems> findRelatedItems(Long categoryId, Long productId, Pageable pageable);
 
-	@Query("SELECT p.id FROM ProductItem p WHERE p.discount > 0")
-	List<Integer> findAllDiscountedProductIds();
+//	Page<ProductItems> findRelatedItems(Long categoryId, Long productId, Pageable of);
+
+//	@Query("SELECT p.id FROM ProductItems p WHERE p.discount > 0")
+//	List<Integer> findAllDiscountedProductIds();
 
 }
