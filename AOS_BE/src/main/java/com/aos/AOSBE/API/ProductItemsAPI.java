@@ -244,7 +244,7 @@ public class ProductItemsAPI {
 			List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findByProductItemsId(id).stream()
 					.map(priceHistoriesMapper::mapper).collect(Collectors.toList());
 
-			List<PromotionsDTOS> promotions = promotionsService.promotionsFindByIsActiveTrue(id).stream()
+			List<PromotionsDTOS> promotions = promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(id).stream()
 					.map(promotionsMapper::mapper).collect(Collectors.toList());
 
 			ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, priceHistories, promotions);

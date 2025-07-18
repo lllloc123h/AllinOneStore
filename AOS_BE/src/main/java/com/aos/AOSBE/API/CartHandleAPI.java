@@ -54,12 +54,14 @@ public class CartHandleAPI {
 			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(
 					userEmail,
 					cartItem.getProductItems().getId());
-			List<Promotions> promotion = promotionsService.promotionsFindByIsActiveTrue(entity.getProductItems());
+			List<Promotions> promotion = promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems());
+			System.err.println("productitem "+entity.getProductItems());
+			System.err.println("Promotion: " + promotion);
 			if (!promotion.isEmpty()) {
 				cartItem.setPromotions(promotion.get(0));
+				item.setPromotions(promotion.get(0));
 			}
 			if (item != null && item.getComboGroupId() == null) {
-				item.setPromotions(promotion.get(0));
 				item.setQty(item.getQty() + cartItem.getQty());
 				cartItemsService.cartItemsSave(item);
 				return ResponseEntity.ok(item);

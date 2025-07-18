@@ -54,10 +54,11 @@ public class PromotionsAPI {
 	@Autowired
 	private GroupProductMapper groupProductMapper;
 
+
 	@GetMapping("/Promotions")
 	public ResponseEntity<?> getAllPromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
-		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrue(productItemId);
-		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper::mapper).toList();
+		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(productItemId);
+		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
 		return ResponseEntity.ok(promotionsDTOS);
 	}
 
@@ -87,6 +88,8 @@ public class PromotionsAPI {
 		return ResponseEntity.ok(listGroups);
 	}
 
+
+
 	@GetMapping("/admin/Promotions")
 	public ResponseEntity<?> getAllPromotionsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -99,6 +102,7 @@ public class PromotionsAPI {
 		response.put("content", promotions);
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
+
 	}
 
 	@GetMapping("/admin/Promotions/{id}")
@@ -109,6 +113,7 @@ public class PromotionsAPI {
 
 	@PostMapping("/admin/Promotions")
 	public ResponseEntity<Promotions> addNewPromotions(@RequestBody PromotionsDTOS entity) {
+
 		Promotions saved = promotionsService.promotionsSave(promotionsMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
 	}
