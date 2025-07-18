@@ -29,6 +29,7 @@ public class OrdersDTOS {
 	private int accounts;
 	private int paymentMethods;
 	private int shippingMethods;
+    private String orderCode;
 
 	private List<?> productOrder;
 

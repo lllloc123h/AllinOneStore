@@ -72,4 +72,6 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "shipping_method_id")
     private ShippingMethods shippingMethods;
+    @Column(name = "order_code")
+    private String ghnOrderCode;
 }

@@ -34,7 +34,8 @@ public class OrdersMapper {
 				    entity.getUpdatedAt(),
 				    entity.getAccounts().getId(),
 				    entity.getPaymentMethods().getId(),
-				    entity.getShippingMethods().getId()
+				    entity.getShippingMethods().getId(),
+					entity.getGhnOrderCode()
 			);
 	}
 	public Orders mapperToObject(OrdersDTOS entity) {
@@ -56,7 +57,8 @@ public class OrdersMapper {
 					entity.getUpdatedAt(),
 					accountsService.accountsFindById(entity.getAccounts()).orElse(null),
 					paymentMethodsService.paymentMethodsFindById(entity.getPaymentMethods()).orElse(null),
-					shippingMethodsService.shippingMethodsFindById(entity.getShippingMethods()).orElse(null)
+					shippingMethodsService.shippingMethodsFindById(entity.getShippingMethods()).orElse(null),
+					entity.getOrderCode()
 			);
 	}
 	

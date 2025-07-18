@@ -7,11 +7,11 @@
       <p><strong>Mã đơn:</strong> {{ order.maDon }}</p>
       <p><strong>Ngày đặt:</strong> {{ formatDate(order.ngayDat) }}</p>
       <p><strong>Khách hàng:</strong> {{ order.khachHang.ten }}</p>
+      <p><strong>Trạng thái GHN:</strong> {{ order.trangThai }}</p>
     </div>
 
     <div class="section order-status">
-      <div v-for="(step, idx) in steps" :key="idx"
-           :class="['step', { active: idx === statusIndex }]">
+      <div v-for="(step, idx) in steps" :key="idx" :class="['step', { active: idx === statusIndex }]">
         <div class="circle"><i :class="step.icon"></i></div>
         <div>{{ step.label }}</div>
       </div>
@@ -44,9 +44,9 @@
 
     <div class="section">
       <h3>Thông tin thanh toán</h3>
-      <p><strong>PT:</strong> {{ order.thanhToan.phuongThuc }}</p>
-      <p><strong>TT:</strong> {{ order.thanhToan.trangThai }}</p>
-      <p><strong>Tổng:</strong> {{ formatMoney(order.tongTien) }}</p>
+      <p><strong>Phương thức:</strong> {{ order.thanhToan.phuongThuc }}</p>
+      <p><strong>Trạng thái:</strong> {{ order.thanhToan.trangThai }}</p>
+      <p><strong>Tổng tiền:</strong> {{ formatMoney(order.tongTien) }}</p>
     </div>
 
     <div class="section" v-if="order.ghiChu">
@@ -72,6 +72,7 @@
       <button class="review">Đánh giá</button>
       <button>Mua lại</button>
       <button>In hóa đơn</button>
+      <button @click="syncStatus">Đồng bộ trạng thái GHN</button>
     </div>
   </div>
 
@@ -83,8 +84,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from "axios";
-import api, { authService } from "../../Configs/api";
+import api from "../../Configs/api";
 
 const order = ref(null)
 const statusIndex = ref(0)
@@ -96,7 +96,16 @@ const steps = [
   { label: 'Đã nhận hàng', icon: 'fas fa-box-open' }
 ]
 
+// GHN trả về nhiều trạng thái, cần map để khớp UI
 const statusMap = {
+  'ready_to_pick': 1,
+  'picking': 1,
+  'picked': 2,
+  'delivering': 2,
+  'delivered': 3,
+  'cancel': 0,
+  'return': 0,
+  'exception': 0,
   'Chờ xác nhận': 0,
   'Chờ lấy hàng': 1,
   'Chờ giao hàng': 2,
@@ -106,7 +115,7 @@ const statusMap = {
 const route = useRoute()
 const maDon = route.params.id
 
-onMounted(async () => {
+const loadOrder = async () => {
   try {
     const res = await api.get(`/Orders/detail/${maDon}`)
     const orderData = res.data;
@@ -125,7 +134,7 @@ onMounted(async () => {
       },
       vanChuyen: {
         ten: orderData.order.shippingMethods?.name || 'N/A',
-        maVanDon: 'Đang cập nhật'
+        maVanDon: orderData.order.orderCode || 'Đang cập nhật'
       },
       thanhToan: {
         phuongThuc: orderData.order.paymentMethods?.name || 'N/A',
@@ -153,8 +162,21 @@ onMounted(async () => {
   } catch (error) {
     console.error('Lỗi khi lấy chi tiết đơn hàng', error);
   }
-});
+}
 
+onMounted(loadOrder)
+
+// Gọi API cập nhật trạng thái từ GHN
+const syncStatus = async () => {
+  try {
+    const res = await api.put(`/admin/Orders/update-ghn-status/${maDon}`)
+    order.value.trangThai = res.data.shippingStatus
+    statusIndex.value = statusMap[res.data.shippingStatus] ?? 0;
+    alert("Cập nhật trạng thái GHN thành công!");
+  } catch (error) {
+    alert("Lỗi khi cập nhật trạng thái GHN");
+  }
+}
 
 const formatDate = d => new Date(d).toLocaleDateString('vi-VN')
 const formatDateTime = d => new Date(d).toLocaleString('vi-VN')

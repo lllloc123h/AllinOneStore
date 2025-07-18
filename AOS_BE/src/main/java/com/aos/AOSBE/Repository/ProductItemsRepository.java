@@ -101,4 +101,12 @@ public interface ProductItemsRepository
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
 			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
+
+	List<ProductItems> findTop6ByBaseProducts_Categories_IdAndIdNot(Long categoryId, Long id);
+	@Query("SELECT pi FROM ProductItems pi " +
+       "WHERE pi.baseProducts.categories.id = :categoryId " +
+       "AND pi.id <> :productId")
+	Page<ProductItems> findRelatedItems(@Param("categoryId") Long categoryId,
+                                    @Param("productId") Long productId,
+                                    Pageable pageable);
 }

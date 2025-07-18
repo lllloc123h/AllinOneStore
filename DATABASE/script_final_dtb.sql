@@ -347,6 +347,7 @@ create table
 		point int not null,
 		final_total decimal(18, 2) not null,
 		order_infor nvarchar (max) not null,
+		order_code VARCHAR(50),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (account_id) references accounts (id) ON DELETE CASCADE,

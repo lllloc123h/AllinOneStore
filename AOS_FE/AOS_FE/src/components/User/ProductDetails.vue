@@ -33,15 +33,24 @@
 
         <!-- Giá hiện tại và giảm giá -->
         <p class="fs-4 fw-bold">
+        <!-- Nếu có giảm giá thực sự -->
+        <template v-if="discountedPrice !== currentPrice">
           <span class="text-danger">{{ formatPrice(discountedPrice) }}</span>
-          <del class="text-muted ms-2" v-if="promotion">{{ formatPrice(currentPrice) }}</del>
-          <small class="text-danger ms-2" v-if="promotion">-{{ promotion.promotions.discountPercent }}%</small>
-          <small class="text-muted">| ★★★★☆ ({{ reviews.length }} review)</small>
+          <del class="text-muted ms-2">{{ formatPrice(currentPrice) }}</del>
+          <small class="text-danger ms-2">-{{ promotion.promotions.discountPercent }}%</small>
+        </template>
+
+        <!-- Nếu không có giảm giá (hoặc bằng nhau) -->
+        <template v-else>
+          <span class="text-dark">{{ formatPrice(currentPrice) }}</span>
+        </template>
+
+        <small class="text-muted">| ★★★★☆ ({{ reviews.length }} review)</small>
         </p>
 
         <p class="text-muted mb-3">{{ product.material }}</p>
 
-        <div class="mb-2" v-if="promotion">
+        <div class="mb-2" v-if="promotion && promotion.promotions">
           <span class="badge bg-danger">
             KM: {{ promotion.promotions.name }} ({{ promotion.promotions.discountPercent }}%)
           </span>
@@ -131,17 +140,37 @@
       </div>
     </div>
   </div>
+  <p v-else>Đang tải chi tiết sản phẩm...</p>
+  <!-- Sản phẩm liên quan -->
+<div class="container mt-5" v-if="relatedItems.length > 0">
+  <h5 class="mb-3">Sản phẩm liên quan</h5>
+  <div class="row row-cols-2 row-cols-md-4 g-3">
+    <div class="col" v-for="item in relatedItems.slice(0, 4)" :key="item.id">
+      <div class="card h-100 shadow-sm related-card">
+        <img :src="item.imageUrl" class="card-img-top" alt="..." />
+        <div class="card-body p-2">
+          <h6 class="card-title text-truncate mb-1">{{ item.sku }}</h6>
+          <p class="card-text text-danger fw-bold mb-2">{{ formatPrice(item.price) }}</p>
+          <router-link :to="`/product/${item.id}`" class="btn btn-outline-dark btn-sm w-100">
+            Xem chi tiết
+          </router-link>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import api from "../../Configs/api";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from "ant-design-vue";
 
 const route = useRoute();
-const productId = route.params.id;
+const productId = ref(route.params.id);
 
 const product = ref(null);
 const images = ref([]);
@@ -156,18 +185,19 @@ const activeTab = ref('desc');
 const reviews = ref([]);
 const newReview = ref({ name: '', text: '' });
 
+const relatedItems = ref([]);
+
 const discountedPrice = computed(() => {
-  if (promotion.value && promotion.value.discountPercent) {
-    return Math.round(currentPrice.value * (1 - promotion.value.discountPercent / 100));
+  if (promotion.value?.promotions?.discountPercent) {
+    return Math.round(currentPrice.value * (1 - promotion.value.promotions.discountPercent / 100));
   }
   return currentPrice.value;
 });
 
-onMounted(async () => {
+// Hàm load toàn bộ data sản phẩm
+const fetchProductData = async (id) => {
   try {
-    const res = await api.get(`/ProductItems/detail/${productId}`);
-    console.log("Kết quả trả về từ API chi tiết sản phẩm:", res.data);
-
+    const res = await api.get(`/ProductItems/detail/${id}`);
     product.value = res.data.productItem;
     images.value = res.data.images || [];
     priceHistories.value = res.data.priceHistories || [];
@@ -183,8 +213,25 @@ onMounted(async () => {
   } catch (err) {
     console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
+
+  try {
+    const relatedRes = await api.get(`/ProductItems/related/${id}`);
+    relatedItems.value = relatedRes.data || [];
+  } catch (err) {
+    console.error("Lỗi tải sản phẩm liên quan:", err);
+  }
+};
+
+// Gọi khi component mount
+onMounted(() => {
+  fetchProductData(productId.value);
 });
 
+// Gọi lại khi ID trên URL thay đổi
+watch(() => route.params.id, (newId) => {
+  productId.value = newId;
+  fetchProductData(newId);
+});
 
 function increaseQty() {
   quantity.value++;
@@ -213,7 +260,7 @@ function formatDate(dateStr) {
 
 const itemCart = ref({
   id: "",
-  accounts: "", // nếu cần tài khoản đăng nhập thì gắn ID user ở đây
+  accounts: "",
   productItems: "",
   promotions: "",
   comboGroup: "",
@@ -225,12 +272,14 @@ const itemCart = ref({
 const addToCart = () => {
   if (!product.value || quantity.value <= 0) return;
 
-  // Set dữ liệu cho itemCart
-  itemCart.value.productItems = product.value.id;
-  itemCart.value.qty = quantity.value;
+  const newCartItem = {
+    productItems: product.value.id,
+    qty: quantity.value,
+    promotions: promotion.value?.promotions?.id || null,
+  };
 
-  if (quantity.value < product.value.safetyStock) {
-    finalHandleCartProgress(itemCart.value);
+  if (quantity.value <= product.value.qty) {
+    finalHandleCartProgress(newCartItem);
     notification.success({
       message: "Thành công",
       description: `Đã thêm ${quantity.value} x ${product.value.name} vào giỏ hàng`,
@@ -238,11 +287,12 @@ const addToCart = () => {
   } else {
     notification.error({
       message: "Thất bại",
-      description: `Số lượng tồn không đủ!`,
-    }); 
+      description: `Số lượng tồn kho chỉ còn ${product.value.qty} sản phẩm!`,
+    });
   }
 };
 </script>
+
 
 <style scoped>
 .img-thumbnail.border-primary {
@@ -266,6 +316,19 @@ del {
 .add-to-cart-btn:hover {
   filter: brightness(1.08);
   cursor: pointer;
+}
+.related-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  transition: transform 0.3s ease;
+}
+
+.related-card:hover img {
+  transform: scale(1.05);
 }
 
 

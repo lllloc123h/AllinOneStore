@@ -173,5 +173,18 @@ public class OrdersAPI {
 			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "ĐÃ CÓ LỖI XẢY RA " + e.getMessage()));
 		}
 	}
-
+	@PutMapping("/admin/Orders/update-ghn-status/{id}")
+		public ResponseEntity<?> updateShippingStatusFromGHN(@PathVariable int id) {
+			try {
+				Orders updatedOrder = ordersService.updateShippingStatusFromGHN(id);
+				return ResponseEntity.ok(Map.of(
+					"message", "Cập nhật trạng thái vận đơn thành công",
+					"shippingStatus", updatedOrder.getShippingStatus()
+				));
+			} catch (IllegalArgumentException e) {
+				return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+			} catch (Exception e) {
+				return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
+			}
+		}
 }

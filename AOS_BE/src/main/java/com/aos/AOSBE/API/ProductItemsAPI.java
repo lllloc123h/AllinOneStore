@@ -249,4 +249,10 @@ public class ProductItemsAPI {
 		}
 	}
 
+	@GetMapping("/ProductItems/related/{id}")
+	public ResponseEntity<List<ProductItemsDTOS>> getRelatedProductItems(@PathVariable int id) {
+    List<ProductItemsDTOS> relatedItems = productItemsService.getRelatedProductItems(id);
+    return ResponseEntity.ok(relatedItems);
+}
+
 }

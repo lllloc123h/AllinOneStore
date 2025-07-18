@@ -1,8 +1,10 @@
 package com.aos.AOSBE.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.DTOS.ProductItemsDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Repository.ProductItemsRepository;
 
 @Service
@@ -22,6 +26,8 @@ public class ProductItemsService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private ProductItemsRepository productItemsRepository;
+	@Autowired
+	private ProductItemsMapper productItemsMapper;
 
 	public Page<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -82,4 +88,23 @@ public class ProductItemsService {
 	public void productItemsDeleteById(int id) {
 		productItemsRepository.deleteById(id);
 	}
+
+	@Transactional
+	public List<ProductItemsDTOS> getRelatedProductItems(int id) {
+    ProductItems currentItem = productItemsRepository.findById(id).orElse(null);
+    if (currentItem == null) return new ArrayList<>();
+
+    Long categoryId = (long) currentItem.getBaseProducts().getCategories().getId();
+    Long productId = (long) id;
+
+    List<ProductItems> relatedItems = productItemsRepository
+        .findRelatedItems(categoryId, productId, PageRequest.of(0, 4))
+        .getContent();
+
+    return relatedItems.stream()
+        .map(productItemsMapper::mapper)
+        .collect(Collectors.toList());
+}
+
+
 }
