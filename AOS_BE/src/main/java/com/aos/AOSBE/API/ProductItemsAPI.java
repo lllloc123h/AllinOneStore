@@ -28,6 +28,7 @@ import com.aos.AOSBE.DTOS.ProductItemsDTOS;
 import com.aos.AOSBE.DTOS.PromotionsDTOS;
 import com.aos.AOSBE.DTOS.filterAdvanceDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Entity.PromotionProducts;
 import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
 import com.aos.AOSBE.Mapper.ProductImagesMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
@@ -35,6 +36,7 @@ import com.aos.AOSBE.Mapper.PromotionsMapper;
 import com.aos.AOSBE.Service.PriceHistoriesService;
 import com.aos.AOSBE.Service.ProductImagesService;
 import com.aos.AOSBE.Service.ProductItemsService;
+import com.aos.AOSBE.Service.PromotionProductsService;
 import com.aos.AOSBE.Service.PromotionsService;
 
 @RestController
@@ -259,5 +261,10 @@ public class ProductItemsAPI {
     List<ProductItemsDTOS> relatedItems = productItemsService.getRelatedProductItems(id);
     return ResponseEntity.ok(relatedItems);
 }
+	@GetMapping("/ProductItems/Discount")
+	public ResponseEntity<List<ProductItems>> getDiscountProduct(){
+
+		return ResponseEntity.ok(null);
+	}
 
 }
