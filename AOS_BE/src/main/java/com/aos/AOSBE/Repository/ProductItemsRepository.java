@@ -133,5 +133,9 @@ public interface ProductItemsRepository
 			+ "AND pi.id <> :productId")
 	Page<ProductItems> findRelatedItems(@Param("categoryId") Long categoryId, @Param("productId") Long productId,
 			Pageable pageable);
+	List<ProductItems> findRelatedItems(Long categoryId, Long productId, PageRequest of);
+
+	@Query("SELECT p.id FROM ProductItem p WHERE p.discount > 0")
+	List<Integer> findAllDiscountedProductIds();
 
 }
