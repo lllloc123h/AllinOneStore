@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 
 @Repository
@@ -105,27 +104,48 @@ public interface ProductItemsRepository
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
 			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
 
-	@Query("""
-			    SELECT new com.aos.AOSBE.DTOS.DiscountedProductDTOS(
+//	@Query("""
+//			    SELECT new com.aos.AOSBE.DTOS.DiscountedProductDTOS(
+//			        pi.id,
+//			        bp.name,
+//			        pi.price,
+//			        promo.discountType,
+//			        promo.name,
+//			        promo.startAt,
+//			        promo.endAt,
+//			        img.imageUrl
+//			    )
+//			    FROM ProductItems pi
+//			    JOIN pi.baseProducts bp
+//			    JOIN PromotionProducts pp ON pi.id = pp.productItems.id
+//			    JOIN pp.promotions promo
+//			    LEFT JOIN ProductImages img ON img.productItems.id = pi.id
+//			    WHERE promo.isActive = true
+//			      AND promo.type = 'DISCOUNT'
+//			      AND CURRENT_TIMESTAMP BETWEEN promo.startAt AND promo.endAt
+//			""")
+//	List<DiscountedProductDTOS> getAllDiscountedProducts();
+
+	@Query(value = """
+			    SELECT
 			        pi.id,
 			        bp.name,
 			        pi.price,
-			        promo.discountType,
+			        promo.discount_type,
 			        promo.name,
-			        promo.startAt,
-			        promo.endAt,
-			        img.imageUrl
-			    )
-			    FROM ProductItems pi
-			    JOIN pi.baseProducts bp
-			    JOIN PromotionProducts pp ON pi.id = pp.productItems.id
-			    JOIN pp.promotions promo
-			    LEFT JOIN ProductImages img ON img.productItems.id = pi.id
-			    WHERE promo.isActive = true
+			        promo.start_at,
+			        promo.end_at,
+			        img.image_url
+			    FROM product_items pi
+			    JOIN base_products bp ON pi.base_id = bp.id
+			    JOIN promotion_products pp ON pi.id = pp.product_item_id
+			    JOIN promotions promo ON pp.promotion_id = promo.id
+			    LEFT JOIN product_images img ON img.product_item_id = pi.id
+			    WHERE promo.is_active = 1
 			      AND promo.type = 'DISCOUNT'
-			      AND CURRENT_TIMESTAMP BETWEEN promo.startAt AND promo.endAt
-			""")
-	List<DiscountedProductDTOS> getAllDiscountedProducts();
+			      AND CURRENT_TIMESTAMP BETWEEN promo.start_at AND promo.end_at
+			""", nativeQuery = true)
+	List<Object[]> getAllDiscountedProducts();
 
 	List<ProductItems> findTop6ByBaseProducts_Categories_IdAndIdNot(Long categoryId, Long id);
 
