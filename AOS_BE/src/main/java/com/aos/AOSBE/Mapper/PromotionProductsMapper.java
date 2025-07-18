@@ -16,18 +16,20 @@ public class PromotionProductsMapper {
 
 	@Autowired
 	private PromotionsService promotionsService;
+	@Autowired
+	private ProductItemsMapper productItemsMapper;
 
 	public PromotionProductsDTOS mapper(PromotionProducts entity) {
 		return new PromotionProductsDTOS(entity.getId(), entity.getRequireQty(), entity.isGift(), entity.getCostShare(),
-				entity.getCreatedAt(), entity.getUpdatedAt(), entity.getProductItems().getId(),
+				entity.getCreatedAt(), entity.getUpdatedAt(), productItemsMapper.mapper(entity.getProductItems()),
 				entity.getPromotions().getId());
 	}
 
 	public PromotionProducts mapperToObject(PromotionProductsDTOS entity) {
 		return new PromotionProducts(entity.getId(), entity.getRequireQty(), entity.isGift(), entity.getCostShare(),
 				entity.getCreatedAt(), entity.getUpdatedAt(),
-				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-				promotionsService.promotionsFindById(entity.getPromotions().getId()).orElse(null));
+				productItemsService.productItemsFindById(entity.getProductItem().getId()).orElse(null),
+				promotionsService.promotionsFindById(entity.getPromotionId()).orElse(null));
 	}
 
 //  public PromotionProductsDTOS mapper(PromotionProducts entity) {

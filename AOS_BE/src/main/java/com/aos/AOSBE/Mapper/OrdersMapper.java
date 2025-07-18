@@ -30,9 +30,9 @@ public class OrdersMapper {
 	public Orders mapperToObject(OrdersDTOS entity) {
 		return new Orders(entity.getId(), entity.getShippingStatus(), entity.getEstimatedShippingFee(),
 				entity.getFreeshipCouponCode(), entity.getActualShippingFee(), entity.getDiscountCouponCode(),
-				entity.getDiscountValue(), entity.getPaymentStatus(), entity.getNote(), entity.getPoint(),
-				entity.getFinalTotal(), entity.getOrderInfor(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				accountsService.accountsFindById(entity.getAccounts()).orElse(null),
+				entity.getDiscountValue(), entity.getShippedDate(), entity.getPaymentStatus(), entity.getNote(),
+				entity.getPoint(), entity.getFinalTotal(), entity.getOrderInfor(), entity.getCreatedAt(),
+				entity.getUpdatedAt(), accountsService.accountsFindById(entity.getAccounts()).orElse(null),
 				paymentMethodsService.paymentMethodsFindByName(entity.getPaymentMethods()).orElse(null),
 				shippingMethodsService.shippingMethodsFindByName(entity.getShippingMethods()).orElse(null),
 				entity.getOrderCode());
