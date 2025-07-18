@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +50,7 @@ public class OrdersAPI {
 	private EWalletsService EWalletsservice;
 	@Autowired
 	private AccountsService accountService;
+
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -68,10 +68,6 @@ public class OrdersAPI {
 
 	@GetMapping("/admin/Orders/{id}")
 	public ResponseEntity<Orders> getOrdersByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
 		Orders orders = (Orders) ordersService.ordersFindById(id).orElse(new Orders());
 		return ResponseEntity.ok(orders);
 	}
@@ -98,6 +94,13 @@ public class OrdersAPI {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
 		}
+	}
+
+	@PostMapping("/Orders")
+	public ResponseEntity<Orders> addNewOrdersByUser(@RequestBody OrdersDTOS entity) {
+
+		Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+		return ResponseEntity.ok(saved);
 	}
 
 	@DeleteMapping("/admin/Orders/{id}")
@@ -129,43 +132,46 @@ public class OrdersAPI {
 		OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
 		return ResponseEntity.ok(response);
 	}
+
 	@PutMapping("/Users/Orders/{id}")
-	public ResponseEntity<?> cancelRefundOrder(@PathVariable int id){
+	public ResponseEntity<?> cancelRefundOrder(@PathVariable int id) {
 		try {
 			Orders OrderCancel = ordersService.ordersFindById(id).orElse(null);
-			if(OrderCancel != null) {
-				if(OrderCancel.getShippingStatus().equals("Pending")) {
-					if(OrderCancel.getPaymentStatus().equals("Paid")) {
+			if (OrderCancel != null) {
+				if (OrderCancel.getShippingStatus().equals("Pending")) {
+					if (OrderCancel.getPaymentStatus().equals("Paid")) {
 						Accounts ac = OrderCancel.getAccounts();
 						EWallets ew = EWalletsservice.eWalletsFindByAccountEmail(ac.getEmail()).orElse(null);
-						ew.setBalance(ew.getBalance()+OrderCancel.getFinalTotal());
+						ew.setBalance(ew.getBalance() + OrderCancel.getFinalTotal());
 						EWalletsservice.eWalletsSave(ew);
 						Accounts admin = accountService.accountsFindById(1).orElse(null);
-						if(admin != null ) {
-							
-							EWallets ewadmin = EWalletsservice.eWalletsFindByAccountEmail(admin.getEmail()).orElse(null);
-							ewadmin.setBalance(ewadmin.getBalance()-OrderCancel.getFinalTotal());
+						if (admin != null) {
+
+							EWallets ewadmin = EWalletsservice.eWalletsFindByAccountEmail(admin.getEmail())
+									.orElse(null);
+							ewadmin.setBalance(ewadmin.getBalance() - OrderCancel.getFinalTotal());
 							EWalletsservice.eWalletsSave(ewadmin);
 							OrderCancel.setShippingStatus("Cancel");
 							ordersService.ordersSave(OrderCancel);
-						}else {
-							return ResponseEntity.badRequest().body(Map.of("MESSAGE","admin không tồn tại"));	
+						} else {
+							return ResponseEntity.badRequest().body(Map.of("MESSAGE", "admin không tồn tại"));
 						}
-						return ResponseEntity.ok(Map.of("MESSAGE","Hủy đơn hoàn tiền thành công"));
-					}else {
+						return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn hoàn tiền thành công"));
+					} else {
 						OrderCancel.setShippingStatus("Cancel");
 						ordersService.ordersSave(OrderCancel);
-						return ResponseEntity.ok(Map.of("MESSAGE","hủy thành công"));
+						return ResponseEntity.ok(Map.of("MESSAGE", "hủy thành công"));
 					}
-				}else{
-					return ResponseEntity.ok().body(Map.of("MESSAGE","Đơn hàng đã được vân chuyển, không thể hủy đơn"));	
+				} else {
+					return ResponseEntity.ok()
+							.body(Map.of("MESSAGE", "Đơn hàng đã được vân chuyển, không thể hủy đơn"));
 				}
-			}else {
-				return ResponseEntity.badRequest().body(Map.of("MESSAGE","không tìm thấy đơn hàng "));	
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("MESSAGE", "không tìm thấy đơn hàng "));
 			}
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("MESSAGE","ĐÃ CÓ LỖI XẢY RA "+e.getMessage()));	
+			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "ĐÃ CÓ LỖI XẢY RA " + e.getMessage()));
 		}
 	}
-	
+
 }

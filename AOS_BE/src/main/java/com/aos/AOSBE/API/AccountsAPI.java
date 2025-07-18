@@ -104,16 +104,46 @@ public class AccountsAPI {
 		return ResponseEntity.ok(saved);
 	}
 
+//	@PutMapping("/admin/Accounts/{id}")
+//	public ResponseEntity<?> updateAccounts(@PathVariable int id, @RequestBody AccountsDTOS entity) {
+//		try {
+//			Accounts isExist = accountsService.accountsFindById(id).orElse(null);
+//			if (isExist != null && !isExist.getEmail().equals("adminCUDE@gmail.com")) {
+//				entity.setId(isExist.getId());
+//				if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
+//					// Check if password is already encoded or if it's a new password
+//					if (!passwordEncoder.matches(passwordEncoder.encode(entity.getPassword()), isExist.getPassword())
+//							&& !(entity.getPassword() == isExist.getPassword())) {
+//						entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+//					} else {
+//						entity.setPassword(isExist.getPassword());
+//					}
+//				} else {
+//					// Keep existing password if not provided
+//					entity.setPassword(isExist.getPassword());
+//				}
+//				Accounts update = accountsMapper.mapperToObject(entity);
+//				accountsService.accountsSave(update);
+//				return ResponseEntity.ok().body(Map.of("measage", "Update successfuly", "update", update));
+//			} else {
+//				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+//		}
+//	}
+
 	@PutMapping("/admin/Accounts/{id}")
 	public ResponseEntity<?> updateAccounts(@PathVariable int id, @RequestBody AccountsDTOS entity) {
 		try {
 			Accounts isExist = accountsService.accountsFindById(id).orElse(null);
 			if (isExist != null && !isExist.getEmail().equals("adminCUDE@gmail.com")) {
 				entity.setId(isExist.getId());
+
 				if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
-					// Check if password is already encoded or if it's a new password
-					if (!passwordEncoder.matches(passwordEncoder.encode(entity.getPassword()), isExist.getPassword())
-							&& !(entity.getPassword() == isExist.getPassword())) {
+					// Only encode if the password is new or changed
+					if (!passwordEncoder.matches(entity.getPassword(), isExist.getPassword())) {
 						entity.setPassword(passwordEncoder.encode(entity.getPassword()));
 					} else {
 						entity.setPassword(isExist.getPassword());
@@ -122,15 +152,16 @@ public class AccountsAPI {
 					// Keep existing password if not provided
 					entity.setPassword(isExist.getPassword());
 				}
+
 				Accounts update = accountsMapper.mapperToObject(entity);
 				accountsService.accountsSave(update);
-				return ResponseEntity.ok().body(Map.of("measage", "Update successfuly", "update", update));
+				return ResponseEntity.ok().body(Map.of("message", "Update successfully", "update", update));
 			} else {
-				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+				return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
 
