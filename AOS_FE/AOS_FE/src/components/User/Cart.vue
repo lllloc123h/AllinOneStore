@@ -618,7 +618,7 @@ function isPromotionValid(promotion) {
 
   if (now < startAt || now > endAt) return false;
 
-  return true;
+  return false;
 }
 
 // Hàm lấy thông báo trạng thái promotion

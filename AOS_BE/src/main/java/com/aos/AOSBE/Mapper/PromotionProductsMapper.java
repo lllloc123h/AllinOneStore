@@ -20,16 +20,26 @@ public class PromotionProductsMapper {
 	private ProductItemsMapper productItemsMapper;
 
 	public PromotionProductsDTOS mapper(PromotionProducts entity) {
-		return new PromotionProductsDTOS(entity.getId(), entity.getRequireQty(), entity.isGift(), entity.getCostShare(),
-				entity.getCreatedAt(), entity.getUpdatedAt(), productItemsMapper.mapper(entity.getProductItems()),
-				entity.getPromotions().getId());
+		return new PromotionProductsDTOS(
+				    entity.getId(),
+				    entity.getRequireQty(),
+				    entity.isGift(),
+				    entity.getCreatedAt(),
+				    entity.getUpdatedAt(),
+				    productItemsMapper.mapper(entity.getProductItems()),
+				    entity.getPromotions().getId()
+			);
 	}
-
 	public PromotionProducts mapperToObject(PromotionProductsDTOS entity) {
-		return new PromotionProducts(entity.getId(), entity.getRequireQty(), entity.isGift(), entity.getCostShare(),
-				entity.getCreatedAt(), entity.getUpdatedAt(),
-				productItemsService.productItemsFindById(entity.getProductItem().getId()).orElse(null),
-				promotionsService.promotionsFindById(entity.getPromotionId()).orElse(null));
+		return new PromotionProducts(
+					entity.getId(),
+					entity.getRequireQty(),
+					entity.isGift(),
+					entity.getCreatedAt(),
+					entity.getUpdatedAt(),
+					productItemsService.productItemsFindById(entity.getProductItem().getId()).orElse(null),
+					promotionsService.promotionsFindById(entity.getPromotionId()).orElse(null)
+			);
 	}
 
 //  public PromotionProductsDTOS mapper(PromotionProducts entity) {

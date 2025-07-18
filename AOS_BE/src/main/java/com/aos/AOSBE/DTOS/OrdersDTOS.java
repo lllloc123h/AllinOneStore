@@ -28,17 +28,25 @@ public class OrdersDTOS {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private int accounts;
-	private String paymentMethods;
-	private int address;
-	private String shippingMethods;
-	private List<?> products;
+
+	private int paymentMethodId;
+	private String paymentMethodName;
+
+	private int shippingMethodId;
+	private String shippingMethodName;
+
+	private List<OrderItemsDTOS> products;
 	private String orderCode;
 
-	public OrdersDTOS(int id, String shippingStatus, double estimatedShippingFee, String freeshipCouponCode,
-			double actualShippingFee, String discountCouponCode, double discountValue, LocalDateTime shippedDate,
-			String paymentStatus, String note, int point, double finalTotal, String orderInfor, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int accounts, String paymentMethods, String shippingMethods) {
-		super();
+	public OrdersDTOS(
+		int id, String shippingStatus, double estimatedShippingFee, String freeshipCouponCode,
+		double actualShippingFee, String discountCouponCode, double discountValue, LocalDateTime shippedDate,
+		String paymentStatus, String note, int point, double finalTotal, String orderInfor, LocalDateTime createdAt,
+		LocalDateTime updatedAt, int accounts,
+		int paymentMethodId, String paymentMethodName,
+		int shippingMethodId, String shippingMethodName,
+		String orderCode
+	) {
 		this.id = id;
 		this.shippingStatus = shippingStatus;
 		this.estimatedShippingFee = estimatedShippingFee;
@@ -55,34 +63,10 @@ public class OrdersDTOS {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.accounts = accounts;
-		this.paymentMethods = paymentMethods;
-		this.shippingMethods = shippingMethods;
-	}
-
-	public OrdersDTOS(int id, String shippingStatus, double estimatedShippingFee, String freeshipCouponCode,
-			double actualShippingFee, String discountCouponCode, double discountValue, LocalDateTime shippedDate,
-			String paymentStatus, String note, int point, double finalTotal, String orderInfor, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int accounts, String paymentMethods, String shippingMethods, String orderCode) {
-		super();
-		this.id = id;
-		this.shippingStatus = shippingStatus;
-		this.estimatedShippingFee = estimatedShippingFee;
-		this.freeshipCouponCode = freeshipCouponCode;
-		this.actualShippingFee = actualShippingFee;
-		this.discountCouponCode = discountCouponCode;
-		this.discountValue = discountValue;
-		this.shippedDate = shippedDate;
-		this.paymentStatus = paymentStatus;
-		this.note = note;
-		this.point = point;
-		this.finalTotal = finalTotal;
-		this.orderInfor = orderInfor;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.accounts = accounts;
-		this.paymentMethods = paymentMethods;
-		this.shippingMethods = shippingMethods;
+		this.paymentMethodId = paymentMethodId;
+		this.paymentMethodName = paymentMethodName;
+		this.shippingMethodId = shippingMethodId;
+		this.shippingMethodName = shippingMethodName;
 		this.orderCode = orderCode;
 	}
-
 }

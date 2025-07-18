@@ -74,4 +74,11 @@ public class Orders {
     private ShippingMethods shippingMethods;
     @Column(name = "order_code")
     private String ghnOrderCode;
+    
+    @Transient
+    private Integer paymentMethodId;
+
+
+    @Transient
+    private Integer shippingMethodId;
 }

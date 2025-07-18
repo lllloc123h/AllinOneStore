@@ -33,7 +33,7 @@ public class JwtUtil {
 			roles.add(auth.getRoles().getName());
 		}
 		return Jwts.builder().setSubject(username).setIssuedAt(new Date()).claim("roles", roles)
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60*60))
 				// 30 min
 				.signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256).compact();
 	}

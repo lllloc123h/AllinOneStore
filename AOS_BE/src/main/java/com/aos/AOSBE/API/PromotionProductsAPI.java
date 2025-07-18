@@ -1,5 +1,16 @@
 package com.aos.AOSBE.API;
 
+import com.aos.AOSBE.DTOS.PromotionProductsDTOS;
+import com.aos.AOSBE.DTOS.PromotionsDTOS;
+import com.aos.AOSBE.Entity.PromotionProducts;
+import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Mapper.PromotionProductsMapper;
+import com.aos.AOSBE.Service.PromotionProductsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,3 +94,5 @@ public class PromotionProductsAPI {
 		return ResponseEntity.noContent().build();
 	}
 }
+
+

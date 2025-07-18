@@ -13,7 +13,7 @@
           data-bs-toggle="dropdown"
         >
           <span v-if="selectedProduct">
-            <img :src="previewMainImg" alt="" width="30" height="30" class="me-2" />
+            <img :src="mainImage" alt="" width="30" height="30" class="me-2" />
             {{ selectedProduct.name }} ({{ selectedProduct.material }})
           </span>
           <span v-else>Select a product</span>
@@ -26,13 +26,7 @@
             class="dropdown-item d-flex align-items-center"
             style="cursor: pointer"
           >
-            <img
-              :src="product.mainImagePreviewImg"
-              alt=""
-              width="40"
-              height="40"
-              class="me-2"
-            />
+            <img :src="product.mainImage" alt="" width="40" height="40" class="me-2" />
             <div>
               <strong>{{ product.name }}</strong
               ><br />
@@ -642,7 +636,7 @@ onMounted(async () => {
   dropDownListVariants.value = await dropDownVariant();
   dropDownListBaseProduct.value = await dropDown("BaseProducts");
   const responseCategories = await categoriesService.getAll(0, 1000);
-  categoriesDropDownList.value = responseCategories.data.map((category) => {
+  categoriesDropDownList.value = responseCategories.data?.content.map((category) => {
     return {
       id: category.id,
       name: category.name,

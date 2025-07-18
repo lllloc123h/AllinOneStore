@@ -21,8 +21,12 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Entity.Orders;
+import com.aos.AOSBE.Entity.PaymentMethods;
+import com.aos.AOSBE.Entity.ShippingMethods;
 import com.aos.AOSBE.Repository.CouponsRepository;
 import com.aos.AOSBE.Repository.OrdersRepository;
+import com.aos.AOSBE.Repository.PaymentMethodsRepository;
+import com.aos.AOSBE.Repository.ShippingMethodsRepository;
 
 @Service
 public class OrdersService {
@@ -32,6 +36,10 @@ public class OrdersService {
 	private OrdersRepository ordersRepository;
 	@Autowired
 	private CouponsRepository couponsRepository;
+	@Autowired
+	private PaymentMethodsRepository paymentMethodsRepository;
+	@Autowired
+	private ShippingMethodsRepository shippingMethodsRepository;
 
 	@Value("${GHN_TOKEN}")
 	private String ghnToken;
@@ -48,6 +56,39 @@ public class OrdersService {
 	@Transactional
 	public Orders ordersSave(Orders orders) {
 	    try {
+	        // Xử lý Payment Method
+	        if (orders.getPaymentMethods() == null && orders.getPaymentMethodId() != null) {
+	            PaymentMethods pm = paymentMethodsRepository.findById(orders.getPaymentMethodId())
+	                .orElseThrow(() -> new IllegalArgumentException("Phương thức thanh toán không hợp lệ."));
+	            orders.setPaymentMethods(pm);
+	        }
+
+	        // Xử lý Shipping Method
+	        if (orders.getShippingMethods() == null && orders.getShippingMethodId() != null) {
+	            ShippingMethods sm = shippingMethodsRepository.findById(orders.getShippingMethodId())
+	                .orElseThrow(() -> new IllegalArgumentException("Phương thức vận chuyển không hợp lệ."));
+	            orders.setShippingMethods(sm);
+	        }
+
+	        // Kiểm tra đã chọn phương thức thanh toán
+	        if (orders.getPaymentMethods() == null) {
+	            throw new IllegalArgumentException("Phải chọn phương thức thanh toán.");
+	        }
+
+	        // Thiết lập trạng thái thanh toán
+	        String paymentMethodName = orders.getPaymentMethods().getName();
+	        if ("Thanh toán qua ví điện tử".equalsIgnoreCase(paymentMethodName)) {
+	            orders.setPaymentStatus("Đã thanh toán");
+	        } else {
+	            orders.setPaymentStatus("Chưa thanh toán");
+	        }
+
+	        // Thiết lập trạng thái giao hàng mặc định
+	        if (orders.getShippingStatus() == null || orders.getShippingStatus().isEmpty()) {
+	            orders.setShippingStatus("Chờ xác nhận");
+	        }
+
+	        // Kiểm tra mã giảm giá
 	        String couponCode = orders.getDiscountCouponCode();
 	        if (couponCode != null && !couponCode.trim().isEmpty()) {
 	            Optional<Coupons> optionalCoupon = couponsRepository.findByCode(couponCode);
@@ -67,13 +108,15 @@ public class OrdersService {
 
 	        return ordersRepository.save(orders);
 	    } catch (Exception e) {
-	        e.printStackTrace(); 
-	        throw e; 
+	        e.printStackTrace();
+	        throw e;
 	    }
 	}
 
 
 
+
+	@Transactional
 	public Optional<Orders> ordersFindById(int id) {
 		return ordersRepository.findById(id);
 	}

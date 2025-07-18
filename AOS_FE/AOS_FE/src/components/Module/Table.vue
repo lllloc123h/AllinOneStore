@@ -37,15 +37,28 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <button type="button" @click="goToView(item.id)" class="btn btn-info btn-sm action-btn"
-                  title="Xem chi tiết">
+                <button
+                  type="button"
+                  @click="goToView(item.id)"
+                  class="btn btn-info btn-sm action-btn"
+                  title="Xem chi tiết"
+                >
                   <i class="bi bi-eye"></i>
                 </button>
-                <button type="button" @click="goToEdit(item.id)" class="btn btn-warning btn-sm action-btn"
-                  title="Chỉnh sửa">
+                <button
+                  type="button"
+                  @click="goToEdit(item.id)"
+                  class="btn btn-warning btn-sm action-btn"
+                  title="Chỉnh sửa"
+                >
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button type="button" @click="deleteById(item.id)" class="btn btn-danger btn-sm action-btn" title="Xóa">
+                <button
+                  type="button"
+                  @click="deleteById(item.id)"
+                  class="btn btn-danger btn-sm action-btn"
+                  title="Xóa"
+                >
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -55,12 +68,16 @@
       </table>
     </div>
     <div v-if="!data.length && !loading && !error" class="text-muted"></div>
-    <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
+    <PageNavigative
+      :totalPage="totalPage"
+      v-model:currentPage="currentPage"
+      v-model:currentSize="currentSize"
+    >
     </PageNavigative>
   </div>
 </template>
 <style>
-.pageselect>select#pageSize {
+.pageselect > select#pageSize {
   width: 50px;
 }
 
@@ -324,6 +341,51 @@
 .table-container::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(90deg, #5a67d8, #6b46c1);
 }
+
+/* Time remaining badges */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: inline-block;
+  min-width: fit-content;
+}
+
+.bg-success {
+  background-color: #198754 !important;
+  color: white !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.bg-warning.text-dark {
+  background-color: #ff8c00 !important;
+  color: #000 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Quantity badge specific styling */
+.badge.bg-success.text-white {
+  background-color: #28a745 !important;
+}
+
+.badge.bg-warning.text-dark {
+  background-color: #ffc107 !important;
+}
+
+.badge.bg-danger.text-white {
+  background-color: #dc3545 !important;
+}
 </style>
 <script setup>
 import { ref, watch, onMounted, computed, reactive } from "vue";
@@ -336,7 +398,75 @@ import dayjs from "dayjs";
 import "bootstrap/dist/css/bootstrap.min.css";
 const prices = ["price", "cost", "discountValue", "comboPrice"];
 function formatCell(key, value) {
-  if (typeof value === "string" && !isNaN(Date.parse(value))) {
+  if (key.toLowerCase() === "endat" && value) {
+    const now = new Date();
+    const endDate = new Date(value);
+    const timeDiff = endDate.getTime() - now.getTime();
+
+    if (timeDiff <= 0) {
+      // Đã hết hạn
+      return `<span class="badge bg-danger">Đã hết hạn</span><br><small>${dayjs(
+        value
+      ).format("DD/MM/YYYY HH:mm:ss")}</small>`;
+    } else {
+      // Tính toán thời gian còn lại
+      const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hoursLeft = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutesLeft = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+      let timeLeftText = "";
+      let badgeClass = "";
+
+      if (daysLeft > 7) {
+        // Còn nhiều thời gian (> 7 ngày) - xanh lá
+        timeLeftText = `${daysLeft} ngày`;
+        badgeClass = "bg-success";
+      } else if (daysLeft > 3) {
+        // Cảnh báo (3-7 ngày) - vàng
+        timeLeftText = `${daysLeft} ngày`;
+        badgeClass = "bg-warning";
+      } else if (daysLeft > 0) {
+        // Gần hết hạn (1-3 ngày) - cam
+        timeLeftText = `${daysLeft} ngày ${hoursLeft}h`;
+        badgeClass = "bg-warning text-dark";
+      } else {
+        // Rất gấp (< 1 ngày) - đỏ
+        timeLeftText = `${hoursLeft}h ${minutesLeft}m`;
+        badgeClass = "bg-danger";
+      }
+
+      return `<span class="badge ${badgeClass}">Còn ${timeLeftText}</span><br><small>${dayjs(
+        value
+      ).format("DD/MM/YYYY HH:mm:ss")}</small>`;
+    }
+  } else if (key.toLowerCase() === "qty" && typeof value === "number") {
+    // Hiển thị màu sắc cho quantity dựa trên mức tồn kho
+    let badgeClass = "";
+    let textClass = "";
+
+    if (value <= 0) {
+      // Hết hàng - đỏ
+      badgeClass = "bg-danger";
+      textClass = "text-white";
+    } else if (value <= 5) {
+      // Sắp hết (≤ 5) - cam
+      badgeClass = "bg-warning text-dark";
+      textClass = "text-dark";
+    } else if (value <= 20) {
+      // Ít (≤ 20) - vàng
+      badgeClass = "bg-warning";
+      textClass = "text-dark";
+    } else {
+      // Đủ hàng (> 20) - xanh lá
+      badgeClass = "bg-success";
+      textClass = "text-white";
+    }
+
+    const statusText =
+      value <= 0 ? "Hết hàng" : value <= 5 ? "Sắp hết" : value <= 20 ? "Ít" : "Đủ hàng";
+
+    return `<span class="badge ${badgeClass} ${textClass}">${value} - ${statusText}</span>`;
+  } else if (typeof value === "string" && !isNaN(Date.parse(value))) {
     return dayjs(value).format("DD/MM/YYYY HH:mm:ss");
   } else if (prices.includes(key)) {
     return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
@@ -350,7 +480,7 @@ function formatCell(key, value) {
     const maxStars = 5;
     let stars = "";
     for (let i = 1; i <= maxStars; i++) {
-      stars += `<i class="bi ${i <= value ? 'bi-star-fill' : 'bi-star'}"></i>`;
+      stars += `<i class="bi ${i <= value ? "bi-star-fill" : "bi-star"}"></i>`;
     }
     return `<span class="text-warning">${stars}</span>`;
   }
