@@ -31,7 +31,8 @@
                 <i v-else class="bi bi-x-circle-fill text-danger fs-5"></i>
               </span>
               <span v-else class="cell-content">
-                {{ formatCell(key, item[key]) }}
+                <!-- {{ formatCell(key, item[key]) }} -->
+                <span v-html="formatCell(key, item[key])"></span>
               </span>
             </td>
             <td class="table-cell action-cell">

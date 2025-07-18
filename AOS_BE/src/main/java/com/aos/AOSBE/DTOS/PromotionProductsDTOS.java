@@ -14,7 +14,6 @@ public class PromotionProductsDTOS {
     private boolean isGift;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
     private ProductItemsDTOS productItem;
     private int promotionId;
 }

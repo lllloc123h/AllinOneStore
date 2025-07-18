@@ -26,7 +26,7 @@ public class PromotionProductsMapper {
 				    entity.isGift(),
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
-				    entity.getProductItems().getId(),
+				    productItemsMapper.mapper(entity.getProductItems()),
 				    entity.getPromotions().getId()
 			);
 	}
@@ -37,8 +37,8 @@ public class PromotionProductsMapper {
 					entity.isGift(),
 					entity.getCreatedAt(),
 					entity.getUpdatedAt(),
-					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-					promotionsService.promotionsFindById(entity.getPromotions()).orElse(null)
+					productItemsService.productItemsFindById(entity.getProductItem().getId()).orElse(null),
+					promotionsService.promotionsFindById(entity.getPromotionId()).orElse(null)
 			);
 	}
 
