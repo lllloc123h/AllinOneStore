@@ -268,7 +268,7 @@ public class ProductItemsAPI {
 			return ResponseEntity.ok(listDiscountProduct);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("MESSAGE","Đã có lỗi xả"));
+			return ResponseEntity.badRequest().body(Map.of("MESSAGE","Đã có lỗi xảy ra"));
 		}
 		
 	}
