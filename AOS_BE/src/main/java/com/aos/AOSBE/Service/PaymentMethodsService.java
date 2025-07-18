@@ -27,6 +27,10 @@ public class PaymentMethodsService {
 		return paymentMethodsRepository.findAll(spec, pageable);
 	}
 
+	public Optional<PaymentMethods> paymentMethodsFindByName(String name) {
+		return paymentMethodsRepository.findByName(name);
+	}
+
 	@Transactional
 	public PaymentMethods paymentMethodsSave(PaymentMethods paymentMethods) {
 		return paymentMethodsRepository.save(paymentMethods);

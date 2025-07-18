@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.EWalletsService;
@@ -46,6 +48,8 @@ public class OrdersAPI {
 	@Autowired
 	private OrderItemsService orderItemsService;
 
+	@Autowired
+	private OrderItemsMapper orderItemsMapper;
 	@Autowired
 	private EWalletsService EWalletsservice;
 	@Autowired
@@ -73,10 +77,14 @@ public class OrdersAPI {
 	}
 
 	@PostMapping("/admin/Orders")
-	public ResponseEntity<Orders> addNewOrders(@RequestBody OrdersDTOS entity) {
+	public ResponseEntity<?> userAddNewOrders(@RequestBody OrdersDTOS entity) {
+		try {
+			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 
-		Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
 	}
 
 	@PutMapping("/admin/Orders/{id}")
@@ -96,11 +104,22 @@ public class OrdersAPI {
 		}
 	}
 
-	@PostMapping("/Orders")
-	public ResponseEntity<Orders> addNewOrdersByUser(@RequestBody OrdersDTOS entity) {
-
-		Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+	@PostMapping("/user/Orders")
+	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody OrdersDTOS entity) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			entity.setAccounts(user.getId());
+			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+			List<OrderItems> OrderToOrderItem = new ArrayList<>();
+			entity.getProducts().forEach(element -> {
+				OrderToOrderItem.add(orderItemsMapper.mapperToObject(element));
+			});
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
 	}
 
 	@DeleteMapping("/admin/Orders/{id}")

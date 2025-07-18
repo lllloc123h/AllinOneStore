@@ -73,11 +73,11 @@
                         <div v-if="currentTab === 1">
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Phương thức thanh toán</label>
-                                <div class="form-check" v-for="method in ['COD', 'MOMO']" :key="method">
+                                <div class="form-check" v-for="method in dropdownPaymentMethods" :key="method">
                                     <input type="radio" class="form-check-input" :value="method"
                                         v-model="paymentMethod" />
                                     <label class="form-check-label">
-                                        {{ method === 'COD' ? 'Thanh toán khi nhận hàng' : 'Ví MoMo' }}
+                                        {{ method.name }}
                                     </label>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                 <li><strong>Số điện thoại:</strong> {{ defaultAddressData?.phone || '—' }}</li>
                                 <li><strong>Địa chỉ:</strong> {{ fullAddress }}</li>
                                 <li><strong>Giảm giá:</strong> {{ selectedCoupon?.code || 'Không áp dụng' }}</li>
-                                <li><strong>Thanh toán:</strong> {{ paymentMethod }}</li>
+                                <li><strong>Thanh toán:</strong> {{ paymentMethod.name }}</li>
                             </ul>
 
                             <h6 class="mt-4">Danh sách sản phẩm</h6>
@@ -149,10 +149,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api, { authService } from '../../Configs/api'
 import { onBeforeRouteLeave } from 'vue-router'
+import { dropDown } from '../../Configs/DropDownList'
 
 const router = useRouter()
 const route = useRoute()
@@ -163,7 +164,7 @@ const selectedCoupon = ref(null)
 const paymentMethod = ref('COD')
 const showSuccess = ref(false)
 const defaultAddressData = ref(null)
-
+const dropdownPaymentMethods = ref([]);
 const couponCodeInput = ref('')
 const couponError = ref('')
 
@@ -247,14 +248,32 @@ async function confirmOrder() {
 
     try {
         const payload = {
-            address: defaultAddressData.value,
-            couponCode: selectedCoupon.value?.code || null,
-            paymentMethod: paymentMethod.value,
+            address: defaultAddressData.value.id,
+            // couponCode: selectedCoupon.value?.code || null,
+            discountCouponCode: selectedCoupon.value?.code || null,
+            paymentMethods: paymentMethod.value.name,
             products: selectedProducts.value,
-            totalAmount: finalPrice.value
+            finalTotal: finalPrice.value
         }
-
-        const response = await api.post('/Orders', payload)
+        // const tempPayload = {
+        //     id: '',
+        //     actualShippingFee: '',
+        //     discountCouponCode: '',
+        //     discountValue: '',
+        //     shippedDate: '',
+        //     paymentStatus: '',
+        //     note: '',
+        //     point: '',
+        //     finalTotal: '',
+        //     orderInfor: '',
+        //     createdAt: '',
+        //     updatedAt: '',
+        //     accounts: '',
+        //     paymentMethods: '',
+        //     shippingMethods: '',
+        // }
+        console.log('📦', payload);
+        const response = await api.post('/user/Orders', { ...payload })
         console.log('✅ Đặt hàng thành công:', payload)
         alert('Đặt hàng thành công!')
         console.log(response.data)
@@ -271,6 +290,8 @@ async function confirmOrder() {
 // ==== Lifecycle ====
 
 onMounted(async () => {
+    dropdownPaymentMethods.value = (await dropDown('PaymentMethods')).content;
+    console.log('✅ Đã tải danh sách phương thức thanh toán:', dropdownPaymentMethods.value)
     if (route.query.products) {
         try {
             selectedProducts.value = JSON.parse(route.query.products)

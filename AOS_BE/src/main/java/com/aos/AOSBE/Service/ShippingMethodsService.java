@@ -36,6 +36,10 @@ public class ShippingMethodsService {
 		return shippingMethodsRepository.findById(id);
 	}
 
+	public Optional<ShippingMethods> shippingMethodsFindByName(String name) {
+		return shippingMethodsRepository.findByName(name);
+	}
+
 	@Transactional
 	public void shippingMethodsDeleteById(int id) {
 		shippingMethodsRepository.deleteById(id);

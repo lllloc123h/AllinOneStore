@@ -49,6 +49,21 @@ public class PaymentMethodsAPI {
 
 	}
 
+	@GetMapping("/PaymentMethods")
+	public ResponseEntity<?> getAllPaymentMethodsApiUserRoles(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
+		Page<PaymentMethods> pageResult = paymentMethodsService.paymentMethodsFindAll(page, size, filters);
+		List<PaymentMethodsDTOS> paymentMethods = pageResult.getContent().stream().map(paymentMethodsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", paymentMethods);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
+
+	}
+
 	@GetMapping("/admin/PaymentMethods/{id}")
 	public ResponseEntity<PaymentMethods> getPaymentMethodsByIdApi(@PathVariable int id) {
 		// try{

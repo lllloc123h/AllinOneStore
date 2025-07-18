@@ -48,6 +48,20 @@ public class ShippingMethodsAPI {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/ShippingMethods")
+	public ResponseEntity<?> getAllShippingMethodsApiUserRoles(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
+		Page<ShippingMethods> pageResult = shippingMethodsService.shippingMethodsFindAll(page, size, filters);
+		List<ShippingMethodsDTOS> shippingMethods = pageResult.getContent().stream().map(shippingMethodsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", shippingMethods);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/admin/ShippingMethods/{id}")
 	public ResponseEntity<ShippingMethods> getShippingMethodsByIdApi(@PathVariable int id) {
 		// try{
