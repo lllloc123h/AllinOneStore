@@ -31,7 +31,8 @@
                 <i v-else class="bi bi-x-circle-fill text-danger fs-5"></i>
               </span>
               <span v-else class="cell-content">
-                {{ formatCell(key, item[key]) }}
+                <!-- {{ formatCell(key, item[key]) }} -->
+                <span v-html="formatCell(key, item[key])"></span>
               </span>
             </td>
             <td class="table-cell action-cell">
@@ -473,8 +474,6 @@ function formatCell(key, value) {
     return value.join(", ");
   } else if (value === null || value === undefined) {
     return "N/A";
-<<<<<<< Updated upstream
-=======
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
     return `<img src="${value}" alt="image" style="max-width: 100px; max-height: 60px; object-fit: contain;" />`;
   } else if (key.toLowerCase().includes("rating")) {
@@ -484,7 +483,6 @@ function formatCell(key, value) {
       stars += `<i class="bi ${i <= value ? "bi-star-fill" : "bi-star"}"></i>`;
     }
     return `<span class="text-warning">${stars}</span>`;
->>>>>>> Stashed changes
   }
   return value;
 }
