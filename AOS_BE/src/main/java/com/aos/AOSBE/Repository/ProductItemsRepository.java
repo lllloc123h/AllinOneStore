@@ -154,9 +154,9 @@ public interface ProductItemsRepository
 			""")
 	Page<ProductItems> findRelatedItems(Long categoryId, Long productId, Pageable pageable);
 
-//	Page<ProductItems> findRelatedItems(Long categoryId, Long productId, Pageable of);
 
-//	@Query("SELECT p.id FROM ProductItems p WHERE p.discount > 0")
-//	List<Integer> findAllDiscountedProductIds();
+
+	@Query("SELECT p.productItems FROM PromotionProducts p")
+	List<ProductItems> findAllDiscountedProductIds();
 
 }

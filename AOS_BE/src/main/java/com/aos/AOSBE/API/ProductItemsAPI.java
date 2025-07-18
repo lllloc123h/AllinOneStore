@@ -257,14 +257,20 @@ public class ProductItemsAPI {
 	}
 
 	@GetMapping("/ProductItems/related/{id}")
-	public ResponseEntity<List<ProductItemsDTOS>> getRelatedProductItems(@PathVariable int id) {
+	public ResponseEntity<?> getRelatedProductItems(@PathVariable int id) {
     List<ProductItemsDTOS> relatedItems = productItemsService.getRelatedProductItems(id);
     return ResponseEntity.ok(relatedItems);
 }
 	@GetMapping("/ProductItems/Discount")
-	public ResponseEntity<List<ProductItems>> getDiscountProduct(){
-
-		return ResponseEntity.ok(null);
+	public ResponseEntity<?> getDiscountProduct(){
+		try {
+			List<ProductItems> listDiscountProduct = productItemsService.findAllDiscountedProductIds();
+			return ResponseEntity.ok(listDiscountProduct);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("MESSAGE","Đã có lỗi xả"));
+		}
+		
 	}
 
 }

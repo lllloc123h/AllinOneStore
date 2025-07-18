@@ -122,4 +122,8 @@ public class ProductItemsService {
 
 		return relatedItems.stream().map(productItemsMapper::mapper).collect(Collectors.toList());
 	}
+	@Transactional
+	public List<ProductItems> findAllDiscountedProductIds(){
+		return productItemsRepository.findAllDiscountedProductIds();
+	};
 }
