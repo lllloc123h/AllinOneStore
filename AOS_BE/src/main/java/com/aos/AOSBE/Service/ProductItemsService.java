@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
-import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Repository.ProductItemsRepository;
@@ -29,6 +29,10 @@ public class ProductItemsService {
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
 
+
+    public List<DiscountedProductDTOS> getDiscountedProducts() {
+        return productItemsRepository.getAllDiscountedProducts();
+    }
 	public Page<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<ProductItems> spec = specBuilder.buildFilter(filters);

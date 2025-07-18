@@ -16,7 +16,7 @@ public interface PromotionProductsRepository extends JpaRepository<PromotionProd
 
     @Query("SELECT pp FROM PromotionProducts pp WHERE pp.promotions.id = ?1 ")
     List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId);
-
-    PromotionProducts findAllByProductItems_IdAndPromotions_Id(int productItemsId, int promotionsId);
+    
+    
 }
 

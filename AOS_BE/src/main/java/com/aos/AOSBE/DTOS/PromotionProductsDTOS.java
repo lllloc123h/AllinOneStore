@@ -1,9 +1,6 @@
 package com.aos.AOSBE.DTOS;
-import jakarta.persistence.*;
 
-import java.time.*;
-import java.math.*;
-import java.util.*;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,8 @@ public class PromotionProductsDTOS {
     private double costShare;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private int productItems;
-    private int promotions;
+
+    private ProductItemsDTOS productItem;
+    private int promotionId;
 }
+

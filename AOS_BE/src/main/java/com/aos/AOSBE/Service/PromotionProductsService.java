@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.Entity.PromotionProducts;
+import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Repository.PromotionProductsRepository;
 
 @Service
@@ -44,10 +45,10 @@ public class PromotionProductsService {
 	public List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId) {
 		return promotionProductsRepository.findPromotionProductsByPromotionId(promotionId);
 	}
-	public Page<PromotionProducts> findAll(int page, int size, Map<String, Object> filters) {
+	public Page<PromotionProducts> promotionsFindAll(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		Specification<PromotionProducts> spec = specBuilder.buildFilter(filters);
-		return promotionProductsRepository.findAll(spec, pageable);
+
+		return promotionProductsRepository.findAll(pageable);
 	}
 
 }

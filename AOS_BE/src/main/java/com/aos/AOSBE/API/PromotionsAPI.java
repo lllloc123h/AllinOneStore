@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.GroupProductDTO;
+import com.aos.AOSBE.DTOS.BaseProductsDTOS;
+import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.DTOS.PromotionProductsDTOS;
 import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.PromotionProducts;
 import com.aos.AOSBE.Mapper.BaseProductsMapper;
 import com.aos.AOSBE.Mapper.GroupProductMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Mapper.PromotionProductsMapper;
 import com.aos.AOSBE.Service.PromotionProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,9 +49,8 @@ public class PromotionsAPI {
 	private BaseProductsMapper baseProductsMapper;
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
-    @Autowired
-    private GroupProductMapper groupProductMapper;
-
+	@Autowired
+	private PromotionProductsMapper promotionProductsMapper;
 
 	@GetMapping("/Promotions")
 	public ResponseEntity<?> getAllPromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
@@ -136,5 +138,16 @@ public class PromotionsAPI {
 	public ResponseEntity<Void> deletePromotions(@PathVariable int id) {
 		promotionsService.promotionsDeleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+	@GetMapping("/Users/PromotionProducts")
+	public ResponseEntity<?> getAllPromotionProductUsers(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size){
+		Page<PromotionProducts> pageResult = promotionProductsService.promotionsFindAll(page, size);
+		List<PromotionProductsDTOS> promotionProduct = pageResult.getContent().stream().map(promotionProductsMapper::mapper)
+				.collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", promotionProduct);
+		response.put("totalPages", pageResult.getTotalPages());
+		return ResponseEntity.ok(response);
 	}
 }

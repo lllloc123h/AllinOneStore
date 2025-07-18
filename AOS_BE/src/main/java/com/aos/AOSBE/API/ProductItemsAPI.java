@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.DTOS.PriceHistoriesDTOS;
 import com.aos.AOSBE.DTOS.ProductImagesDTOS;
 import com.aos.AOSBE.DTOS.ProductItemDetailDTO;
@@ -143,6 +144,10 @@ public class ProductItemsAPI {
 		}
 
 	}
+	@GetMapping("/discounted")
+    public ResponseEntity<List<DiscountedProductDTOS>> getDiscountedProducts() {
+        return ResponseEntity.ok(productItemsService.getDiscountedProducts());
+    }
 
 //	@GetMapping("/Product/MultiplrFilter/{sku}")
 //	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
