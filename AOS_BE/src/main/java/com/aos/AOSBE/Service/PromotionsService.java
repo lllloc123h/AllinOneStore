@@ -42,7 +42,7 @@ public class PromotionsService {
 		promotionsRepository.deleteById(id);
 	}
 
-	public List<Promotions> promotionsFindByIsActiveTrue(int productItemId) {
+	public List<Promotions> promotionsFindByIsActiveTrueByPromotionItemId(int productItemId) {
 		return promotionsRepository.findActivePromotionsByProductItemId(productItemId);
 	}
 	public Object[] promotionsFindFirstTypePromotionByProductItemId(int productItemId) {

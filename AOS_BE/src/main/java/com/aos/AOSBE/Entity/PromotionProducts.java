@@ -27,9 +27,7 @@ public class PromotionProducts {
 	
     @Column(name = "is_gift")
     private boolean isGift;
-	
-    @Column(name = "cost_share")
-    private double costShare;
+
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;

@@ -29,10 +29,21 @@ public class ProductItemsMapper {
 		if (productImages.size() != 0) {
 			imgURL = productImages.get(0).getImageUrl();
 		}
-		return new ProductItemsDTOS(entity.getId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
-				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
-				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				entity.getBaseProducts().getId(), entity.getBaseProducts().getName(),
+		return new ProductItemsDTOS(
+				entity.getId(),
+				entity.getCost(),
+				entity.getPrice(),
+				entity.getTurnBuy(),
+				entity.getDescription(),
+				entity.getSku(),
+				entity.getSafetyStock(),
+				entity.getQty(),
+				entity.getSellStart(),
+				entity.getSellEnd(),
+				entity.getCreatedAt(),
+				entity.getUpdatedAt(),
+				entity.getBaseProducts().getId(),
+				entity.getBaseProducts().getName(),
 				entity.getBaseProducts().getMaterial(), imgURL,
 				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null));
 	}

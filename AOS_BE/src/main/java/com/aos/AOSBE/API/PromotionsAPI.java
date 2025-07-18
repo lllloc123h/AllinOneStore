@@ -52,7 +52,7 @@ public class PromotionsAPI {
 
 	@GetMapping("/Promotions")
 	public ResponseEntity<?> getAllPromotionByProductItemId(@RequestParam("productItemId") int productItemId) {
-		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrue(productItemId);
+		List<Promotions> promotions = promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(productItemId);
 		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
 		return ResponseEntity.ok(promotionsDTOS);
 	}
@@ -99,7 +99,6 @@ public class PromotionsAPI {
 		response.put("content", promotions);
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
-
 	}
 
 	@GetMapping("/admin/Promotions/{id}")

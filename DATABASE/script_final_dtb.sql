@@ -247,7 +247,6 @@ CREATE TABLE
 		product_item_id INT NULL,         -- nếu áp dụng cụ thể từng item
 		require_qty int,
 		is_gift bit default 0,
-		cost_share decimal(3, 2),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,

@@ -46,6 +46,109 @@
           />
         </div>
 
+        <!-- <div class="mb-3">
+          <label :for="type" class="form-label text-capitalize">type</label>
+          <input :id="type" v-model="formData.type" type="text" class="form-control" :placeholder="`Enter type`" />
+        </div>
+
+        <div class="mb-3">
+          <label :for="discountType" class="form-label text-capitalize">discountType</label>
+          <input :id="discountType" v-model="formData.discountType" type="text" class="form-control"
+            :placeholder="`Enter discountType`" />
+        </div> -->
+        <div class="mb-3">
+          <label for="type" class="form-label text-capitalize">Type</label>
+          <select id="type" v-model="formData.type" class="form-select">
+            <option disabled value="">Select type</option>
+            <option
+              v-for="item in dropdownTypePromotions"
+              :key="item.id"
+              :value="item.type"
+            >
+              {{ item.type }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="discountValue" class="form-label text-capitalize"
+            >discountValue</label
+          >
+          <input
+            id="discountValue"
+            v-model="formData.discountValue"
+            type="number"
+            :disabled="formData.type === 'COMBO'"
+            class="form-control"
+            placeholder="`Enter discountValue`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="comboPrice" class="form-label text-capitalize">comboPrice</label>
+          <input
+            id="comboPrice"
+            v-model="formData.comboPrice"
+            type="number"
+            :disabled="formData.type === 'DISCOUNT'"
+            class="form-control"
+            placeholder="`Enter comboPrice`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="usageLimit" class="form-label text-capitalize">usageLimit</label>
+          <input
+            id="usageLimit"
+            v-model="formData.qty"
+            type="number"
+            class="form-control"
+            placeholder="`Enter usageLimit`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="startAt" class="form-label text-capitalize">startAt</label>
+          <input
+            id="startAt"
+            v-model="formData.startAt"
+            type="datetime-local"
+            class="form-control"
+            placeholder="`Enter startAt`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="endAt" class="form-label text-capitalize">endAt</label>
+          <input
+            id="endAt"
+            v-model="formData.endAt"
+            type="datetime-local"
+            class="form-control"
+            placeholder="`Enter endAt`"
+          />
+        </div>
+
+        <div class="mb-3">
+          <!-- <label class="form-label text-capitalize">isActive</label> -->
+          <input
+            class="form-check-input"
+            type="radio"
+            id="isActiveTrue"
+            :value="true"
+            v-model="formData.isActive"
+          />
+          <label class="form-check-label" for="isActiveTrue">Active</label>
+
+          <input
+            class="form-check-input"
+            type="radio"
+            id="isActiveFalse"
+            :value="false"
+            v-model="formData.isActive"
+          />
+          <label class="form-check-label" for="isActiveFalse">Inactive</label>
+        </div>
         <!-- Base Product Selection -->
         <div class="mb-3">
           <label class="form-label text-capitalize">Select Base Product</label>
@@ -57,7 +160,7 @@
             >
               <span v-if="selectedProduct">
                 <img
-                  :src="selectedProduct.mainImagePreviewImg"
+                  :src="selectedProduct.mainImage"
                   alt=""
                   width="30"
                   height="30"
@@ -79,7 +182,7 @@
                 style="cursor: pointer"
               >
                 <img
-                  :src="product.mainImagePreviewImg"
+                  :src="product.mainImage"
                   alt=""
                   width="40"
                   height="40"
@@ -118,7 +221,7 @@
           </div>
 
           <!-- Required Quantity Input -->
-          <div class="mt-3">
+          <div class="mt-3" v-if="formData.type !== 'DISCOUNT'">
             <label class="form-label">Required Quantity for this Base Product:</label>
             <input
               type="number"
@@ -162,6 +265,7 @@
                       <p class="card-text mb-1">
                         <small>SKU: {{ item.sku }}</small
                         ><br />
+                        <small>Cost: {{ item.cost?.toLocaleString() }} VND</small> <br />
                         <small>Price: {{ item.price?.toLocaleString() }} VND</small><br />
                         <small>Quantity: {{ item.qty }}</small>
                       </p>
@@ -169,7 +273,7 @@
                       <!-- Gift Toggle -->
                       <div
                         class="form-check form-switch mt-2"
-                        v-if="isItemSelected(item.id)"
+                        v-if="isItemSelected(item.id) && formData.type !== 'DISCOUNT'"
                       >
                         <input
                           class="form-check-input"
@@ -228,7 +332,10 @@
                   <span class="chip-name">{{ item.name }}</span>
                   <small class="chip-sku">{{ item.sku }}</small>
                   <small class="chip-base">Base: {{ item.baseProduct?.name }}</small>
-                  <small v-if="item.isGift" class="chip-gift">
+                  <small
+                    v-if="item.isGift && formData.type !== 'DISCOUNT'"
+                    class="chip-gift"
+                  >
                     <i class="bi bi-gift me-1"></i>
                     Gift Item
                   </small>
@@ -288,14 +395,17 @@
                       <p class="summary-count">
                         {{ group.items.length }} item(s) selected
                       </p>
-                      <p class="summary-required-qty">
+                      <p class="summary-required-qty" v-if="formData.type !== 'DISCOUNT'">
                         <small class="text-primary">
                           <i class="bi bi-123 me-1"></i>
                           Required Qty:
                           {{ getBaseProductRequiredQuantity(group.baseProduct.id) || 1 }}
                         </small>
                       </p>
-                      <p class="summary-gifts" v-if="group.giftCount > 0">
+                      <p
+                        class="summary-gifts"
+                        v-if="group.giftCount > 0 && formData.type !== 'DISCOUNT'"
+                      >
                         <small class="text-success">
                           <i class="bi bi-gift me-1"></i>
                           {{ group.giftCount }} gift item(s)
@@ -341,14 +451,19 @@
                       <strong>{{ group.baseProduct.name }}</strong>
                       <br />
                       <small class="text-muted">
-                        Min Quantity:
-                        {{ getBaseProductRequiredQuantity(group.baseProduct.id) }} |
-                        Items: {{ group.items.length }} | Gifts: {{ group.giftCount }}
+                        <span v-if="formData.type !== 'DISCOUNT'">
+                          Min Quantity:
+                          {{ getBaseProductRequiredQuantity(group.baseProduct.id) }} |
+                        </span>
+                        Items: {{ group.items.length
+                        }}<span v-if="formData.type !== 'DISCOUNT'">
+                          | Gifts: {{ group.giftCount }}</span
+                        >
                       </small>
                     </li>
                   </ul>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" v-if="formData.type !== 'DISCOUNT'">
                   <h6 class="text-success">
                     <i class="bi bi-gift me-2"></i>
                     Gift Items Summary
@@ -374,131 +489,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- <div class="mb-3">
-          <label :for="type" class="form-label text-capitalize">type</label>
-          <input :id="type" v-model="formData.type" type="text" class="form-control" :placeholder="`Enter type`" />
-        </div>
-
-        <div class="mb-3">
-          <label :for="discountType" class="form-label text-capitalize">discountType</label>
-          <input :id="discountType" v-model="formData.discountType" type="text" class="form-control"
-            :placeholder="`Enter discountType`" />
-        </div> -->
-        <div class="mb-3">
-          <label for="type" class="form-label text-capitalize">Type</label>
-          <select id="type" v-model="formData.type" class="form-select">
-            <option disabled value="">Select type</option>
-            <option
-              v-for="item in dropdownTypePromotions"
-              :key="item.id"
-              :value="item.type"
-            >
-              {{ item.type }}
-            </option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label for="discountType" class="form-label text-capitalize"
-            >Discount Type</label
-          >
-          <select
-            id="discountType"
-            v-model="formData.discountType"
-            class="form-select"
-            :disabled="formData.type === 'COMBO'"
-          >
-            <option disabled value="">Select discount type</option>
-            <option
-              v-for="item in dropdownTypeDiscount"
-              :key="item.id"
-              :value="item.type"
-            >
-              {{ item.type }}
-            </option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label for="discountValue" class="form-label text-capitalize"
-            >discountValue</label
-          >
-          <input
-            id="discountValue"
-            v-model="formData.discountValue"
-            type="number"
-            :disabled="formData.type === 'COMBO'"
-            class="form-control"
-            placeholder="`Enter discountValue`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label for="comboPrice" class="form-label text-capitalize">comboPrice</label>
-          <input
-            id="comboPrice"
-            v-model="formData.comboPrice"
-            type="number"
-            :disabled="formData.type === 'DISCOUNT'"
-            class="form-control"
-            placeholder="`Enter comboPrice`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label for="usageLimit" class="form-label text-capitalize">usageLimit</label>
-          <input
-            id="usageLimit"
-            v-model="formData.usageLimit"
-            type="number"
-            class="form-control"
-            placeholder="`Enter usageLimit`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label for="startAt" class="form-label text-capitalize">startAt</label>
-          <input
-            id="startAt"
-            v-model="formData.startAt"
-            type="datetime-local"
-            class="form-control"
-            placeholder="`Enter startAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label for="endAt" class="form-label text-capitalize">endAt</label>
-          <input
-            id="endAt"
-            v-model="formData.endAt"
-            type="datetime-local"
-            class="form-control"
-            placeholder="`Enter endAt`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <!-- <label class="form-label text-capitalize">isActive</label> -->
-          <input
-            class="form-check-input"
-            type="radio"
-            id="isActiveTrue"
-            :value="true"
-            v-model="formData.isActive"
-          />
-          <label class="form-check-label" for="isActiveTrue">Active</label>
-
-          <input
-            class="form-check-input"
-            type="radio"
-            id="isActiveFalse"
-            :value="false"
-            v-model="formData.isActive"
-          />
-          <label class="form-check-label" for="isActiveFalse">Inactive</label>
         </div>
 
         <button type="submit" :disable="props.action === 'view'" class="btn btn-primary">
@@ -770,16 +760,15 @@ const formTableService = createCrudService(props.TableName);
 
 const formData = reactive({
   id: "",
-  name: "",
-  description: "",
-  type: "",
-  discountType: "",
+  name: "KHUYẾN MÃI HÈ CỰC SỐC MUA 2 ÁO THUN UNISEX GIÁ 150.000 VND",
+  description: "Mua 2 áo thun unisex bất kỳ, giá combo chỉ 150.000 VND",
+  type: "COMBO",
   discountValue: "",
-  comboPrice: "",
-  usageLimit: "",
-  startAt: "",
-  endAt: "",
-  isActive: "",
+  comboPrice: "150000",
+  qty: "200",
+  startAt: "2025-07-01T04:23:00",
+  endAt: "2025-07-20T19:22:00",
+  isActive: "false",
   createdAt: "",
   updatedAt: "",
 });
@@ -860,14 +849,16 @@ async function submitForm() {
   formData.startAt = toISOStringWithTimezone(formData.startAt);
   formData.endAt = toISOStringWithTimezone(formData.endAt);
   try {
-    console.log(formData);
+    console.log("Submitting form data:", formData);
+    console.log("Selected items from all bases:", selectedItemsFromAllBases.value);
+    console.log("Base product required quantities:", baseProductRequiredQuantities.value);
+    console.log("Item gift status:", itemGiftStatus.value);
+    console.log("All selected items:", allSelectedItems.value);
     const response = await formTableService.create(formData);
-
     // Create promotion products
     if (selectedItemsFromAllBases.value.length > 0) {
       await createPromotionProducts(response.data.id);
     }
-
     console.log("Create successful:", response.data);
     router.push(`/Admin/${props.TableName}`);
   } catch (error) {
@@ -879,14 +870,25 @@ async function submitForm() {
 async function createPromotionProducts(promotionId) {
   try {
     const promotionProductPromises = selectedItemsFromAllBases.value.map((item) => {
-      const requiredQuantity = getBaseProductRequiredQuantity(item.baseProduct.id);
-      const isGift = isItemGift(item.id);
-
-      return api.post("/admin/PromotionProduct", {
+      // For DISCOUNT type, don't use required quantity, just use 1
+      const requiredQuantity =
+        formData.type === "DISCOUNT"
+          ? null
+          : getBaseProductRequiredQuantity(item.baseProduct.id);
+      const isGift = formData.type === "DISCOUNT" ? false : isItemGift(item.id);
+      console.log(
+        "Creating promotion product for item:",
+        item,
+        "with required quantity:",
+        requiredQuantity,
+        "and isGift:",
+        isGift
+      );
+      return api.post("/admin/PromotionProducts", {
         promotions: promotionId,
         productItems: item.id,
-        requiredQuantity: requiredQuantity,
-        isGift: isGift,
+        requireQty: requiredQuantity,
+        gift: isGift,
       });
     });
 
@@ -900,9 +902,6 @@ async function createPromotionProducts(promotionId) {
 // Update promotion products
 async function updatePromotionProducts(promotionId) {
   try {
-    // First, delete existing promotion products
-    await api.delete(`/admin/PromotionProduct/ByPromotionId/${promotionId}`);
-
     // Then create new ones
     if (selectedItemsFromAllBases.value.length > 0) {
       await createPromotionProducts(promotionId);
@@ -914,14 +913,14 @@ async function updatePromotionProducts(promotionId) {
 const fetchData = async () => {
   if (!props.TableName) return;
   try {
-    const response = await formTableService.getById(props.id);
-    response.data.createdAt = formatDate(response.data.createdAt);
-    response.data.updatedAt = formatDate(response.data.updatedAt);
+    // const response = await formTableService.getById(props.id);
+    // response.data.createdAt = formatDate(response.data.createdAt);
+    // response.data.updatedAt = formatDate(response.data.updatedAt);
 
-    response.data.startAt = formatDateTimeLocal(response.data.startAt);
-    response.data.endAt = formatDateTimeLocal(response.data.endAt);
+    // response.data.startAt = formatDateTimeLocal(response.data.startAt);
+    // response.data.endAt = formatDateTimeLocal(response.data.endAt);
 
-    Object.assign(formData, response.data);
+    // Object.assign(formData, response.data);
 
     // Load promotion products if editing
     if (props.action === "update" && props.id) {
@@ -1184,20 +1183,26 @@ function getGiftItems() {
 }
 
 onMounted(async () => {
-  // Load base products dropdown first
-  dropDownListBaseProduct.value = await dropDown("BaseProducts");
+  try {
+    // Load base products dropdown first
+    dropDownListBaseProduct.value = await dropDown("BaseProducts");
+    // Load categories dropdown
+    const responseCategories = await categoriesService.getAll(0, 1000);
+    // Handle different response structures
+    const categoriesData =
+      responseCategories.data?.content || responseCategories.data || [];
+    categoriesDropDownList.value = categoriesData.map((category) => {
+      return {
+        id: category.id,
+        name: category.name,
+      };
+    });
 
-  // Load categories dropdown
-  const responseCategories = await categoriesService.getAll(0, 1000);
-  categoriesDropDownList.value = responseCategories.data.map((category) => {
-    return {
-      id: category.id,
-      name: category.name,
-    };
-  });
-
-  // Then fetch promotion data (this will also load promotion products)
-  await fetchData();
+    // Then fetch promotion data (this will also load promotion products)
+    await fetchData();
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
 });
 watch(() => props.id, fetchData);
 watch(
