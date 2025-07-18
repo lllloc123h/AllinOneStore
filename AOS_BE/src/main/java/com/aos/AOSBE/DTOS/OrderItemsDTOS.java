@@ -26,4 +26,6 @@ public class OrderItemsDTOS {
     private String comboGroup;
     private UUID comboGroupId;
     private Integer comboQty;
+    private Integer productItemId;
+
 }

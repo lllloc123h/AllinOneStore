@@ -34,30 +34,38 @@ public class OrderItems {
     @Column(name = "selling_price")
     private double sellingPrice;
 	
-    @Column(name = "total")
+    @Column(name = "total", insertable = false, updatable = false)
     private double total;
 	
     @Column(name = "coupon_code")
     private String couponCode;
+    
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
+	
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+	
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
+    
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
+    
     @ManyToOne
     @JoinColumn(name = "promotion_id")
     private Promotions promotions;
+    
     @JoinColumn(name = "combo_group")
     private String comboGroup;
+    
     @JoinColumn(name = "combo_group_id")
     private UUID comboGroupId;
+    
     @JoinColumn(name="combo_qty")
     private Integer comboQty;
 }

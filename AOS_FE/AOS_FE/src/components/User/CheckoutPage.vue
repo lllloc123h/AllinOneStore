@@ -72,6 +72,17 @@
                         <!-- Tab 2: Thanh toán -->
                         <div v-if="currentTab === 1">
                             <div class="mb-3">
+                                <label class="form-label fw-bold">Phương thức giao hàng</label>
+                                <div class="form-check" v-for="method in dropdownShippingMethods" :key="method.id">
+                                    <input type="radio" class="form-check-input" :value="method"
+                                        v-model="shippingMethod" />
+                                    <label class="form-check-label">
+                                        {{ method.name }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label fw-bold">Phương thức thanh toán</label>
                                 <div class="form-check" v-for="method in dropdownPaymentMethods" :key="method">
                                     <input type="radio" class="form-check-input" :value="method"
@@ -93,6 +104,7 @@
                                 <li><strong>Địa chỉ:</strong> {{ fullAddress }}</li>
                                 <li><strong>Giảm giá:</strong> {{ selectedCoupon?.code || 'Không áp dụng' }}</li>
                                 <li><strong>Thanh toán:</strong> {{ paymentMethod.name }}</li>
+                                <li><strong>Giao hàng:</strong> {{ shippingMethod?.name || '—' }}</li>
                             </ul>
 
                             <h6 class="mt-4">Danh sách sản phẩm</h6>
@@ -154,6 +166,8 @@ import { useRoute, useRouter } from 'vue-router'
 import api, { authService } from '../../Configs/api'
 import { onBeforeRouteLeave } from 'vue-router'
 import { dropDown } from '../../Configs/DropDownList'
+const dropdownShippingMethods = ref([])
+const shippingMethod = ref(null)
 
 const router = useRouter()
 const route = useRoute()
@@ -247,14 +261,33 @@ async function confirmOrder() {
     }
 
     try {
+        // const payload = {
+        //     address: defaultAddressData.value.id,
+        //     // couponCode: selectedCoupon.value?.code || null,
+        //     discountCouponCode: selectedCoupon.value?.code || null,
+        //     paymentMethods: paymentMethod.value.name,
+        //     products: selectedProducts.value,
+        //     finalTotal: finalPrice.value
+        // }
         const payload = {
             address: defaultAddressData.value.id,
-            // couponCode: selectedCoupon.value?.code || null,
             discountCouponCode: selectedCoupon.value?.code || null,
-            paymentMethods: paymentMethod.value.name,
-            products: selectedProducts.value,
-            finalTotal: finalPrice.value
+            paymentMethodId: paymentMethod.value.id,
+            shippingMethodId: shippingMethod.value.id, // ✅ thêm dòng này
+            products: selectedProducts.value.map(item => ({
+                productId: item.id,
+                productItemId: item.productItemId, // ✅ Thêm dòng này
+                quantity: item.quantity
+            })),
+            finalTotal: finalPrice.value,
+            note: '',
+            orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`
         }
+
+
+
+
+
         // const tempPayload = {
         //     id: '',
         //     actualShippingFee: '',
@@ -323,6 +356,8 @@ onMounted(async () => {
     if (savedMethod) {
         paymentMethod.value = savedMethod
     }
+    dropdownShippingMethods.value = (await dropDown('ShippingMethods')).content
+    console.log('✅ Đã tải shipping methods:', dropdownShippingMethods.value)
 
 })
 onBeforeRouteLeave((to, from, next) => {

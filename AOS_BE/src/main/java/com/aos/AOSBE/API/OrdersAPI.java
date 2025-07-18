@@ -106,21 +106,33 @@ public class OrdersAPI {
 
 	@PostMapping("/user/Orders")
 	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody OrdersDTOS entity) {
-		try {
-			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
-			entity.setAccounts(user.getId());
-			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
-			List<OrderItems> OrderToOrderItem = new ArrayList<>();
-//			entity.getProducts().forEach(element -> {
-//				OrderToOrderItem.add(orderItemsMapper.mapperToObject(element));
-//			});
-			return ResponseEntity.ok(saved);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
-		}
+	    try {
+	        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+	        Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+	        entity.setAccounts(user.getId());
+
+	        // Lưu đơn hàng trước
+	        Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+
+	        // Mapping các item
+	        List<OrderItems> orderItems = entity.getProducts().stream()
+	            .map(item -> {
+	                OrderItems orderItem = orderItemsMapper.mapperToObject(item);
+	                orderItem.setOrders(saved);
+	                return orderItem;
+	            })
+	            .collect(Collectors.toList());
+
+	        // Lưu các item
+	        orderItemsService.orderItemsSaveAll(orderItems);
+
+	        return ResponseEntity.ok(saved);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+	    }
 	}
+
 
 	@DeleteMapping("/admin/Orders/{id}")
 	public ResponseEntity<Void> deleteOrders(@PathVariable int id) {
