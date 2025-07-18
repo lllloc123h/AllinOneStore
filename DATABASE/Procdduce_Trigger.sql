@@ -4,7 +4,6 @@ OR
 ALTER PROCEDURE usp_DropTablesAndConstraints AS BEGIN
 SET
     NOCOUNT ON;
-
 PRINT '🔧 Disabling all foreign key constraints...';
 
 EXEC sp_msforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';

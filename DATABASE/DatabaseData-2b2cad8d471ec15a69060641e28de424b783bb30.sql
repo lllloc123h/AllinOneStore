@@ -2433,22 +2433,27 @@ VALUES
 (N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 30.00, NULL, 50, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
 (N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
 INSERT INTO promotions (
-    name, description, type, discount_value,
-    combo_price, qty, start_at, end_at,
-    is_active, created_at, updated_at
+	name,
+	description,
+	type,
+	discount_value,
+	combo_price,
+	qty,
+	start_at,
+	end_at,
+	is_active,
+	created_at,
+	updated_at
 )
 VALUES
-(N'Combo mùa thu', N'Mua 2 áo khoác giá chỉ 599K', 'COMBO', NULL, NULL, 599000, 40, GETDATE(), DATEADD(DAY, 25, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Ưu đãi ví điện tử', N'Thanh toán bằng ví được giảm thêm 5%', 'DISCOUNT', 'PERCENT', 5.00, NULL, 300, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Giảm 25% áo nữ', N'Chỉ áp dụng danh mục Áo nữ', 'DISCOUNT', 'PERCENT', 25.00, NULL, 120, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Mua càng nhiều giảm càng sâu', N'Khuyến mãi theo cấp số nhân', 'DISCOUNT', 'PERCENT', 15.00, NULL, 200, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Siêu khuyến mãi cho thành viên VIP', N'Giảm 20% mọi đơn hàng cho VIP', 'DISCOUNT', 'PERCENT', 20.00, NULL, 50, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Quà tặng khách hàng trung thành', N'Mua đủ 5 đơn tặng 1 áo', 'COMBO', NULL, NULL, 0, 20, GETDATE(), DATEADD(DAY, 60, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Tặng tất cả voucher 30K', N'Sự kiện ngày hội thành viên', 'DISCOUNT', 'AMOUNT', 30000, NULL, 300, GETDATE(), DATEADD(DAY, 5, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Ưu đãi mùa lễ hội', N'Giảm 10% toàn bộ dịp lễ', 'DISCOUNT', 'PERCENT', 10.00, NULL, 150, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Gói combo Áo + Quần giá sốc', N'Trọn gói chỉ 350K', 'COMBO', NULL, NULL, 350000, 30, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Ưu đãi cuối tháng', N'Chốt sale giảm 12%', 'DISCOUNT', 'PERCENT', 12.00, NULL, 100, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE());
-GO
+(N'Khuyến mãi hè', N'Giảm giá 20% toàn bộ sản phẩm trong mùa hè', 'DISCOUNT', 20.00, NULL, 100, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+
+(N'Mua 2 tặng 1', N'Khi mua 2 sản phẩm sẽ được tặng 1 sản phẩm cùng loại', 'COMBO', NULL, 0.00, 50, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+
+(N'Giảm 100k đơn từ 500k', N'Áp dụng cho đơn hàng từ 500,000 VNĐ trở lên', 'DISCOUNT', 100000, NULL, 200, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+
+(N'Combo Café Tháng 7', N'Combo 3 gói café chỉ 199,000 VNĐ', 'COMBO', NULL, 199000, 30, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE());
+
 INSERT INTO coupons (
     code, description, discount_type, discount_value,
     min_order_amount, max_discount_amount, qty,
@@ -2477,3 +2482,28 @@ VALUES
 ('COUPON019', N'Mô tả coupon số 19', 'FREESHIP', 48000, 200000, 48000, 118, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 28, GETDATE()), GETDATE(), GETDATE()),
 ('COUPON020', N'Mô tả coupon số 20', 'G-DISCOUNT', 49000, NULL, 49000, 119, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 29, GETDATE()), GETDATE(), GETDATE());
 GO
+
+
+INSERT INTO promotion_products (
+    promotion_id,
+    product_item_id,
+    require_qty,
+    is_gift,
+    created_at,
+    updated_at
+) VALUES
+(1, 1, 1, 0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
+(1, 2, 2, 0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
+(2, 3, 1, 1, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
+
+-- Thêm combo khuyến mãi
+INSERT INTO promotion_products (
+    promotion_id,
+    product_item_id,
+    require_qty,
+    is_gift,
+    created_at,
+    updated_at
+) VALUES
+(2, 1, 1, 0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
+(2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
