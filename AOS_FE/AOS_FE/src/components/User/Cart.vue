@@ -1,571 +1,762 @@
 <template>
-  <div class="container py-5">
-    <div class="row">
-      <!-- Giỏ hàng -->
-      <div class="col-lg-8">
-        <table class="table table-borderless align-middle">
-          <thead class="cart-header">
-            <tr class="border-1">
-              <!-- Checkbox cột -->
-              <th>
-                <input
-                  type="checkbox"
-                  :checked="isAllSelected"
-                  @change="toggleSelectAll"
-                />
-              </th>
-              <th class="text-start">Sản phẩm</th>
-              <th>Tên</th>
-              <th>Loại</th>
-              <th>Giá</th>
-              <th class="text-center">Số lượng</th>
-              <th style="width: 20%" class="text-end">Tổng</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
+  <div class="cart-container">
+    <div class="container-fluid px-3 px-lg-5 py-4">
+      <!-- Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="cart-title mb-0">
+              <i class="bi bi-cart3 me-2 text-primary"></i>
+              Giỏ hàng của bạn
+            </h2>
+            <div class="cart-stats">
+              <span class="badge bg-primary rounded-pill px-3 py-2">
+                {{ cart.length }} sản phẩm
+              </span>
+            </div>
+          </div>
+          <!-- Select All -->
+          <div class="select-all-section bg-light rounded-3 p-3 mb-4">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="selectAll"
+                :checked="isAllSelected"
+                @change="toggleSelectAll"
+              />
+              <label class="form-check-label fw-semibold" for="selectAll">
+                Chọn tất cả sản phẩm ({{ selectedItems.length }}/{{ cart.length }})
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Giỏ hàng -->
+        <div class="col-lg-8">
+          <div class="cart-items-container">
+            <!-- Combo Groups -->
             <template v-for="(items, groupKey) in comboGroups" :key="'combo-' + groupKey">
-              <tr>
-                <td colspan="8" class="p-0 border-0">
-                  <div class="card mb-4 border-warning shadow-sm">
-                    <div
-                      class="card-header bg-warning bg-opacity-25 fw-bold text-danger d-flex align-items-center justify-content-between"
-                    >
-                      <div class="d-flex align-items-center">
-                        <input
-                          type="checkbox"
-                          class="me-2"
-                          :checked="isComboSelected(items)"
-                          @change="toggleSelectCombo(items)"
-                          :disabled="!isPromotionValid(items[0].promotions)"
-                        />
-                        <i class="bi bi-gift-fill mx-1"></i>
-                        <span>
-                          <span class="badge bg-danger me-2">Combo</span>
-                          {{ items[0].promotions.name }}
-                          <span class="text-muted ms-2">{{
-                            items[0].promotions.description
-                          }}</span>
-                          <span
-                            v-if="!isPromotionValid(items[0].promotions)"
-                            class="badge ms-2"
-                            :class="{
-                              'bg-danger':
-                                getPromotionStatusMessage(items[0].promotions) ===
-                                'Hết hạn',
-                              'bg-warning':
-                                getPromotionStatusMessage(items[0].promotions) ===
-                                'Hết hàng',
-                              'bg-secondary':
-                                getPromotionStatusMessage(items[0].promotions) ===
-                                'Ngừng hoạt động',
-                              'bg-info':
-                                getPromotionStatusMessage(items[0].promotions) ===
-                                'Chưa bắt đầu',
-                            }"
-                          >
-                            {{ getPromotionStatusMessage(items[0].promotions) }}
-                          </span>
-                        </span>
-                      </div>
-                      <button
-                        class="btn btn-sm btn-outline-danger"
-                        @click="removeComboGroupId(items)"
-                        :disabled="!isPromotionValid(items[0].promotions)"
-                      >
-                        <i class="bi bi-x-lg"></i>
-                      </button>
-                    </div>
-                    <div class="card-body p-0 bg-light rounded-bottom">
-                      <div class="d-flex align-items-center p-2">
-                        <span class="me-2">Số lượng combo:</span>
+              <div class="combo-card-wrapper mb-4">
+                <div
+                  class="card combo-card border-0 shadow-sm rounded-4 overflow-visible"
+                >
+                  <!-- Combo Header -->
+                  <div class="combo-header position-relative">
+                    <div class="combo-gradient-bg"></div>
+                    <div class="position-relative p-4">
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                          <div class="form-check me-3">
+                            <input
+                              class="form-check-input combo-checkbox"
+                              type="checkbox"
+                              :checked="isComboSelected(items)"
+                              @change="toggleSelectCombo(items)"
+                              :disabled="!isPromotionValid(items[0].promotions)"
+                            />
+                          </div>
+                          <div class="combo-icon-wrapper me-3">
+                            <i class="bi bi-gift-fill text-white"></i>
+                          </div>
+                          <div>
+                            <div class="d-flex align-items-center mb-1">
+                              <span class="combo-badge">COMBO</span>
+                              <h5 class="combo-title mb-0 ms-2">
+                                {{ items[0].promotions.name }}
+                              </h5>
+                            </div>
+                            <p class="combo-description mb-0">
+                              {{ items[0].promotions.description }}
+                            </p>
+                            <div
+                              v-if="!isPromotionValid(items[0].promotions)"
+                              class="mt-2"
+                            >
+                              <span
+                                class="status-badge"
+                                :class="{
+                                  'status-expired':
+                                    getPromotionStatusMessage(items[0].promotions) ===
+                                    'Hết hạn',
+                                  'status-out-of-stock':
+                                    getPromotionStatusMessage(items[0].promotions) ===
+                                    'Hết hàng',
+                                  'status-inactive':
+                                    getPromotionStatusMessage(items[0].promotions) ===
+                                    'Ngừng hoạt động',
+                                  'status-not-started':
+                                    getPromotionStatusMessage(items[0].promotions) ===
+                                    'Chưa bắt đầu',
+                                }"
+                              >
+                                {{ getPromotionStatusMessage(items[0].promotions) }}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                         <button
-                          class="btn btn-sm btn-outline-secondary"
-                          @click="decreaseComboGroupQty(items)"
-                          :disabled="
-                            items[0].comboQty <= 1 ||
-                            !isPromotionValid(items[0].promotions)
-                          "
+                          class="btn btn-outline-danger btn-sm combo-remove-btn"
+                          @click="removeComboGroupId(items)"
+                          :disabled="false"
                         >
-                          -
+                          <i class="bi bi-trash3"></i>
                         </button>
-                        <span class="mx-2 fw-bold">{{ items[0].comboQty }}</span>
-                        <button
-                          class="btn btn-sm btn-outline-secondary"
-                          @click="increaseComboGroupQty(items)"
-                          :disabled="!isPromotionValid(items[0].promotions)"
-                        >
-                          +
-                        </button>
-                        <span class="fw-bold text-danger ms-auto">
-                          Tổng:
-                          <template v-if="items[0].promotions.comboPrice > 0">
-                            {{
-                              (
-                                items[0].promotions.comboPrice * items[0].comboQty
-                              ).toLocaleString()
-                            }}₫
-                          </template>
-                          <template v-else>
-                            <span class="text-muted">Tính tại quầy</span>
-                          </template>
-                        </span>
                       </div>
-                      <table class="table table-borderless align-middle mb-0">
-                        <tbody>
-                          <tr
-                            v-for="item in items"
-                            :key="item.id"
-                            class="align-middle"
-                            :class="{
-                              'table-success bg-opacity-10': item.isGift,
-                              'table-secondary bg-opacity-10': !isPromotionValid(
-                                items[0].promotions
-                              ),
-                            }"
-                          >
-                            <td>
-                              <img
-                                :src="item.image"
-                                class="img-thumbnail"
-                                style="
-                                  width: 100px;
-                                  height: 125px;
-                                  object-fit: cover;
-                                  border-radius: 8px;
-                                "
-                              />
-                            </td>
-                            <td>
-                              <div class="fw-bold">
-                                {{ item.name }}
-                                <span
-                                  v-if="item.isGift"
-                                  class="badge bg-gradient bg-success ms-2 position-relative"
-                                >
-                                  <i class="bi bi-gift-fill me-1"></i>
-                                  Quà tặng
-                                  <span
-                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle"
-                                  >
-                                    <span class="visually-hidden">Miễn phí</span>
-                                  </span>
-                                </span>
-                              </div>
-                              <div class="small text-muted">{{ item.sku }}</div>
-                            </td>
-                            <td class="text-center">{{ item.quantity }}</td>
-                            <td class="text-end">
-                              <template v-if="items[0].promotions.comboPrice > 0">
-                                <span
-                                  v-if="
-                                    item.price !== undefined &&
-                                    item.quantity !== undefined
-                                  "
-                                >
-                                  <template v-if="item.isGift">
-                                    <div class="d-flex flex-column align-items-end">
-                                      <del class="text-muted small">
-                                        {{
-                                          (item.price * item.quantity).toLocaleString()
-                                        }}₫
-                                      </del>
-                                      <span class="text-success fw-bold">
-                                        <i class="bi bi-gift-fill me-1"></i>
-                                        Miễn phí
-                                      </span>
-                                    </div>
-                                  </template>
-                                  <template v-else>
-                                    {{ (item.price * item.quantity).toLocaleString() }}₫
-                                  </template>
-                                </span>
-                              </template>
-                              <template v-else>
-                                <span class="text-muted">Tính tại quầy</span>
-                              </template>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
                     </div>
                   </div>
-                </td>
-              </tr>
-            </template>
-            <tr v-for="item in singleProducts" :key="item.id" class="border-bottom">
-              <td>
-                <input type="checkbox" v-model="selectedItems" :value="item.id" />
-              </td>
-              <td>
-                <div class="d-flex position-relative align-items-center">
-                  <span class="position-relative mt-2 mb-2">
-                    <img
-                      :src="item.image"
-                      class="img-thumbnail me-2"
-                      style="height: 125px; width: 156px"
-                    />
 
-                    <!-- Thay nút Ưu đãi -->
-                    <button
-                      v-if="item.promotions.type === 'COMBO'"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModalToggle"
-                      class="btn border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      @click="openPromotionModal(item)"
-                      type="button"
-                    >
-                      <i class="bi bi-gift-fill"></i>Ưu đãi
-                    </button>
-                    <span
-                      v-else-if="item.promotions.type === 'DISCOUNT'"
-                      class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
-                    >
-                      <i class="bi bi-tag-fill"></i>-{{
-                        Math.round((item.promotions.discountValue / item.price) * 100)
-                      }}%
-                    </span>
-
-                    <!-- Modal của Ưu đãiiiiiiiiiii -->
-                    <div
-                      class="modal fade"
-                      id="exampleModalToggle"
-                      aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel"
-                      tabindex="-1"
-                    >
-                      <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
-                              Ưu đãi hiện có
-                            </h1>
+                  <!-- Combo Controls -->
+                  <div class="combo-controls bg-light border-top p-3">
+                    <div class="row align-items-center">
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                          <span class="me-3 fw-semibold text-muted">Số lượng combo:</span>
+                          <div class="quantity-controls">
                             <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
-                          </div>
-                          <div class="modal-body">
-                            <div
-                              v-for="item in promotions"
-                              :key="item.id"
-                              class="mb-3 row shadow-sm rounded-3"
+                              class="btn btn-outline-secondary btn-sm"
+                              @click="decreaseComboGroupQty(items)"
+                              :disabled="
+                                items[0].comboQty <= 1 ||
+                                !isPromotionValid(items[0].promotions)
+                              "
                             >
-                              <div class="col-10 card border-0">
-                                <div class="card-body py-3 px-4">
-                                  <!-- Header: badge + tên + giá -->
-                                  <div
-                                    class="d-flex justify-content-between align-items-center mb-2"
-                                  >
-                                    <div class="d-flex align-items-center">
-                                      <span class="badge bg-warning text-dark me-2">
-                                        <i class="bi bi-gift-fill me-1"></i> Ưu đãi
-                                      </span>
-                                      <span class="fw-bold">{{ item.name }}</span>
-                                    </div>
-                                    <div
-                                      class="fw-bold text-danger"
-                                      style="min-width: 100px; text-align: right"
-                                    >
-                                      {{ item.comboPrice.toLocaleString() }}đ
-                                    </div>
-                                  </div>
-
-                                  <!-- Mô tả -->
-                                  <div
-                                    class="text-muted text-start mb-3 mt-3"
-                                    style="font-size: 0.95em; white-space: pre-line"
-                                  >
-                                    {{ item.description }}
-                                  </div>
-
-                                  <!-- Info phụ -->
-                                  <div
-                                    class="d-flex justify-content-between"
-                                    style="font-size: 0.9em"
-                                  >
-                                    <span class="text-success"
-                                      >Còn lại: {{ item.qty }}</span
-                                    >
-                                    <span class="text-secondary"
-                                      >HSD:
-                                      {{
-                                        new Date(item.endAt).toLocaleDateString()
-                                      }}</span
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-                              <!-- Nút chuyển tab -->
-                              <div class="col-2 text-end" style="padding: 0">
-                                <button
-                                  style="width: 100%; height: 100%"
-                                  class="btn btn-sm btn-outline-primary border-0"
-                                  @click="openSpecificPromotionModal(item.id)"
-                                  data-bs-target="#exampleModalToggle2"
-                                  data-bs-toggle="modal"
-                                >
-                                  Xem thêm
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <!-- <div class="modal-footer">
-                            <button class="btn btn-primary">Open second modal</button>
-                          </div> -->
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="modal fade"
-                      id="exampleModalToggle2"
-                      aria-hidden="true"
-                      aria-labelledby="exampleModalToggleLabel2"
-                      tabindex="-1"
-                    >
-                      <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">
-                              Modal 2
-                            </h1>
+                              <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="quantity-display">{{ items[0].comboQty }}</span>
                             <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
-                          </div>
-                          <div class="modal-body">
-                            <!-- Hiển thị groupProducts -->
-                            <div v-if="groupProducts.length" class="mt-4">
-                              <h3 class="mb-2">Sản phẩm trong combo</h3>
-                              <div
-                                v-for="(group, idx) in groupProducts"
-                                :key="'group-' + idx"
-                                class="card mb-4 shadow-sm border-0"
-                              >
-                                <div class="card-body">
-                                  <!-- Thông tin combo -->
-                                  <div class="d-flex align-items-center mb-3">
-                                    <img
-                                      :src="group.baseProduct.mainImageUrl"
-                                      alt="Ảnh sản phẩm"
-                                      style="
-                                        width: 125px;
-                                        height: 156px;
-                                        object-fit: cover;
-                                        border-radius: 10px;
-                                        background: #f8f8f8;
-                                      "
-                                      class="me-3"
-                                    />
-                                    <div>
-                                      <div class="fw-bold" style="font-size: 1.1em">
-                                        {{ group.baseProduct.name }}
-                                      </div>
-                                      <div class="text-muted small mb-1">
-                                        {{ group.baseProduct.material }}
-                                      </div>
-                                      <div>
-                                        <span class="badge bg-success me-2">
-                                          <i class="bi bi-star-fill"></i>
-                                          {{ group.baseProduct.rating }}/5
-                                        </span>
-                                        <span class="badge bg-info text-dark">{{
-                                          group.baseProduct.categories
-                                        }}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <!-- Danh sách item trong combo -->
-                                  <div class="table-responsive">
-                                    <table class="table table-sm align-middle mb-0">
-                                      <thead>
-                                        <tr>
-                                          <th></th>
-                                          <th>Tên SP</th>
-                                          <th>Loại</th>
-                                          <th>Giá</th>
-                                          <th>Số lượng</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr
-                                          v-for="item in group.items"
-                                          :key="item.id"
-                                          :class="item.isGift ? 'table-success' : ''"
-                                        >
-                                          <td>
-                                            <input
-                                              type="checkbox"
-                                              :checked="selectedComboItems[item.id] > 0"
-                                              disabled
-                                              name="combo-item-checkbox"
-                                              :value="item.id"
-                                            />
-                                          </td>
-                                          <td>
-                                            <div class="d-flex align-items-center">
-                                              {{ group.baseProduct.name }}
-                                              <span
-                                                v-if="item.isGift"
-                                                style="background-color: red"
-                                                class="badge ms-2"
-                                                ><i class="bi bi-gift-fill"></i> Quà
-                                                tặng</span
-                                              >
-                                            </div>
-                                          </td>
-                                          <td>{{ item.sku }}</td>
-                                          <td class="text-danger fw-bold">
-                                            {{ item.price.toLocaleString() }}₫
-                                          </td>
-                                          <td>
-                                            <template v-if="item.isGift">
-                                              <span class="fw-bold text-success">{{
-                                                item.qty
-                                              }}</span>
-                                            </template>
-                                            <template v-else>
-                                              <div class="d-flex align-items-center">
-                                                <button
-                                                  class="btn btn-sm btn-outline-secondary"
-                                                  @click="decreaseComboQty(item)"
-                                                  :disabled="
-                                                    !selectedComboItems[item.id] ||
-                                                    selectedComboItems[item.id] <= 0
-                                                  "
-                                                >
-                                                  -
-                                                </button>
-                                                <span class="mx-2">{{
-                                                  selectedComboItems[item.id] || 0
-                                                }}</span>
-                                                <button
-                                                  class="btn btn-sm btn-outline-secondary"
-                                                  @click="increaseComboQty(item, group)"
-                                                  :disabled="
-                                                    selectedComboItems[item.id] >=
-                                                      item.qty ||
-                                                    getBaseProductTotalQty(group) >=
-                                                      item.qty
-                                                  "
-                                                >
-                                                  +
-                                                </button>
-                                              </div>
-                                              <div class="small text-muted">
-                                                Tối đa: {{ item.qty }}
-                                              </div>
-                                            </template>
-                                          </td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button
-                              type="button"
-                              class="btn btn-secondary"
-                              data-bs-dismiss="modal"
-                              :disabled="!iscalculateTotalQuantity"
-                              @click="handleProcessCombo()"
+                              class="btn btn-outline-secondary btn-sm"
+                              @click="increaseComboGroupQty(items)"
+                              :disabled="!isPromotionValid(items[0].promotions)"
                             >
-                              Xong
+                              <i class="bi bi-plus"></i>
                             </button>
                           </div>
                         </div>
                       </div>
+                      <div class="col-md-6 text-end">
+                        <div class="combo-total">
+                          <span class="total-label">Tổng cộng:</span>
+                          <template v-if="items[0].promotions.comboPrice > 0">
+                            <span class="total-price">
+                              {{
+                                (
+                                  items[0].promotions.comboPrice * items[0].comboQty
+                                ).toLocaleString()
+                              }}₫
+                            </span>
+                          </template>
+                          <template v-else>
+                            <span class="total-tbd">Tính tại quầy</span>
+                          </template>
+                        </div>
+                      </div>
                     </div>
-                  </span>
-                </div>
-              </td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.sku }}</td>
-              <td v-if="item.promotions.type == 'DISCOUNT'">
-                <del>{{ item.price.toLocaleString() }}đ</del>
-                {{ (item.price - item.promotions.discountValue).toLocaleString() }}₫
-              </td>
-              <td class="text-end" v-else>{{ item.price.toLocaleString() }}₫</td>
-              <td class="text-center">
-                <div class="d-inline-flex align-items-center border rounded px-2">
-                  <button class="btn btn-sm" @click="decreaseQty(item)">−</button>
-                  <span class="mx-2">{{ item.quantity }}</span>
-                  <button class="btn btn-sm" @click="increaseQty(item)">＋</button>
-                </div>
-              </td>
-              <td v-if="item.promotions.type == 'DISCOUNT'" class="text-end">
-                {{
-                  (
-                    (item.price - item.promotions.discountValue) *
-                    item.quantity
-                  ).toLocaleString()
-                }}₫
-              </td>
-              <td class="text-end" v-else>
-                {{ (item.price * item.quantity).toLocaleString() }}
-              </td>
-              <td>
-                <button class="btn btn-sm text-danger" @click="removeItem(item)">
-                  ✕
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                  </div>
 
-      <!-- Thanh toán -->
-      <div class="col-lg-4">
-        <div class="p-3 rounded cart-summary">
-          <h5>Tổng thanh toán</h5>
-          <ul class="list-unstyled">
-            <li class="d-flex justify-content-between py-1">
-              <span>Tạm Tính</span>
-              <span>{{ selectedTotal.toLocaleString() }}₫</span>
-            </li>
-            <li class="d-flex justify-content-between py-1">
-              <span>Đã Giảm Giá</span>
-              <span>{{ totalDiscount.toLocaleString() }}₫</span>
-            </li>
-            <hr />
-            <li class="d-flex justify-content-between fw-bold py-1">
-              <span>Tổng Cộng</span>
-              <span>{{ selectedTotal.toLocaleString() }}₫</span>
-            </li>
-          </ul>
-          <button
-            class="btn btn-dark w-100"
-            :disabled="selectedItems.length === 0"
-            @click="checkout"
-          >
-            Thanh toán
-          </button>
+                  <!-- Combo Items -->
+                  <div class="combo-items">
+                    <div
+                      v-for="item in items"
+                      :key="item.id"
+                      class="combo-item"
+                      :class="{
+                        'combo-item-gift': item.isGift,
+                        'combo-item-invalid': !isPromotionValid(items[0].promotions),
+                      }"
+                    >
+                      <div class="row align-items-center p-3">
+                        <div class="col-auto">
+                          <div class="item-image-wrapper position-relative">
+                            <img
+                              :src="item.image"
+                              class="item-image"
+                              alt="Product Image"
+                            />
+                            <div v-if="item.isGift" class="gift-overlay">
+                              <i class="bi bi-gift-fill"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="item-info">
+                            <h6 class="item-name mb-1">
+                              {{ item.name }}
+                              <span v-if="item.isGift" class="gift-badge">
+                                <i class="bi bi-gift-fill me-1"></i>
+                                Quà tặng
+                              </span>
+                            </h6>
+                            <p class="item-sku text-muted mb-0">{{ item.sku }}</p>
+                          </div>
+                        </div>
+                        <div class="col-auto">
+                          <div class="item-quantity">
+                            <span class="quantity-badge">{{ item.quantity }}</span>
+                          </div>
+                        </div>
+                        <div class="col-auto">
+                          <div class="item-price text-end">
+                            <template v-if="items[0].promotions.comboPrice > 0">
+                              <template v-if="item.isGift">
+                                <div class="gift-price">
+                                  <del class="original-price"
+                                    >{{
+                                      (item.price * item.quantity).toLocaleString()
+                                    }}₫</del
+                                  >
+                                  <span class="free-price">Miễn phí</span>
+                                </div>
+                              </template>
+                              <template v-else>
+                                <span class="price"
+                                  >{{
+                                    (item.price * item.quantity).toLocaleString()
+                                  }}₫</span
+                                >
+                              </template>
+                            </template>
+                            <template v-else>
+                              <span class="price-tbd">Tính tại quầy</span>
+                            </template>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <!-- Single Products -->
+            <div
+              v-for="item in singleProducts"
+              :key="item.id"
+              class="product-card-wrapper mb-3"
+            >
+              <div class="card product-card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4">
+                  <div class="row align-items-center">
+                    <!-- Checkbox -->
+                    <div class="col-auto">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          v-model="selectedItems"
+                          :value="item.id"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Product Image -->
+                    <div class="col-auto">
+                      <div class="product-image-wrapper position-relative">
+                        <img
+                          :src="item.image"
+                          class="product-image"
+                          alt="Product Image"
+                        />
+
+                        <!-- Promotion Badge - Corner overlay -->
+                        <div
+                          v-if="item.promotions.type === 'COMBO'"
+                          class="promotion-badge-corner"
+                        >
+                          <button
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModalToggle"
+                            class="btn btn-xs btn-danger rounded-pill shadow-sm promotion-btn-hover"
+                            @click="openPromotionModal(item)"
+                            type="button"
+                            title="Click để xem ưu đãi combo"
+                          >
+                            <i class="bi bi-gift-fill me-1"></i>
+                            <span class="d-none d-sm-inline">Ưu đãi</span>
+                            <i class="bi bi-chevron-right ms-1"></i>
+                          </button>
+                        </div>
+
+                        <div
+                          v-else-if="item.promotions.type === 'DISCOUNT'"
+                          class="promotion-badge-corner"
+                        >
+                          <span class="badge bg-warning text-dark rounded-pill shadow-sm">
+                            <i class="bi bi-tag-fill me-1"></i>-{{
+                              Math.round(
+                                (item.promotions.discountValue / item.price) * 100
+                              )
+                            }}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="col">
+                      <div class="product-info">
+                        <h6 class="product-name mb-1">{{ item.name }}</h6>
+                        <p class="product-sku text-muted mb-2">{{ item.sku }}</p>
+
+                        <!-- Price -->
+                        <div class="product-price">
+                          <template v-if="item.promotions.type == 'DISCOUNT'">
+                            <span
+                              class="original-price text-muted text-decoration-line-through me-2"
+                            >
+                              {{ item.price.toLocaleString() }}₫
+                            </span>
+                            <span class="current-price fw-bold text-danger">
+                              {{
+                                (
+                                  item.price - item.promotions.discountValue
+                                ).toLocaleString()
+                              }}₫
+                            </span>
+                          </template>
+                          <template v-else>
+                            <span class="current-price fw-bold"
+                              >{{ item.price.toLocaleString() }}₫</span
+                            >
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Quantity Controls -->
+                    <div class="col-auto">
+                      <div class="quantity-controls-single">
+                        <button
+                          class="btn btn-outline-secondary btn-sm"
+                          @click="decreaseQty(item)"
+                        >
+                          <i class="bi bi-dash"></i>
+                        </button>
+                        <span class="quantity-display mx-3">{{ item.quantity }}</span>
+                        <button
+                          class="btn btn-outline-secondary btn-sm"
+                          @click="increaseQty(item)"
+                        >
+                          <i class="bi bi-plus"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="col-auto">
+                      <div class="item-total text-end">
+                        <template v-if="item.promotions.type == 'DISCOUNT'">
+                          <span class="total-price fw-bold">
+                            {{
+                              (
+                                (item.price - item.promotions.discountValue) *
+                                item.quantity
+                              ).toLocaleString()
+                            }}₫
+                          </span>
+                        </template>
+                        <template v-else>
+                          <span class="total-price fw-bold">
+                            {{ (item.price * item.quantity).toLocaleString() }}₫
+                          </span>
+                        </template>
+                      </div>
+                    </div>
+
+                    <!-- Remove Button -->
+                    <div class="col-auto">
+                      <button
+                        class="btn btn-outline-danger btn-sm"
+                        @click="removeItem(item)"
+                      >
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thanh toán -->
+        <div class="col-lg-4">
+          <div class="checkout-sticky">
+            <div class="checkout-summary card border-0 shadow-lg rounded-4">
+              <div class="card-header bg-gradient-primary text-white rounded-top-4 p-4">
+                <h5 class="mb-0 d-flex align-items-center">
+                  <i class="bi bi-receipt me-2"></i>
+                  Tổng thanh toán
+                </h5>
+              </div>
+              <div class="card-body p-4">
+                <div class="summary-details">
+                  <div
+                    class="summary-item d-flex justify-content-between align-items-center py-3 border-bottom"
+                  >
+                    <span class="summary-label">
+                      <i class="bi bi-calculator text-muted me-2"></i>
+                      Tạm tính
+                    </span>
+                    <span class="summary-value"
+                      >{{ selectedTotal.toLocaleString() }}₫</span
+                    >
+                  </div>
+                  <div
+                    class="summary-item d-flex justify-content-between align-items-center py-3 border-bottom"
+                  >
+                    <span class="summary-label text-success">
+                      <i class="bi bi-tag text-success me-2"></i>
+                      Đã giảm giá
+                    </span>
+                    <span class="summary-value text-success"
+                      >-{{ totalDiscount.toLocaleString() }}₫</span
+                    >
+                  </div>
+                  <div
+                    class="summary-item d-flex justify-content-between align-items-center py-3"
+                  >
+                    <span class="summary-label fw-bold fs-5">
+                      <i class="bi bi-credit-card text-primary me-2"></i>
+                      Tổng cộng
+                    </span>
+                    <span class="summary-value fw-bold fs-4 text-primary"
+                      >{{ selectedTotal.toLocaleString() }}₫</span
+                    >
+                  </div>
+                </div>
+
+                <div class="checkout-actions mt-4">
+                  <button
+                    class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm"
+                    :disabled="selectedItems.length === 0"
+                    @click="checkout"
+                  >
+                    <i class="bi bi-credit-card me-2"></i>
+                    Thanh toán
+                    <span v-if="selectedItems.length > 0" class="ms-2">
+                      ({{ selectedItems.length }} sản phẩm)
+                    </span>
+                  </button>
+
+                  <div v-if="selectedItems.length === 0" class="text-center mt-3">
+                    <small class="text-muted">
+                      <i class="bi bi-info-circle me-1"></i>
+                      Vui lòng chọn sản phẩm để thanh toán
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Sản phẩm gợi ý -->
-    <div class="mt-5">
-      <h5 class="mb-4">Bạn cũng có thể thích</h5>
-      <div class="row">
+      <!-- Modals -->
+      <div class="modals-container">
+        <!-- Modal của Ưu đãi -->
         <div
-          class="col-6 col-md-3"
-          v-for="(product, index) in suggestions"
-          :key="'suggestion-' + index"
+          class="modal fade"
+          id="exampleModalToggle"
+          aria-hidden="true"
+          aria-labelledby="exampleModalToggleLabel"
+          tabindex="-1"
         >
-          <div class="text-center">
-            <img :src="product.image" class="suggestion-img mb-2" />
-            <div>{{ product.name }}</div>
-            <small class="text-muted text-decoration-line-through">80.000</small>
-            <strong class="ms-1">{{ product.price.toLocaleString() }}₫</strong>
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow-lg">
+              <div class="modal-header bg-primary text-white rounded-top-4">
+                <h1 class="modal-title fs-4" id="exampleModalToggleLabel">
+                  <i class="bi bi-gift-fill me-2"></i>
+                  Ưu đãi hiện có
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close btn-close-white"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body p-4">
+                <div
+                  v-for="item in promotions"
+                  :key="item.id"
+                  class="promotion-item mb-4 border rounded-3 overflow-hidden shadow-sm"
+                >
+                  <div class="row g-0">
+                    <div class="col-10">
+                      <div class="card-body p-4">
+                        <!-- Header: badge + tên + giá -->
+                        <div
+                          class="d-flex justify-content-between align-items-center mb-3"
+                        >
+                          <div class="d-flex align-items-center">
+                            <span class="badge bg-warning text-dark me-2 px-3 py-2">
+                              <i class="bi bi-gift-fill me-1"></i> Ưu đãi
+                            </span>
+                            <h6 class="fw-bold mb-0">{{ item.name }}</h6>
+                          </div>
+                          <div class="promotion-price fw-bold text-danger fs-5">
+                            {{ item.comboPrice.toLocaleString() }}₫
+                          </div>
+                        </div>
+
+                        <!-- Mô tả -->
+                        <div
+                          class="promotion-description text-muted mb-3"
+                          style="white-space: pre-line"
+                        >
+                          {{ item.description }}
+                        </div>
+
+                        <!-- Info phụ -->
+                        <div class="d-flex justify-content-between align-items-center">
+                          <span
+                            class="badge bg-success bg-opacity-25 text-success px-3 py-2"
+                          >
+                            <i class="bi bi-box-seam me-1"></i>
+                            Còn lại: {{ item.qty }}
+                          </span>
+                          <span
+                            class="badge bg-secondary bg-opacity-25 text-secondary px-3 py-2"
+                          >
+                            <i class="bi bi-calendar-event me-1"></i>
+                            HSD: {{ new Date(item.endAt).toLocaleDateString() }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Nút chuyển tab -->
+                    <div class="col-2 d-flex align-items-center">
+                      <button
+                        class="btn btn-outline-primary h-100 w-100 rounded-0 rounded-end-3"
+                        @click="openSpecificPromotionModal(item.id)"
+                        data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal"
+                      >
+                        <i class="bi bi-arrow-right"></i>
+                        <div class="small">Xem thêm</div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal chi tiết combo -->
+        <div
+          class="modal fade"
+          id="exampleModalToggle2"
+          aria-hidden="true"
+          aria-labelledby="exampleModalToggleLabel2"
+          tabindex="-1"
+        >
+          <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow-lg">
+              <div class="modal-header bg-primary text-white rounded-top-4">
+                <h1 class="modal-title fs-4" id="exampleModalToggleLabel2">
+                  <i class="bi bi-box-seam me-2"></i>
+                  Chi tiết combo
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close btn-close-white"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body p-4">
+                <!-- Hiển thị groupProducts -->
+                <div v-if="groupProducts.length" class="combo-details">
+                  <div
+                    v-for="(group, idx) in groupProducts"
+                    :key="'group-' + idx"
+                    class="combo-group card mb-4 border-0 shadow-sm rounded-3"
+                  >
+                    <div class="card-body p-4">
+                      <!-- Thông tin combo -->
+                      <div
+                        class="combo-base-info d-flex align-items-center mb-4 p-3 bg-light rounded-3"
+                      >
+                        <img
+                          :src="group.baseProduct.mainImageUrl"
+                          alt="Ảnh sản phẩm"
+                          class="combo-base-image me-3"
+                        />
+                        <div class="flex-grow-1">
+                          <h5 class="combo-base-name mb-2">
+                            {{ group.baseProduct.name }}
+                          </h5>
+                          <p class="combo-base-material text-muted mb-2">
+                            {{ group.baseProduct.material }}
+                          </p>
+                          <div class="combo-base-badges">
+                            <span class="badge bg-success me-2">
+                              <i class="bi bi-star-fill"></i>
+                              {{ group.baseProduct.rating }}/5
+                            </span>
+                            <span class="badge bg-info">{{
+                              group.baseProduct.categories
+                            }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Danh sách item trong combo -->
+                      <div class="combo-items-table table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                          <thead class="table-light">
+                            <tr>
+                              <th width="50"></th>
+                              <th>Tên sản phẩm</th>
+                              <th>Loại</th>
+                              <th>Giá</th>
+                              <th width="150">Số lượng</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="item in group.items"
+                              :key="item.id"
+                              :class="{ 'table-success bg-opacity-25': item.isGift }"
+                            >
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  :checked="selectedComboItems[item.id] > 0"
+                                  disabled
+                                  class="form-check-input"
+                                />
+                              </td>
+                              <td>
+                                <div class="d-flex align-items-center">
+                                  <span>{{ group.baseProduct.name }}</span>
+                                  <span v-if="item.isGift" class="badge bg-success ms-2">
+                                    <i class="bi bi-gift-fill me-1"></i>Quà tặng
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <code>{{ item.sku }}</code>
+                              </td>
+                              <td>
+                                <span class="fw-bold text-danger">
+                                  {{ item.price.toLocaleString() }}₫
+                                </span>
+                              </td>
+                              <td>
+                                <template v-if="item.isGift">
+                                  <span
+                                    class="badge bg-success bg-opacity-25 text-success px-3 py-2"
+                                  >
+                                    {{ item.qty }}
+                                  </span>
+                                </template>
+                                <template v-else>
+                                  <div
+                                    class="quantity-controls-combo d-flex align-items-center"
+                                  >
+                                    <button
+                                      class="btn btn-sm btn-outline-secondary"
+                                      @click="decreaseComboQty(item)"
+                                      :disabled="
+                                        !selectedComboItems[item.id] ||
+                                        selectedComboItems[item.id] <= 0
+                                      "
+                                    >
+                                      <i class="bi bi-dash"></i>
+                                    </button>
+                                    <span class="quantity-display mx-3">{{
+                                      selectedComboItems[item.id] || 0
+                                    }}</span>
+                                    <button
+                                      class="btn btn-sm btn-outline-secondary"
+                                      @click="increaseComboQty(item, group)"
+                                      :disabled="
+                                        selectedComboItems[item.id] >= item.qty ||
+                                        getBaseProductTotalQty(group) >= item.qty
+                                      "
+                                    >
+                                      <i class="bi bi-plus"></i>
+                                    </button>
+                                  </div>
+                                  <small class="text-muted">Tối đa: {{ item.qty }}</small>
+                                </template>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer bg-light rounded-bottom-4 p-4">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-lg px-4"
+                  data-bs-dismiss="modal"
+                  :disabled="!iscalculateTotalQuantity"
+                  @click="handleProcessCombo()"
+                >
+                  <i class="bi bi-check-circle me-2"></i>
+                  Hoàn tất
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sản phẩm gợi ý -->
+      <div class="suggestions-section mt-5">
+        <div class="row">
+          <div class="col-12">
+            <div class="suggestions-header text-center mb-5">
+              <h3 class="suggestions-title">
+                <i class="bi bi-heart-fill text-danger me-2"></i>
+                Bạn cũng có thể thích
+              </h3>
+              <p class="suggestions-subtitle text-muted">
+                Khám phá những sản phẩm tương tự
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row g-4">
+          <div
+            class="col-6 col-md-3"
+            v-for="(product, index) in suggestions"
+            :key="'suggestion-' + index"
+          >
+            <div
+              class="suggestion-card card border-0 shadow-sm h-100 rounded-3 overflow-hidden"
+            >
+              <div class="suggestion-image-wrapper position-relative">
+                <img :src="product.image" class="suggestion-image card-img-top" />
+                <div class="suggestion-overlay">
+                  <button class="btn btn-primary btn-sm rounded-pill">
+                    <i class="bi bi-cart-plus me-1"></i>
+                    Thêm vào giỏ
+                  </button>
+                </div>
+              </div>
+              <div class="card-body text-center p-3">
+                <h6 class="suggestion-name mb-2">{{ product.name }}</h6>
+                <div class="suggestion-pricing">
+                  <small
+                    class="suggestion-old-price text-muted text-decoration-line-through me-2"
+                  >
+                    80.000₫
+                  </small>
+                  <span class="suggestion-current-price fw-bold text-danger">
+                    {{ product.price.toLocaleString() }}₫
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1203,14 +1394,980 @@ onMounted(() => {
 </script>
 
 <style scoped>
-img.img-thumbnail {
-  object-fit: cover;
+/* Container và Layout */
+.cart-container {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
 }
 
-.suggestion-img {
-  width: 100%;
-  height: 300px;
+.cart-title {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 2rem;
+}
+
+.cart-stats .badge {
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+  padding: 0.6rem 1.2rem;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  animation: count-badge 3s ease-in-out infinite;
+}
+
+@keyframes count-badge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Select All Section */
+.select-all-section {
+  border: 2px dashed #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.select-all-section:hover {
+  border-color: #0d6efd;
+  background-color: #f8f9ff !important;
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Cart Items Container */
+.cart-items-container {
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+}
+
+.cart-items-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cart-items-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.cart-items-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+/* Combo Card Styles */
+.combo-card-wrapper {
+  transition: box-shadow 0.2s ease;
+}
+
+.combo-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease;
+  background: white;
+}
+
+.combo-header {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.combo-gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+}
+
+.combo-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.combo-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.combo-title {
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.combo-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.status-expired {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  animation: pulse-danger 2s ease-in-out infinite;
+}
+
+.status-out-of-stock {
+  background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+  color: #333;
+  animation: flash 1.5s ease-in-out infinite;
+}
+
+.status-inactive {
+  background: linear-gradient(135deg, #778ca3 0%, #2d3436 100%);
+  color: white;
+}
+
+.status-not-started {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+  color: white;
+  animation: glow-blue 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-danger {
+  0%,
+  100% {
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+  }
+  50% {
+    box-shadow: 0 5px 20px rgba(255, 107, 107, 0.6);
+  }
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes glow-blue {
+  0% {
+    box-shadow: 0 3px 10px rgba(116, 185, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0 5px 20px rgba(116, 185, 255, 0.6);
+  }
+}
+
+.combo-remove-btn {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* Combo Controls */
+.combo-controls {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 25px;
+  padding: 0.2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quantity-controls button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-display {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.combo-total .total-label {
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.combo-total .total-price {
+  color: #dc3545;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.combo-total .total-tbd {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Combo Items */
+.combo-item {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.combo-item:last-child {
+  border-bottom: none;
+}
+
+.combo-item-gift {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left: 4px solid #28a745;
+}
+
+.combo-item-invalid {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  opacity: 0.7;
+}
+
+.item-image-wrapper {
+  position: relative;
+  overflow: visible;
+  border-radius: 12px;
+}
+
+.item-image {
+  width: 80px;
+  height: 100px; /* Tỷ lệ 4:5 cho ảnh 600x750 */
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 12px;
+}
+
+.gift-overlay {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  border: 3px solid white;
+  animation: sparkle-rotate 3s ease-in-out infinite;
+}
+
+@keyframes sparkle-rotate {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  }
+  50% {
+    transform: rotate(10deg) scale(1.1);
+    box-shadow: 0 6px 18px rgba(40, 167, 69, 0.6);
+  }
+}
+
+.gift-badge {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+  }
+}
+
+.quantity-badge {
+  background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  min-width: 50px;
+  text-align: center;
+}
+
+.gift-price .original-price {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.gift-price .free-price {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* Product Card Styles */
+.product-card-wrapper {
+  transition: box-shadow 0.2s ease;
+}
+
+.product-card {
+  transition: border-color 0.2s ease;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.product-card:hover {
+  border-color: #0d6efd;
+}
+
+.product-image-container {
+  position: relative;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 53, 69, 0);
+    transform: scale(1.02);
+  }
+}
+
+.product-image-wrapper {
+  width: 80px;
+  height: 100px; /* Tỷ lệ 4:5 cho ảnh 600x750 */
+  border-radius: 12px;
+  overflow: visible;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Promotion Badge - Corner positioning */
+.promotion-badge-corner {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  z-index: 20;
+}
+
+.promotion-badge-corner .btn {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.7rem;
+  border: 2px solid white;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 21;
+  transition: all 0.3s ease;
+}
+
+.promotion-badge-corner .btn:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.6);
+}
+
+/* Enhanced promotion button hover effect */
+.promotion-btn-hover {
+  position: relative;
+  cursor: pointer;
+  font-size: 0.7rem !important;
+  padding: 0.3rem 0.6rem !important;
+  animation: bounce-gentle 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.promotion-btn-hover:hover {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  transform: scale(1.15) translateY(-3px) !important;
+  box-shadow: 0 10px 30px rgba(220, 53, 69, 0.8) !important;
+  border-color: #fff !important;
+  animation: none;
+}
+
+.promotion-btn-hover:hover .bi-chevron-right {
+  transform: translateX(4px);
+  transition: transform 0.2s ease;
+}
+
+.promotion-btn-hover:hover .bi-gift-fill {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+/* Size class for extra small button */
+.btn-xs {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+@keyframes bounce-gentle {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-2px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes pulse-promotion {
+  0%,
+  100% {
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.6);
+  }
+}
+
+.promotion-badge-corner .badge {
+  font-size: 0.7rem;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid white;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+  position: relative;
+  z-index: 21;
+}
+
+/* Legacy promotion badge for backward compatibility */
+.promotion-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 10;
+}
+
+.combo-promo button {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.combo-promo button:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
+}
+
+.discount-promo .badge {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #333;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.5rem 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  animation: shake 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(220, 53, 69, 0.6);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.product-name {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.product-sku {
+  font-family: "Courier New", monospace;
+  background: #f8f9fa;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
+
+.original-price {
+  font-size: 0.9rem;
+}
+
+.current-price {
+  font-size: 1.1rem;
+}
+
+.quantity-controls-single {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 25px;
+  padding: 0.2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quantity-controls-single button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.quantity-controls-single button:hover:not(:disabled) {
+  transform: scale(1.1);
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+.item-total .total-price {
+  color: #dc3545;
+  font-size: 1.2rem;
+}
+
+/* Checkout Section */
+.checkout-sticky {
+  position: sticky;
+  top: 2rem;
+}
+
+.checkout-summary {
+  background: white;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.summary-label {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.checkout-actions button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.checkout-actions button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a42a0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.checkout-actions button:disabled {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  cursor: not-allowed;
+}
+
+/* Modal Styles */
+.modal-content {
+  border: none;
+  overflow: hidden;
+}
+
+.promotion-item {
+  transition: all 0.3s ease;
+}
+
+.promotion-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.promotion-price {
+  text-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+.combo-base-image {
+  width: 100px;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.combo-base-name {
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.quantity-controls-combo {
+  background: white;
+  border-radius: 25px;
+  padding: 0.2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quantity-controls-combo button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.quantity-controls-combo button:hover:not(:disabled) {
+  transform: scale(1.1);
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+/* Suggestions Section */
+.suggestions-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+}
+
+.suggestions-title {
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.suggestions-subtitle {
+  font-size: 1.1rem;
+}
+
+.suggestion-card {
+  transition: all 0.3s ease;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.suggestion-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+}
+
+.suggestion-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.suggestion-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.suggestion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.8) 0%,
+    rgba(118, 75, 162, 0.8) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.suggestion-card:hover .suggestion-overlay {
+  opacity: 1;
+}
+
+.suggestion-card:hover .suggestion-image {
+  transform: scale(1.1);
+}
+
+.suggestion-name {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.suggestion-old-price {
+  font-size: 0.85rem;
+}
+
+.suggestion-current-price {
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cart-title {
+    font-size: 1.5rem;
+  }
+
+  .combo-header {
+    padding: 1rem !important;
+  }
+
+  .combo-title {
+    font-size: 1rem;
+  }
+
+  .product-image,
+  .item-image {
+    width: 72px;
+    height: 90px; /* Tỷ lệ 4:5 cho mobile */
+  }
+
+  .checkout-sticky {
+    position: relative;
+    top: 0;
+    margin-top: 2rem;
+  }
+
+  .suggestions-section {
+    padding: 2rem 1rem;
+  }
+
+  .suggestions-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Empty Cart State */
+.empty-cart {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6c757d;
+}
+
+.empty-cart-icon {
+  font-size: 4rem;
+  color: #dee2e6;
+  margin-bottom: 1rem;
+}
+
+/* Loading States */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Badge Improvements */
+.badge {
+  transition: all 0.3s ease;
+}
+
+.badge:hover {
+  transform: translateY(-2px);
+}
+
+/* Modal Badge Improvements */
+.modal .badge {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.modal .badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+  color: #333;
+  box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
+}
+
+.modal .badge.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.modal .badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+  box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
+}
+
+.modal .badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3);
+}
+
+/* Additional Badge Effects */
+.badge.bg-success.bg-opacity-25 {
+  background: linear-gradient(
+    135deg,
+    rgba(40, 167, 69, 0.15) 0%,
+    rgba(32, 201, 151, 0.15) 100%
+  ) !important;
+  color: #28a745 !important;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.badge.bg-secondary.bg-opacity-25 {
+  background: linear-gradient(
+    135deg,
+    rgba(108, 117, 125, 0.15) 0%,
+    rgba(73, 80, 87, 0.15) 100%
+  ) !important;
+  color: #6c757d !important;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .combo-card,
+  .product-card,
+  .suggestion-card {
+    border: 2px solid #000;
+  }
+
+  .combo-header {
+    background: #000 !important;
+    color: #fff !important;
+  }
 }
 </style>
