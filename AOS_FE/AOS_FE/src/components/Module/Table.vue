@@ -76,7 +76,7 @@
     </PageNavigative>
   </div>
 </template>
-<style>
+<style scoped>
 .pageselect > select#pageSize {
   width: 50px;
 }
@@ -342,8 +342,8 @@
   background: linear-gradient(90deg, #5a67d8, #6b46c1);
 }
 
-/* Time remaining badges */
-.badge {
+/* Time remaining badges - scoped to table only */
+.table-container .badge {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.375rem;
@@ -354,36 +354,36 @@
   min-width: fit-content;
 }
 
-.bg-success {
+.table-container .bg-success {
   background-color: #198754 !important;
   color: white !important;
 }
 
-.bg-warning {
+.table-container .bg-warning {
   background-color: #ffc107 !important;
   color: #000 !important;
 }
 
-.bg-warning.text-dark {
+.table-container .bg-warning.text-dark {
   background-color: #ff8c00 !important;
   color: #000 !important;
 }
 
-.bg-danger {
+.table-container .bg-danger {
   background-color: #dc3545 !important;
   color: white !important;
 }
 
-/* Quantity badge specific styling */
-.badge.bg-success.text-white {
+/* Quantity badge specific styling - scoped to table only */
+.table-container .badge.bg-success.text-white {
   background-color: #28a745 !important;
 }
 
-.badge.bg-warning.text-dark {
+.table-container .badge.bg-warning.text-dark {
   background-color: #ffc107 !important;
 }
 
-.badge.bg-danger.text-white {
+.table-container .badge.bg-danger.text-white {
   background-color: #dc3545 !important;
 }
 </style>
@@ -396,7 +396,14 @@ import FilterDropDown from "./FilterDropDown.vue";
 import dayjs from "dayjs";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-const prices = ["price", "cost", "discountValue", "comboPrice"];
+const prices = [
+  "price",
+  "totalSpent",
+  "averageOrderValue",
+  "cost",
+  "discountValue",
+  "comboPrice",
+];
 function formatCell(key, value) {
   if (key.toLowerCase() === "endat" && value) {
     const now = new Date();
@@ -475,7 +482,13 @@ function formatCell(key, value) {
   } else if (value === null || value === undefined) {
     return "N/A";
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
-    return `<img src="${value}" alt="image" style="max-width: 100px; max-height: 60px; object-fit: contain;" />`;
+    // Kiểm tra nếu là avatar URL từ Google hoặc URL khác
+    if (value.includes("googleusercontent.com") || key.toLowerCase().includes("avatar")) {
+      // Đối với Google avatar, sử dụng crossorigin="anonymous" và referrerpolicy
+      return `<img src="${value}" alt="avatar" crossorigin="anonymous" referrerpolicy="no-referrer" style="max-width: 60px; max-height: 60px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display:none; padding: 4px 8px; background: #f8f9fa; border-radius: 4px; font-size: 0.8rem; color: #6c757d;">Avatar không khả dụng</span>`;
+    } else {
+      return `<img src="${value}" alt="image" style="max-width: 100px; max-height: 60px; object-fit: contain;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display:none; padding: 4px 8px; background: #f8f9fa; border-radius: 4px; font-size: 0.8rem;">Không thể tải ảnh</span>`;
+    }
   } else if (key.toLowerCase().includes("rating")) {
     const maxStars = 5;
     let stars = "";
@@ -483,6 +496,42 @@ function formatCell(key, value) {
       stars += `<i class="bi ${i <= value ? "bi-star-fill" : "bi-star"}"></i>`;
     }
     return `<span class="text-warning">${stars}</span>`;
+  } else if (key.toLowerCase().includes("userrank") && typeof value === "string") {
+    // Xử lý màu sắc cho userrank
+    let badgeClass = "";
+    let iconClass = "";
+
+    switch (value.toLowerCase()) {
+      case "đồng":
+      case "dong":
+      case "bronze":
+        badgeClass = "bg-warning text-dark";
+        iconClass = "bi-award";
+        break;
+      case "bạc":
+      case "bac":
+      case "silver":
+        badgeClass = "bg-secondary text-white";
+        iconClass = "bi-award-fill";
+        break;
+      case "vàng":
+      case "vang":
+      case "gold":
+        badgeClass = "bg-success text-white";
+        iconClass = "bi-trophy";
+        break;
+      case "bạch kim":
+      case "bach kim":
+      case "platinum":
+        badgeClass = "bg-primary text-white";
+        iconClass = "bi-trophy-fill";
+        break;
+      default:
+        badgeClass = "bg-light text-dark";
+        iconClass = "bi-person";
+    }
+
+    return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;
   }
   return value;
 }
