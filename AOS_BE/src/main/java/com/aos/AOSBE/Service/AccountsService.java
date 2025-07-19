@@ -74,6 +74,7 @@ public class AccountsService {
 		System.out.println("Registering user with email: " + registerRequestDTO);
 		Accounts accounts = new Accounts();
 		accounts.setEmail(registerRequestDTO.getEmail());
+		accounts.setUserRank("Đồng");
 		accounts.setPassword(new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword()));
 		accounts.setPhone(registerRequestDTO.getPhone());
 		accounts.setFullname(registerRequestDTO.getFullname());

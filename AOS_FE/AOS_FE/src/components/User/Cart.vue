@@ -71,7 +71,7 @@
                       <button
                         class="btn btn-sm btn-outline-danger"
                         @click="removeComboGroupId(items)"
-                        :disabled="isPromotionValid(items[0].promotions)"
+                        :disabled="!isPromotionValid(items[0].promotions)"
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
@@ -222,7 +222,7 @@
                       class="border-0 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
                     >
                       <i class="bi bi-tag-fill"></i>-{{
-                        (item.promotions.discountValue / item.price) * 100
+                        Math.round((item.promotions.discountValue / item.price) * 100)
                       }}%
                     </span>
 
@@ -618,7 +618,7 @@ function isPromotionValid(promotion) {
 
   if (now < startAt || now > endAt) return false;
 
-  return false;
+  return true;
 }
 
 // Hàm lấy thông báo trạng thái promotion
@@ -626,7 +626,7 @@ function getPromotionStatusMessage(promotion) {
   if (!promotion) return "Không có thông tin";
 
   // Kiểm tra active
-  if (!promotion.active) return "Không còn tồn tại";
+  if (!promotion.active) return "Ngừng hoạt động";
 
   // Kiểm tra số lượng
   if (promotion.qty <= 0) return "Hết hàng";
@@ -662,17 +662,22 @@ const totalDiscount = computed(() => {
   cart.value.forEach((item) => {
     if (!selectedItems.value.includes(item.id)) return;
 
-    // DISCOUNT
-    if (item.promotions && item.promotions.type === "DISCOUNT") {
+    // DISCOUNT - chỉ áp dụng nếu promotion hợp lệ
+    if (
+      item.promotions &&
+      item.promotions.type === "DISCOUNT" &&
+      isPromotionValid(item.promotions)
+    ) {
       sum += item.promotions.discountValue * item.quantity;
       return;
     }
 
-    // COMBO: chỉ tính giảm giá cho 1 lần duy nhất mỗi comboGroupId
+    // COMBO: chỉ tính giảm giá cho 1 lần duy nhất mỗi comboGroupId và promotion hợp lệ
     if (
       item.promotions &&
       item.promotions.type === "COMBO" &&
-      item.promotions.comboPrice > 0
+      item.promotions.comboPrice > 0 &&
+      isPromotionValid(item.promotions)
     ) {
       const groupKey = item.comboGroupId;
       if (
@@ -861,6 +866,7 @@ function openSpecificPromotionModal(promotionId) {
             }
           });
         });
+        iscalculateTotalQuantity.value = calculateTotalQuantity();
       }
     })
     .catch((error) => {
@@ -1102,8 +1108,12 @@ const selectedTotal = computed(() => {
 
     // SẢN PHẨM LẺ: không có comboGroupId
     if (!item.comboGroupId) {
-      // Nếu là DISCOUNT
-      if (item.promotions && item.promotions.type === "DISCOUNT") {
+      // Nếu là DISCOUNT và promotion hợp lệ
+      if (
+        item.promotions &&
+        item.promotions.type === "DISCOUNT" &&
+        isPromotionValid(item.promotions)
+      ) {
         sum += (item.price - item.promotions.discountValue) * item.quantity;
       } else {
         sum += item.price * item.quantity;
@@ -1115,7 +1125,8 @@ const selectedTotal = computed(() => {
     if (
       item.promotions &&
       item.promotions.type === "COMBO" &&
-      item.promotions.comboPrice > 0
+      item.promotions.comboPrice > 0 &&
+      isPromotionValid(item.promotions)
     ) {
       const groupKey = item.comboGroupId;
       if (countedComboGroups.has(groupKey)) return;
@@ -1137,6 +1148,32 @@ const selectedTotal = computed(() => {
         });
         countedComboGroups.add(groupKey);
         return;
+      }
+    } else if (item.comboGroupId) {
+      // Trường hợp combo không hợp lệ (hết hạn/hết hàng): tính giá lẻ
+      const groupKey = item.comboGroupId;
+      if (!countedComboGroups.has(groupKey)) {
+        const allComboGroups = {};
+        cart.value.forEach((cartItem) => {
+          if (
+            cartItem.comboGroupId &&
+            cartItem.promotions &&
+            cartItem.promotions.type === "COMBO"
+          ) {
+            const gKey = cartItem.comboGroupId;
+            if (!allComboGroups[gKey]) allComboGroups[gKey] = [];
+            allComboGroups[gKey].push(cartItem);
+          }
+        });
+
+        if (allComboGroups[groupKey]) {
+          allComboGroups[groupKey].forEach((i) => {
+            if (selectedItems.value.includes(i.id)) {
+              sum += i.price * i.quantity;
+            }
+          });
+        }
+        countedComboGroups.add(groupKey);
       }
     }
   });

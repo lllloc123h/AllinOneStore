@@ -1,6 +1,7 @@
 package com.aos.AOSBE.Mapper;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Repository.VariantValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,8 @@ import com.aos.AOSBE.Entity.CartItems;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.ProductItemsService;
 import com.aos.AOSBE.Service.PromotionsService;
+
+import java.util.List;
 
 @Component
 public class CartItemsMapper {
@@ -23,6 +26,12 @@ public class CartItemsMapper {
 	private HandleListSkuToFilter handleListSkuToFilter;
 
 	public CartItemsDTOS mapper(CartItems entity) {
+		if((entity.getPromotions()) == null){
+			List<Promotions> pro= promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems().getId());
+			if(!pro.isEmpty()){
+				entity.setPromotions(pro.get(0));
+			}
+		}
 		return new CartItemsDTOS(
 				entity.getId(),
 				entity.getQty(),

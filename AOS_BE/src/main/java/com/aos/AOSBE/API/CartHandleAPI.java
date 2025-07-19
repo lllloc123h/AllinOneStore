@@ -54,13 +54,6 @@ public class CartHandleAPI {
 			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(
 					userEmail,
 					cartItem.getProductItems().getId());
-			List<Promotions> promotion = promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems());
-			System.err.println("productitem "+entity.getProductItems());
-			System.err.println("Promotion: " + promotion);
-			if (!promotion.isEmpty()) {
-				cartItem.setPromotions(promotion.get(0));
-				item.setPromotions(promotion.get(0));
-			}
 			if (item != null && item.getComboGroupId() == null) {
 				item.setQty(item.getQty() + cartItem.getQty());
 				cartItemsService.cartItemsSave(item);
@@ -113,7 +106,7 @@ public class CartHandleAPI {
 	@GetMapping("/cart")
 	public ResponseEntity<?> cart() {
 		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-		List<CartItemsDTOS> cartListByAcount = cartItemsService.cartItemsFindAccounts("adminCUDE@gmail.com").stream().map(cartItemsMapper::mapper).toList();
+		List<CartItemsDTOS> cartListByAcount = cartItemsService.cartItemsFindAccounts(userEmail).stream().map(cartItemsMapper::mapper).toList();
 		return ResponseEntity.ok(cartListByAcount);
 	}
 
@@ -135,7 +128,7 @@ public class CartHandleAPI {
 	public ResponseEntity<?> addCombo(@RequestBody CreateComboDTO entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
 			System.err.println(entity);
 			cartItemsService.addCombo(entity, account);
 			return ResponseEntity.ok(Map.of("message", "Combo added successfully"));
@@ -149,7 +142,7 @@ public class CartHandleAPI {
 	public ResponseEntity<?> updateComboQty(@RequestBody UpdateComboDTO entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
 			List<CartItems> listCartItems = cartItemsService.findCartItemsByAccountsAndComboGroupId(account, entity.getComboGroupId());
 			for (CartItems cartItems : listCartItems) {
 				int tempQty = cartItems.getQty() / cartItems.getComboQty();
@@ -173,7 +166,7 @@ public class CartHandleAPI {
 	public ResponseEntity<?> deleteCombo(@PathVariable("comboGroupId") UUID comboGroupId) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
 	cartItemsService.deleteCombo(account, comboGroupId);
 			return ResponseEntity.ok(Map.of("message", "Combo deleted successfully"));
 		} catch (Exception e) {

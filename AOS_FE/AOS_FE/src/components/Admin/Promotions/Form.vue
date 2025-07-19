@@ -885,8 +885,8 @@ async function createPromotionProducts(promotionId) {
         isGift
       );
       return api.post("/admin/PromotionProducts", {
-        promotions: promotionId,
-        productItems: item.id,
+        promotionId: promotionId,
+        productItem: { id: item.id },
         requireQty: requiredQuantity,
         gift: isGift,
       });

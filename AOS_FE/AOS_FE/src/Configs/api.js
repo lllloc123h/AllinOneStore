@@ -20,8 +20,6 @@ const excludedPaths = [
   '/BaseProducts',
   '/VariantValues',
   '/openai/chat',
-  '/cart',
-  '/cart/addCombo',
   '/Promotions/',
   '/Promotions'
 ]
@@ -88,11 +86,11 @@ async login(email, password) {
       .then(async (response) => {
         const token = response.data.token;
         const cartSizeValue = response.data.cartSize || 0;
-        
         // Set token và cart size trước
         localStorage.setItem('jwtToken', token);
         localStorage.setItem('cartSize', cartSizeValue);
-        tokenRef.value = token;
+        console.log('cart sizeValue: ', cartSizeValue);
+        this.setTokenRef(token);
         cartSize.value = cartSizeValue;
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
         // Sync cart
@@ -116,7 +114,10 @@ async login(email, password) {
         toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
         console.log('Đăng nhập thất bại ', error.response)
       })
-  }
+  },
+  setTokenRef(token) {
+    tokenRef.value = token;
+  } 
   ,
   isLogged() {
     return tokenRef.value != null;
@@ -127,11 +128,13 @@ async login(email, password) {
   },
   updateCart(qty) {
     cartSize.value += qty;
+    console.log('Cart size updated:', cartSize.value)
     localStorage.setItem('cartSize', cartSize.value);
   }
   ,
   setCart(qty) {
     cartSize.value = qty;
+        console.log('Cart size set:', cartSize.value)
     localStorage.setItem('cartSize', cartSize.value);
   }
   ,
@@ -168,6 +171,7 @@ async login(email, password) {
       toast.success('Đăng xuất thành công !');
     }, 600);
     cartSize.value = 0;
+    localStorage.removeItem('cartSize');
     tokenRef.value = null;
     console.log('User logged out');
   },

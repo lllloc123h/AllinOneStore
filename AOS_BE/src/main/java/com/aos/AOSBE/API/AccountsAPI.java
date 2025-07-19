@@ -108,9 +108,8 @@ public class AccountsAPI {
 	public ResponseEntity<?> updateAccounts(@PathVariable int id, @RequestBody AccountsDTOS entity) {
 		try {
 			Accounts isExist = accountsService.accountsFindById(id).orElse(null);
-			if (isExist != null && !isExist.getEmail().equals("adminCUDE@gmail.com")) {
+			if (isExist != null) {
 				entity.setId(isExist.getId());
-
 				if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
 					// Only encode if the password is new or changed
 					if (!passwordEncoder.matches(entity.getPassword(), isExist.getPassword())) {
