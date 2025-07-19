@@ -2507,3 +2507,82 @@ INSERT INTO promotion_products (
 ) VALUES
 (2, 1, 1, 0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
 (2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
+
+-- INSERT 30 orders
+DECLARE @i INT = 1;
+WHILE @i <= 30
+BEGIN
+  INSERT INTO orders (
+    account_id,
+    payment_method_id,
+    shipping_method_id,
+    shipping_status,
+    estimated_shipping_fee,
+    actual_shipping_fee,
+    payment_status,
+    note,
+    point,
+    final_total,
+    order_infor,
+    order_code,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    (SELECT TOP 1 id FROM accounts ORDER BY NEWID()),
+    (SELECT TOP 1 id FROM payment_methods ORDER BY NEWID()),
+    (SELECT TOP 1 id FROM shipping_methods ORDER BY NEWID()),
+    N'Đang xử lý',
+    25000.00,
+    25000.00,
+    N'Chưa thanh toán',
+    N'Giao trước 6 giờ tối',
+    10,
+    100000.00 + (@i * 1000),
+    N'Họ tên người nhận, địa chỉ đầy đủ, số điện thoại',
+    CONCAT('ORD', FORMAT(@i, '0000')),
+    GETDATE(),
+    GETDATE()
+  );
+
+  SET @i = @i + 1;
+END;
+-- INSERT order_items for each order
+DECLARE @order_id INT, @max_id INT, @pid INT, @j INT;
+
+SELECT @order_id = MIN(id), @max_id = MAX(id) FROM orders;
+
+WHILE @order_id <= @max_id
+BEGIN
+  SET @j = 1;
+
+  WHILE @j <= (1 + ABS(CHECKSUM(NEWID()) % 3)) -- mỗi đơn có 1-3 sản phẩm
+  BEGIN
+    SELECT TOP 1 @pid = id FROM product_items ORDER BY NEWID();
+
+    INSERT INTO order_items (
+      order_id,
+      product_item_id,
+      qty,
+      price_at_buy,
+      selling_price,
+      coupon_code,
+      created_at,
+      updated_at
+    )
+    VALUES (
+      @order_id,
+      @pid,
+      1 + ABS(CHECKSUM(NEWID()) % 5),  -- qty từ 1-5
+      (SELECT price FROM product_items WHERE id = @pid),
+      (SELECT price FROM product_items WHERE id = @pid),
+      NULL,
+      GETDATE(),
+      GETDATE()
+    );
+
+    SET @j = @j + 1;
+  END;
+
+  SET @order_id = @order_id + 1;
+END;
