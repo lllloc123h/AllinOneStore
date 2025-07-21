@@ -32,7 +32,9 @@
           <input id="avatar" v-model="formData.avatar" type="text" class="form-control"
             placeholder="`Enter avatar`" />
         </div> -->
-        <ImageUpload @update-avatar="formData.avatarUrl = $event" />
+        <!-- <ImageUpload @update-avatar="formData.avatarUrl = $event" /> -->
+        <ImageUpload :max-images="1" :max-videos="1" folder="products" :heightImg="0" :widthImg="0" :videoDuration="60"
+          ref="imageUploadRef" @result-uploaded="handleGetUploadUrl" />
         <div v-if="formData.avatar" class="mb-3">
           <label class="form-label">Preview Avatar:</label>
           <img :src="formData.avatar" alt="Avatar Preview" class="img-thumbnail" style="max-height: 150px;" />
@@ -162,6 +164,11 @@ const props = defineProps({
 })
 const formTableService = createCrudService(props.TableName);
 const dropDownListRoles = ref([])
+const resultUpload = ref([]);
+function handleGetUploadUrl(results) {
+  resultUpload.value = results;
+  formData.avatarUrl = resultUpload.value[0]?.url
+}
 const formData = reactive({
   id: '',
   email: '',
