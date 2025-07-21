@@ -158,5 +158,23 @@ public interface ProductItemsRepository
 
 	@Query("SELECT p.productItems FROM PromotionProducts p")
 	List<ProductItems> findAllDiscountedProductIds();
+	
+	@Query(value = """
+		    SELECT
+		        pi.id AS productItemId,
+		        bp.id AS baseProductId,
+		        bp.name,
+		        bp.material,
+		        COALESCE(img.image_url, '') AS imageUrl,
+		        pi.price,
+		        pi.qty,
+		        pi.turn_buy
+		    FROM product_items pi
+		    JOIN base_products bp ON pi.base_id = bp.id
+		    LEFT JOIN product_images img ON img.product_item_id = pi.id AND img.is_default = 1
+		    ORDER BY pi.turn_buy DESC
+		    LIMIT :limit
+		""", nativeQuery = true)
+		List<Object[]> findBestSellerProductItems(@Param("limit") int limit);
 
 }

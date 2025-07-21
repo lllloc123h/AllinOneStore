@@ -108,17 +108,17 @@ public class AccountsService {
 		account.setFullname(dto.getFullname());
 		account.setEmail(dto.getEmail());
 		account.setPhone(dto.getPhone());
-		account.setAvatarUrl(dto.getAvatar());
+		account.setAvatarUrl(dto.getAvatarUrl());
 		accountsRepository.save(account);
 		Optional<UserAddresses> optionalAddress = addressRepository.findByAccountsIdAndIsDefaultTrue(account.getId());
 		UserAddresses address = optionalAddress.orElse(new UserAddresses());
 
 		address.setRecipientName(dto.getFullname());
 		address.setPhone(dto.getPhone());
-		address.setProvince(dto.getProvinceName() + "");
-		address.setDistrict(dto.getDistrictName() + "");
-		address.setWard(dto.getWardName());
-		address.setStreet(dto.getAddress());
+		address.setProvince(dto.getProvince() + "");
+		address.setDistrict(dto.getDistrict() + "");
+		address.setWard(dto.getWard());
+		address.setStreet(dto.getStreet());
 		address.setLabel("Nhà riêng");
 		address.setDefault(true);
 		address.setAccounts(account);
