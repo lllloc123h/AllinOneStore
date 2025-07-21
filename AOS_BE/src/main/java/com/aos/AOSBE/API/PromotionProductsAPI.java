@@ -63,6 +63,14 @@ public class PromotionProductsAPI {
 		PromotionProducts promotionProduct = promotionProductsService.findById(id).orElse(new PromotionProducts());
 		return ResponseEntity.ok(promotionProductsMapper.mapper(promotionProduct));
 	}
+	@GetMapping("/admin/promotionproducts")
+	public ResponseEntity<?> getPromotionProductsByPromotionId(@RequestParam("promotionId") int promotionId) {
+		List<PromotionProducts> promotionProducts = promotionProductsService
+				.findPromotionProductsByPromotionsId(promotionId);
+		List<PromotionProductsDTOS> promotionProductsDTOS = promotionProducts.stream()
+				.map(promotionProductsMapper::mapper).toList();
+		return ResponseEntity.ok(promotionProductsDTOS);
+	}
 
 	@PostMapping("/admin/PromotionProducts")
 	public ResponseEntity<?> addNewPromotions(@RequestBody PromotionProductsDTOS entity) {

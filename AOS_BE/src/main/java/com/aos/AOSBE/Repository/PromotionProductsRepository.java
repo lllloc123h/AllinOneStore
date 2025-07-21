@@ -18,4 +18,6 @@ public interface PromotionProductsRepository
 	List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId);
 
 	PromotionProducts findAllByProductItems_IdAndPromotions_Id(int productItemsId, int promotionsId);
+
+	List<PromotionProducts> findPromotionProductsByPromotions_Id(int promotionsId);
 }

@@ -823,10 +823,6 @@ const dropdownTypePromotions = [
   { id: "0", type: "DISCOUNT" },
   { id: "1", type: "COMBO" },
 ];
-const dropdownTypeDiscount = [
-  { id: "0", type: "PERCENT" },
-  { id: "1", type: "AMOUNT" },
-];
 
 async function submitUpdateForm() {
   try {
@@ -849,11 +845,6 @@ async function submitForm() {
   formData.startAt = toISOStringWithTimezone(formData.startAt);
   formData.endAt = toISOStringWithTimezone(formData.endAt);
   try {
-    console.log("Submitting form data:", formData);
-    console.log("Selected items from all bases:", selectedItemsFromAllBases.value);
-    console.log("Base product required quantities:", baseProductRequiredQuantities.value);
-    console.log("Item gift status:", itemGiftStatus.value);
-    console.log("All selected items:", allSelectedItems.value);
     const response = await formTableService.create(formData);
     // Create promotion products
     if (selectedItemsFromAllBases.value.length > 0) {
@@ -913,17 +904,23 @@ async function updatePromotionProducts(promotionId) {
 const fetchData = async () => {
   if (!props.TableName) return;
   try {
-    // const response = await formTableService.getById(props.id);
-    // response.data.createdAt = formatDate(response.data.createdAt);
-    // response.data.updatedAt = formatDate(response.data.updatedAt);
-
-    // response.data.startAt = formatDateTimeLocal(response.data.startAt);
-    // response.data.endAt = formatDateTimeLocal(response.data.endAt);
-
-    // Object.assign(formData, response.data);
-
     // Load promotion products if editing
-    if (props.action === "update" && props.id) {
+    if (
+      !props.action ||
+      props.action === "view" ||
+      (props.action === "update" && props.id)
+    ) {
+      const response = await formTableService.getById(props.id);
+      console.log("=== PROMOTION DATA RESPONSE ===");
+      console.log("Promotion ID:", props.id);
+      console.log("Response data:", response.data);
+      console.log("===============================");
+
+      response.data.createdAt = formatDate(response.data.createdAt);
+      response.data.updatedAt = formatDate(response.data.updatedAt);
+      Object.assign(formData, response.data);
+
+      // Load promotion products after setting form data
       await loadPromotionProducts(props.id);
     }
   } catch (err) {
@@ -934,30 +931,44 @@ const fetchData = async () => {
 // Load promotion products for editing
 async function loadPromotionProducts(promotionId) {
   try {
-    const response = await api.get(
-      `/admin/PromotionProduct/ByPromotionId/${promotionId}`
-    );
-    if (response.data.content && response.data.content.length > 0) {
-      const promotionProducts = response.data.content;
+    const response = await api.get(`/admin/promotionproducts?promotionId=${promotionId}`);
+    // Handle direct array response (not wrapped in content)
+    const promotionProducts = Array.isArray(response.data)
+      ? response.data
+      : response.data.content || [];
+
+    if (promotionProducts.length > 0) {
+      console.log("First promotion product:", promotionProducts[0]);
 
       // Group by base product
       const groupedByBase = new Map();
 
       for (const promotionProduct of promotionProducts) {
-        const productItem = promotionProduct.productItems;
+        // Use productItem instead of productItems based on the actual response structure
+        const productItem = promotionProduct.productItem;
         const baseProductId = productItem.baseId;
 
         if (!groupedByBase.has(baseProductId)) {
           groupedByBase.set(baseProductId, []);
         }
-        groupedByBase.get(baseProductId).push(productItem);
+        groupedByBase.get(baseProductId).push({
+          ...productItem,
+          promotionProductId: promotionProduct.id,
+          requireQty: promotionProduct.requireQty,
+          gift: promotionProduct.gift,
+        });
       }
+
+      console.log("Grouped by base:", groupedByBase);
 
       // Load items for each base product
       for (const [baseProductId, items] of groupedByBase) {
         const baseProduct = dropDownListBaseProduct.value.find(
           (p) => p.id === baseProductId
         );
+
+        console.log("Processing base product:", baseProduct);
+
         if (baseProduct) {
           // Create set for this base
           const selectedForThisBase = new Set(items.map((item) => item.id));
@@ -965,32 +976,19 @@ async function loadPromotionProducts(promotionId) {
 
           // Add to selectedItemsFromAllBases
           for (const item of items) {
-            // Load gift status and required quantity from promotion product data
-            const promotionProduct = promotionProducts.find(
-              (pp) => pp.productItems.id === item.id
-            );
-            const isGift = promotionProduct?.isGift || false;
-            const requiredQty = promotionProduct?.requiredQuantity || 1;
-
             // Set gift status
-            itemGiftStatus.value.set(item.id, isGift);
+            itemGiftStatus.value.set(item.id, item.gift || false);
 
             selectedItemsFromAllBases.value.push({
               ...item,
               baseProduct: baseProduct,
-              isGift: isGift,
+              isGift: item.gift || false,
             });
           }
 
-          // Set required quantity for this base product
-          const firstPromotionProduct = promotionProducts.find(
-            (pp) => pp.productItems.baseId === baseProductId
-          );
-          if (firstPromotionProduct?.requiredQuantity) {
-            baseProductRequiredQuantities.value.set(
-              baseProductId,
-              firstPromotionProduct.requiredQuantity
-            );
+          // Set required quantity for this base product (use the first item's requireQty)
+          if (items.length > 0 && items[0].requireQty) {
+            baseProductRequiredQuantities.value.set(baseProductId, items[0].requireQty);
           }
         }
       }
@@ -998,6 +996,7 @@ async function loadPromotionProducts(promotionId) {
       // If there are items loaded, select the first base product by default
       if (selectedItemsFromAllBases.value.length > 0) {
         const firstBaseProduct = selectedItemsFromAllBases.value[0].baseProduct;
+        console.log("Auto-selecting first base product:", firstBaseProduct);
         await selectBaseProduct(firstBaseProduct);
       }
     }
@@ -1022,8 +1021,18 @@ async function getProductItems(baseProductId) {
     const response = await api.get(
       "/admin/ProductItems/ByBaseProductId/" + baseProductId
     );
-    if (response.data.content && response.data.content.length > 0) {
-      productItemsList.value = response.data.content.map((item) => {
+    console.log("=== PRODUCT ITEMS RESPONSE ===");
+    console.log("BaseProductId:", baseProductId);
+    console.log("Response data:", response.data);
+    console.log("==============================");
+
+    // Handle both content wrapper and direct array response
+    const items = response.data.content || response.data || [];
+
+    if (items.length > 0) {
+      console.log("First product item:", items[0]);
+
+      productItemsList.value = items.map((item) => {
         return {
           ...item,
           name: item.baseProducts?.name || selectedProduct.value?.name,
@@ -1186,8 +1195,19 @@ onMounted(async () => {
   try {
     // Load base products dropdown first
     dropDownListBaseProduct.value = await dropDown("BaseProducts");
+    console.log("=== BASE PRODUCTS DROPDOWN ===");
+    console.log("Base products loaded:", dropDownListBaseProduct.value?.length, "items");
+    if (dropDownListBaseProduct.value?.length > 0) {
+      console.log("First base product:", dropDownListBaseProduct.value[0]);
+    }
+    console.log("==============================");
+
     // Load categories dropdown
     const responseCategories = await categoriesService.getAll(0, 1000);
+    console.log("=== CATEGORIES RESPONSE ===");
+    console.log("Categories response:", responseCategories.data);
+    console.log("===========================");
+
     // Handle different response structures
     const categoriesData =
       responseCategories.data?.content || responseCategories.data || [];
@@ -1197,6 +1217,8 @@ onMounted(async () => {
         name: category.name,
       };
     });
+
+    console.log("Categories loaded:", categoriesDropDownList.value?.length, "items");
 
     // Then fetch promotion data (this will also load promotion products)
     await fetchData();

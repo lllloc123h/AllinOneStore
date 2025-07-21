@@ -57,4 +57,7 @@ public class PromotionProductsService {
 		Specification<PromotionProducts> spec = specBuilder.buildFilter(filters);
 		return promotionProductsRepository.findAll(spec, pageable);
 	}
+	public List<PromotionProducts> findPromotionProductsByPromotionsId(int promotionsId) {
+		return promotionProductsRepository.findPromotionProductsByPromotions_Id(promotionsId);
+	}
 }
