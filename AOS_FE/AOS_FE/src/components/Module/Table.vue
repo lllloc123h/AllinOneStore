@@ -405,14 +405,84 @@ const prices = [
   "comboPrice",
 ];
 function formatCell(key, value) {
-  if (key.toLowerCase() === "endat" && value) {
+  if (key.toLowerCase() === "createdat" && value) {
+    const now = new Date();
+    const createdDate = new Date(value);
+    const timeDiff = now.getTime() - createdDate.getTime();
+    const daysAgo = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hoursAgo = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    let statusText = "";
+    let badgeClass = "";
+
+    if (daysAgo === 0) {
+      if (hoursAgo === 0) {
+        statusText = "Vừa tạo";
+        badgeClass = "bg-success text-white";
+      } else {
+        statusText = `${hoursAgo}h trước`;
+        badgeClass = "bg-success text-white";
+      }
+    } else if (daysAgo <= 3) {
+      statusText = `${daysAgo} ngày trước`;
+      badgeClass = "bg-info text-white";
+    } else if (daysAgo <= 14) {
+      statusText = `${daysAgo} ngày trước`;
+      badgeClass = "bg-warning text-dark";
+    } else {
+      statusText = `${daysAgo} ngày trước`;
+      badgeClass = "bg-secondary text-white";
+    }
+
+    return `<span class="badge ${badgeClass}"><i class="bi bi-calendar-plus me-1"></i>${statusText}</span><br><small>${dayjs(
+      value
+    ).format("DD/MM/YYYY HH:mm:ss")}</small>`;
+  } else if (key.toLowerCase() === "updatedat" && value) {
+    const now = new Date();
+    const updatedDate = new Date(value);
+    const timeDiff = now.getTime() - updatedDate.getTime();
+    const daysAgo = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hoursAgo = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutesAgo = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+    let statusText = "";
+    let badgeClass = "";
+
+    if (daysAgo === 0) {
+      if (hoursAgo === 0) {
+        if (minutesAgo === 0) {
+          statusText = "Vừa cập nhật";
+          badgeClass = "bg-success text-white";
+        } else {
+          statusText = `${minutesAgo}p trước`;
+          badgeClass = "bg-success text-white";
+        }
+      } else {
+        statusText = `${hoursAgo}h trước`;
+        badgeClass = "bg-success text-white";
+      }
+    } else if (daysAgo <= 3) {
+      statusText = `${daysAgo} ngày trước`;
+      badgeClass = "bg-info text-white";
+    } else if (daysAgo <= 14) {
+      statusText = `${daysAgo} ngày trước`;
+      badgeClass = "bg-warning text-dark";
+    } else {
+      statusText = `${daysAgo} ngày trước`;
+      badgeClass = "bg-secondary text-white";
+    }
+
+    return `<span class="badge ${badgeClass}"><i class="bi bi-pencil-square me-1"></i>${statusText}</span><br><small>${dayjs(
+      value
+    ).format("DD/MM/YYYY HH:mm:ss")}</small>`;
+  } else if (key.toLowerCase() === "endat" && value) {
     const now = new Date();
     const endDate = new Date(value);
     const timeDiff = endDate.getTime() - now.getTime();
 
     if (timeDiff <= 0) {
       // Đã hết hạn
-      return `<span class="badge bg-danger">Đã hết hạn</span><br><small>${dayjs(
+      return `<span class="badge bg-secondary text-white"><i class="bi bi-x-circle me-1"></i>Đã hết hạn</span><br><small>${dayjs(
         value
       ).format("DD/MM/YYYY HH:mm:ss")}</small>`;
     } else {
@@ -423,26 +493,31 @@ function formatCell(key, value) {
 
       let timeLeftText = "";
       let badgeClass = "";
+      let iconClass = "";
 
-      if (daysLeft > 7) {
-        // Còn nhiều thời gian (> 7 ngày) - xanh lá
+      if (daysLeft > 14) {
+        // Còn nhiều thời gian (> 14 ngày) - xanh lá
         timeLeftText = `${daysLeft} ngày`;
-        badgeClass = "bg-success";
+        badgeClass = "bg-success text-white";
+        iconClass = "bi-check-circle";
       } else if (daysLeft > 3) {
-        // Cảnh báo (3-7 ngày) - vàng
+        // Cảnh báo (3-14 ngày) - xanh dương
         timeLeftText = `${daysLeft} ngày`;
-        badgeClass = "bg-warning";
+        badgeClass = "bg-info text-white";
+        iconClass = "bi-info-circle";
       } else if (daysLeft > 0) {
-        // Gần hết hạn (1-3 ngày) - cam
+        // Gần hết hạn (1-3 ngày) - vàng
         timeLeftText = `${daysLeft} ngày ${hoursLeft}h`;
         badgeClass = "bg-warning text-dark";
+        iconClass = "bi-exclamation-triangle";
       } else {
-        // Rất gấp (< 1 ngày) - đỏ
+        // Rất gấp (< 1 ngày) - đỏ (nhưng giữ màu đỏ riêng cho trường hợp khẩn cấp)
         timeLeftText = `${hoursLeft}h ${minutesLeft}m`;
-        badgeClass = "bg-danger";
+        badgeClass = "bg-danger text-white";
+        iconClass = "bi-alarm";
       }
 
-      return `<span class="badge ${badgeClass}">Còn ${timeLeftText}</span><br><small>${dayjs(
+      return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>Còn ${timeLeftText}</span><br><small>${dayjs(
         value
       ).format("DD/MM/YYYY HH:mm:ss")}</small>`;
     }
@@ -529,6 +604,26 @@ function formatCell(key, value) {
       default:
         badgeClass = "bg-light text-dark";
         iconClass = "bi-person";
+    }
+
+    return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;
+  } else if (key.toLowerCase() === "type" && typeof value === "string") {
+    // Xử lý màu sắc cho promotion type
+    let badgeClass = "";
+    let iconClass = "";
+
+    switch (value.toUpperCase()) {
+      case "COMBO":
+        badgeClass = "bg-warning text-dark";
+        iconClass = "bi-collection";
+        break;
+      case "DISCOUNT":
+        badgeClass = "bg-info text-white";
+        iconClass = "bi-percent";
+        break;
+      default:
+        badgeClass = "bg-secondary text-white";
+        iconClass = "bi-tag";
     }
 
     return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;

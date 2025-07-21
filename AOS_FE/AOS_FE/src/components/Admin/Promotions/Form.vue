@@ -825,6 +825,19 @@ const dropdownTypePromotions = [
 ];
 
 async function submitUpdateForm() {
+  // Validation: Check if all items are gifts (only for COMBO type)
+  if (formData.type !== "DISCOUNT" && selectedItemsFromAllBases.value.length > 0) {
+    const allItemsAreGifts = selectedItemsFromAllBases.value.every((item) =>
+      isItemGift(item.id)
+    );
+    if (allItemsAreGifts) {
+      alert(
+        "Không thể cập nhật khuyến mãi khi tất cả sản phẩm đều là quà tặng. Vui lòng chọn ít nhất một sản phẩm không phải là quà tặng."
+      );
+      return;
+    }
+  }
+
   try {
     formData.createdAt = formatDateTimeLocal(formData.createdAt);
     formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
@@ -842,6 +855,19 @@ async function submitUpdateForm() {
 }
 
 async function submitForm() {
+  // Validation: Check if all items are gifts (only for COMBO type)
+  if (formData.type !== "DISCOUNT" && selectedItemsFromAllBases.value.length > 0) {
+    const allItemsAreGifts = selectedItemsFromAllBases.value.every((item) =>
+      isItemGift(item.id)
+    );
+    if (allItemsAreGifts) {
+      alert(
+        "Không thể tạo khuyến mãi khi tất cả sản phẩm đều là quà tặng. Vui lòng chọn ít nhất một sản phẩm không phải là quà tặng."
+      );
+      return;
+    }
+  }
+
   formData.startAt = toISOStringWithTimezone(formData.startAt);
   formData.endAt = toISOStringWithTimezone(formData.endAt);
   try {
@@ -889,13 +915,52 @@ async function createPromotionProducts(promotionId) {
     console.error("Create promotion products failed:", error);
   }
 }
+async function editPromotionProducts(promotionId) {
+  try {
+    const promotionProductPromises = selectedItemsFromAllBases.value.map((item) => {
+      // For DISCOUNT type, don't use required quantity, just use 1
+      const requiredQuantity =
+        formData.type === "DISCOUNT"
+          ? null
+          : getBaseProductRequiredQuantity(item.baseProduct.id);
+      const isGift = formData.type === "DISCOUNT" ? false : isItemGift(item.id);
+      console.log(
+        "Creating promotion product for item:",
+        item,
+        "with required quantity:",
+        requiredQuantity,
+        "and isGift:",
+        isGift
+      );
+      console.log("update ", {
+        id: getPromotionProductIdFromGrouped(item.baseProduct.id, item.id),
+        promotionId: promotionId,
+        productItem: { id: item.id },
+        requireQty: requiredQuantity,
+        gift: isGift,
+      });
+      return api.put("/admin/PromotionProducts", {
+        id: getPromotionProductIdFromGrouped(item.baseProduct.id, item.id),
+        promotionId: promotionId,
+        productItem: { id: item.id },
+        requireQty: requiredQuantity,
+        gift: isGift,
+      });
+    });
+
+    await Promise.all(promotionProductPromises);
+    console.log("Promotion products updated successfully");
+  } catch (error) {
+    console.error("Updated promotion products failed:", error);
+  }
+}
 
 // Update promotion products
 async function updatePromotionProducts(promotionId) {
   try {
     // Then create new ones
     if (selectedItemsFromAllBases.value.length > 0) {
-      await createPromotionProducts(promotionId);
+      await editPromotionProducts(promotionId);
     }
   } catch (error) {
     console.error("Update promotion products failed:", error);
@@ -927,6 +992,11 @@ const fetchData = async () => {
     console.error("Get failed:", err);
   }
 };
+var groupedByBase = new Map();
+function getPromotionProductIdFromGrouped(baseId, productItemId) {
+  return groupedByBase.get(baseId)?.find((item) => item.id === productItemId)
+    ?.promotionProductId;
+}
 
 // Load promotion products for editing
 async function loadPromotionProducts(promotionId) {
@@ -941,7 +1011,6 @@ async function loadPromotionProducts(promotionId) {
       console.log("First promotion product:", promotionProducts[0]);
 
       // Group by base product
-      const groupedByBase = new Map();
 
       for (const promotionProduct of promotionProducts) {
         // Use productItem instead of productItems based on the actual response structure
@@ -1174,6 +1243,20 @@ function isItemGift(itemId) {
 }
 
 function toggleItemGift(itemId, isGift) {
+  // Validation: Prevent all items from being gifts
+  if (isGift && formData.type !== "DISCOUNT") {
+    const nonGiftItems = selectedItemsFromAllBases.value.filter(
+      (item) => item.id !== itemId && !isItemGift(item.id)
+    );
+
+    if (nonGiftItems.length === 0) {
+      alert(
+        "Không thể đặt tất cả sản phẩm làm quà tặng. Phải có ít nhất một sản phẩm không phải là quà tặng."
+      );
+      return;
+    }
+  }
+
   itemGiftStatus.value.set(itemId, isGift);
 
   // Update the item in selectedItemsFromAllBases

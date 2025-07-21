@@ -82,6 +82,16 @@ public class PromotionProductsAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+	@PutMapping("/admin/PromotionProducts")
+	public ResponseEntity<?> updatePromotions(@RequestBody PromotionProductsDTOS entity) {
+		try {
+			PromotionProducts saved = promotionProductsService.save(promotionProductsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
 
 	@PutMapping("/admin/PromotionProducts/{id}")
 	public ResponseEntity<?> updatePromotions(@PathVariable int id, @RequestBody PromotionProductsDTOS entity) {
