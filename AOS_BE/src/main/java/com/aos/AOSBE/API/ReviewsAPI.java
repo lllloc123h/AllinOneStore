@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import org.springframework.util.StringUtils;
 
 import com.aos.AOSBE.DTOS.ReviewsDTOS;
 import com.aos.AOSBE.Entity.Reviews;
@@ -87,5 +95,46 @@ public class ReviewsAPI {
 		reviewsService.reviewsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	@GetMapping("/reviews/product/{productItemId}")
+	public ResponseEntity<?> getReviewsByProductItemId(
+			@PathVariable Long productItemId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
+		
+		Page<Reviews> pageResult = reviewsService.reviewsFindByProductItemId(productItemId, page, size);
+		List<ReviewsDTOS> reviewsDTOSList = pageResult.getContent().stream()
+				.map(reviewsMapper::mapper)
+				.collect(Collectors.toList());
 
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", reviewsDTOSList);
+		response.put("totalPages", pageResult.getTotalPages());
+		response.put("totalElements", pageResult.getTotalElements());
+		response.put("currentPage", pageResult.getNumber());
+
+		return ResponseEntity.ok(response);
+	}
+	@PostMapping("/upload/review-media")
+	public ResponseEntity<?> uploadReviewMedia(@RequestParam("file") MultipartFile file) {
+		try {
+			String uploadDir = "uploads/reviews"; // thư mục gốc
+			String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
+			// Tạo thư mục nếu chưa có
+			Path uploadPath = Paths.get(uploadDir);
+			if (!Files.exists(uploadPath)) {
+				Files.createDirectories(uploadPath);
+			}
+
+			// Lưu file vào thư mục
+			Path filePath = uploadPath.resolve(filename);
+			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+			// Trả về URL để frontend sử dụng
+			String fileUrl = "/uploads/reviews/" + filename;
+			return ResponseEntity.ok(Map.of("url", fileUrl));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("error", "Không thể upload file"));
+		}
+	}
 }

@@ -16,13 +16,28 @@
               v-for="(img, idx) in images"
               :key="idx"
               :src="img.imageUrl"
-              @click="currentImage = img.imageUrl"
-              :class="['img-thumbnail', { 'border-primary': currentImage === img.imageUrl }]"
+              @click="selectImage(idx)"
+              :class="['img-thumbnail', { 'border-primary': currentImageIndex === idx }]"
               style="cursor: pointer; width: 100%; aspect-ratio: 1/1; object-fit: cover"
             />
           </div>
-          <div class="col-9">
+          <div class="col-9 position-relative overflow-hidden rounded" style="padding: 0 32px;">
             <img :src="currentImage" alt="main" class="img-fluid border rounded w-100" />
+            
+            <button
+              class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm"
+              @click="prevImage"
+              style="z-index: 10; transform: translateY(-50%) translateX(-50%);"
+            >
+              ‹
+            </button>
+            <button
+              class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm"
+              @click="nextImage"
+              style="z-index: 10; transform: translateY(-50%) translateX(50%);"
+            >
+              ›
+            </button>
           </div>
         </div>
       </div>
@@ -45,7 +60,7 @@
           <span class="text-dark">{{ formatPrice(currentPrice) }}</span>
         </template>
 
-        <small class="text-muted">| ★★★★☆ ({{ reviews.length }} review)</small>
+        <small class="text-muted">| {{ averageRating }} ★ ({{ reviews.length }} đánh giá)</small>
         </p>
 
         <p class="text-muted mb-3">{{ product.material }}</p>
@@ -111,11 +126,15 @@
 
         <div v-show="activeTab === 'review'">
           <div v-for="review in reviews" :key="review.name" class="mb-3 p-3 border rounded bg-white">
-            <h6 class="mb-1">{{ review.name }}</h6>
-            <p class="text-muted small mb-1">{{ review.text }}</p>
-            <small class="text-muted">1 phút trước</small>
+            <h6 class="mb-1">{{ review.accounts?.fullName || 'Ẩn danh' }}</h6>
+            <p class="text-muted small mb-1">{{ review.comment }}</p>
+            <div class="text-warning small">
+              <span v-for="i in 5" :key="i">{{ i <= review.rating ? '★' : '☆' }}</span>
+            </div>
+            <small class="text-muted">{{ formatTimeAgo(review.createdAt) }}</small>
           </div>
 
+          <!-- Form đánh giá -->
           <form @submit.prevent="submitReview" class="p-3 border rounded bg-white">
             <div class="row mb-2">
               <div class="col-md-6">
@@ -128,14 +147,37 @@
               </div>
             </div>
             <div class="mb-2">
+            <label class="form-label">Hình ảnh (tùy chọn)</label>
+            <input type="file" class="form-control" accept="image/*" @change="handleFileUpload" />
+          </div>
+            <div class="mb-2">
               <label class="form-label">Đánh giá</label>
               <textarea class="form-control rounded" rows="3" v-model="newReview.text" required></textarea>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-              <div>Đánh giá ★☆☆☆☆</div>
+              <div class="d-flex align-items-center gap-1">
+                <span v-for="star in 5" :key="star" @click="newReview.rating = star" style="cursor: pointer;">
+                  <span :class="star <= newReview.rating ? 'text-warning' : 'text-secondary'">★</span>
+                </span>
+              </div>
               <button type="submit" class="btn btn-dark rounded-pill">Đăng bình luận</button>
             </div>
           </form>
+          <div class="d-flex justify-content-center mt-3" v-if="totalPages > 1">
+            <button
+              class="btn btn-sm btn-outline-secondary me-2"
+              :disabled="currentPage === 0"
+              @click="changePage(currentPage - 1)">
+              ← Trước
+            </button>
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              :disabled="currentPage >= totalPages - 1"
+              @click="changePage(currentPage + 1)">
+              Tiếp →
+            </button>
+          </div>
+          <!-- Danh sách đánh giá -->
         </div>
       </div>
     </div>
@@ -149,7 +191,7 @@
       <div class="card h-100 shadow-sm related-card">
         <img :src="item.imageUrl" class="card-img-top" alt="..." />
         <div class="card-body p-2">
-          <h6 class="card-title text-truncate mb-1">{{ item.sku }}</h6>
+          <h6 class="card-title text-truncate mb-1">{{ item.name }}</h6>
           <p class="card-text text-danger fw-bold mb-2">{{ formatPrice(item.price) }}</p>
           <router-link :to="`/product/${item.id}`" class="btn btn-outline-dark btn-sm w-100">
             Xem chi tiết
@@ -183,9 +225,14 @@ const quantity = ref(1);
 const activeTab = ref('desc');
 
 const reviews = ref([]);
-const newReview = ref({ name: '', text: '' });
+const newReview = ref({ name: '', text: '', rating: 5 });
 
 const relatedItems = ref([]);
+
+const currentPage = ref(0);
+const pageSize = ref(5);
+const totalPages = ref(0);
+
 
 const discountedPrice = computed(() => {
   if (promotion.value?.promotions?.discountPercent) {
@@ -206,10 +253,10 @@ const fetchProductData = async (id) => {
     currentImage.value = images.value?.[0]?.imageUrl || product.value.imageUrl;
     currentPrice.value = priceHistories.value?.[0]?.price || 0;
 
-    reviews.value = [
-      { name: "Huy", text: "Sản phẩm tốt" },
-      { name: "Ngọc", text: "Chất lượng ok, sẽ mua lần nữa" }
-    ];
+    // reviews.value = [
+    //   { name: "Huy", text: "Sản phẩm tốt" },
+    //   { name: "Ngọc", text: "Chất lượng ok, sẽ mua lần nữa" }
+    // ];
   } catch (err) {
     console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
@@ -223,9 +270,11 @@ const fetchProductData = async (id) => {
 };
 
 // Gọi khi component mount
-onMounted(() => {
-  fetchProductData(productId.value);
+onMounted(async () => {
+  await fetchProductData(productId.value);
+  await fetchReviews(); // Gọi luôn khi đã có product
 });
+
 
 // Gọi lại khi ID trên URL thay đổi
 watch(() => route.params.id, (newId) => {
@@ -241,13 +290,28 @@ function decreaseQty() {
   if (quantity.value > 1) quantity.value--;
 }
 
-function submitReview() {
-  if (newReview.value.name && newReview.value.text) {
-    reviews.value.push({ ...newReview.value });
+async function submitReview() {
+  if (!newReview.value.name || !newReview.value.text) return;
+
+  try {
+    await api.post("/admin/Reviews", {
+      accounts: 1,
+      productItems: product.value.id,
+      rating: newReview.value.rating,
+      comment: newReview.value.text
+    });
+
+    notification.success({ message: "Gửi đánh giá thành công" });
     newReview.value.name = '';
     newReview.value.text = '';
+    newReview.value.rating = 5;
+    await fetchReviews(); // reload đánh giá mới
+  } catch (err) {
+    notification.error({ message: "Lỗi gửi đánh giá" });
+    console.error(err);
   }
 }
+
 
 function formatPrice(price) {
   return price.toLocaleString('vi-VN') + '₫';
@@ -291,6 +355,72 @@ const addToCart = () => {
     });
   }
 };
+const currentImageIndex = ref(0);
+watch(images, (newImages) => {
+  if (newImages.length > 0) {
+    currentImage.value = newImages[0].imageUrl;
+    currentImageIndex.value = 0;
+  }
+});
+
+const prevImage = () => {
+  if (images.value.length === 0) return;
+  currentImageIndex.value =
+    (currentImageIndex.value - 1 + images.value.length) % images.value.length;
+  currentImage.value = images.value[currentImageIndex.value].imageUrl;
+};
+
+const nextImage = () => {
+  if (images.value.length === 0) return;
+  currentImageIndex.value =
+    (currentImageIndex.value + 1) % images.value.length;
+  currentImage.value = images.value[currentImageIndex.value].imageUrl;
+};
+function selectImage(idx) {
+  currentImageIndex.value = idx;
+  currentImage.value = images.value[idx].imageUrl;
+}
+
+const fetchReviews = async () => {
+  try {
+    const res = await api.get(`/reviews/product/${product.value.id}`, {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value
+      }
+    });
+
+    reviews.value = res.data.content || [];
+    totalPages.value = res.data.totalPages || 0;
+  } catch (err) {
+    console.error("Lỗi tải đánh giá:", err);
+  }
+};
+
+
+const averageRating = computed(() => {
+  if (reviews.value.length === 0) return 0;
+  const total = reviews.value.reduce((sum, r) => sum + r.rating, 0);
+  return (total / reviews.value.length).toFixed(1);
+});
+
+function formatTimeAgo(dateStr) {
+  const now = new Date();
+  const past = new Date(dateStr);
+  const diff = Math.floor((now - past) / 1000); // giây
+
+  if (diff < 60) return "Vừa xong";
+  if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+  return past.toLocaleDateString("vi-VN");
+}
+
+const changePage = async (page) => {
+  currentPage.value = page;
+  await fetchReviews();
+};
+
+
 </script>
 
 
@@ -331,5 +461,23 @@ del {
   transform: scale(1.05);
 }
 
+.btn-light {
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn-light:hover {
+  background-color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+}
 
 </style>

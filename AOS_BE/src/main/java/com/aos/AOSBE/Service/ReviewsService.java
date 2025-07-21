@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,4 +41,16 @@ public class ReviewsService {
 	public void reviewsDeleteById(int id) {
 		reviewsRepository.deleteById(id);
 	}
+	
+	@Transactional
+	public List<Reviews> reviewsFindByProductItemId(Long productItemId) {
+    return reviewsRepository.findByProductItemsId(productItemId);
+	}
+
+	@Transactional
+	public Page<Reviews> reviewsFindByProductItemId(Long productItemId, int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    return reviewsRepository.findByProductItemsId(productItemId, pageable);
+	}
+
 }

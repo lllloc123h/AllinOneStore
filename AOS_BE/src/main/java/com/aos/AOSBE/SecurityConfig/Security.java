@@ -50,7 +50,7 @@ public class Security {
 						"/api/Accounts/verify-otp",
 								"/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback",
 						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**",
-						"/api/Promotions/**",
+						"/api/Promotions/**","/api/reviews/product/**",
 
 								"/api/cart/**"
 
