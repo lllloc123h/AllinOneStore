@@ -212,6 +212,25 @@ public class AccountsAPI {
 			return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/Accounts/me")
+	public ResponseEntity<?> getCurrentAccount() {
+	    try {
+	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	        Accounts account = accountsService.accountsFindByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+	        Map<String, Object> result = new HashMap<>();
+	        result.put("name", account.getFullname());
+	        result.put("email", account.getEmail());
+	        result.put("phone", account.getPhone());
+	        result.put("avatar", account.getAvatarUrl());
+	        result.put("address", "Đang cập nhật");
+	        return ResponseEntity.ok(result);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Không xác thực được người dùng"));
+	    }
+	}
 //	@PutMapping("/Accounts/profile")
 //	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
 //    try {

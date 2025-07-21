@@ -4,96 +4,158 @@
       <Dashboard></Dashboard>
     </div>
     <div class="article col-9">
-      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
-        <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
+      <form class="account-form shadow-lg p-4 rounded bg-white"
+        @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
+        <div class="mb-4" :style="(props.action === 'view' || props.action === 'create') ? 'display:none;' : ''">
           <label for="id" class="form-label text-capitalize"></label>
           <input id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
-            type="number" class="form-control" placeholder="`Enter id`" />
+            type="number" class="form-control custom-input" placeholder="Enter id" />
         </div>
-        <div class="mb-3">
-          <label for="email" class="form-label text-capitalize">email</label>
-          <input id="email" v-model="formData.email" type="email" class="form-control" placeholder="`Enter email`" />
-        </div>
-
-        <div class="mb-3">
-          <label for="password" class="form-label text-capitalize">password</label>
-          <input id="password" v-model="formData.password" type="password" class="form-control"
-            placeholder="`Enter password`" />
+        <div class="mb-4">
+          <label for="email" class="form-label text-capitalize fw-semibold">Email</label>
+          <input id="email" v-model="formData.email" type="email" class="form-control custom-input"
+            placeholder="Enter email" />
         </div>
 
-        <div class="mb-3">
-          <label for="fullname" class="form-label text-capitalize">fullname</label>
-          <input id="fullname" v-model="formData.fullname" type="text" class="form-control"
-            placeholder="`Enter fullname`" />
+        <div class="mb-4">
+          <label for="password" class="form-label text-capitalize fw-semibold">Password</label>
+          <input id="password" v-model="formData.password" type="password" class="form-control custom-input"
+            placeholder="Enter password" />
         </div>
 
-        <!-- <div class="mb-3">
-          <label for="avatar" class="form-label text-capitalize">avatar</label>
-          <input id="avatar" v-model="formData.avatar" type="text" class="form-control"
-            placeholder="`Enter avatar`" />
-        </div> -->
-        <ImageUpload @update-avatar="formData.avatarUrl = $event" />
-        <div v-if="formData.avatar" class="mb-3">
-          <label class="form-label">Preview Avatar:</label>
-          <img :src="formData.avatar" alt="Avatar Preview" class="img-thumbnail" style="max-height: 150px;" />
+        <div class="mb-4">
+          <label for="fullname" class="form-label text-capitalize fw-semibold">Full Name</label>
+          <input id="fullname" v-model="formData.fullname" type="text" class="form-control custom-input"
+            placeholder="Enter fullname" />
         </div>
 
-        <div class="row mb-3">
-          <div class="mb-3 col-4">
-            <label for="phone" class="form-label text-capitalize">phone</label>
-            <input id="phone" v-model="formData.phone" type="text" class="form-control" placeholder="`Enter phone`" />
-          </div>
-
-          <div class="mb-3 col-4">
-            <label for="averageOrderValue" class="form-label text-capitalize">averageOrderValue</label>
-            <input id="averageOrderValue" v-model="formData.averageOrderValue" type="number" class="form-control"
-              placeholder="`Enter averageOrderValue`" />
-          </div>
-          <div class="mb-3 col-4">
-            <label for="userRank" class="form-label text-capitalize">userRank</label>
-            <input id="userRank" v-model="formData.userRank" type="text" class="form-control"
-              placeholder="`Enter userRank`" />
+        <div class="mb-4">
+          <label class="form-label text-capitalize fw-semibold">Avatar</label>
+          <ImageUpload :max-images="1" :max-videos="1" folder="products" :heightImg="0" :widthImg="0"
+            :videoDuration="60" ref="imageUploadRef" @result-uploaded="handleGetUploadUrl" class="upload-container" />
+          <div v-if="formData.avatar" class="mt-3 text-center">
+            <label class="form-label">Preview Avatar:</label>
+            <img :src="formData.avatar" alt="Avatar Preview" class="img-thumbnail avatar-preview rounded-circle"
+              style="width: 100px; height: 100px; object-fit: cover;" />
           </div>
         </div>
-        <div class="row mb-3">
-          <div class="mb-3 col-4">
-            <label for="totalSpent" class="form-label text-capitalize">totalSpent</label>
-            <input id="totalSpent" v-model="formData.totalSpent" type="number" class="form-control"
-              placeholder="`Enter totalSpent`" />
+
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <label for="phone" class="form-label text-capitalize fw-semibold">Phone</label>
+            <input id="phone" v-model="formData.phone" type="text" class="form-control custom-input"
+              placeholder="Enter phone" />
           </div>
 
-          <div class="mb-3 col-4">
-            <label for="totalOrder" class="form-label text-capitalize">totalOrder</label>
-            <input id="totalOrder" v-model="formData.totalOrder" type="number" class="form-control"
-              placeholder="`Enter totalOrder`" />
+          <div class="col-md-4">
+            <label for="averageOrderValue" class="form-label text-capitalize fw-semibold">Avg. Order Value</label>
+            <input id="averageOrderValue" v-model="formData.averageOrderValue" type="number"
+              class="form-control custom-input" placeholder="Enter average order value" />
           </div>
-
-          <div class="mb-3 col-4">
-            <label for="loyaltyPoint" class="form-label text-capitalize">loyaltyPoint</label>
-            <input id="loyaltyPoint" v-model="formData.loyaltyPoint" type="number" class="form-control"
-              placeholder="`Enter loyaltyPoint`" />
+          <div class="col-md-4">
+            <label for="userRank" class="form-label text-capitalize fw-semibold">User Rank</label>
+            <input id="userRank" v-model="formData.userRank" type="text" class="form-control custom-input"
+              placeholder="Enter user rank" />
           </div>
         </div>
-        <div class="row role-list">
-          <label v-for="role in dropDownListRoles" :key="role.id" class="role-item">
-            <input type="checkbox" :value="role.id" v-model="selectedRoles" />
-            <div class="role-info">
-              <span class="role-name">{{ role.name }}</span>
-              <span class="role-date">Created: {{ formatDate(role.createdAt) }}</span>
+
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <label for="totalSpent" class="form-label text-capitalize fw-semibold">Total Spent</label>
+            <input id="totalSpent" v-model="formData.totalSpent" type="number" class="form-control custom-input"
+              placeholder="Enter total spent" />
+          </div>
+
+          <div class="col-md-4">
+            <label for="totalOrder" class="form-label text-capitalize fw-semibold">Total Orders</label>
+            <input id="totalOrder" v-model="formData.totalOrder" type="number" class="form-control custom-input"
+              placeholder="Enter total orders" />
+          </div>
+
+          <div class="col-md-4">
+            <label for="loyaltyPoint" class="form-label text-capitalize fw-semibold">Loyalty Points</label>
+            <input id="loyaltyPoint" v-model="formData.loyaltyPoint" type="number" class="form-control custom-input"
+              placeholder="Enter loyalty points" />
+          </div>
+        </div>
+
+        <div class="role-list mb-4 p-4 rounded bg-light border">
+          <label class="form-label mb-3 fw-semibold">Roles</label>
+          <div class="row">
+            <div v-for="role in dropDownListRoles" :key="role.id" class="col-md-6 mb-2">
+              <label class="role-item w-100">
+                <input type="checkbox" :value="role.id" v-model="selectedRoles" class="form-check-input me-2" />
+                <div class="role-info">
+                  <span class="role-name">{{ role.name }}</span>
+                  <span class="role-date">Created: {{ formatDate(role.createdAt) }}</span>
+                </div>
+              </label>
             </div>
-          </label>
+          </div>
         </div>
 
-        <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary">
-          <span v-if="props.action === 'create'">Create</span>
-          <span v-else-if="props.action === 'create'">Create</span>
-          <span v-else>Update</span>
-        </button>
+        <div class="text-end">
+          <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary px-5 py-2 rounded-pill">
+            <span v-if="props.action === 'create'">Create</span>
+            <span v-else>Update</span>
+          </button>
+        </div>
       </form>
+
+
     </div>
   </div>
 </template>
 <style scoped>
+.custom-input {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.account-form {
+  max-width: 1200px;
+  margin: 2rem auto;
+  border-radius: 15px;
+}
+
+.form-label {
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.upload-container {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.btn-primary {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+}
+
+.role-list {
+  background: #f8f9fa !important;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
 .role-list {
   display: flex;
   flex-direction: column;
@@ -162,6 +224,11 @@ const props = defineProps({
 })
 const formTableService = createCrudService(props.TableName);
 const dropDownListRoles = ref([])
+const resultUpload = ref([]);
+function handleGetUploadUrl(results) {
+  resultUpload.value = results;
+  formData.avatarUrl = resultUpload.value[0]?.url
+}
 const formData = reactive({
   id: '',
   email: '',

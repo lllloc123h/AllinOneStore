@@ -4,36 +4,34 @@
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     <div class="article col-9">
-      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
-        <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
-          <label :for="id" class="form-label text-capitalize"></label>
+      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()"
+        class="p-4 rounded shadow-sm bg-white aos-form">
+        <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? 'display:none;' : ''">
+          <label :for="id" class="form-label text-capitalize fw-bold"></label>
           <input :id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
             type="number" class="form-control" :placeholder="`Enter id`" />
         </div>
         <div class="mb-3">
-          <label :for="reason" class="form-label text-capitalize">reason</label>
-          <input :id="reason" v-model="formData.reason" type="text" class="form-control"
-            :placeholder="`Enter reason`" />
+          <label :for="reason" class="form-label text-capitalize fw-bold">Reason</label>
+          <input :id="reason" v-model="formData.reason" type="text" class="form-control" :placeholder="`Enter reason`"
+            :readonly="props.action === 'view'" />
         </div>
-
         <div class="mb-3">
-          <label :for="isPaid" class="form-label text-capitalize">isPaid</label>
-          <input :id="isPaid" v-model="formData.isPaid" type="text" class="form-control"
-            :placeholder="`Enter isPaid`" />
+          <label :for="isPaid" class="form-label text-capitalize fw-bold">Is Paid</label>
+          <input :id="isPaid" v-model="formData.isPaid" type="text" class="form-control" :placeholder="`Enter isPaid`"
+            :readonly="props.action === 'view'" />
         </div>
-
         <div class="mb-3">
-          <label :for="status" class="form-label text-capitalize">status</label>
-          <input :id="status" v-model="formData.status" type="text" class="form-control"
-            :placeholder="`Enter status`" />
+          <label :for="status" class="form-label text-capitalize fw-bold">Status</label>
+          <input :id="status" v-model="formData.status" type="text" class="form-control" :placeholder="`Enter status`"
+            :readonly="props.action === 'view'" />
         </div>
-
-
-        <button type="submit" :disable="props.action == 'view'" class="btn btn-primary">
-          <span v-if="props.action === 'create'">Create</span>
-          <span v-else-if="props.action === 'create'">Create</span>
-          <span v-else>Update</span>
-        </button>
+        <div class="d-flex justify-content-end">
+          <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary px-4 py-2">
+            <span v-if="props.action === 'create'">Create</span>
+            <span v-else>Update</span>
+          </button>
+        </div>
       </form>
     </div>
   </div>

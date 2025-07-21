@@ -3,24 +3,29 @@
     <div class="aside col-3">
       <Dashboard></Dashboard>
     </div>
-    <div class="article col-9">
-      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
-        <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
-          <label for="id" class="form-label text-capitalize"></label>
+    <div class="article col-9 form-article">
+      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()"
+        class="aos-form shadow p-4 rounded bg-white">
+        <div class="mb-4" :style="(props.action === 'view' || props.action === 'create') ? 'display:none;' : ''">
+          <label for="id" class="form-label text-capitalize fw-bold">ID</label>
           <input :id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
-            type="number" class="form-control" placeholder="`Enter id`" readonly />
+            type="number" class="form-control" placeholder="Enter id" readonly />
         </div>
 
-        <!-- <div class="mb-3">
-          <label for="email" class="form-label text-capitalize">email</label>
-          <input :id="email" v-model="formData.accounts.email" type="email" class="form-control"
-            placeholder="`Enter email`" />
-        </div> -->
+        <!-- Example field, uncomment and style as needed
+      <div class="mb-4">
+        <label for="email" class="form-label text-capitalize fw-bold">Email</label>
+        <input :id="email" v-model="formData.accounts.email" type="email" class="form-control"
+        placeholder="Enter email" />
+      </div>
+      -->
 
-        <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary">
-          <span v-if="props.action === 'create'">Create</span>
-          <span v-else>Update</span>
-        </button>
+        <div class="d-flex justify-content-end">
+          <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary px-4 py-2">
+            <span v-if="props.action === 'create'">Create</span>
+            <span v-else>Update</span>
+          </button>
+        </div>
       </form>
     </div>
   </div>

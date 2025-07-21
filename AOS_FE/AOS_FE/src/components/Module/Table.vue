@@ -37,28 +37,15 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <button
-                  type="button"
-                  @click="goToView(item.id)"
-                  class="btn btn-info btn-sm action-btn"
-                  title="Xem chi tiết"
-                >
+                <button type="button" @click="goToView(item.id)" class="btn btn-info btn-sm action-btn"
+                  title="Xem chi tiết">
                   <i class="bi bi-eye"></i>
                 </button>
-                <button
-                  type="button"
-                  @click="goToEdit(item.id)"
-                  class="btn btn-warning btn-sm action-btn"
-                  title="Chỉnh sửa"
-                >
+                <button type="button" @click="goToEdit(item.id)" class="btn btn-warning btn-sm action-btn"
+                  title="Chỉnh sửa">
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                  type="button"
-                  @click="deleteById(item.id)"
-                  class="btn btn-danger btn-sm action-btn"
-                  title="Xóa"
-                >
+                <button type="button" @click="deleteById(item.id)" class="btn btn-danger btn-sm action-btn" title="Xóa">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -68,16 +55,12 @@
       </table>
     </div>
     <div v-if="!data.length && !loading && !error" class="text-muted"></div>
-    <PageNavigative
-      :totalPage="totalPage"
-      v-model:currentPage="currentPage"
-      v-model:currentSize="currentSize"
-    >
+    <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
     </PageNavigative>
   </div>
 </template>
 <style scoped>
-.pageselect > select#pageSize {
+.pageselect>select#pageSize {
   width: 50px;
 }
 
@@ -685,7 +668,6 @@ const fetchData = async () => {
       currentSize.value,
       props.FilterList
     );
-    console.log(responseIndexTable);
     const json = responseIndexTable.data.content;
     totalPage.value = responseIndexTable.data.totalPages;
     data.value = Array.isArray(json) ? json : [json];
