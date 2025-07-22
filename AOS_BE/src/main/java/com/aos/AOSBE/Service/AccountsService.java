@@ -102,35 +102,16 @@ public class AccountsService {
 
 	@Transactional
 	public void updateProfile(UpdateProfileDTO dto) {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		Accounts account = accountsRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-		account.setFullname(dto.getFullname());
-		account.setEmail(dto.getEmail());
-		account.setPhone(dto.getPhone());
-		account.setAvatarUrl(dto.getAvatarUrl());
-		accountsRepository.save(account);
-		Optional<UserAddresses> optionalAddress = addressRepository.findByAccountsIdAndIsDefaultTrue(account.getId());
-		UserAddresses address = optionalAddress.orElse(new UserAddresses());
+	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	    Accounts account = accountsRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
-		address.setRecipientName(dto.getFullname());
-		address.setPhone(dto.getPhone());
-		address.setProvince(dto.getProvince() + "");
-		address.setDistrict(dto.getDistrict() + "");
-		address.setWard(dto.getWard());
-		address.setStreet(dto.getStreet());
-		address.setLabel("Nhà riêng");
-		address.setDefault(true);
-		address.setAccounts(account);
+	    account.setFullname(dto.getFullname());
+	    account.setEmail(dto.getEmail());
+	    account.setPhone(dto.getPhone());
 
-		addressRepository.save(address);
+
+	    accountsRepository.save(account);
 	}
-//	@Transactional
-//	public void ResetPass (String targetEmail) {
-//		
-//		Accounts account = accountsRepository.findByEmail(targetEmail)
-//				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-//		String PassWordDefautl = "UserCuBe@123";
-//		account.setPassword(passwordEncoder.encode(PassWordDefautl));
-//	}
+
 }

@@ -1,5 +1,7 @@
 package com.aos.AOSBE.Repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +16,8 @@ import com.aos.AOSBE.Entity.BaseProducts;
 public interface BaseProductsRepository
 		extends JpaRepository<BaseProducts, Integer>, JpaSpecificationExecutor<BaseProducts> {
 	// Add custom query methods here if needed
-
+	@Query("SELECT b FROM BaseProducts b WHERE b.isActive = true ORDER BY b.turnBuy DESC")
+    List<BaseProducts> findBestSellers(Pageable pageable);
 //    SELECT bp.id,bp.name,bp.material,bp.main_image,bp.is_active,bp.is_custom,bp.turn_buy,bp.rating
 //    from base_products bp
 //    inner join product_items pit on bp.id = pit.base_id

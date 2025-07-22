@@ -31,6 +31,7 @@ import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpDTO;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.DTOS.UpdateProfileDTO;
 import com.aos.AOSBE.DTOS.loginRequestDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Mapper.AccountsMapper;
@@ -230,17 +231,19 @@ public class AccountsAPI {
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Không xác thực được người dùng"));
 	    }
+	    
 	}
-//	@PutMapping("/Accounts/profile")
-//	public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO dto) {
-//    try {
-//        accountsService.updateProfile(dto);
-//        return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
-//    } catch (RuntimeException e) {
-//        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-//    } catch (Exception e) {
-//        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
-//    }
-//}
+	@PutMapping("/Accounts/me")
+	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
+	    try {
+	        accountsService.updateProfile(dto);
+	        return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+	    } catch (Exception e) {
+	        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
+	    }
+	}
+
 
 }

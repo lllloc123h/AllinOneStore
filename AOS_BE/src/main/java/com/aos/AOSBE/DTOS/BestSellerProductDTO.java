@@ -1,17 +1,17 @@
 package com.aos.AOSBE.DTOS;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class BestSellerProductDTO {
-    private int productItemId;
-    private int baseProductId;
+    private int id;
     private String name;
-    private String material;
     private String imageUrl;
-    private double price;
-    private int qty;
     private int turnBuy;
+    private int rating;
+    private double price;
 }
