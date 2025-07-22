@@ -29,6 +29,8 @@ import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.EWalletsService;
 import com.aos.AOSBE.Service.EmailService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -36,6 +38,9 @@ public class EWalletsAPI {
 
 	@Autowired
 	private EWalletsService eWalletsService;
+
+	@Autowired
+	private HttpSession session;
 
 	@Autowired
 	AccountsService accountsService;
@@ -102,9 +107,27 @@ public class EWalletsAPI {
 			entity.setBalance(0);
 			entity.setCodeActivce(CodeActice);
 			entity.setWalletType("REAL");
+
+			session.setAttribute("otp_" + userEmail, CodeActice);
+			session.setAttribute("otp_time_" + userEmail, System.currentTimeMillis());
 			EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
 			emailService.sendVerificationEWallet("nkha79323@gmail.com", CodeActice);
 			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
+		}
+	}
+
+	@GetMapping("/user/resendOTP")
+	public ResponseEntity<?> resendOTP() {
+		try {
+			CommonFunctions commonFunctions = new CommonFunctions();
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			String CodeActice = commonFunctions.generateVerificationCode();
+			session.setAttribute("otp_" + userEmail, CodeActice);
+			session.setAttribute("otp_time_" + userEmail, System.currentTimeMillis());
+			emailService.sendVerificationEWallet("nkha79323@gmail.com", CodeActice);
+			return ResponseEntity.ok(Map.of("message", "Gửi lại OTP thành công"));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra:" + e.getMessage()));
 		}
@@ -115,8 +138,19 @@ public class EWalletsAPI {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			EWallets ewallet = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
-			if (ewallet != null && ewallet.isActive() == false
-					&& entity.getCodeActivce().equals(ewallet.getCodeActivce())) {
+			String sessionOtp = (String) session.getAttribute("otp_" + userEmail);
+			Long sentTime = (Long) session.getAttribute("otp_time_" + userEmail);
+			if (sessionOtp == null || sentTime == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "OTP expired or not found."));
+			}
+			long currentTime = System.currentTimeMillis();
+			if (currentTime - sentTime > 60_000) {
+				session.removeAttribute("otp_" + userEmail);
+				session.removeAttribute("otp_time_" + userEmail);
+				return ResponseEntity.badRequest().body(Map.of("message", "OTP has expired."));
+			}
+
+			if (ewallet != null && ewallet.isActive() == false && sessionOtp.equals(entity.getCodeActivce())) {
 				ewallet.setActive(true);
 				EWallets saved = eWalletsService.eWalletsSave(ewallet);
 				return ResponseEntity.ok(saved);
