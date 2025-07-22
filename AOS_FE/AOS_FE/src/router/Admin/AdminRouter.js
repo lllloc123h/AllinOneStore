@@ -32,6 +32,10 @@ const listDashBoard = [
 ]
 export default [
     {
+        path:'stats',
+        component: () => import('../../components/Admin/Stats/index.vue'),
+    },
+    {
         path: 'Accounts',
         component: import('../../components/Admin/Accounts/index.vue'),
         props: route => ({ TableName: 'Accounts' })
