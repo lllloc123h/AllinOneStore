@@ -11,6 +11,7 @@ import Vue3Toastify, { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import Antd from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.css';
+import VueApexCharts from "vue3-apexcharts"
 
 const app = createApp(App)
 
@@ -31,4 +32,5 @@ app.use(Vue3Toastify, {
   }
 })
 app.use(Antd);
+app.use(VueApexCharts);
 app.mount('#app')
