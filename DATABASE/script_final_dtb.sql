@@ -608,7 +608,7 @@ UPDATE orders
 SET order_code = 'L3BXXN'
 WHERE id = 2;
 
-CREATE TRIGGER trg_update_user_address
+/**CREATE TRIGGER trg_update_user_address
 ON user_addresses
 AFTER UPDATE
 AS
@@ -618,4 +618,4 @@ BEGIN
   SET updated_at = GETDATE()
   FROM inserted
   WHERE user_addresses.id = inserted.id;
-END;
+END;**\
