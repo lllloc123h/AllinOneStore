@@ -597,5 +597,5 @@ VALUES
         END
     END
 UPDATE orders
-SET order_code = 'L3BKV6'
-WHERE id = 1;
+SET order_code = 'L3BXXN'
+WHERE id = 2;
