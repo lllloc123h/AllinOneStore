@@ -88,8 +88,6 @@ public class PromotionsAPI {
 		return ResponseEntity.ok(listGroups);
 	}
 
-
-
 	@GetMapping("/admin/Promotions")
 	public ResponseEntity<?> getAllPromotionsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {

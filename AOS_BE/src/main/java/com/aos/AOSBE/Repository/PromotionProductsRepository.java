@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,5 @@ public interface PromotionProductsRepository
 	PromotionProducts findAllByProductItems_IdAndPromotions_Id(int productItemsId, int promotionsId);
 
 	List<PromotionProducts> findPromotionProductsByPromotions_Id(int promotionsId);
+
 }

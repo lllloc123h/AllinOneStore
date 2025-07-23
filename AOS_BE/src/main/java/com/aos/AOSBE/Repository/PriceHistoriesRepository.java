@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface PriceHistoriesRepository
 	// Add custom query methods here if needed
 	List<PriceHistories> findByProductItems_Id(int productItemId);
 
+	List<PriceHistories> findPriceHistoriesByProductItems_IdAndCreatedAtBetween(int productItemsId, LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
 }

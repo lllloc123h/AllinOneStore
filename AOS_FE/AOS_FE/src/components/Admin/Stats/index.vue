@@ -338,6 +338,137 @@
                 </div>
               </div>
             </div>
+            <div class="row mt-4">
+              <div class="col-12">
+                <h6 class="text-primary">
+                  <i class="bi bi-graph-up-arrow me-2"></i>
+                  Biểu đồ thống kê bán hàng
+                  <strong class="text-black"
+                    >(Lịch sử thay đổi giá, doanh thu, lịch sử khuyến mãi)</strong
+                  >
+                </h6>
+                <div class="col-4 shadow-sm border-0 rounded-4 p-3">
+                  Từ ngày :
+                  <input
+                    type="date"
+                    @change="filterByDate"
+                    v-model="startAt"
+                    class="form-control mb-3"
+                  />
+                  Đến ngày
+                  <input
+                    type="date"
+                    @change="filterByDate"
+                    v-model="endAt"
+                    class="form-control mb-3"
+                  />
+                </div>
+                <div class="chart-container">
+                  <apexchart
+                    type="line"
+                    height="350"
+                    :options="chartOptions"
+                    :series="series"
+                  ></apexchart>
+
+                  <!-- Chart Legend -->
+                  <div class="chart-legend mt-3">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="legend-item">
+                          <span
+                            class="legend-dot"
+                            style="background-color: #ff6b35; opacity: 0.3"
+                          ></span>
+                          <span>Combo Sale Period</span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="legend-item">
+                          <span
+                            class="legend-dot"
+                            style="background-color: #dc3545; opacity: 0.3"
+                          ></span>
+                          <span>Discount Season</span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="legend-item">
+                          <span
+                            class="legend-marker"
+                            style="border: 2px solid #00e396"
+                          ></span>
+                          <span>Mục tiêu</span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="legend-item">
+                          <span
+                            class="legend-marker"
+                            style="border: 3px solid #ff4560; background-color: #fff"
+                          ></span>
+                          <span>Sự kiện đặc biệt</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-md-4">
+                        <div class="legend-item">
+                          <span
+                            class="legend-marker"
+                            style="border: 3px solid #00e396; background-color: #fff"
+                          ></span>
+                          <span>Đỉnh cao doanh thu</span>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="legend-item">
+                          <span
+                            class="legend-marker"
+                            style="border: 3px solid #feb019; background-color: #fff"
+                          ></span>
+                          <span>Mốc quan trọng</span>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <small class="text-muted">
+                          <i class="bi bi-info-circle me-1"></i>
+                          Sử dụng thanh công cụ phía trên để zoom vào khu vực bạn muốn xem
+                          chi tiết
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Promotion Info Cards -->
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <div class="promotion-card combo-card">
+                      <div class="promotion-icon">
+                        <i class="bi bi-gift"></i>
+                      </div>
+                      <div class="promotion-info">
+                        <h6>COMBO SALE</h6>
+                        <p>T4 - T7: Mua 2 tặng 1</p>
+                        <span class="badge bg-warning">Đang diễn ra</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="promotion-card discount-card">
+                      <div class="promotion-icon">
+                        <i class="bi bi-percent"></i>
+                      </div>
+                      <div class="promotion-info">
+                        <h6>DISCOUNT 30%</h6>
+                        <p>T9 - T11: Giảm giá toàn bộ</p>
+                        <span class="badge bg-danger">Sắp diễn ra</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -420,10 +551,6 @@
 
               <div class="card-footer bg-transparent border-0">
                 <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-eye me-1"></i>
-                    Xem
-                  </button>
                   <button class="btn btn-sm btn-outline-warning">
                     <i class="bi bi-pencil me-1"></i>
                     Sửa
@@ -489,14 +616,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import Dashboard from "../../Module/DashBoard.vue";
 import createCrudService from "../../../Configs/reusableCRUDService.js";
 import { dropDown } from "../../../Configs/DropDownList.js";
 import api from "../../../Configs/api.js";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+const startAt = ref();
+const endAt = ref();
+function filterByDate() {
+  // Implement date filtering logic here
+  console.log("Filtering by date:", startAt.value, endAt.value);
+}
 // Reactive data
 const selectedBaseProduct = ref(null);
 const selectedProductItem = ref(null);
@@ -538,6 +670,285 @@ const listDashBoard = [
   "Variants",
 ];
 
+// Chart data
+const series = ref([
+  {
+    name: "Doanh thu",
+    data: [
+      [new Date("2024-01-01 15:10:00").getTime(), 300],
+      [new Date("2024-02-01 09:30:00").getTime(), 40],
+      [new Date("2024-03-01 10:15:00").getTime(), 35],
+      [new Date("2024-04-01 11:45:00").getTime(), 50],
+      [new Date("2024-05-01 14:20:00").getTime(), 49],
+      [new Date("2024-06-01 16:10:00").getTime(), 60],
+      [new Date("2024-07-01 18:30:00").getTime(), 70],
+      [new Date("2024-08-01 20:45:00").getTime(), 91],
+      [new Date("2024-09-01 22:15:00").getTime(), 125],
+      [new Date("2024-10-01 13:30:00").getTime(), 100],
+      [new Date("2024-11-01 15:45:00").getTime(), 85],
+      [new Date("2024-12-01 17:20:00").getTime(), 95],
+    ],
+  },
+  {
+    name: "Lượt mua",
+    data: [
+      [new Date("2024-01-01 08:00:00").getTime(), 23],
+      [new Date("2024-02-01 09:30:00").getTime(), 12],
+      [new Date("2024-03-01 10:15:00").getTime(), 54],
+      [new Date("2024-04-01 11:45:00").getTime(), 61],
+      [new Date("2024-05-01 14:20:00").getTime(), 32],
+      [new Date("2024-06-01 16:10:00").getTime(), 56],
+      [new Date("2024-07-01 18:30:00").getTime(), 81],
+      [new Date("2024-08-01 20:45:00").getTime(), 19],
+      [new Date("2024-09-01 22:15:00").getTime(), 45],
+      [new Date("2024-10-01 13:30:00").getTime(), 67],
+      [new Date("2024-11-01 15:45:00").getTime(), 23],
+      [new Date("2024-12-01 17:20:00").getTime(), 43],
+    ],
+  },
+  {
+    name: "Lượt xem",
+    data: [
+      [new Date("2024-01-01 08:00:00").getTime(), 23],
+      [new Date("2024-02-01 09:30:00").getTime(), 12],
+      [new Date("2024-03-01 10:15:00").getTime(), 14],
+      [new Date("2024-04-01 11:45:00").getTime(), 41],
+      [new Date("2024-05-01 14:20:00").getTime(), 42],
+      [new Date("2024-06-01 16:10:00").getTime(), 16],
+      [new Date("2024-07-01 18:30:00").getTime(), 41],
+      [new Date("2024-08-01 20:45:00").getTime(), 89],
+      [new Date("2024-09-01 22:15:00").getTime(), 15],
+      [new Date("2024-10-01 13:30:00").getTime(), 67],
+      [new Date("2024-11-01 15:45:00").getTime(), 23],
+      [new Date("2024-12-01 17:20:00").getTime(), 43],
+    ],
+  },
+]);
+
+const chartOptions = ref({
+  chart: {
+    height: 350,
+    type: "line",
+    id: "product-stats-chart",
+    zoom: {
+      enabled: true,
+      type: "x",
+      autoScaleYaxis: true,
+      zoomedArea: {
+        fill: {
+          color: "#90CAF9",
+          opacity: 0.4,
+        },
+        stroke: {
+          color: "#0D47A1",
+          opacity: 0.4,
+          width: 1,
+        },
+      },
+    },
+    toolbar: {
+      show: true,
+      autoSelected: "zoom",
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    width: [4, 3, 3],
+    curve: "smooth",
+    dashArray: [0, 5, 5],
+  },
+  title: {
+    text: "Thống kê bán hàng với Annotations (Có thể zoom)",
+    align: "left",
+    style: {
+      fontSize: "16px",
+      fontWeight: "600",
+      color: "#2c3e50",
+    },
+  },
+  legend: {
+    position: "top",
+    horizontalAlign: "right",
+  },
+  markers: {
+    hover: {
+      sizeOffset: 3,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    labels: {
+      format: "dd/MM",
+      style: {
+        fontSize: "11px",
+      },
+    },
+    title: {
+      text: "Thời gian (Có thể zoom để xem chi tiết)",
+    },
+  },
+  yaxis: [
+    {
+      title: {
+        text: "Doanh thu (VND)",
+      },
+      labels: {
+        formatter: function (val) {
+          return val ? val.toLocaleString("vi-VN") : "0";
+        },
+      },
+    },
+    {
+      opposite: true,
+      title: {
+        text: "Lượt mua/xem",
+      },
+    },
+  ],
+  tooltip: {
+    shared: true,
+    intersect: false,
+    x: {
+      format: "dd/MM/yyyy HH:mm",
+    },
+    y: {
+      formatter: function (val, opts) {
+        if (opts.seriesIndex === 0) {
+          return val.toLocaleString("vi-VN") + " VND";
+        }
+        return val + " lượt";
+      },
+    },
+  },
+  colors: ["#28a745", "#007bff", "#ff6b35"],
+  grid: {
+    borderColor: "#f1f1f1",
+    padding: {
+      right: 30,
+      left: 20,
+    },
+  },
+  annotations: {
+    yaxis: [],
+    xaxis: [
+      {
+        x: new Date("2024-04-01 11:45:00").getTime(),
+        strokeDashArray: 0,
+        borderColor: "#775DD0",
+        label: {
+          borderColor: "#775DD0",
+          style: {
+            color: "#fff",
+            background: "#775DD0",
+          },
+          text: "Bắt đầu Q2",
+        },
+      },
+      {
+        x: new Date("2024-04-01 11:45:00").getTime(),
+        x2: new Date("2024-07-01 18:30:00").getTime(),
+        fillColor: "#ff6b35",
+        opacity: 0.3,
+        label: {
+          borderColor: "#ff6b35",
+          style: {
+            fontSize: "10px",
+            color: "#fff",
+            background: "#ff6b35",
+          },
+          offsetY: -10,
+          text: "COMBO SALE PERIOD",
+        },
+      },
+      {
+        x: new Date("2024-09-01 22:15:00").getTime(),
+        x2: new Date("2024-11-01 15:45:00").getTime(),
+        fillColor: "#dc3545",
+        opacity: 0.3,
+        label: {
+          borderColor: "#dc3545",
+          style: {
+            fontSize: "10px",
+            color: "#fff",
+            background: "#dc3545",
+          },
+          offsetY: -10,
+          text: "DISCOUNT SEASON",
+        },
+      },
+    ],
+    points: [
+      {
+        x: new Date("2024-05-01 14:20:00").getTime(),
+        y: 49,
+        marker: {
+          size: 8,
+          fillColor: "#fff",
+          strokeColor: "#FF4560",
+          strokeWidth: 3,
+          shape: "circle",
+        },
+        label: {
+          borderColor: "#FF4560",
+          offsetY: 0,
+          offsetX: 0,
+          style: {
+            color: "#fff",
+            background: "#FF4560",
+            fontSize: "12px",
+          },
+          text: "Sự kiện đặc biệt",
+        },
+      },
+      {
+        x: new Date("2024-08-01 20:45:00").getTime(),
+        y: 91,
+        marker: {
+          size: 10,
+          fillColor: "#fff",
+          strokeColor: "#00E396",
+          strokeWidth: 3,
+          shape: "circle",
+        },
+        label: {
+          borderColor: "#00E396",
+          offsetY: 0,
+          offsetX: 0,
+          style: {
+            color: "#fff",
+            background: "#00E396",
+            fontSize: "12px",
+          },
+          text: "Đỉnh cao doanh thu",
+        },
+      },
+      {
+        x: new Date("2024-10-01 13:30:00").getTime(),
+        y: 100,
+        marker: {
+          size: 8,
+          fillColor: "#fff",
+          strokeColor: "#FEB019",
+          strokeWidth: 3,
+          shape: "circle",
+        },
+        label: {
+          borderColor: "#FEB019",
+          offsetY: 0,
+          offsetX: 0,
+          style: {
+            color: "#fff",
+            background: "#FEB019",
+            fontSize: "12px",
+          },
+          text: "Mốc quan trọng",
+        },
+      },
+    ],
+  },
+});
 // Methods
 async function selectBaseProduct(product) {
   selectedBaseProduct.value = product;
@@ -877,6 +1288,100 @@ onMounted(async () => {
   border-left: 4px solid #0d6efd;
   color: #2c3e50;
   line-height: 1.6;
+}
+
+/* Chart Styles */
+.chart-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  margin-top: 1rem;
+}
+
+/* Promotion Card Styles */
+.promotion-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid;
+  margin-bottom: 1rem;
+}
+
+.combo-card {
+  border-left-color: #ff6b35;
+}
+
+.discount-card {
+  border-left-color: #dc3545;
+}
+
+.promotion-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.combo-card .promotion-icon {
+  background-color: #ff6b35;
+}
+
+.discount-card .promotion-icon {
+  background-color: #dc3545;
+}
+
+.promotion-info h6 {
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.promotion-info p {
+  margin: 0.25rem 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Chart Legend Styles */
+.chart-legend {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.legend-dot {
+  width: 20px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.legend-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: white;
 }
 
 /* Responsive */

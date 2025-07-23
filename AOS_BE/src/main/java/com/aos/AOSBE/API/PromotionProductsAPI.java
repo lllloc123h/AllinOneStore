@@ -1,16 +1,15 @@
 package com.aos.AOSBE.API;
 
-import com.aos.AOSBE.DTOS.PromotionProductsDTOS;
-import com.aos.AOSBE.DTOS.PromotionsDTOS;
-import com.aos.AOSBE.Entity.PromotionProducts;
-import com.aos.AOSBE.Entity.Promotions;
-import com.aos.AOSBE.Mapper.PromotionProductsMapper;
-import com.aos.AOSBE.Service.PromotionProductsService;
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Mapper.*;
+import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,18 @@ public class PromotionProductsAPI {
 	private PromotionProductsService promotionProductsService;
 	@Autowired
 	private PromotionProductsMapper promotionProductsMapper;
-
+	@Autowired
+	private CostHistoriesService costHistoriesService;
+	@Autowired
+	private PriceHistoriesService priceHistoriesService;
+	@Autowired
+	private PriceHistoriesMapper priceHistoriesMapper;
+	@Autowired
+	private CostHistoriesMapper costHistoriesMapper;
+	@Autowired
+	private PromotionsService promotionsService;
+	@Autowired
+	private PromotionsMapper promotionsMapper;
 	@GetMapping("/admin/PromotionProducts")
 	public ResponseEntity<?> getAllPromotionProductsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -115,6 +125,20 @@ public class PromotionProductsAPI {
 		promotionProductsService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
-}
+	@GetMapping("/admin/products/details/{id}")
+	public ResponseEntity<?> getPromotionProductsByProductItemsId(@PathVariable int id, @RequestParam("startAt")LocalDateTime startAt, @RequestParam("endAt")LocalDateTime endAt) {
+		List<PromotionsDTOS> promotions = promotionsService.findPromotionByProductItemAndDuration(id, startAt, endAt).stream().map(promotionsMapper::mapper).toList();
+		List<CostHistoriesDTOS> costHistories = costHistoriesService.findCostHistoriesByProductItemsIdBetween(id, startAt, endAt)
+				.stream().map(costHistoriesMapper::mapper).toList();
+		List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findPriceHistoriesByProductItemsIdAndCreatedAtBetween(id, startAt, endAt)
+				.stream().map(priceHistoriesMapper::mapper).toList();
+		DetailStatsDTO detailStatsDTO = new DetailStatsDTO();
+		detailStatsDTO.setPromotions(promotions);
+		detailStatsDTO.setCostHistories(costHistories);
+		detailStatsDTO.setPriceHistories(priceHistories);
+		return ResponseEntity.ok(detailStatsDTO);
+	}
+	}
+
 
 

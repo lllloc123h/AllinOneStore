@@ -139,6 +139,19 @@ const menuItems = [
       },
     ],
   },
+    {
+    title: "Thống kê",
+    children: [
+      {
+        name: "Quản lý Promotions",
+        path: "/Admin/Promotions",
+      },
+      {
+        name: "Thống kê theo sản phẩm",
+        path: "/Admin/products/details/stats",
+      },
+    ],
+  },
 ];
 </script>
 

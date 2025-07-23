@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,5 +45,8 @@ public class PriceHistoriesService {
 	@Transactional
 	public List<PriceHistories> findByProductItemsId(int productItemId) {
     return priceHistoriesRepository.findByProductItems_Id(productItemId);
+	}
+	public List<PriceHistories> findPriceHistoriesByProductItemsIdAndCreatedAtBetween(int productItemId,LocalDateTime createdAtAfter, LocalDateTime createdAtBefore) {
+		return priceHistoriesRepository.findPriceHistoriesByProductItems_IdAndCreatedAtBetween(productItemId, createdAtAfter, createdAtBefore);
 	}
 }

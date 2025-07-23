@@ -32,7 +32,7 @@ const listDashBoard = [
 ]
 export default [
     {
-        path:'stats',
+        path:'products/details/stats',
         component: () => import('../../components/Admin/Stats/index.vue'),
     },
     {

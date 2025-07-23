@@ -60,4 +60,5 @@ public class PromotionProductsService {
 	public List<PromotionProducts> findPromotionProductsByPromotionsId(int promotionsId) {
 		return promotionProductsRepository.findPromotionProductsByPromotions_Id(promotionsId);
 	}
+
 }
