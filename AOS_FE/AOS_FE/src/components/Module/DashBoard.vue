@@ -137,6 +137,19 @@ const menuItems = [
         name: "Quản lý Promotions Products",
         path: "/Admin/PromotionProducts",
       },
+      {
+        name: "Quản lý COUPONS",
+        path: "/Admin/Coupons",
+      }
+    ],
+  },
+  {
+    title: "QUẢN LÝ CUSTOMS",
+    children: [
+      {
+        name: "Quản lý CUSTOMS",
+        path: "/Admin/Customs",
+      }
     ],
   },
     {

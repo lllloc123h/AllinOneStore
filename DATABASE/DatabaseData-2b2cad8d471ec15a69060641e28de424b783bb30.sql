@@ -2586,3 +2586,91 @@ BEGIN
 
   SET @order_id = @order_id + 1;
 END;
+DECLARE @i INT = 1;
+DECLARE @order_item_id INT;
+
+WHILE @i <= 10
+BEGIN
+  -- Lấy ngẫu nhiên 1 id từ order_items
+  SELECT TOP 1 @order_item_id = id FROM order_items ORDER BY NEWID();
+
+  INSERT INTO returns (
+    order_product_item_id,
+    qty,
+    reason,
+    image_url1,
+    image_url2,
+    image_url3,
+    video_url,
+    is_returned_money,
+    refund_amount,
+    return_type,
+    refund_type,
+    status,
+    processed_at,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    @order_item_id,
+    1 + ABS(CHECKSUM(NEWID()) % 3), -- qty từ 1–3
+    N'Sản phẩm bị lỗi, cần đổi trả',
+    'https://example.com/image1.jpg',
+    NULL,
+    NULL,
+    'https://example.com/video.mp4',
+    0,
+    50000.00,
+    'REFUND',
+    'WALLET',
+    'PENDING',
+    NULL,
+    GETDATE(),
+    GETDATE()
+  );
+
+  SET @i = @i + 1;
+END;
+
+DECLARE @i INT = 1;
+WHILE @i <= 20
+BEGIN
+    INSERT INTO reviews (
+        product_item_id,
+        account_id,
+        rating,
+        comment,
+        image_url1,
+        image_url2,
+        image_url3,
+        video_url,
+        created_at
+    )
+    SELECT TOP 1 
+        id AS product_item_id,
+        1 + ABS(CHECKSUM(NEWID()) % 10),  -- Giả sử có 10 tài khoản
+        1 + ABS(CHECKSUM(NEWID()) % 5),   -- Rating từ 1–5
+        N'Sản phẩm dùng rất tốt, sẽ mua lại!',
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg',
+        'https://example.com/image3.jpg',
+        'https://example.com/video.mp4',
+        DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 30), GETDATE())
+    FROM product_items
+    ORDER BY NEWID();
+
+    SET @i = @i + 1;
+END;
+select * from cancels
+INSERT INTO cancels (order_id, reason, is_paid, status, created_at, updated_at)
+VALUES 
+(1, N'Khách thay đổi quyết định', 0, N'PENDING', GETDATE(), GETDATE()),
+(2, N'Không thể liên hệ với người nhận', 1, N'APPROVED', GETDATE(), GETDATE()),
+(3, N'Trùng đơn', 0, N'REJECTED', GETDATE(), GETDATE()),
+(4, N'Sản phẩm không đúng mô tả', 1, N'DONE', GETDATE(), GETDATE()),
+(5, N'Địa chỉ giao hàng không hợp lệ', 0, N'PENDING', GETDATE(), GETDATE()),
+(6, N'Khách đặt nhầm', 0, N'DONE', GETDATE(), GETDATE()),
+(7, N'Hệ thống báo lỗi đơn hàng', 1, N'APPROVED', GETDATE(), GETDATE()),
+(8, N'Khách hủy đơn khi chưa thanh toán', 0, N'REJECTED', GETDATE(), GETDATE()),
+(9, N'Giao hàng trễ so với cam kết', 1, N'APPROVED', GETDATE(), GETDATE()),
+(10, N'Không cần nữa', 0, N'PENDING', GETDATE(), GETDATE());

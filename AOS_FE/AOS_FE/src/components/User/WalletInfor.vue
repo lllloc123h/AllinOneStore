@@ -86,6 +86,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-secondary" @click="showVerifyModal = false">Hủy</button>
+                                <button class="btn btn-warning" :disabled="timeLineOTP > 0" @click="ReSendOTP">
+                                    Gửi lại OTP
+                                    <span v-if="timeLineOTP > 0">({{ timeLineOTP }}s)</span>
+                                </button>
                                 <button class="btn btn-primary" @click="verifyWallet">Xác minh</button>
                             </div>
                         </div>
@@ -99,7 +103,7 @@
                             <div class="d-flex justify-content-between">
                                 <span>{{ txn.description }} ({{ formatDate(txn.date) }})</span>
                                 <span> {{ txn.status === 'PENDING' ? 'Giao dịch quá hạn' : "Nạp tiền thành công"
-                                    }}</span>
+                                }}</span>
                                 <strong :class="txn.amount > 0 ? 'text-success' : 'text-danger'">
                                     {{ formatCurrency(txn.amount) }}
                                 </strong>
@@ -126,7 +130,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../../Configs/api'
-
+import { notification } from "ant-design-vue";
 const wallet = ref({})
 const totalTopup = ref(0)
 const totalSpent = ref(0)
@@ -138,15 +142,8 @@ const router = useRouter()
 const showModal = ref(false)
 const showVerifyModal = ref(false)
 const verifyCode = ref('')
-import { notification } from "ant-design-vue";
-// thisis the structure of the wallet object
-//  private String id;
-// 	private double balance;
-// 	private String walletType;
-// 	private boolean isActive;
-// 	private String codeActivce;
-// 	private LocalDateTime createdAt;
-// 	private String accounts;
+const timeLineOTP = ref(0);
+let otpTimer = null;
 const formDataWallet = ref(
     {
         id: '',
@@ -205,7 +202,27 @@ async function createWallet() {
         alert('Không thể tạo ví. Vui lòng thử lại.')
     }
 }
-
+function ReSendOTP() {
+    if (timeLineOTP.value > 0) return;
+    try {
+        api.get(`/user/resendOTP`);
+        timeLineOTP.value = 60;
+        otpTimer = setInterval(() => {
+            if (timeLineOTP.value > 0) {
+                timeLineOTP.value--;
+            } else {
+                clearInterval(otpTimer);
+            }
+        }, 1000);
+    }
+    catch (error) {
+        console.error('Lỗi khi gửi lại OTP:', error)
+        notification.error({
+            message: "Lỗi",
+            description: "Không thể gửi lại mã xác minh. Vui lòng thử lại sau.",
+        })
+    }
+}
 function formatDate(dateStr) {
     if (!dateStr) return ''
     const date = new Date(dateStr)

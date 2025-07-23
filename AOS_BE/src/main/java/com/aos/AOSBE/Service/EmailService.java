@@ -64,7 +64,7 @@ public class EmailService {
 				            <!-- Replace with your dynamic code -->
 				          </p>
 				          <p style="font-size: 14px; color: #999">
-				            This code will expire in 10 minutes.
+				            This code will expire in 1 minutes.
 				          </p>
 				          <p style="margin-top: 40px; font-size: 12px; color: #bbb">
 				            If you did not request this code, please ignore this email.
@@ -136,7 +136,7 @@ public class EmailService {
 				            <!-- Replace with your dynamic code -->
 				          </p>
 				          <p style="font-size: 14px; color: #999">
-				            This code will expire in 10 minutes.
+				            This code will expire in 1 minutes.
 				          </p>
 				          <p style="margin-top: 40px; font-size: 12px; color: #bbb">
 				            If you did not request this code, please ignore this email.
