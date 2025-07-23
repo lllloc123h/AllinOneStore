@@ -7,7 +7,7 @@
       <p><strong>Mã đơn:</strong> {{ order.maDon }}</p>
       <p><strong>Ngày đặt:</strong> {{ formatDate(order.ngayDat) }}</p>
       <p><strong>Khách hàng:</strong> {{ order.khachHang.ten }}</p>
-      <p><strong>Trạng thái GHN:</strong> {{ order.trangThai }}</p>
+      <p><strong>Trạng thái:</strong> {{ order.trangThai }}</p>
     </div>
 
     <div class="section order-status">
@@ -20,16 +20,18 @@
     <div class="section products">
       <h3>Danh sách sản phẩm</h3>
       <table>
-        <thead><tr><th>Ảnh</th><th>Tên</th><th>Số lượng</th><th>Đơn giá</th><th>Tổng</th></tr></thead>
-        <tbody>
-          <tr v-for="(sp, i) in order.sanPham" :key="i">
-            <td><img :src="sp.anh" /></td>
-            <td>{{ sp.ten }}</td>
-            <td>{{ sp.soLuong }}</td>
-            <td>{{ formatMoney(sp.gia) }}</td>
-            <td>{{ formatMoney(sp.gia * sp.soLuong) }}</td>
-          </tr>
-        </tbody>
+        <thead>
+        <tr><th>Ảnh</th><th>Tên</th><th>Số lượng</th><th>Đơn giá</th><th>Tổng</th></tr>
+      </thead>
+      <tbody>
+        <tr v-for="(sp, i) in order.sanPham" :key="i">
+          <td><img :src="sp.anh" /></td>
+          <td>{{ sp.ten }}</td>
+          <td>{{ sp.soLuong }}</td>
+          <td>{{ formatMoney(sp.gia) }}</td>
+          <td>{{ formatMoney(sp.gia * sp.soLuong) }}</td>
+        </tr>
+      </tbody>
       </table>
     </div>
 
@@ -38,14 +40,14 @@
       <p><strong>Người nhận:</strong> {{ order.khachHang.ten }}</p>
       <p><strong>Địa chỉ:</strong> {{ order.khachHang.diaChi }}</p>
       <p><strong>Điện thoại:</strong> {{ order.khachHang.sdt }}</p>
-      <p><strong>Đơn vị vận chuyển:</strong> {{ order.vanChuyen.ten }}</p>
+      <p><strong>Đơn vị vận chuyển: </strong>Giao hàng nhanh</p>
       <p><strong>Mã vận đơn:</strong> {{ order.vanChuyen.maVanDon }}</p>
     </div>
 
     <div class="section">
       <h3>Thông tin thanh toán</h3>
       <p><strong>Phương thức:</strong> {{ order.thanhToan.phuongThuc }}</p>
-      <p><strong>Trạng thái:</strong> {{ order.thanhToan.trangThai }}</p>
+      <p><strong>Trạng thái thanh toán:</strong> {{ order.thanhToan.trangThai }}</p>
       <p><strong>Tổng tiền:</strong> {{ formatMoney(order.tongTien) }}</p>
     </div>
 
@@ -128,9 +130,9 @@ const loadOrder = async () => {
       tongTien: orderData.order.finalTotal,
 
       khachHang: {
-        ten: orderData.orderInfor?.fullName || 'N/A',
+        ten: orderData.account?.fullname || 'N/A',
         diaChi: orderData.orderInfor?.address || 'N/A',
-        sdt: orderData.orderInfor?.phone || 'N/A'
+        sdt: orderData.account?.phone || 'N/A'
       },
       vanChuyen: {
         ten: orderData.order.shippingMethods?.name || 'N/A',
@@ -149,7 +151,7 @@ const loadOrder = async () => {
       lichSu: [
         {
           thoiGian: orderData.order.createdAt,
-          noiDung: `Đơn hàng được tạo`
+          noiDung: `Đơn hàng được tạo`  
         },
         ...(orderData.order.shippedDate ? [{
           thoiGian: orderData.order.shippedDate,
@@ -181,6 +183,24 @@ const syncStatus = async () => {
 const formatDate = d => new Date(d).toLocaleDateString('vi-VN')
 const formatDateTime = d => new Date(d).toLocaleString('vi-VN')
 const formatMoney = v => Number(v).toLocaleString('vi-VN') + 'đ'
+
+const statusDisplayMap = {
+  'ready_to_pick': 'Chờ lấy hàng',
+  'picking': 'Đang lấy hàng',
+  'picked': 'Đã lấy hàng',
+  'delivering': 'Đang giao hàng',
+  'delivered': 'Đã giao hàng thành công',
+  'cancel': 'Đã huỷ',
+  'return': 'Đang hoàn hàng',
+  'exception': 'Giao hàng thất bại',
+  'damage': 'Hàng bị hư hỏng',
+  'lost': 'Mất hàng',
+  'Chờ xác nhận': 'Chờ xác nhận',
+  'Chờ lấy hàng': 'Chờ lấy hàng',
+  'Chờ giao hàng': 'Đang giao hàng',
+  'Đã nhận hàng': 'Đã nhận hàng'
+}
+
 </script>
 
 <style scoped>

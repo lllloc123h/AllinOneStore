@@ -41,11 +41,8 @@ public class OrdersService {
 	@Autowired
 	private ShippingMethodsRepository shippingMethodsRepository;
 
-	@Value("${GHN_TOKEN}")
-	private String ghnToken;
-
-	@Value("${GHN_SHOPID}")
-	private String ghnShopId;
+	private final String ghnToken = System.getProperty("GHN_TOKEN");
+	private final String ghnShopId = System.getProperty("GHN_SHOPID");
 	
 	public Page<Orders> ordersFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -127,6 +124,8 @@ public class OrdersService {
 	}
 	@Transactional
     public Orders updateShippingStatusFromGHN(int id) {
+		System.out.println(">> GHN_TOKEN: " + ghnToken);
+    	System.out.println(">> GHN_SHOPID: " + ghnShopId);
         Optional<Orders> optionalOrder = ordersRepository.findById(id);
         if (optionalOrder.isEmpty()) {
             throw new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + id);
@@ -140,14 +139,13 @@ public class OrdersService {
         }
 
         try {
-            String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
+            String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
 
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Token", ghnToken);
-            headers.set("ShopId", ghnShopId);
 
             String requestBody = "{\"order_code\": \"" + orderCode + "\"}";
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);

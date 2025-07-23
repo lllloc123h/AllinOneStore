@@ -596,3 +596,6 @@ VALUES
             PRINT N'Đã thêm lịch sử thay đổi giá';
         END
     END
+UPDATE orders
+SET order_code = 'L3BKV6'
+WHERE id = 1;
