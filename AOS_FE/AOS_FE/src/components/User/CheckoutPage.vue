@@ -72,17 +72,6 @@
                         <!-- Tab 2: Thanh toán -->
                         <div v-if="currentTab === 1">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Phương thức giao hàng</label>
-                                <div class="form-check" v-for="method in dropdownShippingMethods" :key="method.id">
-                                    <input type="radio" class="form-check-input" :value="method"
-                                        v-model="shippingMethod" />
-                                    <label class="form-check-label">
-                                        {{ method.name }}
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
                                 <label class="form-label fw-bold">Phương thức thanh toán</label>
                                 <div class="form-check" v-for="method in dropdownPaymentMethods" :key="method">
                                     <input type="radio" class="form-check-input" :value="method"
@@ -135,6 +124,11 @@
                             <span>Tạm tính:</span>
                             <span>{{ totalPrice.toLocaleString() }}₫</span>
                         </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Phí vận chuyển:</span>
+                            <span>{{ shippingFee.toLocaleString() }}₫</span>
+                        </div>
+
                         <div class="d-flex justify-content-between">
                             <span>Giảm giá:</span>
                             <span>-{{ discountAmount.toLocaleString() }}₫</span>
@@ -211,7 +205,9 @@ const isCouponApplicable = computed(() => {
 
 
 
-const finalPrice = computed(() => totalPrice.value - discountAmount.value)
+const finalPrice = computed(() =>
+    totalPrice.value - discountAmount.value + shippingFee.value
+)
 
 const fullAddress = computed(() => {
     const addr = defaultAddressData.value
@@ -357,6 +353,9 @@ onMounted(async () => {
         paymentMethod.value = savedMethod
     }
     dropdownShippingMethods.value = (await dropDown('ShippingMethods')).content
+    if (dropdownShippingMethods.value.length > 0) {
+        shippingMethod.value = dropdownShippingMethods.value[0] // Gán mặc định
+    }
     console.log('✅ Đã tải shipping methods:', dropdownShippingMethods.value)
 
 })
@@ -377,6 +376,70 @@ onBeforeRouteLeave((to, from, next) => {
 
     next()
 })
+const shippingFee = ref(0)
+
+async function fetchShippingFee() {
+    if (!defaultAddressData.value || selectedProducts.value.length === 0) return;
+    // Kiểm tra xem đã có phí vận chuyển hay không
+    if (shippingFee.value > 0) return;
+    // Kiểm tra xem địa chỉ đã được chọn chưa
+    console.log("🧐 defaultAddressData:", defaultAddressData.value);
+
+    if (!defaultAddressData.value.districtId || !defaultAddressData.value.wardCode) {
+        console.warn('❗ Chưa chọn địa chỉ giao hàng đầy đủ.')
+        return;
+    }
+    // Kiểm tra xem có sản phẩm nào được chọn không
+    if (selectedProducts.value.length === 0) {
+        console.warn('❗ Chưa có sản phẩm nào được chọn.')
+        return;
+    }
+    // Kiểm tra xem có sản phẩm nào có số lượng > 0 không
+    if (selectedProducts.value.every(item => item.quantity <= 0)) {
+        console.warn('❗ Tất cả sản phẩm đều có số lượng 0.')
+        return;
+    }
+    // Tạo payload để gửi đến API tính phí vận chuyển
+    console.log('📦 Đang tính phí vận chuyển cho địa chỉ:', defaultAddressData.value);
+    console.log('📦 Sản phẩm được chọn:', selectedProducts.value);
+
+
+    try {
+        const items = selectedProducts.value.map(item => ({
+            quantity: item.quantity,
+            weight: 100,
+            length: 10,
+            width: 10,
+            height: 10
+        }));
+
+        const payload = {
+            to_district_id: defaultAddressData.value.districtId,
+            to_ward_code: defaultAddressData.value.wardCode,
+            items: items
+        };
+        // Xóa dòng này nếu giữ dòng bên dưới:
+        const res = await api.post("/shipping/fee", {
+            to_district_id: defaultAddressData.value.ghn_district_id,
+            to_ward_code: defaultAddressData.value.ghn_ward_code,
+            items: items
+        });
+
+
+
+        console.log('📦 Payload gửi tính phí:', payload);
+
+        const { data } = await api.post('/shipping/fee', payload);
+        shippingFee.value = data.data.total;
+    } catch (err) {
+        console.error('❌ Lỗi lấy phí vận chuyển:', err.response?.data || err.message);
+        shippingFee.value = 0;
+    }
+}
+watch([defaultAddressData, selectedProducts, shippingMethod], () => {
+    fetchShippingFee()
+}, { deep: true })
+
 
 </script>
 

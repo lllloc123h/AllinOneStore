@@ -41,21 +41,21 @@
           <input type="text" placeholder="Số điện thoại" v-model="phone" />
         </div>
 
-        <select v-model="selectedProvince" @change="loadDistricts">
+        <select class="input-group" v-model="selectedProvince" @change="loadDistricts">
           <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
           <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
             {{ prov.name }}
           </option>
         </select>
 
-        <select v-model="selectedDistrict" @change="loadWards" :disabled="!districts.length">
+        <select class="input-group" v-model="selectedDistrict" @change="loadWards" :disabled="!districts.length">
           <option value="" disabled selected>Chọn Quận/Huyện</option>
           <option v-for="dist in districts" :key="dist.code" :value="dist.code">
             {{ dist.name }}
           </option>
         </select>
 
-        <select v-model="selectedWard" :disabled="!wards.length">
+        <select class="input-group" v-model="selectedWard" :disabled="!wards.length">
           <option value="" disabled selected>Chọn Phường/Xã</option>
           <option v-for="ward in wards" :key="ward.code" :value="ward.code">
             {{ ward.name }}
@@ -160,10 +160,18 @@ export default {
     },
     async setAddressDefault(id) {
       try {
-        const res = await api.put(`/UserAddresses/${id}`)
-        this.fetchData()
+        await api.put(`/UserAddresses/${id}`);
+        this.fetchData(); // gọi lại danh sách để reload
+        notification.success({
+          message: 'Thành công',
+          description: 'Đã chọn địa chỉ mặc định'
+        });
       } catch (err) {
-        console.log(err.message)
+        console.log(err.message);
+        notification.error({
+          message: 'Thất bại',
+          description: 'Không thể chọn địa chỉ mặc định'
+        });
       }
     },
     async addAddress() {
@@ -171,9 +179,8 @@ export default {
         const provinceObj = this.provinces.find(p => p.code === this.selectedProvince);
         const districtObj = this.districts.find(d => d.code === this.selectedDistrict);
         const wardObj = this.wards.find(w => w.code === this.selectedWard);
+
         const formData = {
-          id: '',
-          accountId: '',
           recipientName: this.name,
           phone: this.phone,
           province: provinceObj?.name || '',
@@ -182,13 +189,16 @@ export default {
           street: this.detailAddress,
           label: this.label,
           isDefault: false,
-          note: this.note
-        }
+          note: this.note,
+          ghnDistrictId: districtObj?.code || null,  // int
+          ghnWardCode: wardObj?.code || null         // string
+        };
+
         const isContainAddress = this.shippingAddress.some(item =>
-          item.province === provinceObj?.name &&
-          item.district === districtObj?.name &&
-          item.ward === wardObj?.name &&
-          item.street === this.detailAddress
+          item.province === formData.province &&
+          item.district === formData.district &&
+          item.ward === formData.ward &&
+          item.street === formData.street
         );
         if (isContainAddress) {
           notification.error({
@@ -197,10 +207,16 @@ export default {
           });
           return;
         }
-        const res = await api.post(`/UserAddresses`, formData)
-        this.fetchData()
+
+        await api.post(`/UserAddresses`, formData);
+        this.fetchData();
+        this.showModal = false;  // đóng modal sau khi thêm
       } catch (err) {
-        console.log(err.message)
+        console.error(err);
+        notification.error({
+          message: 'Lỗi khi thêm địa chỉ',
+          description: err.message
+        });
       }
     },
     goBackToCheckout() {

@@ -21,7 +21,8 @@ const excludedPaths = [
   '/VariantValues',
   '/openai/chat',
   '/Promotions/',
-  '/Promotions'
+  '/Promotions',
+  '/shipping/fee'
 ]
 
 // Automatically attach token to each request
