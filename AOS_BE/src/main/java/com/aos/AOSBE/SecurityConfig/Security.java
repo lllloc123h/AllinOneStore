@@ -54,7 +54,8 @@ public class Security {
 
 								"/api/cart/**",
 								"/api/shipping/**",
-								"/api/ghn/**"
+								"/api/ghn/**",
+								"/api/UserAddresses/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

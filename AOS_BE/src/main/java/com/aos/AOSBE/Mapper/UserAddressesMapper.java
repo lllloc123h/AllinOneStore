@@ -27,29 +27,31 @@ public class UserAddressesMapper {
 	        entity.getCreatedAt(),
 	        entity.getUpdatedAt(),
 	        entity.getAccounts().getEmail(),
+	        entity.getGhnProvinceId(),
 	        entity.getGhnDistrictId(),
 	        entity.getGhnWardCode()
 	    );
 	}
 
 	public UserAddresses mapperToObject(UserAddressesDTOS dto) {
-	    return new UserAddresses(
-	        dto.getId(),
-	        dto.getRecipientName(),
-	        dto.getPhone(),
-	        dto.getProvince(),
-	        dto.getDistrict(),
-	        dto.getWard(),
-	        dto.getStreet(),
-	        dto.getLabel(),
-	        dto.isDefault(),
-	        dto.getNote(),
-	        dto.getCreatedAt(),
-	        dto.getUpdatedAt(),
-	        accountsService.accountsFindByEmail(dto.getAccounts()).orElse(null),
-	        dto.getGhnDistrictId(),
-	        dto.getGhnWardCode()
-	    );
+		return new UserAddresses(
+			    dto.getId(),
+			    dto.getRecipientName(),
+			    dto.getPhone(),
+			    dto.getProvince(),
+			    dto.getDistrict(),
+			    dto.getWard(),
+			    dto.getStreet(),
+			    dto.getLabel(),
+			    dto.isDefault(),
+			    dto.getNote(),
+			    dto.getCreatedAt(),
+			    dto.getUpdatedAt(),
+			    accountsService.accountsFindByEmail(dto.getAccounts()).orElse(null),
+			    dto.getGhnProvinceId(), 
+			    dto.getGhnDistrictId(),
+			    dto.getGhnWardCode()
+			);
 	}
 
 

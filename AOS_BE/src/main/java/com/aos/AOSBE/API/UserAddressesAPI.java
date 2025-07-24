@@ -51,28 +51,6 @@ public class UserAddressesAPI {
 
 	}
 
-	@GetMapping("/UserAddresses")
-	public ResponseEntity<?> getAllUserAddressesApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-		try {
-			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			List<UserAddressesDTOS> userAddresses = new ArrayList<UserAddressesDTOS>();
-			userAddressesService.userAddressesFindAllByUserEmail(userEmail).forEach(e -> {
-				userAddresses.add(userAddressesMapper.mapper(e));
-			});
-			return ResponseEntity.ok(userAddresses);
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "đã có lỗi xảy ra"));
-		}
-
-	}
-
-	@DeleteMapping("/UserAddresses/{id}")
-	public ResponseEntity<Void> deleteUserAddresses(@PathVariable int id) {
-		userAddressesService.userAddressesDeleteById(id);
-		return ResponseEntity.noContent().build();
-	}
-
 	@GetMapping("/admin/UserAddresses/{id}")
 	public ResponseEntity<UserAddresses> getUserAddressesByIdApi(@PathVariable int id) {
 		// try{
@@ -90,34 +68,7 @@ public class UserAddressesAPI {
 		UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));
 		return ResponseEntity.ok(saved);
 	}
-
-	@PostMapping("/UserAddresses")
-	public ResponseEntity<?> addNewUserAddresses(@RequestBody UserAddressesDTOS entity) {
-		try {
-			String email = SecurityContextHolder.getContext().getAuthentication().getName();
-			entity.setAccounts(email);
-			UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));
-			return ResponseEntity.ok(saved);
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Error occurred"));
-		}
-	}
-
-	@PutMapping("/UserAddresses/{id}")
-	public ResponseEntity<?> setDefaultAddress(@PathVariable int id) {
-		try {
-			UserAddresses address = userAddressesService.userAddressesFindById(id).orElse(null);
-			if (address != null) {
-				UserAddresses updated = userAddressesService.userAddressesSetDefaultAddress(id, address);
-				return ResponseEntity.ok().body(Map.of("message", "Set as default successfully"));
-			} else {
-				return ResponseEntity.badRequest().body(Map.of("message", "Address not found"));
-			}
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Error occurred"));
-		}
-	}
-
+	
 	@PutMapping("/admin/UserAddresses/{id}")
 	public ResponseEntity<?> updateUserAddressesAdminRoles(@PathVariable int id,
 			@RequestBody UserAddressesDTOS entity) {
@@ -141,5 +92,57 @@ public class UserAddressesAPI {
 		userAddressesService.userAddressesDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@GetMapping("/UserAddresses")
+	public ResponseEntity<?> getAllUserAddressesApi(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			List<UserAddressesDTOS> userAddresses = new ArrayList<UserAddressesDTOS>();
+			userAddressesService.userAddressesFindAllByUserEmail(userEmail).forEach(e -> {
+				userAddresses.add(userAddressesMapper.mapper(e));
+			});
+			return ResponseEntity.ok(userAddresses);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "đã có lỗi xảy ra"));
+		}
+
+	}
+
+	@DeleteMapping("/UserAddresses/{id}")
+	public ResponseEntity<Void> deleteUserAddresses(@PathVariable int id) {
+		userAddressesService.userAddressesDeleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PostMapping("/UserAddresses")
+	public ResponseEntity<?> addNewUserAddresses(@RequestBody UserAddressesDTOS entity) {
+	    try {
+	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	        entity.setAccounts(email);
+	        UserAddresses saved = userAddressesService.userAddressesSave(userAddressesMapper.mapperToObject(entity));
+	        return ResponseEntity.ok(saved);
+	    } catch (Exception e) {
+	        e.printStackTrace(); // 👈 In ra stack trace
+	        return ResponseEntity.badRequest().body(Map.of("message", "Error occurred", "error", e.getMessage()));
+	    }
+	}
+
+	@PutMapping("/UserAddresses/{id}")
+	public ResponseEntity<?> setDefaultAddress(@PathVariable int id) {
+		try {
+			UserAddresses address = userAddressesService.userAddressesFindById(id).orElse(null);
+			if (address != null) {
+				UserAddresses updated = userAddressesService.userAddressesSetDefaultAddress(id, address);
+				return ResponseEntity.ok().body(Map.of("message", "Set as default successfully"));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("message", "Address not found"));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Error occurred"));
+		}
+	}
+
+	
 
 }

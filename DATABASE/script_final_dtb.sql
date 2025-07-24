@@ -113,6 +113,7 @@ CREATE TABLE
 	user_addresses (
 		id INT IDENTITY(1,1) PRIMARY KEY,
 		account_id INT NOT NULL,
+
 		recipient_name NVARCHAR(100) NOT NULL,
 		phone VARCHAR(15) NOT NULL,
 		province NVARCHAR(100) NOT NULL,
@@ -122,17 +123,18 @@ CREATE TABLE
 		label NVARCHAR(20),
 		is_default BIT DEFAULT 0,
 		note NVARCHAR(255),
+
 		created_at DATETIME DEFAULT GETDATE(),
 		updated_at DATETIME DEFAULT GETDATE(),
 
-		-- GHN mapping
-		ghn_district_id INT,          -- mã GHN
-		ghn_ward_code VARCHAR(20),    -- mã GHN
+		ghn_province_id INT,            -- tỉnh GHN
+		ghn_district_id INT,            -- mã huyện GHN
+		ghn_ward_code VARCHAR(20),      -- mã phường GHN
 
 		FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
-
 GO
+
 
 
 create table

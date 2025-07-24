@@ -22,6 +22,8 @@ public class UserAddressesService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private UserAddressesRepository userAddressesRepository;
+	@Autowired
+	private GhnAddressService ghnAddressService;
 
 	public Page<UserAddresses> userAddressesFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -29,18 +31,20 @@ public class UserAddressesService {
 		return userAddressesRepository.findAll(spec, pageable);
 	}
 
-	@Transactional
-	public UserAddresses userAddressesSetDefaultAddress(int id, UserAddresses updated) {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		UserAddresses findDefault = userAddressesRepository.findBAddressIsDefalut(true, email).orElse(null);
-		if (findDefault != null) {
-			findDefault.setDefault(false);
-			updated.setDefault(true);
-			userAddressesRepository.save(findDefault);
-			userAddressesRepository.save(updated);
-		}
-		return updated;
+	public UserAddresses userAddressesSetDefaultAddress(int id, UserAddresses selectedAddress) {
+	    String email = selectedAddress.getAccounts().getEmail();
+
+	    // 1. Tắt hết các địa chỉ mặc định của user này
+	    List<UserAddresses> addresses = userAddressesRepository.findByAccountsEmail(email);
+	    for (UserAddresses addr : addresses) {
+	        addr.setDefault(addr.getId() == id);
+	    }
+
+	    userAddressesRepository.saveAll(addresses);
+
+	    return selectedAddress;
 	}
+
 
 	public List<UserAddresses> userAddressesFindAllByUserEmail(String email) {
 //		Pageable pageable = PageRequest.of(page, size);
@@ -49,8 +53,24 @@ public class UserAddressesService {
 
 	@Transactional
 	public UserAddresses userAddressesSave(UserAddresses userAddresses) {
-		return userAddressesRepository.save(userAddresses);
+	    Integer provinceId = userAddresses.getGhnProvinceId();
+	    Integer districtId = userAddresses.getGhnDistrictId();
+	    String wardCode = userAddresses.getGhnWardCode();
+
+	    // Check null để tránh lỗi runtime
+	    if (provinceId != null && districtId != null && wardCode != null) {
+	        String provinceName = ghnAddressService.getProvinceNameById(provinceId);
+	        String districtName = ghnAddressService.getDistrictNameById(provinceId, districtId);
+	        String wardName = ghnAddressService.getWardNameByCode(districtId, wardCode);
+
+	        userAddresses.setProvince(provinceName);
+	        userAddresses.setDistrict(districtName);
+	        userAddresses.setWard(wardName);
+	    }
+
+	    return userAddressesRepository.save(userAddresses);
 	}
+
 
 	public Optional<UserAddresses> userAddressesFindById(int id) {
 		return userAddressesRepository.findById(id);
