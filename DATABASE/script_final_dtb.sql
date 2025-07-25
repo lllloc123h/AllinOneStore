@@ -587,37 +587,4 @@ VALUES
 		'1970-01-01 00:00:00.000'
 	);
 
-	ALTER TRIGGER trgg_auto_insert_history_cost_and_price
-    ON product_items
-    FOR INSERT, UPDATE
-    AS
-    BEGIN
-        SET NOCOUNT ON;
-        
-        -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
-        IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
-        BEGIN
-            INSERT INTO cost_histories(product_item_id, cost)
-            SELECT id, cost FROM inserted;
-            
-            INSERT INTO price_histories(product_item_id, price)
-            SELECT id, price FROM inserted;
-            
-            PRINT N'Đã thêm lịch sử thay đổi giá';
-        END
-    END
-UPDATE orders
-SET order_code = 'L3BXXN'
-WHERE id = 2;
-
-/**CREATE TRIGGER trg_update_user_address
-ON user_addresses
-AFTER UPDATE
-AS
-BEGIN
-  SET NOCOUNT ON;
-  UPDATE user_addresses
-  SET updated_at = GETDATE()
-  FROM inserted
-  WHERE user_addresses.id = inserted.id;
-END;**\
+	

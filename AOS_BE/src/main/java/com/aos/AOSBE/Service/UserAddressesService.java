@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,19 +31,18 @@ public class UserAddressesService {
 	}
 
 	public UserAddresses userAddressesSetDefaultAddress(int id, UserAddresses selectedAddress) {
-	    String email = selectedAddress.getAccounts().getEmail();
+		String email = selectedAddress.getAccounts().getEmail();
 
-	    // 1. Tắt hết các địa chỉ mặc định của user này
-	    List<UserAddresses> addresses = userAddressesRepository.findByAccountsEmail(email);
-	    for (UserAddresses addr : addresses) {
-	        addr.setDefault(addr.getId() == id);
-	    }
+		// 1. Tắt hết các địa chỉ mặc định của user này
+		List<UserAddresses> addresses = userAddressesRepository.findByAccountsEmail(email);
+		for (UserAddresses addr : addresses) {
+			addr.setDefault(addr.getId() == id);
+		}
 
-	    userAddressesRepository.saveAll(addresses);
+		userAddressesRepository.saveAll(addresses);
 
-	    return selectedAddress;
+		return selectedAddress;
 	}
-
 
 	public List<UserAddresses> userAddressesFindAllByUserEmail(String email) {
 //		Pageable pageable = PageRequest.of(page, size);
@@ -53,24 +51,23 @@ public class UserAddressesService {
 
 	@Transactional
 	public UserAddresses userAddressesSave(UserAddresses userAddresses) {
-	    Integer provinceId = userAddresses.getGhnProvinceId();
-	    Integer districtId = userAddresses.getGhnDistrictId();
-	    String wardCode = userAddresses.getGhnWardCode();
+//	    Integer provinceId = userAddresses.getGhnProvinceId();
+//	    Integer districtId = userAddresses.getGhnDistrictId();
+//	    String wardCode = userAddresses.getGhnWardCode();
+//
+//	    // Check null để tránh lỗi runtime
+//	    if (provinceId != null && districtId != null && wardCode != null) {
+//	        String provinceName = ghnAddressService.getProvinceNameById(provinceId);
+//	        String districtName = ghnAddressService.getDistrictNameById(provinceId, districtId);
+//	        String wardName = ghnAddressService.getWardNameByCode(districtId, wardCode);
+//
+//	        userAddresses.setProvince(provinceName);
+//	        userAddresses.setDistrict(districtName);
+//	        userAddresses.setWard(wardName);
+//	    }
 
-	    // Check null để tránh lỗi runtime
-	    if (provinceId != null && districtId != null && wardCode != null) {
-	        String provinceName = ghnAddressService.getProvinceNameById(provinceId);
-	        String districtName = ghnAddressService.getDistrictNameById(provinceId, districtId);
-	        String wardName = ghnAddressService.getWardNameByCode(districtId, wardCode);
-
-	        userAddresses.setProvince(provinceName);
-	        userAddresses.setDistrict(districtName);
-	        userAddresses.setWard(wardName);
-	    }
-
-	    return userAddressesRepository.save(userAddresses);
+		return userAddressesRepository.save(userAddresses);
 	}
-
 
 	public Optional<UserAddresses> userAddressesFindById(int id) {
 		return userAddressesRepository.findById(id);

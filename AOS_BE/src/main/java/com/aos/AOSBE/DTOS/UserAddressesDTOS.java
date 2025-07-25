@@ -26,4 +26,5 @@ public class UserAddressesDTOS {
 	private Integer ghnProvinceId;
 	private Integer ghnDistrictId;
 	private String ghnWardCode;
+
 }

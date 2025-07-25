@@ -190,8 +190,10 @@ export default {
           label: this.label,
           isDefault: false,
           note: this.note,
+          account:'',
           ghnDistrictId: districtObj?.code || null,  // int
-          ghnWardCode: wardObj?.code || null         // string
+          ghnWardCode: wardObj?.code || null   ,      // string
+          ghnProvinceId: provinceObj?.code || null, // int
         };
 
         const isContainAddress = this.shippingAddress.some(item =>
