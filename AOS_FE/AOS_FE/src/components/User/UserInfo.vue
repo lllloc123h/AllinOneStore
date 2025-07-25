@@ -12,7 +12,34 @@
       </div>
       <div>
 
-<div v-if="showPopupDoiMatKhau" class="popup-overlay">
+        <div v-if="showPopupTaiKhoan" class="popup-overlay">
+          <form class="form-container">
+            <section class="form-section">
+              <h3>Thông tin khách hàng</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Họ và tên</label>
+                  <input type="text" v-model="user.Name" />
+                </div>
+                <div class="form-group">
+                  <label>Số điện thoại</label>
+                  <input type="text" v-model="user.Phone" />
+                </div>
+                <div class="form-group full-width">
+                  <label>Địa chỉ Email</label>
+                  <input type="email" v-model="user.Email" />
+                </div>
+              </div>
+            </section>
+
+            <div class="form-buttons">
+              <button class="submit-btn" @click.prevent="updateProfile">Lưu thay đổi</button>
+              <button class="cancel-btn" @click.prevent="showPopupTaiKhoan = false">Hủy</button>
+            </div>
+          </form>
+        </div>
+
+        <div v-if="showPopupDoiMatKhau" class="popup-overlay">
   <form class="form-container">
     <section class="form-section">
       <h3>Đổi mật khẩu</h3>
@@ -41,29 +68,6 @@
 
       </div>
     </section>
-
-            <div class="form-buttons">
-              <button class="submit-btn" @click.prevent="updateProfile">Lưu thay đổi</button>
-              <button class="cancel-btn" @click.prevent="showPopupTaiKhoan = false">Hủy</button>
-            </div>
-          </form>
-        </div>
-
-        <div v-if="showPopupDoiMatKhau" class="popup-overlay">
-          <form class="form-container">
-            <section class="form-section">
-              <h3>Đổi mật khẩu</h3>
-              <div class="form-grid">
-                <div class="form-group full-width">
-                  <label>Mật khẩu mới</label>
-                  <input type="password" v-model="user.NewPassword" />
-                </div>
-                <div class="form-group full-width">
-                  <label>Xác nhận mật khẩu</label>
-                  <input type="password" v-model="user.ConfirmPassword" />
-                </div>
-              </div>
-            </section>
 
             <div class="form-buttons">
               <button class="submit-btn" @click.prevent="changePassword">Đổi mật khẩu</button>
@@ -101,25 +105,14 @@ import { useRouter } from 'vue-router'
 import { authService } from '../../Configs/api'
 const router = useRouter()
 
-  // 👤 Dữ liệu người dùng
-  const user = ref({
-    Name: '',
-    Email: '',
-    Phone: '',
-    NewPassword: '',
-    ConfirmPassword: ''
-  })
-const showPasswordNew = ref(false)
-const showPasswordConfirm = ref(false)
-
-const togglePasswordNew = () => {
-  showPasswordNew.value = !showPasswordNew.value
-}
-
-const togglePasswordConfirm = () => {
-  showPasswordConfirm.value = !showPasswordConfirm.value
-}
-
+// 👤 Dữ liệu người dùng
+const user = ref({
+  Name: '',
+  Email: '',
+  Phone: '',
+  NewPassword: '',
+  ConfirmPassword: ''
+})
 
 // 🔄 Trạng thái popup
 const showPopupTaiKhoan = ref(false)
@@ -131,6 +124,16 @@ const openPopupDoiMatKhau = () => { showPopupDoiMatKhau.value = true }
 const openPopupTopUp = () => { router.push({ name: "wallet" }) }
 const openPopupDiaChi = () => { router.push({ name: "shippingaddress" }) }
 const redirectOrder = () => { router.push({ name: "user-orders" }) }
+const showPasswordNew = ref(false)
+const showPasswordConfirm = ref(false)
+
+const togglePasswordNew = () => {
+  showPasswordNew.value = !showPasswordNew.value
+}
+
+const togglePasswordConfirm = () => {
+  showPasswordConfirm.value = !showPasswordConfirm.value
+}
 
 // ✅ Lấy thông tin người dùng từ API qua authService
 onMounted(async () => {
