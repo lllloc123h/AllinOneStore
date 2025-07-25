@@ -227,7 +227,10 @@
                   <div class="stat-icon bg-success">
                     <i class="bi bi-cash-coin"></i>
                   </div>
-                  <h6 class="stat-title">Doanh thu ước tính</h6>
+                  <h6 class="stat-title">
+                    Doanh thu ước tính <br />
+                    <strong>(Chưa trừ giảm giá, chiết khấu, hoàn tiền)</strong>
+                  </h6>
                   <div class="stat-value">
                     {{
                       formatPrice(
@@ -348,23 +351,42 @@
                   >
                 </h6>
                 <div class="col-4 shadow-sm border-0 rounded-4 p-3">
-                  Từ ngày :
-                  <input
-                    type="date"
-                    @change="filterByDate"
-                    v-model="startAt"
-                    class="form-control mb-3"
-                  />
-                  Đến ngày
-                  <input
-                    type="date"
-                    @change="filterByDate"
-                    v-model="endAt"
-                    class="form-control mb-3"
-                  />
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-label">Từ ngày:</label>
+                      <input
+                        type="date"
+                        @change="filterByDate"
+                        v-model="startAt"
+                        class="form-control mb-3"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Đến hết ngày:</label>
+                      <input
+                        type="date"
+                        @change="filterByDate"
+                        v-model="endAt"
+                        class="form-control mb-3"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <button
+                        @click="resetDateFilter"
+                        class="btn btn-outline-secondary btn-sm w-100"
+                        title="Hiển thị toàn bộ dữ liệu"
+                      >
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Reset Filter
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div class="chart-container">
                   <apexchart
+                    :key="chartKey"
                     type="line"
                     height="350"
                     :options="chartOptions"
@@ -412,29 +434,37 @@
                       </div>
                     </div>
                     <div class="row mt-2">
-                      <div class="col-md-4">
+                      <div class="col-md-3">
                         <div class="legend-item">
                           <span
                             class="legend-marker"
                             style="border: 3px solid #00e396; background-color: #fff"
                           ></span>
-                          <span>Đỉnh cao doanh thu</span>
+                          <span>Lịch sử giá gốc</span>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-md-3">
                         <div class="legend-item">
                           <span
                             class="legend-marker"
                             style="border: 3px solid #feb019; background-color: #fff"
                           ></span>
-                          <span>Mốc quan trọng</span>
+                          <span>Lịch sử giá bán</span>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-md-3">
+                        <div class="legend-item">
+                          <span
+                            class="legend-dot"
+                            style="background-color: #e74c3c; opacity: 0.3"
+                          ></span>
+                          <span>Khuyến mãi</span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
                         <small class="text-muted">
                           <i class="bi bi-info-circle me-1"></i>
-                          Sử dụng thanh công cụ phía trên để zoom vào khu vực bạn muốn xem
-                          chi tiết
+                          Khu vực tô màu = thời gian khuyến mãi
                         </small>
                       </div>
                     </div>
@@ -463,6 +493,227 @@
                         <h6>DISCOUNT 30%</h6>
                         <p>T9 - T11: Giảm giá toàn bộ</p>
                         <span class="badge bg-danger">Sắp diễn ra</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Detailed Events Section -->
+                <div
+                  v-if="
+                    startAt &&
+                    endAt &&
+                    (filteredEvents.costHistories.length > 0 ||
+                      filteredEvents.priceHistories.length > 0 ||
+                      filteredEvents.promotions.length > 0)
+                  "
+                  class="row mt-4"
+                >
+                  <div class="col-12">
+                    <h6 class="text-primary">
+                      <i class="bi bi-list-check me-2"></i>
+                      Chi tiết sự kiện trong khoảng thời gian đã chọn
+                      <span class="badge bg-info ms-2"
+                        >{{ formatDate(startAt) }} - {{ formatDate(endAt) }}</span
+                      >
+                    </h6>
+
+                    <!-- Combined Price History Details -->
+                    <div
+                      v-if="combinedPriceHistories.length > 0"
+                      class="event-section mb-4"
+                    >
+                      <div class="event-header">
+                        <h6 class="text-primary">
+                          <i class="bi bi-currency-exchange me-2"></i>
+                          Lịch sử thay đổi giá ({{ combinedPriceHistories.length }} lần)
+                          <small class="text-muted ms-2">
+                            - Giá gốc: {{ filteredEvents.costHistories.length }} lần, Giá
+                            bán: {{ filteredEvents.priceHistories.length }} lần
+                          </small>
+                        </h6>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                          <thead class="table-primary">
+                            <tr>
+                              <th>Thời gian</th>
+                              <th>Giá gốc</th>
+                              <th>Giá bán</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(history, index) in combinedPriceHistories"
+                              :key="index"
+                            >
+                              <td>
+                                <span class="fw-bold">{{ history.displayTime }}</span>
+                              </td>
+                              <td>
+                                <span v-if="history.cost" class="fw-bold text-success">
+                                  <i class="bi bi-cash-stack me-1"></i>
+                                  {{ history.cost.formatted }}
+                                </span>
+                                <span v-else class="text-muted">
+                                  <i class="bi bi-dash"></i>
+                                  Không có
+                                </span>
+                              </td>
+                              <td>
+                                <span v-if="history.price" class="fw-bold text-warning">
+                                  <i class="bi bi-tag me-1"></i>
+                                  {{ history.price.formatted }}
+                                </span>
+                                <span v-else class="text-muted">
+                                  <i class="bi bi-dash"></i>
+                                  Không có
+                                </span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Promotions Details -->
+                    <div
+                      v-if="filteredEvents.promotions.length > 0"
+                      class="event-section mb-4"
+                    >
+                      <div class="event-header">
+                        <h6 class="text-danger">
+                          <i class="bi bi-megaphone me-2"></i>
+                          Chương trình khuyến mãi ({{ filteredEvents.promotions.length }}
+                          chương trình)
+                        </h6>
+                      </div>
+                      <div class="row">
+                        <div
+                          v-for="(promo, index) in filteredEvents.promotions"
+                          :key="index"
+                          class="col-md-6 mb-3"
+                        >
+                          <div class="card border-0 shadow-sm promotion-detail-card">
+                            <div
+                              class="card-header"
+                              :class="promo.type === 'COMBO' ? 'bg-warning' : 'bg-danger'"
+                              style="color: white"
+                            >
+                              <div
+                                class="d-flex justify-content-between align-items-center"
+                              >
+                                <h6 class="mb-0">
+                                  <i
+                                    :class="
+                                      promo.type === 'COMBO'
+                                        ? 'bi bi-gift'
+                                        : 'bi bi-percent'
+                                    "
+                                    class="me-2"
+                                  ></i>
+                                  {{ promo.name }}
+                                </h6>
+                                <span
+                                  class="badge"
+                                  :class="
+                                    promo.type === 'COMBO'
+                                      ? 'bg-light text-dark'
+                                      : 'bg-light text-dark'
+                                  "
+                                >
+                                  {{ promo.type }}
+                                </span>
+                              </div>
+                            </div>
+                            <div class="card-body">
+                              <div class="promotion-details">
+                                <div class="detail-item">
+                                  <strong>Thời gian:</strong>
+                                  <div class="text-muted">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    {{ formatDateTime(promo.startAt) }}
+                                    <br />
+                                    <i class="bi bi-calendar-x me-1"></i>
+                                    {{ formatDateTime(promo.endAt) }}
+                                  </div>
+                                </div>
+                                <div class="detail-item mt-2">
+                                  <strong>Mô tả:</strong>
+                                  <p class="text-muted mb-1">
+                                    {{ promo.description || "Không có mô tả" }}
+                                  </p>
+                                </div>
+                                <div class="detail-item mt-2" v-if="promo.discountValue">
+                                  <strong>Giá trị giảm:</strong>
+                                  <span class="text-success fw-bold">{{
+                                    formatPrice(promo.discountValue)
+                                  }}</span>
+                                </div>
+                                <div class="detail-item mt-2" v-if="promo.comboPrice">
+                                  <strong>Giá combo:</strong>
+                                  <span class="text-warning fw-bold">{{
+                                    formatPrice(promo.comboPrice)
+                                  }}</span>
+                                </div>
+                                <div
+                                  class="detail-item mt-2"
+                                  v-if="promo.discountPercent"
+                                >
+                                  <strong>Phần trăm giảm:</strong>
+                                  <span class="text-info fw-bold"
+                                    >{{ promo.discountPercent }}%</span
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Summary Statistics -->
+                    <div class="event-summary mt-4">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="summary-card bg-light">
+                            <div class="summary-icon text-success">
+                              <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="summary-content">
+                              <h6>Tổng thay đổi giá gốc</h6>
+                              <p class="mb-0">
+                                {{ filteredEvents.costHistories.length }} lần
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="summary-card bg-light">
+                            <div class="summary-icon text-warning">
+                              <i class="bi bi-tag"></i>
+                            </div>
+                            <div class="summary-content">
+                              <h6>Tổng thay đổi giá bán</h6>
+                              <p class="mb-0">
+                                {{ filteredEvents.priceHistories.length }} lần
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="summary-card bg-light">
+                            <div class="summary-icon text-danger">
+                              <i class="bi bi-megaphone"></i>
+                            </div>
+                            <div class="summary-content">
+                              <h6>Tổng khuyến mãi</h6>
+                              <p class="mb-0">
+                                {{ filteredEvents.promotions.length }} chương trình
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -616,18 +867,311 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import Dashboard from "../../Module/DashBoard.vue";
 import createCrudService from "../../../Configs/reusableCRUDService.js";
 import { dropDown } from "../../../Configs/DropDownList.js";
 import api from "../../../Configs/api.js";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-const startAt = ref();
+import { formatDateTimeLocal } from "../../Module/CommonsFunctions.js";
+const startAt = ref("21-07-2025");
 const endAt = ref();
-function filterByDate() {
-  // Implement date filtering logic here
-  console.log("Filtering by date:", startAt.value, endAt.value);
+const chartKey = ref(0); // For force re-render
+
+// Event details
+const filteredEvents = ref({
+  costHistories: [],
+  priceHistories: [],
+  promotions: [],
+});
+
+async function filterByDate() {
+  if (!selectedProductItem.value) {
+    console.warn("No product item selected");
+    return;
+  }
+
+  if (!startAt.value || !endAt.value) {
+    // If no date range selected, show original data
+    chartOptions.value.title.text = "Thống kê bán hàng với Annotations (Có thể zoom)";
+    return;
+  }
+
+  const startTime = new Date(startAt.value).getTime();
+  const endTime = new Date(endAt.value).setHours(23, 59, 59, 999); // End of day
+
+  console.log("Fetching data for product:", selectedProductItem.value.id);
+  console.log(
+    "Date range:",
+    formatDateTimeLocal(startTime),
+    "to",
+    formatDateTimeLocal(endTime)
+  );
+
+  // Call API to get filtered data
+  const filteredSeries = ref({
+    name: "Lượt mua",
+    data: [],
+  });
+  api
+    .get(
+      `/admin/products/details/${
+        selectedProductItem.value.id
+      }?startAt=${formatDateTimeLocal(startTime)}&endAt=${formatDateTimeLocal(endTime)}`
+    )
+    .then(async (response) => {
+      const apiData = response.data?.data || [];
+      filteredSeries.value.data = apiData.map((item) => [
+        new Date(item.date).getTime(),
+        item.turnBuy || 0,
+      ]);
+      const costHistories = response.data?.costHistories || [];
+      const priceHistories = response.data?.priceHistories || [];
+      const promotions = response.data?.promotions || [];
+
+      // Store filtered events for detailed display
+      filteredEvents.value = {
+        costHistories: costHistories,
+        priceHistories: priceHistories,
+        promotions: promotions,
+      };
+
+      console.log("filtered data:", filteredSeries.value.data);
+      console.log("cost history: ", response.data?.costHistories || []);
+      console.log("price history: ", response.data?.priceHistories || []);
+      console.log("promotions: ", response.data?.promotions || []);
+
+      // Ensure annotations object exists and has proper structure
+      if (!chartOptions.value.annotations) {
+        chartOptions.value.annotations = {
+          xaxis: [],
+          yaxis: [],
+          points: [],
+        };
+      }
+
+      // Clear existing annotations
+      chartOptions.value.annotations.xaxis = [];
+      chartOptions.value.annotations.points = [];
+
+      // Combine and sort all histories by date to handle overlapping
+      const allHistories = [
+        ...costHistories.map((h) => ({
+          ...h,
+          type: "cost",
+          timestamp: new Date(h.createdAt).getTime(),
+          value: h.cost,
+          color: "#00e396",
+          text: `Giá gốc ${h.cost.toLocaleString("vi-VN")} VND`,
+        })),
+        ...priceHistories.map((h) => ({
+          ...h,
+          type: "price",
+          timestamp: new Date(h.createdAt).getTime(),
+          value: h.price,
+          color: "#feb019",
+          text: `Giá bán ${h.price.toLocaleString("vi-VN")} VND`,
+        })),
+        ...promotions.map((p) => ({
+          ...p,
+          type: p.type,
+          timestamp: new Date(p.startAt).getTime(),
+          endTimestamp: new Date(p.endAt).getTime(),
+          value: p.discountValue || p.comboPrice || 0,
+          color: p.type === "COMBO" ? "#ff6b35" : "red",
+          text: p.name,
+        })),
+      ].sort((a, b) => a.timestamp - b.timestamp);
+
+      // Group annotations by time proximity (within 1 day)
+      const groupedAnnotations = [];
+      const timeThreshold = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+
+      allHistories.forEach((history, index) => {
+        // Check if there's an existing group within time threshold
+        const existingGroup = groupedAnnotations.find(
+          (group) => Math.abs(group.timestamp - history.timestamp) < timeThreshold
+        );
+
+        if (existingGroup) {
+          // Add to existing group
+          existingGroup.items.push(history);
+          // Update combined text
+          existingGroup.combinedText = existingGroup.items
+            .map((item) => item.text)
+            .join(" | ");
+        } else {
+          // Create new group
+          groupedAnnotations.push({
+            timestamp: history.timestamp,
+            items: [history],
+            combinedText: history.text,
+          });
+        }
+      });
+
+      // Create annotations from grouped data
+      groupedAnnotations.forEach((group, groupIndex) => {
+        if (group.items.length === 1) {
+          // Single annotation
+          const item = group.items[0];
+
+          if (item.type === "COMBO") {
+            // Handle promotion as area annotation (time range)
+            chartOptions.value.annotations.xaxis.push({
+              x: item.timestamp,
+              x2: item.endTimestamp,
+              fillColor: item.color,
+              opacity: 0.2,
+              label: {
+                borderColor: item.color,
+                style: {
+                  color: "#fff",
+                  background: item.color,
+                  fontSize: "11px",
+                  fontWeight: "500",
+                },
+                text: item.text,
+                orientation: "vertical",
+                position: "top",
+              },
+            });
+          } else {
+            chartOptions.value.annotations.xaxis.push({
+              x: item.timestamp,
+              x2: item.endTimestamp,
+              fillColor: item.color,
+              opacity: 0.2,
+              label: {
+                borderColor: item.color,
+                style: {
+                  color: "#fff",
+                  background: item.color,
+                  fontSize: "11px",
+                  fontWeight: "500",
+                },
+                text: item.text,
+                orientation: "vertical",
+                position: "top",
+              },
+            });
+          }
+        } else {
+          // Multiple annotations at similar time - create stacked labels
+          group.items.forEach((item, itemIndex) => {
+            const offsetY = itemIndex * 25; // Vertical offset for stacking
+
+            if (item.type === "COMBO") {
+              // Handle promotion in group
+              chartOptions.value.annotations.xaxis.push({
+                x: item.timestamp,
+                x2: item.endTimestamp,
+                fillColor: item.color,
+                opacity: 0.15,
+                strokeDashArray: itemIndex === 0 ? 0 : 5,
+                label: {
+                  borderColor: item.color,
+                  style: {
+                    color: "#fff",
+                    background: item.color,
+                    fontSize: "10px",
+                    fontWeight: "500",
+                  },
+                  text: item.text,
+                  orientation: "vertical",
+                  position: "top",
+                  offsetY: offsetY,
+                },
+              });
+            } else {
+              chartOptions.value.annotations.xaxis.push({
+                x: item.timestamp,
+                x2: item.endTimestamp,
+                fillColor: item.color,
+                opacity: 0.15,
+                strokeDashArray: itemIndex === 0 ? 0 : 5,
+                label: {
+                  borderColor: item.color,
+                  style: {
+                    color: "#fff",
+                    background: item.color,
+                    fontSize: "10px",
+                    fontWeight: "500",
+                  },
+                  text: item.text,
+                  orientation: "vertical",
+                  position: "top",
+                  offsetY: offsetY,
+                },
+              });
+            }
+          });
+        }
+      });
+
+      // Update series correctly - assign the data array directly
+      series.value[0].data = filteredSeries.value.data;
+      // Update chart title to show filtered period
+      chartOptions.value.title.text = `Thống kê bán hàng từ ${formatDate(
+        startAt.value
+      )} đến ${formatDate(endAt.value)}`;
+
+      // Force chart re-render
+      await nextTick();
+      chartKey.value++;
+
+      console.log("Updated series:", series.value);
+      console.log("Updated chart options:", chartOptions.value.title.text);
+    })
+    .catch((error) => {
+      console.error("Error fetching filtered data:", error);
+      // Clear data on error
+      series.value[0].data = [];
+      filteredEvents.value = {
+        costHistories: [],
+        priceHistories: [],
+        promotions: [],
+      };
+      chartOptions.value.title.text = `Thống kê bán hàng từ ${formatDate(
+        startAt.value
+      )} đến ${formatDate(endAt.value)} (Không có dữ liệu)`;
+    });
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("vi-VN");
+}
+
+function resetDateFilter() {
+  startAt.value = null;
+  endAt.value = null;
+
+  // Reset chart data to empty
+  series.value[0].data = [];
+
+  // Clear filtered events
+  filteredEvents.value = {
+    costHistories: [],
+    priceHistories: [],
+    promotions: [],
+  };
+
+  // Clear all annotations
+  if (chartOptions.value.annotations) {
+    chartOptions.value.annotations.xaxis = [];
+    chartOptions.value.annotations.points = [];
+    chartOptions.value.annotations.yaxis = [];
+  }
+
+  chartOptions.value.title.text = "Thống kê bán hàng với Annotations (Có thể zoom)";
+
+  // Force chart re-render
+  chartKey.value++;
+
+  console.log("Date filter reset, chart key:", chartKey.value);
 }
 // Reactive data
 const selectedBaseProduct = ref(null);
@@ -673,58 +1217,11 @@ const listDashBoard = [
 // Chart data
 const series = ref([
   {
-    name: "Doanh thu",
-    data: [
-      [new Date("2024-01-01 15:10:00").getTime(), 300],
-      [new Date("2024-02-01 09:30:00").getTime(), 40],
-      [new Date("2024-03-01 10:15:00").getTime(), 35],
-      [new Date("2024-04-01 11:45:00").getTime(), 50],
-      [new Date("2024-05-01 14:20:00").getTime(), 49],
-      [new Date("2024-06-01 16:10:00").getTime(), 60],
-      [new Date("2024-07-01 18:30:00").getTime(), 70],
-      [new Date("2024-08-01 20:45:00").getTime(), 91],
-      [new Date("2024-09-01 22:15:00").getTime(), 125],
-      [new Date("2024-10-01 13:30:00").getTime(), 100],
-      [new Date("2024-11-01 15:45:00").getTime(), 85],
-      [new Date("2024-12-01 17:20:00").getTime(), 95],
-    ],
-  },
-  {
     name: "Lượt mua",
-    data: [
-      [new Date("2024-01-01 08:00:00").getTime(), 23],
-      [new Date("2024-02-01 09:30:00").getTime(), 12],
-      [new Date("2024-03-01 10:15:00").getTime(), 54],
-      [new Date("2024-04-01 11:45:00").getTime(), 61],
-      [new Date("2024-05-01 14:20:00").getTime(), 32],
-      [new Date("2024-06-01 16:10:00").getTime(), 56],
-      [new Date("2024-07-01 18:30:00").getTime(), 81],
-      [new Date("2024-08-01 20:45:00").getTime(), 19],
-      [new Date("2024-09-01 22:15:00").getTime(), 45],
-      [new Date("2024-10-01 13:30:00").getTime(), 67],
-      [new Date("2024-11-01 15:45:00").getTime(), 23],
-      [new Date("2024-12-01 17:20:00").getTime(), 43],
-    ],
-  },
-  {
-    name: "Lượt xem",
-    data: [
-      [new Date("2024-01-01 08:00:00").getTime(), 23],
-      [new Date("2024-02-01 09:30:00").getTime(), 12],
-      [new Date("2024-03-01 10:15:00").getTime(), 14],
-      [new Date("2024-04-01 11:45:00").getTime(), 41],
-      [new Date("2024-05-01 14:20:00").getTime(), 42],
-      [new Date("2024-06-01 16:10:00").getTime(), 16],
-      [new Date("2024-07-01 18:30:00").getTime(), 41],
-      [new Date("2024-08-01 20:45:00").getTime(), 89],
-      [new Date("2024-09-01 22:15:00").getTime(), 15],
-      [new Date("2024-10-01 13:30:00").getTime(), 67],
-      [new Date("2024-11-01 15:45:00").getTime(), 23],
-      [new Date("2024-12-01 17:20:00").getTime(), 43],
-    ],
+    data: [],
   },
 ]);
-
+console.log("Initial series data:", series.value[0].name);
 const chartOptions = ref({
   chart: {
     height: 350,
@@ -760,7 +1257,7 @@ const chartOptions = ref({
     dashArray: [0, 5, 5],
   },
   title: {
-    text: "Thống kê bán hàng với Annotations (Có thể zoom)",
+    text: "Thống kê bán hàng với Annotations (Có thể zoom 1)",
     align: "left",
     style: {
       fontSize: "16px",
@@ -792,18 +1289,12 @@ const chartOptions = ref({
   yaxis: [
     {
       title: {
-        text: "Doanh thu (VND)",
+        text: "Lượt mua",
       },
       labels: {
         formatter: function (val) {
           return val ? val.toLocaleString("vi-VN") : "0";
         },
-      },
-    },
-    {
-      opposite: true,
-      title: {
-        text: "Lượt mua/xem",
       },
     },
   ],
@@ -814,10 +1305,7 @@ const chartOptions = ref({
       format: "dd/MM/yyyy HH:mm",
     },
     y: {
-      formatter: function (val, opts) {
-        if (opts.seriesIndex === 0) {
-          return val.toLocaleString("vi-VN") + " VND";
-        }
+      formatter: function (val) {
         return val + " lượt";
       },
     },
@@ -832,121 +1320,8 @@ const chartOptions = ref({
   },
   annotations: {
     yaxis: [],
-    xaxis: [
-      {
-        x: new Date("2024-04-01 11:45:00").getTime(),
-        strokeDashArray: 0,
-        borderColor: "#775DD0",
-        label: {
-          borderColor: "#775DD0",
-          style: {
-            color: "#fff",
-            background: "#775DD0",
-          },
-          text: "Bắt đầu Q2",
-        },
-      },
-      {
-        x: new Date("2024-04-01 11:45:00").getTime(),
-        x2: new Date("2024-07-01 18:30:00").getTime(),
-        fillColor: "#ff6b35",
-        opacity: 0.3,
-        label: {
-          borderColor: "#ff6b35",
-          style: {
-            fontSize: "10px",
-            color: "#fff",
-            background: "#ff6b35",
-          },
-          offsetY: -10,
-          text: "COMBO SALE PERIOD",
-        },
-      },
-      {
-        x: new Date("2024-09-01 22:15:00").getTime(),
-        x2: new Date("2024-11-01 15:45:00").getTime(),
-        fillColor: "#dc3545",
-        opacity: 0.3,
-        label: {
-          borderColor: "#dc3545",
-          style: {
-            fontSize: "10px",
-            color: "#fff",
-            background: "#dc3545",
-          },
-          offsetY: -10,
-          text: "DISCOUNT SEASON",
-        },
-      },
-    ],
-    points: [
-      {
-        x: new Date("2024-05-01 14:20:00").getTime(),
-        y: 49,
-        marker: {
-          size: 8,
-          fillColor: "#fff",
-          strokeColor: "#FF4560",
-          strokeWidth: 3,
-          shape: "circle",
-        },
-        label: {
-          borderColor: "#FF4560",
-          offsetY: 0,
-          offsetX: 0,
-          style: {
-            color: "#fff",
-            background: "#FF4560",
-            fontSize: "12px",
-          },
-          text: "Sự kiện đặc biệt",
-        },
-      },
-      {
-        x: new Date("2024-08-01 20:45:00").getTime(),
-        y: 91,
-        marker: {
-          size: 10,
-          fillColor: "#fff",
-          strokeColor: "#00E396",
-          strokeWidth: 3,
-          shape: "circle",
-        },
-        label: {
-          borderColor: "#00E396",
-          offsetY: 0,
-          offsetX: 0,
-          style: {
-            color: "#fff",
-            background: "#00E396",
-            fontSize: "12px",
-          },
-          text: "Đỉnh cao doanh thu",
-        },
-      },
-      {
-        x: new Date("2024-10-01 13:30:00").getTime(),
-        y: 100,
-        marker: {
-          size: 8,
-          fillColor: "#fff",
-          strokeColor: "#FEB019",
-          strokeWidth: 3,
-          shape: "circle",
-        },
-        label: {
-          borderColor: "#FEB019",
-          offsetY: 0,
-          offsetX: 0,
-          style: {
-            color: "#fff",
-            background: "#FEB019",
-            fontSize: "12px",
-          },
-          text: "Mốc quan trọng",
-        },
-      },
-    ],
+    xaxis: [],
+    points: [],
   },
 });
 // Methods
@@ -956,8 +1331,37 @@ async function selectBaseProduct(product) {
   await getProductItems(product.id);
 }
 
-async function selectProductItem(item) {
+function selectProductItem(item) {
   selectedProductItem.value = item;
+
+  // Reset date filters when selecting new item
+  startAt.value = null;
+  endAt.value = null;
+
+  // Reset chart data to empty
+  series.value[0].data = [];
+
+  // Clear filtered events
+  filteredEvents.value = {
+    costHistories: [],
+    priceHistories: [],
+    promotions: [],
+  };
+
+  // Clear all annotations
+  if (chartOptions.value.annotations) {
+    chartOptions.value.annotations.xaxis = [];
+    chartOptions.value.annotations.points = [];
+    chartOptions.value.annotations.yaxis = [];
+  }
+
+  chartOptions.value.title.text = "Thống kê bán hàng với Annotations (Có thể zoom)";
+
+  // Force chart re-render
+  chartKey.value++;
+
+  console.log("Selected product item:", item.sku, "ID:", item.id);
+  console.log("Chart key updated to:", chartKey.value);
 }
 
 async function getProductItems(baseProductId) {
@@ -1002,6 +1406,65 @@ function formatDateTime(dateTime) {
   return new Date(dateTime).toLocaleString("vi-VN");
 }
 
+function calculateChangePercentage(newValue, oldValue) {
+  if (!oldValue || oldValue === 0) return 0;
+  return (((newValue - oldValue) / oldValue) * 100).toFixed(1);
+}
+
+// Computed property to combine and sort price histories
+const combinedPriceHistories = computed(() => {
+  if (
+    !filteredEvents.value.costHistories.length &&
+    !filteredEvents.value.priceHistories.length
+  ) {
+    return [];
+  }
+
+  // Group by timestamp (same time) and merge cost/price data
+  const timeGroups = {};
+
+  // Process cost histories
+  filteredEvents.value.costHistories.forEach((cost) => {
+    const timestamp = new Date(cost.createdAt).getTime();
+    const timeKey = Math.floor(timestamp / (60 * 1000)) * (60 * 1000); // Group by minute
+
+    if (!timeGroups[timeKey]) {
+      timeGroups[timeKey] = {
+        timestamp: timeKey,
+        displayTime: formatDateTime(cost.createdAt),
+        cost: null,
+        price: null,
+      };
+    }
+    timeGroups[timeKey].cost = {
+      value: cost.cost,
+      formatted: formatPrice(cost.cost),
+    };
+  });
+
+  // Process price histories
+  filteredEvents.value.priceHistories.forEach((price) => {
+    const timestamp = new Date(price.createdAt).getTime();
+    const timeKey = Math.floor(timestamp / (60 * 1000)) * (60 * 1000); // Group by minute
+
+    if (!timeGroups[timeKey]) {
+      timeGroups[timeKey] = {
+        timestamp: timeKey,
+        displayTime: formatDateTime(price.createdAt),
+        cost: null,
+        price: null,
+      };
+    }
+    timeGroups[timeKey].price = {
+      value: price.price,
+      formatted: formatPrice(price.price),
+    };
+  });
+
+  // Convert to array and sort by timestamp
+  return Object.values(timeGroups).sort((a, b) => a.timestamp - b.timestamp);
+});
+
 // Lifecycle
 onMounted(async () => {
   try {
@@ -1023,7 +1486,6 @@ onMounted(async () => {
   }
 });
 </script>
-
 <style scoped>
 /* Header Styles */
 .stats-header {
@@ -1412,5 +1874,159 @@ onMounted(async () => {
 
 .display-1.bi {
   font-size: 4rem !important;
+}
+
+/* Event Details Styles */
+.event-section {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-header {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.event-header h6 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.table-responsive {
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.table td {
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+.promotion-detail-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.promotion-detail-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.promotion-detail-card .card-header {
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.promotion-details .detail-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.promotion-details .detail-item:last-child {
+  border-bottom: none;
+}
+
+.event-summary {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e9ecef;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.summary-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.summary-content h6 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.summary-content p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Price change indicators */
+.text-success .bi-arrow-up,
+.text-danger .bi-arrow-down {
+  font-size: 0.8rem;
+  margin-right: 0.25rem;
+}
+
+/* Table hover effects */
+.table tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
+
+/* Badge improvements */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+/* Responsive adjustments for event details */
+@media (max-width: 768px) {
+  .event-section {
+    margin-bottom: 1rem;
+  }
+
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+
+  .summary-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .summary-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
 }
 </style>

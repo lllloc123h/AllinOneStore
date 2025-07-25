@@ -577,7 +577,7 @@ VALUES
 		'1970-01-01 00:00:00.000'
 	);
 
-	ALTER TRIGGER trgg_auto_insert_history_cost_and_price
+	create TRIGGER trgg_auto_insert_history_cost_and_price
     ON product_items
     FOR INSERT, UPDATE
     AS

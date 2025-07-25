@@ -140,15 +140,14 @@ public class OrdersService {
         }
 
         try {
-            String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
+            String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
 
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Token", ghnToken);
-            headers.set("ShopId", ghnShopId);
-
+			System.err.println(ghnShopId + " " + ghnToken + " " + orderCode);
             String requestBody = "{\"order_code\": \"" + orderCode + "\"}";
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 

@@ -18,7 +18,7 @@ VALUES
     'nguyenvana@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
     N'Nguyễn Văn A',
-    'avatar_a.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0901234567',
     1500000.00,
     N'Bạc',
@@ -30,7 +30,7 @@ VALUES
     'tranvanb@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
     N'Trần Văn B',
-    'avatar_b.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0902345678',
     2000000.00,
     N'Vàng',
@@ -2547,6 +2547,9 @@ BEGIN
 
   SET @i = @i + 1;
 END;
+
+
+
 -- INSERT order_items for each order
 DECLARE @order_id INT, @max_id INT, @pid INT, @j INT;
 
