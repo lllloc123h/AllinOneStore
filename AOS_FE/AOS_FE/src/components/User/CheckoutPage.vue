@@ -280,27 +280,6 @@ async function confirmOrder() {
             orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`
         }
 
-
-
-
-
-        // const tempPayload = {
-        //     id: '',
-        //     actualShippingFee: '',
-        //     discountCouponCode: '',
-        //     discountValue: '',
-        //     shippedDate: '',
-        //     paymentStatus: '',
-        //     note: '',
-        //     point: '',
-        //     finalTotal: '',
-        //     orderInfor: '',
-        //     createdAt: '',
-        //     updatedAt: '',
-        //     accounts: '',
-        //     paymentMethods: '',
-        //     shippingMethods: '',
-        // }
         console.log('📦', payload);
         const response = await api.post('/user/Orders', { ...payload })
         console.log('✅ Đặt hàng thành công:', payload)
