@@ -109,33 +109,45 @@ public class OrdersAPI {
 
 	@PostMapping("/user/Orders")
 	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody OrdersDTOS entity) {
-	    try {
-	        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
-	        entity.setAccounts(user.getId());
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			entity.setAccounts(user.getId());
 
-	        // Lưu đơn hàng trước
-	        Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+			// Lưu đơn hàng trước
+			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 
-	        // Mapping các item
-	        List<OrderItems> orderItems = entity.getProducts().stream()
-	            .map(item -> {
-	                OrderItems orderItem = orderItemsMapper.mapperToObject(item);
-	                orderItem.setOrders(saved);
-	                return orderItem;
-	            })
-	            .collect(Collectors.toList());
+			// Mapping các item
+			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
+				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
+				orderItem.setOrders(saved);
+				return orderItem;
+			}).collect(Collectors.toList());
 
-	        // Lưu các item
-	        orderItemsService.orderItemsSaveAll(orderItems);
+			// Lưu các item
+			orderItemsService.orderItemsSaveAll(orderItems);
 
-	        return ResponseEntity.ok(saved);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
-	    }
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
 	}
 
+	@GetMapping("/user/Orders/paypending")
+	public ResponseEntity<?> addNewOrdersByUserRolesWithKey(@RequestParam("KEY") String key) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			List<OrdersDTOS> listUserOrders = ordersService.ordersFindByAccountAndKeyPaymentPending(user.getId(), key)
+					.stream().map(ordersMapper::mapper).collect(Collectors.toList());
+			;
+			return ResponseEntity.ok(listUserOrders);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
 
 	@DeleteMapping("/admin/Orders/{id}")
 	public ResponseEntity<Void> deleteOrders(@PathVariable int id) {
@@ -165,15 +177,8 @@ public class OrdersAPI {
 			ProductItems pi = item.getProductItems();
 			String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
 
-			itemsDTO.add(new OrderItemDetailDTO(
-				item.getQty(),
-				item.getSellingPrice(),
-				item.getTotal(),
-				item.isGift(),
-				pi.getSku(),
-				productName,
-				pi.getDescription()
-			));
+			itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
+					pi.getSku(), productName, pi.getDescription()));
 		}
 
 		// Trả về full response

@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,15 +10,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Entity.Orders;
@@ -43,7 +43,7 @@ public class OrdersService {
 
 	private final String ghnToken = System.getProperty("GHN_TOKEN");
 	private final String ghnShopId = System.getProperty("GHN_SHOPID");
-	
+
 	public Page<Orders> ordersFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<Orders> spec = specBuilder.buildFilter(filters);
@@ -52,66 +52,71 @@ public class OrdersService {
 
 	@Transactional
 	public Orders ordersSave(Orders orders) {
-	    try {
-	        // Xử lý Payment Method
-	        if (orders.getPaymentMethods() == null && orders.getPaymentMethodId() != null) {
-	            PaymentMethods pm = paymentMethodsRepository.findById(orders.getPaymentMethodId())
-	                .orElseThrow(() -> new IllegalArgumentException("Phương thức thanh toán không hợp lệ."));
-	            orders.setPaymentMethods(pm);
-	        }
+		try {
+			// Xử lý Payment Method
+			if (orders.getPaymentMethods() == null && orders.getPaymentMethodId() != null) {
+				PaymentMethods pm = paymentMethodsRepository.findById(orders.getPaymentMethodId())
+						.orElseThrow(() -> new IllegalArgumentException("Phương thức thanh toán không hợp lệ."));
+				orders.setPaymentMethods(pm);
+			}
 
-	        // Xử lý Shipping Method
-	        if (orders.getShippingMethods() == null && orders.getShippingMethodId() != null) {
-	            ShippingMethods sm = shippingMethodsRepository.findById(orders.getShippingMethodId())
-	                .orElseThrow(() -> new IllegalArgumentException("Phương thức vận chuyển không hợp lệ."));
-	            orders.setShippingMethods(sm);
-	        }
+			// Xử lý Shipping Method
+			if (orders.getShippingMethods() == null && orders.getShippingMethodId() != null) {
+				ShippingMethods sm = shippingMethodsRepository.findById(orders.getShippingMethodId())
+						.orElseThrow(() -> new IllegalArgumentException("Phương thức vận chuyển không hợp lệ."));
+				orders.setShippingMethods(sm);
+			}
 
-	        // Kiểm tra đã chọn phương thức thanh toán
-	        if (orders.getPaymentMethods() == null) {
-	            throw new IllegalArgumentException("Phải chọn phương thức thanh toán.");
-	        }
+			// Kiểm tra đã chọn phương thức thanh toán
+			if (orders.getPaymentMethods() == null) {
+				throw new IllegalArgumentException("Phải chọn phương thức thanh toán.");
+			}
 
-	        // Thiết lập trạng thái thanh toán
-	        String paymentMethodName = orders.getPaymentMethods().getName();
-	        if ("Thanh toán qua ví điện tử".equalsIgnoreCase(paymentMethodName)) {
-	            orders.setPaymentStatus("Đã thanh toán");
-	        } else {
-	            orders.setPaymentStatus("Chưa thanh toán");
-	        }
+			// Thiết lập trạng thái thanh toán
+			String paymentMethodName = orders.getPaymentMethods().getName();
+			if ("Thanh toán qua ví điện tử".equalsIgnoreCase(paymentMethodName)) {
+				orders.setPaymentStatus("Chưa thanh toán");
+			} else {
+				orders.setPaymentStatus("Chưa thanh toán");
+			}
 
-	        // Thiết lập trạng thái giao hàng mặc định
-	        if (orders.getShippingStatus() == null || orders.getShippingStatus().isEmpty()) {
-	            orders.setShippingStatus("Chờ xác nhận");
-	        }
+			// Thiết lập trạng thái giao hàng mặc định
+			if (orders.getShippingStatus() == null || orders.getShippingStatus().isEmpty()) {
+				orders.setShippingStatus("Chờ xác nhận");
+			}
 
-	        // Kiểm tra mã giảm giá
-	        String couponCode = orders.getDiscountCouponCode();
-	        if (couponCode != null && !couponCode.trim().isEmpty()) {
-	            Optional<Coupons> optionalCoupon = couponsRepository.findByCode(couponCode);
-	            if (optionalCoupon.isEmpty()) {
-	                throw new IllegalArgumentException("Mã giảm giá không tồn tại.");
-	            }
-	            Coupons coupon = optionalCoupon.get();
-	            if (!coupon.isActive()) {
-	                throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
-	            }
+			// Kiểm tra mã giảm giá
+			String couponCode = orders.getDiscountCouponCode();
+			if (couponCode != null && !couponCode.trim().isEmpty()) {
+				Optional<Coupons> optionalCoupon = couponsRepository.findByCode(couponCode);
+				if (optionalCoupon.isEmpty()) {
+					throw new IllegalArgumentException("Mã giảm giá không tồn tại.");
+				}
+				Coupons coupon = optionalCoupon.get();
+				if (!coupon.isActive()) {
+					throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
+				}
 
-	            long usageCount = ordersRepository.countCouponUsage((long) orders.getAccounts().getId(), couponCode);
-	            if (usageCount >= coupon.getUsagePerCustomer()) {
-	                throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
-	            }
-	        }
+				long usageCount = ordersRepository.countCouponUsage((long) orders.getAccounts().getId(), couponCode);
+				if (usageCount >= coupon.getUsagePerCustomer()) {
+					throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
+				}
+			}
 
-	        return ordersRepository.save(orders);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        throw e;
-	    }
+			return ordersRepository.save(orders);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
+	public List<Orders> ordersFindByAccountAndKeyShippingStatus(int account, String key) {
+		return ordersRepository.findAllByAccountAndKeyShippingStatus(account, key);
+	}
 
-
+	public List<Orders> ordersFindByAccountAndKeyPaymentPending(int account, String key) {
+		return ordersRepository.findAllByAccountAndKeyPaymentPending(account, key, 2);
+	}
 
 	@Transactional
 	public Optional<Orders> ordersFindById(int id) {
@@ -122,50 +127,51 @@ public class OrdersService {
 	public void ordersDeleteById(int id) {
 		ordersRepository.deleteById(id);
 	}
+
 	@Transactional
-    public Orders updateShippingStatusFromGHN(int id) {
+	public Orders updateShippingStatusFromGHN(int id) {
 		System.out.println(">> GHN_TOKEN: " + ghnToken);
-    	System.out.println(">> GHN_SHOPID: " + ghnShopId);
-        Optional<Orders> optionalOrder = ordersRepository.findById(id);
-        if (optionalOrder.isEmpty()) {
-            throw new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + id);
-        }
+		System.out.println(">> GHN_SHOPID: " + ghnShopId);
+		Optional<Orders> optionalOrder = ordersRepository.findById(id);
+		if (optionalOrder.isEmpty()) {
+			throw new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + id);
+		}
 
-        Orders order = optionalOrder.get();
-        String orderCode = order.getGhnOrderCode();
+		Orders order = optionalOrder.get();
+		String orderCode = order.getGhnOrderCode();
 
-        if (orderCode == null || orderCode.isEmpty()) {
-            throw new IllegalArgumentException("Đơn hàng chưa có mã vận đơn GHN.");
-        }
+		if (orderCode == null || orderCode.isEmpty()) {
+			throw new IllegalArgumentException("Đơn hàng chưa có mã vận đơn GHN.");
+		}
 
-        try {
-            String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
+		try {
+			String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
 
-            RestTemplate restTemplate = new RestTemplate();
+			RestTemplate restTemplate = new RestTemplate();
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Token", ghnToken);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Token", ghnToken);
 
-            String requestBody = "{\"order_code\": \"" + orderCode + "\"}";
-            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+			String requestBody = "{\"order_code\": \"" + orderCode + "\"}";
+			HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+			ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
 
-            if (response.getStatusCode() == HttpStatus.OK) {
-                Map<String, Object> responseBody = response.getBody();
-                Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
-                String status = (String) data.get("status");
+			if (response.getStatusCode() == HttpStatus.OK) {
+				Map<String, Object> responseBody = response.getBody();
+				Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
+				String status = (String) data.get("status");
 
-                order.setShippingStatus(status);
-                ordersRepository.save(order);
-                return order;
-            } else {
-                throw new RuntimeException("GHN trả về lỗi: " + response.getStatusCode());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Lỗi khi gọi GHN API: " + e.getMessage());
-        }
-    }
+				order.setShippingStatus(status);
+				ordersRepository.save(order);
+				return order;
+			} else {
+				throw new RuntimeException("GHN trả về lỗi: " + response.getStatusCode());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Lỗi khi gọi GHN API: " + e.getMessage());
+		}
+	}
 }
