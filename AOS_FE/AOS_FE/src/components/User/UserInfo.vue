@@ -45,13 +45,27 @@
       <h3>Đổi mật khẩu</h3>
       <div class="form-grid">
         <div class="form-group full-width">
-          <label>Mật khẩu mới</label>
-          <input type="password" v-model="user.NewPassword" />
-        </div>
-        <div class="form-group full-width">
-          <label>Xác nhận mật khẩu</label>
-          <input type="password" v-model="user.ConfirmPassword" />
-        </div>
+  <label>Mật khẩu mới</label>
+  <div class="password-wrapper">
+   <input :type="showPasswordNew ? 'text' : 'password'" v-model="user.NewPassword" />
+<button type="button" class="toggle-password" @click="togglePasswordNew">
+  <span v-if="showPasswordNew">🙈</span>
+  <span v-else>👁️</span>
+</button>
+  </div>
+</div>
+
+<div class="form-group full-width">
+  <label>Xác nhận mật khẩu</label>
+  <div class="password-wrapper">
+   <input :type="showPasswordConfirm ? 'text' : 'password'" v-model="user.ConfirmPassword" />
+<button type="button" class="toggle-password" @click="togglePasswordConfirm">
+  <span v-if="showPasswordConfirm">🙈</span>
+  <span v-else>👁️</span>
+</button>
+  </div>
+</div>
+
       </div>
     </section>
 
@@ -96,6 +110,17 @@
     NewPassword: '',
     ConfirmPassword: ''
   })
+const showPasswordNew = ref(false)
+const showPasswordConfirm = ref(false)
+
+const togglePasswordNew = () => {
+  showPasswordNew.value = !showPasswordNew.value
+}
+
+const togglePasswordConfirm = () => {
+  showPasswordConfirm.value = !showPasswordConfirm.value
+}
+
 
   // 🔄 Trạng thái popup
   const showPopupTaiKhoan = ref(false)
@@ -397,6 +422,37 @@ textarea {
   color: #777;
   font-size: 14px;
   margin-top: 5px;
+}
+  .password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  flex: 1;
+  padding-right: 70px; /* chừa khoảng trống cho nút */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px; /* 👉 icon to hơn */
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.toggle-password:hover {
+  color: #007bff; /* xanh dương nổi bật khi hover */
+  transform: scale(1.2); /* hơi phóng to khi hover */
 }
 
   </style>

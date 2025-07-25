@@ -217,6 +217,18 @@ updateProfile(dto) {
     }
   }
 };
+const homeService = {
+  getBestSellers(limit = 8) {
+    return api.get('/homepage/bestsellers', {
+      params: { limit }
+    }).then(res => res.data)
+      .catch(err => {
+        console.error('Lỗi lấy sản phẩm bán chạy:', err);
+        throw err;
+      });
+  }
+};
+
 const cartService = {
   async getCart() {
     const cartList = ref([]);
@@ -262,4 +274,4 @@ const cartService = {
 
 
 export default api;
-export { authService, cartService };
+export { authService, cartService, homeService };
