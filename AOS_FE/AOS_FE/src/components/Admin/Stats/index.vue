@@ -63,7 +63,16 @@
                 <br />
                 <small class="text-muted">{{ product.material }}</small>
                 <br />
-                <small class="badge bg-info">Qty: {{ product.qty }}</small>
+                <div class="d-flex gap-2 mt-2">
+                  <small class="badge bg-info">
+                    <i class="bi bi-box me-1"></i>
+                    Qty: {{ product.qty }}
+                  </small>
+                  <small class="badge bg-warning text-dark">
+                    <i class="bi bi-star-fill me-1"></i>
+                    {{ product.rating }}/5
+                  </small>
+                </div>
               </div>
             </li>
           </ul>
@@ -1470,7 +1479,7 @@ onMounted(async () => {
   try {
     // Load base products dropdown
     dropDownListBaseProduct.value = await dropDown("BaseProducts");
-    console.log("Base products loaded:", dropDownListBaseProduct.value?.length, "items");
+    console.log("Base products loaded:", dropDownListBaseProduct.value, "items");
 
     // Load categories dropdown
     const responseCategories = await categoriesService.getAll(0, 1000);
