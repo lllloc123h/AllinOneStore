@@ -24,12 +24,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 import org.springframework.util.StringUtils;
 
 import com.aos.AOSBE.DTOS.ReviewsDTOS;
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Reviews;
 import com.aos.AOSBE.Mapper.ReviewsMapper;
+import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.ReviewsService;
 
 @RestController
@@ -41,6 +47,9 @@ public class ReviewsAPI {
 
 	@Autowired
 	private ReviewsMapper reviewsMapper;
+
+	@Autowired
+	private AccountsService accountsService;
 
 	@GetMapping("/admin/Reviews")
 	public ResponseEntity<?> getAllReviewsApi(@RequestParam(defaultValue = "0") int page,
@@ -67,11 +76,32 @@ public class ReviewsAPI {
 	}
 
 	@PostMapping("/admin/Reviews")
-	public ResponseEntity<Reviews> addNewReviews(@RequestBody ReviewsDTOS entity) {
+	public ResponseEntity<?> addNewReviews(@RequestBody ReviewsDTOS entity) {
+		try {
+			// Lấy user từ SecurityContext
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
 
-		Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+			// Lấy account từ service
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			// Set lại accountId để mapper dùng được
+			entity.setAccountId(account.getId());
+
+			Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(saved);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi khi gửi đánh giá", "error", e.getMessage()));
+		}
 	}
+
+
 
 	@PutMapping("/admin/Reviews/{id}")
 	public ResponseEntity<?> updateReviews(@PathVariable int id, @RequestBody ReviewsDTOS entity) {
@@ -113,28 +143,17 @@ public class ReviewsAPI {
 		response.put("currentPage", pageResult.getNumber());
 
 		return ResponseEntity.ok(response);
+	}	
+	@GetMapping("/reviews/product/{productItemId}/average-rating")
+	public ResponseEntity<?> getAverageRating(@PathVariable Long productItemId) {
+		Double average = reviewsService.getAverageRatingByProductItemId(productItemId);
+		return ResponseEntity.ok(Map.of("averageRating", average));
 	}
-	@PostMapping("/upload/review-media")
-	public ResponseEntity<?> uploadReviewMedia(@RequestParam("file") MultipartFile file) {
-		try {
-			String uploadDir = "uploads/reviews"; // thư mục gốc
-			String filename = StringUtils.cleanPath(file.getOriginalFilename());
-
-			// Tạo thư mục nếu chưa có
-			Path uploadPath = Paths.get(uploadDir);
-			if (!Files.exists(uploadPath)) {
-				Files.createDirectories(uploadPath);
-			}
-
-			// Lưu file vào thư mục
-			Path filePath = uploadPath.resolve(filename);
-			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-			// Trả về URL để frontend sử dụng
-			String fileUrl = "/uploads/reviews/" + filename;
-			return ResponseEntity.ok(Map.of("url", fileUrl));
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("error", "Không thể upload file"));
-		}
+	
+	@GetMapping("/reviews/product/{productItemId}/count")
+	public ResponseEntity<?> countReviews(@PathVariable Long productItemId) {
+		Long count = reviewsService.countReviewsByProductItemId(productItemId);
+		return ResponseEntity.ok(Map.of("total", count));
 	}
+
 }

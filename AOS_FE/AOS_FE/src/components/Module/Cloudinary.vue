@@ -15,6 +15,7 @@ const canUpload = ref(false);
 const errorMsg = ref("");
 let lastFile = null;
 const previewUrl = ref(null);
+const emit = defineEmits(["uploaded"]);
 
 function checkImageSize(e) {
   canUpload.value = false;
@@ -32,6 +33,7 @@ function checkImageSize(e) {
         canUpload.value = true;
         lastFile = file;
         previewUrl.value = evt.target.result;
+        openUploadWidget();
       } else {
         errorMsg.value = "Ảnh phải đúng 300x200px!";
         canUpload.value = false;
@@ -55,6 +57,7 @@ function openUploadWidget() {
         // Xử lý kết quả upload thành công
         console.log("Upload thành công:", response.data.secure_url);
         errorMsg.value = "Upload thành công!";
+        emit("uploaded", response.data.secure_url);
       })
       .catch((err) => {
         errorMsg.value = "Upload thất bại!";

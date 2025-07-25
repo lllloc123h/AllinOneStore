@@ -60,7 +60,7 @@
           <span class="text-dark">{{ formatPrice(currentPrice) }}</span>
         </template>
 
-        <small class="text-muted">| {{ averageRating }} ★ ({{ reviews.length }} đánh giá)</small>
+        <small class="text-muted">| {{ averageRating }} ★ ({{ totalReviews }} đánh giá)</small>
         </p>
 
         <p class="text-muted mb-3">{{ product.material }}</p>
@@ -126,8 +126,13 @@
 
         <div v-show="activeTab === 'review'">
           <div v-for="review in reviews" :key="review.name" class="mb-3 p-3 border rounded bg-white">
-            <h6 class="mb-1">{{ review.accounts?.fullName || 'Ẩn danh' }}</h6>
+            <strong>{{ review.accountName }}</strong>
             <p class="text-muted small mb-1">{{ review.comment }}</p>
+            <div class="review-images mt-2">
+              <img v-if="review.imageUrl1" :src="review.imageUrl1" alt="Ảnh 1" class="img-thumbnail me-2" width="100" />
+              <img v-if="review.imageUrl2" :src="review.imageUrl2" alt="Ảnh 2" class="img-thumbnail me-2" width="100" />
+              <img v-if="review.imageUrl3" :src="review.imageUrl3" alt="Ảnh 3" class="img-thumbnail me-2" width="100" />
+            </div>
             <div class="text-warning small">
               <span v-for="i in 5" :key="i">{{ i <= review.rating ? '★' : '☆' }}</span>
             </div>
@@ -136,20 +141,10 @@
 
           <!-- Form đánh giá -->
           <form @submit.prevent="submitReview" class="p-3 border rounded bg-white">
-            <div class="row mb-2">
-              <div class="col-md-6">
-                <label class="form-label">Tên của bạn</label>
-                <input type="text" class="form-control rounded-pill" v-model="newReview.name" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control rounded-pill" placeholder="example@gmail.com" />
-              </div>
-            </div>
             <div class="mb-2">
-            <label class="form-label">Hình ảnh (tùy chọn)</label>
-            <input type="file" class="form-control" accept="image/*" @change="handleFileUpload" />
-          </div>
+              <label class="form-label">Hình ảnh (tùy chọn)</label>
+              <CloudinaryUploader :key="uploaderKey" @uploaded="handleImageUploaded"/>
+            </div>
             <div class="mb-2">
               <label class="form-label">Đánh giá</label>
               <textarea class="form-control rounded" rows="3" v-model="newReview.text" required></textarea>
@@ -163,20 +158,32 @@
               <button type="submit" class="btn btn-dark rounded-pill">Đăng bình luận</button>
             </div>
           </form>
-          <div class="d-flex justify-content-center mt-3" v-if="totalPages > 1">
-            <button
-              class="btn btn-sm btn-outline-secondary me-2"
-              :disabled="currentPage === 0"
-              @click="changePage(currentPage - 1)">
-              ← Trước
-            </button>
-            <button
-              class="btn btn-sm btn-outline-secondary"
-              :disabled="currentPage >= totalPages - 1"
-              @click="changePage(currentPage + 1)">
-              Tiếp →
-            </button>
-          </div>
+          <div class="d-flex justify-content-center align-items-center gap-2 mt-3" v-if="totalPages > 1">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage === 0"
+          >
+            ← Trước
+          </button>
+
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="changePage(page - 1)"
+            :class="['btn btn-sm', page - 1 === currentPage ? 'btn-dark' : 'btn-outline-secondary']"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage === totalPages - 1"
+          >
+            Tiếp →
+          </button>
+        </div>
           <!-- Danh sách đánh giá -->
         </div>
       </div>
@@ -210,6 +217,7 @@ import { useRoute } from 'vue-router';
 import api from "../../Configs/api";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from "ant-design-vue";
+import CloudinaryUploader from "../Module/Cloudinary.vue";
 
 const route = useRoute();
 const productId = ref(route.params.id);
@@ -225,13 +233,14 @@ const quantity = ref(1);
 const activeTab = ref('desc');
 
 const reviews = ref([]);
-const newReview = ref({ name: '', text: '', rating: 5 });
+const newReview = ref({ text: '', rating: 5 });
 
 const relatedItems = ref([]);
 
 const currentPage = ref(0);
 const pageSize = ref(5);
 const totalPages = ref(0);
+const uploaderKey = ref(Date.now());
 
 
 const discountedPrice = computed(() => {
@@ -273,6 +282,8 @@ const fetchProductData = async (id) => {
 onMounted(async () => {
   await fetchProductData(productId.value);
   await fetchReviews(); // Gọi luôn khi đã có product
+  await fetchAverageRating();
+  await fetchTotalReviews();
 });
 
 
@@ -280,6 +291,8 @@ onMounted(async () => {
 watch(() => route.params.id, (newId) => {
   productId.value = newId;
   fetchProductData(newId);
+  fetchReviews();
+  fetchAverageRating();
 });
 
 function increaseQty() {
@@ -291,21 +304,25 @@ function decreaseQty() {
 }
 
 async function submitReview() {
-  if (!newReview.value.name || !newReview.value.text) return;
+  if (!newReview.value.text) return;
 
   try {
     await api.post("/admin/Reviews", {
-      accounts: 1,
+      
       productItems: product.value.id,
       rating: newReview.value.rating,
-      comment: newReview.value.text
+      comment: newReview.value.text,
+      imageUrl1: reviewImageUrl.value || null,
     });
 
     notification.success({ message: "Gửi đánh giá thành công" });
-    newReview.value.name = '';
+
+    // Reset form
     newReview.value.text = '';
     newReview.value.rating = 5;
-    await fetchReviews(); // reload đánh giá mới
+    reviewImageUrl.value = '';
+    uploaderKey.value = Date.now();
+    await fetchReviews();
   } catch (err) {
     notification.error({ message: "Lỗi gửi đánh giá" });
     console.error(err);
@@ -398,11 +415,28 @@ const fetchReviews = async () => {
 };
 
 
-const averageRating = computed(() => {
-  if (reviews.value.length === 0) return 0;
-  const total = reviews.value.reduce((sum, r) => sum + r.rating, 0);
-  return (total / reviews.value.length).toFixed(1);
-});
+const averageRating = ref(0);
+
+const fetchAverageRating = async () => {
+  try {
+    const res = await api.get(`/reviews/product/${productId.value}/average-rating`);
+    averageRating.value = res.data.averageRating || 0;
+  } catch (err) {
+    console.error("Lỗi lấy điểm trung bình:", err);
+  }
+};
+
+const totalReviews = ref(0);
+
+const fetchTotalReviews = async () => {
+  try {
+    const res = await api.get(`/reviews/product/${productId.value}/count`);
+    totalReviews.value = res.data.total || 0;
+  } catch (err) {
+    console.error("Lỗi lấy tổng số đánh giá:", err);
+  }
+};
+
 
 function formatTimeAgo(dateStr) {
   const now = new Date();
@@ -416,10 +450,25 @@ function formatTimeAgo(dateStr) {
 }
 
 const changePage = async (page) => {
-  currentPage.value = page;
+  if (page < 0) {
+    currentPage.value = totalPages.value - 1;
+  } else if (page >= totalPages.value) {
+    currentPage.value = 0;
+  } else {
+    currentPage.value = page;
+  }
   await fetchReviews();
 };
 
+
+const reviewImageUrl = ref('');
+
+const handleImageUploaded = (url) => {
+  reviewImageUrl.value = url;
+  console.log("Ảnh review đã upload:", url);
+};
+
+const fileInputRef = ref(null);
 
 </script>
 

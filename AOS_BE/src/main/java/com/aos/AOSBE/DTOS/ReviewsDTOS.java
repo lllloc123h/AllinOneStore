@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import java.time.*;
 import java.math.*;
 import java.util.*;
+
+import com.aos.AOSBE.Entity.Accounts;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +23,7 @@ public class ReviewsDTOS {
     private String imageUrl3;
     private String videoUrl;
     private LocalDateTime createdAt;
-    private int accounts;
+    private int accountId;
+    private String accountName;
     private int productItems;
 }
