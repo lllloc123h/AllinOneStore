@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.AccountProfileDTO;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpDTO;
@@ -218,21 +219,22 @@ public class AccountsAPI {
 	public ResponseEntity<?> getCurrentAccount() {
 	    try {
 	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts account = accountsService.accountsFindByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+	        Accounts acc = accountsService.accountsFindByEmail(email)
+	                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-	        Map<String, Object> result = new HashMap<>();
-	        result.put("name", account.getFullname());
-	        result.put("email", account.getEmail());
-	        result.put("phone", account.getPhone());
-	        result.put("avatar", account.getAvatarUrl());
-	        result.put("address", "Đang cập nhật");
-	        return ResponseEntity.ok(result);
+	        AccountProfileDTO dto = new AccountProfileDTO(
+	                acc.getFullname(),
+	                acc.getEmail(),
+	                acc.getPhone()
+	        );
+
+	        return ResponseEntity.ok(dto);
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Không xác thực được người dùng"));
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body(Map.of("message", "Không xác thực được người dùng"));
 	    }
-	    
 	}
+
 	@PutMapping("/Accounts/me")
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
 	    try {

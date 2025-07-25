@@ -1,202 +1,247 @@
-<template>
-  <div class="mt-2 mx-5">
-    <h2><strong> Cài đặt tài khoản</strong></h2>
-    <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
-  </div>
-
-  <div>
-    <!-- Popup cập nhật thông tin -->
-    <div v-if="showPopupTaiKhoan" class="popup-overlay">
-      <form>
-        <div class="popup-content">
-          <h4><strong>Thông tin khách hàng</strong></h4>
-          <label class="form-label">Họ và tên</label>
-          <input type="text" class="form-control" v-model="user.Name">
-
-          <label class="form-label">Địa chỉ Email</label>
-          <input type="email" class="form-control" v-model="user.Email">
-
-          <label class="form-label">Số điện thoại</label>
-          <input type="text" class="form-control" v-model="user.Phone">
-
-          <label class="form-label">Link ảnh đại diện</label>
-          <input type="text" class="form-control" v-model="user.Avatar">
-
-          <button class="btn-popup" @click.prevent="updateProfile">Cập nhật</button>
-        </div>
-      </form>
+  <template>
+    <div class="mt-2 mx-5">
+      <h2><strong> Cài đặt tài khoản</strong></h2>
+      <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
     </div>
-
-    <!-- Popup đổi mật khẩu -->
-    <div v-if="showPopupDoiMatKhau" class="popup-overlay">
-      <form>
-        <div class="popup-content">
-          <h4 class="mt-4"><strong>Đổi mật khẩu</strong></h4>
-          <div class="row">
-            <div class="col-sm-12">
-              <label class="form-label">Mật khẩu mới</label>
-              <input type="password" class="form-control" v-model="user.NewPassword">
-            </div>
-            <div class="col-sm-12 mt-3">
-              <label class="form-label">Xác nhận mật khẩu</label>
-              <input type="password" class="form-control" v-model="user.ConfirmPassword">
-            </div>
+<div class="account-card">
+  <!-- Ảnh đại diện và tên -->
+  <div class="account-header">
+    <img :src="user.Avatar || avatar" alt="avatar" class="avatar-img" />
+    <h4 class="username">{{ user.Name }}</h4>
+    <p class="user-email">{{ user.Email }}</p>
+  </div>
+    <div>
+     
+  <div v-if="showPopupTaiKhoan" class="popup-overlay">
+    <form class="form-container">
+      <section class="form-section">
+        <h3>Thông tin khách hàng</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Họ và tên</label>
+            <input type="text" v-model="user.Name" />
           </div>
-          <button class="btn-popup" @click.prevent="changePassword">Đổi mật khẩu</button>
+          <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" v-model="user.Phone" />
+          </div>
+          <div class="form-group full-width">
+            <label>Địa chỉ Email</label>
+            <input type="email" v-model="user.Email" />
+          </div>
         </div>
-      </form>
-    </div>
+      </section>
 
-    <!-- Ảnh đại diện -->
-    <div class="card" style="width: 240px; height: 320px; margin: auto;">
-      <img :src="user.Avatar || avatar" alt="avatar" class="card-img" width="100%" height="100%">
-    </div>
+      <div class="form-buttons">
+        <button class="submit-btn" @click.prevent="updateProfile">Lưu thay đổi</button>
+        <button class="cancel-btn" @click.prevent="showPopupTaiKhoan = false">Hủy</button>
+      </div>
+    </form>
+  </div>
 
-    <!-- Các nút điều hướng -->
-    <div class="button-holder">
-      <div>
-        <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
+<div v-if="showPopupDoiMatKhau" class="popup-overlay">
+  <form class="form-container">
+    <section class="form-section">
+      <h3>Đổi mật khẩu</h3>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Mật khẩu mới</label>
+          <input type="password" v-model="user.NewPassword" />
+        </div>
+        <div class="form-group full-width">
+          <label>Xác nhận mật khẩu</label>
+          <input type="password" v-model="user.ConfirmPassword" />
+        </div>
       </div>
-      <div>
-        <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
-      </div>
-      <div>
-        <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
-      </div>
-      <div>
-        <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
+    </section>
+
+    <div class="form-buttons">
+      <button class="submit-btn" @click.prevent="changePassword">Đổi mật khẩu</button>
+      <button class="cancel-btn" @click.prevent="showPopupDoiMatKhau = false">Hủy</button>
+    </div>
+  </form>
+</div>
+
+      <!-- Các nút điều hướng -->
+      <div class="button-holder">
+        <div>
+          <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
+        </div>
+        <div>
+          <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
+        </div>
+        <div>
+          <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
+        </div>
+        <div>
+          <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
+        </div>
       </div>
     </div>
   </div>
-</template>
+  </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import avatar from '../../assets/imgs/avarta_Kha.png'
-import { useRouter } from 'vue-router'
+  <script setup>
+  import { ref, onMounted } from 'vue'
+  import avatar from '../../assets/imgs/avarta_Kha.png'
+  import { useRouter } from 'vue-router'
+  import { authService } from '../../Configs/api'
+  const router = useRouter()
 
-const router = useRouter()
+  // 👤 Dữ liệu người dùng
+  const user = ref({
+    Name: '',
+    Email: '',
+    Phone: '',
+    NewPassword: '',
+    ConfirmPassword: ''
+  })
 
-const user = ref({
-  Name: '',
-  Phone: '',
-  Avatar: '',
-  Email: '',
-  Password: '',
-  Address: '',
-  NewPassword: '',
-  ConfirmPassword: ''
-})
+  // 🔄 Trạng thái popup
+  const showPopupTaiKhoan = ref(false)
+  const showPopupDoiMatKhau = ref(false)
 
-const showPopupTaiKhoan = ref(false)
-const showPopupDoiMatKhau = ref(false)
+  // 🧭 Các nút điều hướng
+  const openPopupTaiKhoan = () => { showPopupTaiKhoan.value = true }
+  const openPopupDoiMatKhau = () => { showPopupDoiMatKhau.value = true }
+  const openPopupTopUp = () => { router.push({ name: "wallet" }) }
+  const openPopupDiaChi = () => { router.push({ name: "shippingaddress" }) }
 
-const openPopupTaiKhoan = () => {
-  showPopupTaiKhoan.value = true
-}
-
-const openPopupDoiMatKhau = () => {
-  showPopupDoiMatKhau.value = true
-}
-
-const openPopupTopUp = () => {
-  router.push({ name: "wallet" })
-}
-
-const openPopupDiaChi = () => {
-  router.push({ name: "shippingaddress" })
-}
-
-// Lấy thông tin người dùng khi tải trang
-onMounted(async () => {
-  try {
-    const token = localStorage.getItem("token")
-    const res = await axios.get("http://localhost:8080/api/Accounts/me", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-
-    const data = res.data
-    user.value.Name = data.name
-    user.value.Email = data.email
-    user.value.Phone = data.phone
-    user.value.Avatar = data.avatar
-  } catch (err) {
-    console.error("Không thể lấy thông tin tài khoản", err)
-  }
-})
-
-// Gửi request cập nhật thông tin
-const updateProfile = async () => {
-  try {
-    const token = localStorage.getItem("token")
-    const dto = {
-      fullname: user.value.Name,
-      email: user.value.Email,
-      phone: user.value.Phone,
-      avatar: user.value.Avatar
+  // ✅ Lấy thông tin người dùng từ API qua authService
+  onMounted(async () => {
+    try {
+      const data = await authService.getProfile()
+      user.value.Name = data.fullname
+      user.value.Email = data.email
+      user.value.Phone = data.phone
+    } catch (err) {
+      console.error("Không thể lấy thông tin tài khoản", err)
     }
+  })
 
-    const res = await axios.put("http://localhost:8080/api/Accounts/me", dto, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-
-    alert(res.data.message || "Cập nhật thông tin thành công")
-    showPopupTaiKhoan.value = false
-  } catch (err) {
-    alert(err.response?.data?.message || "Lỗi cập nhật thông tin")
+  // ✅ Cập nhật thông tin người dùng
+  const updateProfile = async () => {
+    try {
+      const dto = {
+        fullname: user.value.Name,
+        email: user.value.Email,
+        phone: user.value.Phone
+      }
+      await authService.updateProfile(dto)
+      alert("Cập nhật thông tin thành công")
+      showPopupTaiKhoan.value = false
+    } catch (err) {
+      alert(err.response?.data?.message || "Lỗi cập nhật thông tin")
+    }
   }
-}
 
-// Gửi request đổi mật khẩu
-const changePassword = async () => {
+  // ✅ Đổi mật khẩu người dùng
+  const changePassword = async () => {
+  if (user.value.NewPassword !== user.value.ConfirmPassword) {
+    alert("Mật khẩu xác nhận không khớp")
+    return
+  }
+
   try {
-    const token = localStorage.getItem("token")
     const dto = {
       newPassword: user.value.NewPassword,
       confirmPassword: user.value.ConfirmPassword
     }
 
-    const res = await axios.put("http://localhost:8080/api/Accounts/change-password", dto, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    await authService.changePassword(dto)
+    alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.")
 
-    alert(res.data || "Đổi mật khẩu thành công")
-    showPopupDoiMatKhau.value = false
+    authService.logout()
+
   } catch (err) {
-    alert(err.response?.data || "Lỗi khi đổi mật khẩu")
+    const message = err.response?.data || "Lỗi khi đổi mật khẩu"
+    alert(typeof message === 'string' ? message : message.message)
   }
 }
-</script>
 
-<style scoped>
-form {
-  width: 50%;
-  margin: auto;
-  padding: 10px;
-  border-radius: 15px;
-  margin-bottom: 50px;
-}
+  </script>
 
-.btn-popup {
-  background-color: #deb887;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  height: 48px;
-  width: 160px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
 
-.btn-popup:hover {
-  background-color: #ffa835;
-  transform: scale(1.05);
-}
 
+  <style scoped>
+  /* Form popup layout giống mẫu */
+  .form-container {
+    width: 600px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    font-family: sans-serif;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  input {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 14px;
+  }
+
+  /* Nút lưu và hủy */
+  .form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .submit-btn {
+    background-color: #fdddcf;
+    color: black;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .submit-btn:hover {
+    background-color: #ffcbb5;
+  }
+
+  .cancel-btn {
+    background-color: #ddd;
+    color: #333;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .cancel-btn:hover {
+    background-color: #bbb;
+  }
 .popup-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -207,42 +252,151 @@ form {
   z-index: 999;
 }
 
-.popup-content {
-  background-color: white;
+.form-container {
+  width: 600px;
+  background: #fff;
   padding: 30px;
   border-radius: 15px;
-  text-align: center;
-  width: 350px;
-  max-width: 100%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  font-family: sans-serif;
 }
 
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+input,
+textarea {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  font-size: 14px;
+}
+
+textarea {
+  border-radius: 15px;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.submit-btn {
+  background-color: #fdddcf;
+  color: black;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #ffcbb5;
+}
+
+.cancel-btn {
+  background-color: #ddd;
+  color: #333;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  background-color: #bbb;
+}
 .button-holder {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: center;
-  margin: 20px auto;
+  margin: 30px auto;
 }
 
+/* Nút điều hướng chính */
 .open-popup-btn {
-  background-color: #deb887;
-  color: white;
+  background-color: #fdddcf;
+  color: #333;
   font-size: 16px;
   font-weight: 600;
-  padding: 12px 24px;
+  padding: 12px 30px;
   border: none;
   border-radius: 25px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  min-width: 260px;
 }
 
 .open-popup-btn:hover {
-  background-color: #ffa835;
-  transform: scale(1.05);
+  background-color: #ffcbb5;
+  transform: translateY(-2px);
+}
+.account-card {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
-.card-img {
-  object-fit: cover;
-  border-radius: 12px;
+.account-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
 }
-</style>
+
+.avatar-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.username {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 15px;
+  color: #333;
+}
+
+.user-email {
+  color: #777;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+  </style>

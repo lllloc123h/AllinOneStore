@@ -163,8 +163,33 @@ async login(email, password) {
         return false;
       }
     }
-  }
-  ,
+  },
+  getProfile() {
+    return api.get('/Accounts/me')
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Không thể lấy thông tin tài khoản:', err);
+        throw err;
+      });
+  },
+updateProfile(dto) {
+    return api.put('/Accounts/me', dto)
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Lỗi cập nhật thông tin:', err);
+        throw err;
+      });
+  },
+
+  changePassword(dto) {
+    return api.put('/Accounts/change-password', dto)
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Lỗi đổi mật khẩu:', err);
+        throw err;
+      });
+  },
+
   logout() {
     localStorage.removeItem('jwtToken');
     router.push('/');
