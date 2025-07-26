@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.aos.AOSBE.DTOS.AccountProfileDTO;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.OtpDTO;
@@ -218,21 +220,45 @@ public class AccountsAPI {
 	public ResponseEntity<?> getCurrentAccount() {
 	    try {
 	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts account = accountsService.accountsFindByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+	        Accounts acc = accountsService.accountsFindByEmail(email)
+	                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-	        Map<String, Object> result = new HashMap<>();
-	        result.put("name", account.getFullname());
-	        result.put("email", account.getEmail());
-	        result.put("phone", account.getPhone());
-	        result.put("avatar", account.getAvatarUrl());
-	        result.put("address", "Đang cập nhật");
-	        return ResponseEntity.ok(result);
+	        AccountProfileDTO dto = new AccountProfileDTO(
+	                acc.getFullname(),
+	                acc.getEmail(),
+	                acc.getPhone(),
+	                acc.getAvatarUrl(),
+	                acc.getAverageOrderValue(),
+	                acc.getUserRank(),
+	                acc.getTotalSpent(),
+	                acc.getTotalOrder(),
+	                acc.getLoyaltyPoint()
+	        );
+
+	        return ResponseEntity.ok(dto);
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Không xác thực được người dùng"));
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body(Map.of("message", "Không xác thực được người dùng"));
 	    }
-	    
 	}
+
+	@PutMapping("/Accounts/me/avatar")
+	public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) {
+	    try {
+	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	        Accounts acc = accountsService.accountsFindByEmail(email)
+	                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+	        String url = accountsService.uploadAvatarAndGetUrl(file); // xử lý upload ảnh
+	        acc.setAvatarUrl(url);
+	        accountsService.accountsSave(acc);
+
+	        return ResponseEntity.ok(Map.of("message", "Cập nhật ảnh đại diện thành công", "avatarUrl", url));
+	    } catch (Exception e) {
+	        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi khi cập nhật ảnh đại diện"));
+	    }
+	}
+
 	@PutMapping("/Accounts/me")
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
 	    try {

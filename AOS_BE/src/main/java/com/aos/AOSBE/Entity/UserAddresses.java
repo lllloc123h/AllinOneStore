@@ -57,4 +57,14 @@ public class UserAddresses {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts accounts;
+    	
+    @Column(name = "ghn_province_id")
+    private Integer ghnProvinceId;
+
+    @Column(name = "ghn_district_id")
+    private Integer ghnDistrictId;
+
+    @Column(name = "ghn_ward_code")
+    private String ghnWardCode;
+
 }

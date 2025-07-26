@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
 import com.aos.AOSBE.DTOS.OrderItemDetailDTO;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
@@ -30,6 +31,7 @@ import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Service.AccountsService;
@@ -47,13 +49,14 @@ public class OrdersAPI {
 	private OrdersMapper ordersMapper;
 	@Autowired
 	private OrderItemsService orderItemsService;
-
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
 	@Autowired
 	private EWalletsService EWalletsservice;
 	@Autowired
 	private AccountsService accountService;
+	@Autowired
+	private AccountsMapper accountsMapper;
 
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
@@ -106,33 +109,45 @@ public class OrdersAPI {
 
 	@PostMapping("/user/Orders")
 	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody OrdersDTOS entity) {
-	    try {
-	        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
-	        entity.setAccounts(user.getId());
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			entity.setAccounts(user.getId());
 
-	        // Lưu đơn hàng trước
-	        Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+			// Lưu đơn hàng trước
+			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 
-	        // Mapping các item
-	        List<OrderItems> orderItems = entity.getProducts().stream()
-	            .map(item -> {
-	                OrderItems orderItem = orderItemsMapper.mapperToObject(item);
-	                orderItem.setOrders(saved);
-	                return orderItem;
-	            })
-	            .collect(Collectors.toList());
+			// Mapping các item
+			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
+				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
+				orderItem.setOrders(saved);
+				return orderItem;
+			}).collect(Collectors.toList());
 
-	        // Lưu các item
-	        orderItemsService.orderItemsSaveAll(orderItems);
+			// Lưu các item
+			orderItemsService.orderItemsSaveAll(orderItems);
 
-	        return ResponseEntity.ok(saved);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
-	    }
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
 	}
 
+	@GetMapping("/user/Orders/paypending")
+	public ResponseEntity<?> addNewOrdersByUserRolesWithKey(@RequestParam("KEY") String key) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			List<OrdersDTOS> listUserOrders = ordersService.ordersFindByAccountAndKeyPaymentPending(user.getId(), key)
+					.stream().map(ordersMapper::mapper).collect(Collectors.toList());
+			;
+			return ResponseEntity.ok(listUserOrders);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
 
 	@DeleteMapping("/admin/Orders/{id}")
 	public ResponseEntity<Void> deleteOrders(@PathVariable int id) {
@@ -148,8 +163,13 @@ public class OrdersAPI {
 		}
 
 		Orders order = orderOpt.get();
-		OrdersDTOS orderDTO = ordersMapper.mapper(order); // bạn đang có
+		OrdersDTOS orderDTO = ordersMapper.mapper(order); // thông tin đơn hàng
 
+		// Lấy thông tin account
+		Accounts account = order.getAccounts();
+		AccountsDTOS accountDTO = accountsMapper.mapper(account); // ✔️ Dùng mapper đã có
+
+		// Lấy danh sách sản phẩm
 		List<OrderItems> items = orderItemsService.findByOrderId(id);
 		List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
 
@@ -160,7 +180,9 @@ public class OrdersAPI {
 			itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
 					pi.getSku(), productName, pi.getDescription()));
 		}
-		OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO);
+
+		// Trả về full response
+		OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO, accountDTO);
 		return ResponseEntity.ok(response);
 	}
 

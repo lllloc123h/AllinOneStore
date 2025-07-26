@@ -22,8 +22,6 @@ public class GhnService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", ghnToken);
-        headers.set("ShopId", shopId);
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, String> body = Map.of("order_code", orderCode);
 

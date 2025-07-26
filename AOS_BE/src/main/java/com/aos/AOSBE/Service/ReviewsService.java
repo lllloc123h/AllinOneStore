@@ -53,4 +53,14 @@ public class ReviewsService {
     return reviewsRepository.findByProductItemsId(productItemId, pageable);
 	}
 
+	@Transactional
+	public Double getAverageRatingByProductItemId(Long productItemId) {
+    Double avg = reviewsRepository.findAverageRatingByProductItemId(productItemId);
+    return avg != null ? Math.round(avg * 10.0) / 10.0 : 0.0;
+	}
+
+	@Transactional
+	public Long countReviewsByProductItemId(Long productItemId) {
+    return reviewsRepository.countByProductItemId(productItemId);
+	}
 }

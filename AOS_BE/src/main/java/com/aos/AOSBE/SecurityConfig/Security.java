@@ -51,7 +51,11 @@ public class Security {
 								"/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback",
 						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**",
 						"/api/Promotions/**","/api/reviews/product/**",
-								"/api/cart/**"
+
+								"/api/cart/**",
+								"/api/shipping/**",
+								"/api/ghn/**",
+								"/api/UserAddresses/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

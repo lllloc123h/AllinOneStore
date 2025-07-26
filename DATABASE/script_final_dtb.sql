@@ -109,24 +109,34 @@ create table
 		foreign key (role_id) references roles (id) ON DELETE CASCADE
 	) 
 GO
-create table
+CREATE TABLE
 	user_addresses (
-		id int identity (1, 1) primary key,
-		account_id int not null,
-		recipient_name nvarchar (100) not null,
-		phone varchar(15) not null,
-		province nvarchar (50) not null,
-		district nvarchar (50) not null,
-		ward nvarchar (50) not null,
-		street nvarchar (50) not null,
-		label nvarchar (20),
-		is_default bit default 1,
-		note nvarchar (255),
-		created_at datetime default getdate (),
-		updated_at datetime default getdate (),
-		foreign key (account_id) references accounts (id) ON DELETE CASCADE
-	);
+		id INT IDENTITY(1,1) PRIMARY KEY,
+		account_id INT NOT NULL,
+
+		recipient_name NVARCHAR(100) NOT NULL,
+		phone VARCHAR(15) NOT NULL,
+		province NVARCHAR(100) NOT NULL,
+		district NVARCHAR(100) NOT NULL,
+		ward NVARCHAR(100) NOT NULL,
+		street NVARCHAR(100) NOT NULL,
+		label NVARCHAR(20),
+		is_default BIT DEFAULT 0,
+		note NVARCHAR(255),
+
+		created_at DATETIME DEFAULT GETDATE(),
+		updated_at DATETIME DEFAULT GETDATE(),
+
+		ghn_province_id INT,            -- tỉnh GHN
+		ghn_district_id INT,            -- mã huyện GHN
+		ghn_ward_code VARCHAR(20),      -- mã phường GHN
+
+		FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
 GO
+
+
+
 create table
 	catalogs (
 		id int identity (1, 1) primary key,
@@ -577,22 +587,24 @@ VALUES
 		'1970-01-01 00:00:00.000'
 	);
 
+
+
 	create TRIGGER trgg_auto_insert_history_cost_and_price
     ON product_items
     FOR INSERT, UPDATE
     AS
     BEGIN
         SET NOCOUNT ON;
-        
+
         -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
         IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
         BEGIN
             INSERT INTO cost_histories(product_item_id, cost)
             SELECT id, cost FROM inserted;
-            
+
             INSERT INTO price_histories(product_item_id, price)
             SELECT id, price FROM inserted;
-            
+
             PRINT N'Đã thêm lịch sử thay đổi giá';
         END
     END

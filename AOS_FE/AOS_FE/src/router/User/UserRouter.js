@@ -11,13 +11,13 @@ export default [
         path: '',
         name: 'home',
         component: HomeView,
-    },  
+    },
     // {
     //     path: 'uploads',
     //     name: 'uploads',
     //     component: Upload,
     // },
-     {
+    {
         path: 'uploads',
         name: 'uploads',
         component: ImageUpload,
@@ -107,6 +107,11 @@ export default [
         path: '/momo/return',
         name: 'momo-return',
         component: () => import('../../components/User/WalletInfor.vue')
+    },
+    {
+        path: '/user-orders',
+        name: 'user-orders',
+        component: () => import('../../components/User/UserOrders.vue')
     }
 
 ]
