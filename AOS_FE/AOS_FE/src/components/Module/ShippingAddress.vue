@@ -190,7 +190,7 @@ export default {
           label: this.label,
           isDefault: false,
           note: this.note,
-          account:'',
+          accounts:'',
           ghnDistrictId: districtObj?.code || null,  // int
           ghnWardCode: wardObj?.code || null   ,      // string
           ghnProvinceId: provinceObj?.code || null, // int
