@@ -63,16 +63,7 @@
                 <br />
                 <small class="text-muted">{{ product.material }}</small>
                 <br />
-                <div class="d-flex gap-2 mt-2">
-                  <small class="badge bg-info">
-                    <i class="bi bi-box me-1"></i>
-                    Qty: {{ product.qty }}
-                  </small>
-                  <small class="badge bg-warning text-dark">
-                    <i class="bi bi-star-fill me-1"></i>
-                    {{ product.rating }}/5
-                  </small>
-                </div>
+                <small class="badge bg-info">Qty: {{ product.qty }}</small>
               </div>
             </li>
           </ul>

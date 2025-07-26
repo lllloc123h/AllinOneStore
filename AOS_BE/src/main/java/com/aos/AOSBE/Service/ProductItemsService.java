@@ -2,12 +2,17 @@ package com.aos.AOSBE.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Mapper.*;
+import com.aos.AOSBE.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
-import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
-import com.aos.AOSBE.DTOS.ProductItemsDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
-import com.aos.AOSBE.Mapper.ProductItemsMapper;
-import com.aos.AOSBE.Repository.ProductItemsRepository;
 
 @Service
 public class ProductItemsService {
@@ -29,6 +30,34 @@ public class ProductItemsService {
 	@Autowired
 	private GenericSpecificationBuilder specBuilder;
 
+	@Autowired
+	private ProductItemsRepository productItemsRepository;
+
+	@Autowired
+	private ProductItemsMapper productItemsMapper;
+
+	@Autowired
+	private ReviewsRepository reviewsRepository;
+	@Autowired
+	private ReturnsRepository returnsRepository;
+	@Autowired
+	private OrderItemsRepository orderItemsRepository;
+	@Autowired
+	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private PromotionsMapper promotionsMapper;
+	@Autowired
+	private PromotionProductsRepository promotionProductsRepository;
+	@Autowired
+	private PromotionProductsMapper promotionProductsMapper;
+	@Autowired
+	private CostHistoriesMapper costHistoriesMapper;
+	@Autowired
+	private PriceHistoriesMapper priceHistoriesMapper;
+	@Autowired
+	private CostHistoriesRepository costHistoriesRepository;
+	@Autowired
+	private PriceHistoriesRepository priceHistoriesRepository;
 	public List<DiscountedProductDTOS> getDiscountedProducts() {
 
 		List<Object[]> rows = productItemsRepository.getAllDiscountedProducts();
@@ -43,12 +72,6 @@ public class ProductItemsService {
 				(String) r[7] // imageUrl
 		)).toList();
 	}
-
-	@Autowired
-	private ProductItemsRepository productItemsRepository;
-
-	@Autowired
-	private ProductItemsMapper productItemsMapper;
 
 	public Page<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -126,4 +149,47 @@ public class ProductItemsService {
 	public List<ProductItems> findAllDiscountedProductIds(){
 		return productItemsRepository.findAllDiscountedProductIds();
 	};
+	public ForeCastDTO getForeCastDataLast30Days(int productItemId) {
+		ForeCastDTO foreCastDTO = new ForeCastDTO();
+		ProductItems result = productItemsRepository.findById(productItemId).get();
+		if (result != null) {
+			foreCastDTO.setProductItemId(result.getId());
+			foreCastDTO.setName(result.getBaseProducts().getName());
+			foreCastDTO.setCategory(result.getBaseProducts().getCategories().getName());
+			foreCastDTO.setCost(result.getCost());
+			foreCastDTO.setPrice(result.getPrice());
+			foreCastDTO.setStockQty(result.getQty());
+			foreCastDTO.setTurnBuy(result.getTurnBuy());
+			foreCastDTO.setAvgRatingLast30Days(
+					reviewsRepository.findAverageRatingByProductItemIdAndCreateAtBetween(result.getId(),
+							LocalDateTime.now().minusDays(30),
+							LocalDateTime.now()));
+			foreCastDTO.setReviewCountLast30Days(
+					reviewsRepository.countReviewsByProductItemIdAndCreateAtBetween(result.getId(),
+							LocalDateTime.now().minusDays(30),
+							LocalDateTime.now()));
+			int returnCountLast30Days = returnsRepository.findReturnsByProductItemIdAndCreateAtBetween(
+					result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now());
+			double orderCountLast30Days = orderItemsRepository
+					.sumQuantityByProductIdAndDateRange(result.getId(),
+							LocalDateTime.now().minusDays(30),
+							LocalDateTime.now());
+			double returnRate = (Double.parseDouble(returnCountLast30Days + "") / orderCountLast30Days) * 100;
+			foreCastDTO.setReturnRateLast30Days(returnRate);
+			foreCastDTO.setSoldLast30Days((int) orderCountLast30Days);
+			foreCastDTO.setInPromotions(promotionsRepository.findPromotionsByDuration(result.getId(),
+					LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(promotionsMapper::mapper).toList());
+//			foreCastDTO.setComboUsageLast30Days(promotionProductsRepository
+//					.countPromotionProductsByProductItemsIdAndPromotionsStartAtAfterOrPromotionsEndAtBefore(result.getId(),
+//							LocalDateTime.now().minusDays(30), LocalDateTime.now()));
+			foreCastDTO.setGiftUsageLast30Days(promotionProductsRepository.findPromotionProductsByProductItems_IdAndGiftIsTrue(
+					result.getId(), true).stream().map(promotionProductsMapper::mapper).toList());
+			foreCastDTO.setCostHistoriesLast30Days(costHistoriesRepository.findCostHistoriesByProductItems_IdAndCreatedAtBetween
+					(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(costHistoriesMapper::mapper).toList());
+			foreCastDTO.setPriceHistoriesLast30Days(priceHistoriesRepository.findPriceHistoriesByProductItems_IdAndCreatedAtBetween
+					(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(priceHistoriesMapper::mapper).toList());
+			return foreCastDTO;
+		}
+		return null;
+	}
 }

@@ -2659,7 +2659,7 @@ BEGIN
         'https://example.com/image3.jpg',
         'https://example.com/video.mp4',
         DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 30), GETDATE())
-    FROM product_items
+    FROM product_items where id =1 
     ORDER BY NEWID();
 
     SET @i = @i + 1;

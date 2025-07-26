@@ -136,7 +136,7 @@
             type="radio"
             id="isActiveTrue"
             :value="true"
-            v-model="formData.isActive"
+            v-model="formData.active"
           />
           <label class="form-check-label" for="isActiveTrue">Active</label>
 
@@ -145,7 +145,7 @@
             type="radio"
             id="isActiveFalse"
             :value="false"
-            v-model="formData.isActive"
+            v-model="formData.active"
           />
           <label class="form-check-label" for="isActiveFalse">Inactive</label>
         </div>
@@ -768,7 +768,7 @@ const formData = reactive({
   qty: "200",
   startAt: "2025-07-01T04:23:00",
   endAt: "2025-07-20T19:22:00",
-  isActive: "false",
+  active: "false",
   createdAt: "",
   updatedAt: "",
 });

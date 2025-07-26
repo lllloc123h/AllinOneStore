@@ -21,5 +21,9 @@ public interface PromotionProductsRepository
 	PromotionProducts findAllByProductItems_IdAndPromotions_Id(int productItemsId, int promotionsId);
 
 	List<PromotionProducts> findPromotionProductsByPromotions_Id(int promotionsId);
-
+	@Query
+	("SELECT COUNT(pp) FROM PromotionProducts pp WHERE pp.productItems.id = ?1 AND pp.promotions.startAt >= ?2 or pp.promotions.endAt <= ?3")
+	int countPromotionProductsByProductItemsIdAndPromotionsStartAtAfterOrPromotionsEndAtBefore(
+			int productItemsId, LocalDateTime startAt, LocalDateTime endAt);
+	List<PromotionProducts> findPromotionProductsByProductItems_IdAndGiftIsTrue(int productItemsId, boolean gift);
 }
