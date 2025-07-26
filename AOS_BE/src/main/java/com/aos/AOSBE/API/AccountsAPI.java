@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aos.AOSBE.DTOS.AccountProfileDTO;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
@@ -225,13 +226,36 @@ public class AccountsAPI {
 	        AccountProfileDTO dto = new AccountProfileDTO(
 	                acc.getFullname(),
 	                acc.getEmail(),
-	                acc.getPhone()
+	                acc.getPhone(),
+	                acc.getAvatarUrl(),
+	                acc.getAverageOrderValue(),
+	                acc.getUserRank(),
+	                acc.getTotalSpent(),
+	                acc.getTotalOrder(),
+	                acc.getLoyaltyPoint()
 	        );
 
 	        return ResponseEntity.ok(dto);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 	                .body(Map.of("message", "Không xác thực được người dùng"));
+	    }
+	}
+
+	@PutMapping("/Accounts/me/avatar")
+	public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) {
+	    try {
+	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	        Accounts acc = accountsService.accountsFindByEmail(email)
+	                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+	        String url = accountsService.uploadAvatarAndGetUrl(file); // xử lý upload ảnh
+	        acc.setAvatarUrl(url);
+	        accountsService.accountsSave(acc);
+
+	        return ResponseEntity.ok(Map.of("message", "Cập nhật ảnh đại diện thành công", "avatarUrl", url));
+	    } catch (Exception e) {
+	        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi khi cập nhật ảnh đại diện"));
 	    }
 	}
 

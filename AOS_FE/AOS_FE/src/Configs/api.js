@@ -180,7 +180,11 @@ updateProfile(dto) {
         throw err;
       });
   },
-
+uploadAvatar(formData) {
+  return api.put("/Accounts/me/avatar", formData, {
+    headers: { "Content-Type": "multipart/form-data" }
+  }).then(res => res.data)
+},
   changePassword(dto) {
     return api.put('/Accounts/change-password', dto)
       .then(res => res.data)

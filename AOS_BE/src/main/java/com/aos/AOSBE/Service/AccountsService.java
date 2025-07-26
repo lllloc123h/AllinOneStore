@@ -1,8 +1,13 @@
 package com.aos.AOSBE.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
@@ -113,5 +119,30 @@ public class AccountsService {
 
 	    accountsRepository.save(account);
 	}
+	@Transactional
+	public String uploadAvatarAndGetUrl(MultipartFile file) {
+	    try {
 
+	        String uploadDir = "D:/AllinOneStore/uploads/avatar/";
+	        Files.createDirectories(Paths.get(uploadDir));
+
+	        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+	        Path filePath = Paths.get(uploadDir + filename);
+	        Files.write(filePath, file.getBytes());
+
+	        String avatarUrl = "/avatar/" + filename;
+
+
+	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	        Accounts account = accountsRepository.findByEmail(email)
+	                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+	        account.setAvatarUrl(avatarUrl);
+	        accountsRepository.save(account);
+
+	        return avatarUrl;
+	    } catch (IOException e) {
+	        throw new RuntimeException("Không thể lưu ảnh đại diện", e);
+	    }
+	}
 }
+

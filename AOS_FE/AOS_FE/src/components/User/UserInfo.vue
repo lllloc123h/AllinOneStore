@@ -4,13 +4,50 @@
       <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
     </div>
     <div class="account-card">
-      <!-- Ảnh đại diện và tên -->
-      <div class="account-header">
-        <img :src="user.Avatar || avatar" alt="avatar" class="avatar-img" />
-        <h4 class="username">{{ user.Name }}</h4>
-        <p class="user-email">{{ user.Email }}</p>
-      </div>
-      <div>
+  <!-- Ảnh đại diện + thông tin chính -->
+  <div class="account-header">
+   <div class="avatar-wrapper">
+  <img :src="user.Avatar" alt="avatar" class="avatar-img" />
+  <button class="avatar-upload-btn" @click="$refs.avatarInput.click()" title="Đổi ảnh đại diện">
+    📷
+  </button>
+  <input type="file" ref="avatarInput" @change="handleAvatarChange" accept="image/*" hidden />
+</div>
+
+    <h4 class="username">{{ user.Name }}</h4>
+    <p class="user-email">{{ user.Email }}</p>
+  </div>
+
+  <!-- Thông tin xếp hạng / điểm / chi tiêu -->
+<div class="account-info-stats">
+  <div class="stat-box">
+    <span class="stat-icon">🏅</span>
+    <p class="label">Hạng thành viên</p>
+    <strong>{{ user.Rank || 'Chưa xếp hạng' }}</strong>
+  </div>
+  <div class="stat-box">
+    <span class="stat-icon">💰</span>
+    <p class="label">Tổng chi tiêu</p>
+    <strong>{{ user.TotalSpent.toLocaleString() }}₫</strong>
+  </div>
+  <div class="stat-box">
+    <span class="stat-icon">🌟</span>
+    <p class="label">Điểm tích lũy</p>
+    <strong>{{ user.LoyaltyPoint }}</strong>
+  </div>
+</div>
+
+
+  <!-- Các nút chức năng -->
+  <div class="button-holder">
+    <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
+    <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
+    <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
+    <button class="open-popup-btn" @click="redirectOrder">Đơn Hàng</button>
+    <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
+  </div>
+</div>
+
 
         <div v-if="showPopupTaiKhoan" class="popup-overlay">
           <form class="form-container">
@@ -76,31 +113,10 @@
           </form>
         </div>
 
-        <!-- Các nút điều hướng -->
-        <div class="button-holder">
-          <div>
-            <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
-          </div>
-          <div>
-            <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
-          </div>
-          <div>
-            <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
-          </div>
-          <div>
-            <button class="open-popup-btn" @click="redirectOrder">Đơn Hàng</button>
-          </div>
-          <div>
-            <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import avatar from '../../assets/imgs/avarta_Kha.png'
 import { useRouter } from 'vue-router'
 import { authService } from '../../Configs/api'
 const router = useRouter()
@@ -110,9 +126,14 @@ const user = ref({
   Name: '',
   Email: '',
   Phone: '',
+  Avatar: '', 
+  Rank: '',
+  TotalSpent: 0,
+  LoyaltyPoint: 0,
   NewPassword: '',
   ConfirmPassword: ''
 })
+
 
 // 🔄 Trạng thái popup
 const showPopupTaiKhoan = ref(false)
@@ -142,10 +163,15 @@ onMounted(async () => {
     user.value.Name = data.fullname
     user.value.Email = data.email
     user.value.Phone = data.phone
+    user.value.Avatar = data.avatarUrl
+    user.value.Rank = data.userRank
+    user.value.TotalSpent = data.totalSpent
+    user.value.LoyaltyPoint = data.loyaltyPoint
   } catch (err) {
     console.error("Không thể lấy thông tin tài khoản", err)
   }
 })
+
 
 // ✅ Cập nhật thông tin người dùng
 const updateProfile = async () => {
@@ -184,6 +210,23 @@ const changePassword = async () => {
   } catch (err) {
     const message = err.response?.data || "Lỗi khi đổi mật khẩu"
     alert(typeof message === 'string' ? message : message.message)
+  }
+}
+const avatarInput = ref(null)
+
+const handleAvatarChange = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  const formData = new FormData()
+  formData.append("file", file)
+
+  try {
+    const res = await authService.uploadAvatar(formData)
+    user.value.Avatar = res.avatarUrl
+    alert("Cập nhật ảnh đại diện thành công!")
+  } catch (err) {
+    alert(err.response?.data?.message || "Lỗi khi cập nhật ảnh đại diện")
   }
 }
 
@@ -462,6 +505,66 @@ textarea {
 .toggle-password:hover {
   color: #007bff; /* xanh dương nổi bật khi hover */
   transform: scale(1.2); /* hơi phóng to khi hover */
+}
+.user-rank,
+.user-spending,
+.user-points {
+  font-size: 14px;
+  color: #555;
+  margin-top: 6px;
+}
+.account-info-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.stat-box .label {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 4px;
+}
+.stat-icon {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+.stat-icon {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: #fdddcf;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background 0.3s, transform 0.2s;
+}
+
+.avatar-upload-btn:hover {
+  background-color: #ffcbb5;
+  transform: scale(1.1);
 }
 
   </style>
