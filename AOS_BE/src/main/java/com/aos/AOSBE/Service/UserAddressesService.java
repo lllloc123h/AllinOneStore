@@ -51,23 +51,29 @@ public class UserAddressesService {
 
 	@Transactional
 	public UserAddresses userAddressesSave(UserAddresses userAddresses) {
-//	    Integer provinceId = userAddresses.getGhnProvinceId();
-//	    Integer districtId = userAddresses.getGhnDistrictId();
-//	    String wardCode = userAddresses.getGhnWardCode();
-//
-//	    // Check null để tránh lỗi runtime
-//	    if (provinceId != null && districtId != null && wardCode != null) {
-//	        String provinceName = ghnAddressService.getProvinceNameById(provinceId);
-//	        String districtName = ghnAddressService.getDistrictNameById(provinceId, districtId);
-//	        String wardName = ghnAddressService.getWardNameByCode(districtId, wardCode);
-//
-//	        userAddresses.setProvince(provinceName);
-//	        userAddresses.setDistrict(districtName);
-//	        userAddresses.setWard(wardName);
-//	    }
+	    // Lấy tên
+	    String provinceName = userAddresses.getProvince();
+	    String districtName = userAddresses.getDistrict();
+	    String wardName = userAddresses.getWard();
 
-		return userAddressesRepository.save(userAddresses);
+	    // Mapping tên → mã GHN
+	    int provinceId = ghnAddressService.getProvinceIdByName(provinceName);
+	    int districtId = ghnAddressService.getDistrictIdByName(provinceId, districtName);
+	    String wardCode = ghnAddressService.getWardCodeByName(districtId, wardName);
+
+	    // Gán lại thông tin GHN
+	    userAddresses.setGhnProvinceId(provinceId);
+	    userAddresses.setGhnDistrictId(districtId);
+	    userAddresses.setGhnWardCode(wardCode);
+
+	    // Đảm bảo tên cũng đồng bộ (phòng trường hợp bị viết sai format)
+	    userAddresses.setProvince(ghnAddressService.getProvinceNameById(provinceId));
+	    userAddresses.setDistrict(ghnAddressService.getDistrictNameById(provinceId, districtId));
+	    userAddresses.setWard(ghnAddressService.getWardNameByCode(districtId, wardCode));
+
+	    return userAddressesRepository.save(userAddresses);
 	}
+
 
 	public Optional<UserAddresses> userAddressesFindById(int id) {
 		return userAddressesRepository.findById(id);

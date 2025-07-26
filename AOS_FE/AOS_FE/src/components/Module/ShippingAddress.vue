@@ -42,21 +42,21 @@
         </div>
 
         <select class="input-group" v-model="selectedProvince" @change="loadDistricts">
-          <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
+          <option value="" disabled>Chọn Tỉnh/Thành phố</option>
           <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
             {{ prov.name }}
           </option>
         </select>
 
         <select class="input-group" v-model="selectedDistrict" @change="loadWards" :disabled="!districts.length">
-          <option value="" disabled selected>Chọn Quận/Huyện</option>
+          <option value="" disabled>Chọn Quận/Huyện</option>
           <option v-for="dist in districts" :key="dist.code" :value="dist.code">
             {{ dist.name }}
           </option>
         </select>
 
         <select class="input-group" v-model="selectedWard" :disabled="!wards.length">
-          <option value="" disabled selected>Chọn Phường/Xã</option>
+          <option value="" disabled>Chọn Phường/Xã</option>
           <option v-for="ward in wards" :key="ward.code" :value="ward.code">
             {{ ward.name }}
           </option>
@@ -126,6 +126,7 @@ export default {
       this.selectedWard = "";
       this.districts = [];
       this.wards = [];
+
       if (this.selectedProvince) {
         const res = await fetch(`https://provinces.open-api.vn/api/p/${this.selectedProvince}?depth=2`);
         const data = await res.json();
@@ -190,10 +191,7 @@ export default {
           label: this.label,
           isDefault: false,
           note: this.note,
-          accounts:'',
-          ghnDistrictId: districtObj?.code || null,  // int
-          ghnWardCode: wardObj?.code || null   ,      // string
-          ghnProvinceId: provinceObj?.code || null, // int
+          accounts: '',
         };
 
         const isContainAddress = this.shippingAddress.some(item =>
@@ -211,8 +209,25 @@ export default {
         }
 
         await api.post(`/UserAddresses`, formData);
+
+        // Reset form
+        this.name = "";
+        this.phone = "";
+        this.detailAddress = "";
+        this.selectedProvince = "";
+        this.selectedDistrict = "";
+        this.selectedWard = "";
+        this.districts = [];
+        this.wards = [];
+        this.label = '';
+        this.note = '';
+
         this.fetchData();
-        this.showModal = false;  // đóng modal sau khi thêm
+        this.showModal = false;
+        notification.success({
+          message: 'Thành công',
+          description: 'Đã thêm địa chỉ mới.',
+        });
       } catch (err) {
         console.error(err);
         notification.error({

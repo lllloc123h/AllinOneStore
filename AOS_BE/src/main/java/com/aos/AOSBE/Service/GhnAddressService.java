@@ -65,6 +65,27 @@ public class GhnAddressService {
             .findFirst()
             .orElse("Unknown");
     }
+    
+    public int getProvinceIdByName(String name) {
+        String cleanedName = normalizeName(name);
+
+        return getProvinces().stream()
+            .filter(p -> normalizeName(p.getProvinceName()).equals(cleanedName))
+            .map(ProvinceDTO::getProvinceID)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Province name not found: " + name));
+    }
+    
+    private String normalizeName(String name) {
+        return name
+            .toLowerCase()
+            .replace("tỉnh ", "")
+            .replace("thành phố ", "")
+            .replace("tp. ", "")
+            .replaceAll("\\s+", " ")
+            .trim();
+    }
+
 
     // =================== DISTRICTS ===================
     @Cacheable(value = "ghnDistricts", key = "#provinceId")
@@ -97,6 +118,14 @@ public class GhnAddressService {
             .findFirst()
             .orElse("Unknown");
     }
+    
+    public int getDistrictIdByName(int provinceId, String name) {
+        return getDistricts(provinceId).stream()
+            .filter(d -> d.getDistrictName().equalsIgnoreCase(name.trim()))
+            .map(DistrictDTO::getDistrictID)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("District name not found: " + name));
+    }
 
     // =================== WARDS ===================
     @Cacheable(value = "ghnWards", key = "#districtId")
@@ -128,4 +157,13 @@ public class GhnAddressService {
             .findFirst()
             .orElse("Unknown");
     }
+    
+    public String getWardCodeByName(int districtId, String name) {
+        return getWards(districtId).stream()
+            .filter(w -> w.getWardName().equalsIgnoreCase(name.trim()))
+            .map(WardDTO::getWardCode)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Ward name not found: " + name));
+    }
+
 }

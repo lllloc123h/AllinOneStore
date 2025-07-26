@@ -93,7 +93,6 @@
                                 <li><strong>Địa chỉ:</strong> {{ fullAddress }}</li>
                                 <li><strong>Giảm giá:</strong> {{ selectedCoupon?.code || 'Không áp dụng' }}</li>
                                 <li><strong>Thanh toán:</strong> {{ paymentMethod.name }}</li>
-                                <li><strong>Giao hàng:</strong> {{ shippingMethod?.name || '—' }}</li>
                             </ul>
 
                             <h6 class="mt-4">Danh sách sản phẩm</h6>
