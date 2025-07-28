@@ -64,6 +64,8 @@ DROP TABLE IF EXISTS purchase_orders;
 
 DROP TABLE IF EXISTS User_Logs;
 
+DROP TABLE IF EXISTS user_product_events;
+
 DROP TABLE IF EXISTS authorities;
 
 DROP TABLE IF EXISTS roles;
@@ -78,6 +80,8 @@ create table
 		id int identity (1, 1) primary key,
 		email varchar(100) unique not null,
 		password varchar(100) not null,
+		gender bit default 0,
+		birthday date ,
 		fullname nvarchar (100) not null,
 		avatar_url varchar(255),
 		phone varchar(15) null,
@@ -202,17 +206,34 @@ create table
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO
-CREATE TABLE
-	user_logs (
-		id INT IDENTITY (1, 1) PRIMARY KEY,
-		user_id INT NOT NULL,
-		action NVARCHAR (100) NOT NULL,
-		description NVARCHAR (500),
-		ip_address VARCHAR(45),
-		user_agent NVARCHAR (255),
-		created_at DATETIME DEFAULT GETDATE (),
-		module NVARCHAR (100)
-	);
+--CREATE TABLE
+--	user_logs (
+--		id INT IDENTITY (1, 1) PRIMARY KEY,
+--		user_id INT NOT NULL,
+--		action NVARCHAR (100) NOT NULL,
+--		description NVARCHAR (500),
+--		ip_address VARCHAR(45),
+--		user_agent NVARCHAR (255),
+--		created_at DATETIME DEFAULT GETDATE (),
+--		module NVARCHAR (100)
+--	);
+CREATE TABLE user_product_events (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    event_type NVARCHAR(50) NOT NULL,       -- e.g., 'click', 'add_to_cart', 'purchase'
+    event_time DATETIME DEFAULT GETDATE(),  -- when it happened
+    session_id NVARCHAR(100),               -- optional: group actions per session
+    device NVARCHAR(100),                   -- e.g., 'mobile', 'desktop'
+    ip_address VARCHAR(45),
+    user_agent NVARCHAR(255),
+    position_in_list INT,                   -- optional: product position in list
+    time_spent_seconds INT,                 -- optional: how long user viewed the product
+    referrer NVARCHAR(255)                  -- optional: where the user came from (e.g. home page)
+	foreign key (product_id) references product_items (id) ON DELETE CASCADE,
+	foreign key ( user_id) references accounts (id) ON DELETE CASCADE
+);
+GO
 GO
 create table
 	product_images (
@@ -496,11 +517,13 @@ CREATE TABLE
 		created_at DATETIME DEFAULT GETDATE (),
 		FOREIGN KEY (wallet_id) REFERENCES e_wallets (id) ON DELETE CASCADE
 	);
-
+	go
 INSERT INTO
 	accounts (
 		email,
 		password,
+		gender,
+		birthday,
 		fullname,
 		avatar_url,
 		phone,
@@ -516,6 +539,8 @@ VALUES
 	(
 		'adminCUDE@gmail.com',
 		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+		1,
+		'2005-06-05',
 		'admin',
 		NULL,
 		'0866843926',
@@ -531,6 +556,8 @@ INSERT INTO
 	accounts (
 		email,
 		password,
+		gender,
+		birthday,
 		fullname,
 		avatar_url,
 		phone,
@@ -546,6 +573,8 @@ VALUES
 	(
 		'nkha79323@gmail.com',
 		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+		1,
+		'2005-06-05',
 		'admin',
 		NULL,
 		'0866843926',
@@ -585,45 +614,51 @@ VALUES
 		5,
 		'1970-01-01 00:00:00.000',
 		'1970-01-01 00:00:00.000'
+	),
+	(
+		2,
+		5,
+		'1970-01-01 00:00:00.000',
+		'1970-01-01 00:00:00.000'
 	);
 
 
 
-	create TRIGGER trgg_auto_insert_history_cost_and_price
-    ON product_items
-    FOR INSERT, UPDATE
-    AS
-    BEGIN
-        SET NOCOUNT ON;
+--	create TRIGGER trgg_auto_insert_history_cost_and_price
+--    ON product_items
+--    FOR INSERT, UPDATE
+--    AS
+--    BEGIN
+--        SET NOCOUNT ON;
 
-        -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
-        IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
-        BEGIN
-            INSERT INTO cost_histories(product_item_id, cost)
-            SELECT id, cost FROM inserted;
+--        -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
+--        IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
+--        BEGIN
+--            INSERT INTO cost_histories(product_item_id, cost)
+--            SELECT id, cost FROM inserted;
 
-            INSERT INTO price_histories(product_item_id, price)
-            SELECT id, price FROM inserted;
+--            INSERT INTO price_histories(product_item_id, price)
+--            SELECT id, price FROM inserted;
 
-            PRINT N'Đã thêm lịch sử thay đổi giá';
-        END
-    END
-UPDATE orders
-SET order_code = 'L3BXXN'
-WHERE id = 2;
+--            PRINT N'Đã thêm lịch sử thay đổi giá';
+--        END
+--    END
+--UPDATE orders
+--SET order_code = 'L3BXXN'
+--WHERE id = 2;
 
-/**CREATE TRIGGER trg_update_user_address
-ON user_addresses
-AFTER UPDATE
-AS
-BEGIN
-  SET NOCOUNT ON;
-  UPDATE user_addresses
-  SET updated_at = GETDATE()
-  FROM inserted
-  WHERE user_addresses.id = inserted.id;
-END;**\
+--/**CREATE TRIGGER trg_update_user_address
+--ON user_addresses
+--AFTER UPDATE
+--AS
+--BEGIN
+--  SET NOCOUNT ON;
+--  UPDATE user_addresses
+--  SET updated_at = GETDATE()
+--  FROM inserted
+--  WHERE user_addresses.id = inserted.id;
+--END;**\
 
-USE master;
-ALTER DATABASE all_in_store SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-DROP DATABASE all_in_store;
+--USE master;
+--ALTER DATABASE all_in_store SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+--DROP DATABASE all_in_store;

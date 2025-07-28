@@ -67,6 +67,8 @@ DROP TABLE IF EXISTS purchase_orders;
 
 DROP TABLE IF EXISTS UserLogs;
 
+DROP TABLE IF EXISTS user_product_events;
+
 DROP TABLE IF EXISTS authorities;
 
 DROP TABLE IF EXISTS roles;

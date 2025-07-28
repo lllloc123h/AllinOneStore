@@ -28,6 +28,12 @@ public class Accounts {
     @Column(name = "password")
     private String password;
 	
+    @Column(name = "gender")
+    private boolean gender;
+	
+    @Column(name = "birthday")
+    private LocalDateTime birthday;
+	
     @Column(name = "fullname")
     private String fullname;
 	

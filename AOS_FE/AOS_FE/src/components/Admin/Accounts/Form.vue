@@ -28,7 +28,22 @@
           <input id="fullname" v-model="formData.fullname" type="text" class="form-control custom-input"
             placeholder="Enter fullname" />
         </div>
-
+        <div class="mb-4">
+          <label class="form-label text-capitalize fw-semibold">Gender</label>
+          <div>
+            <label class="form-check-label me-3">
+              <input type="radio" class="form-check-input" v-model="formData.gender" :value="true" /> Male
+            </label>
+            <label class="form-check-label me-3">
+              <input type="radio" class="form-check-input" v-model="formData.gender" :value="false" /> Female
+            </label>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="birthday" class="form-label text-capitalize fw-semibold">Birthday</label>
+          <input id="birthday" v-model="formData.birthday" type="datetime-local" class="form-control custom-input"
+            placeholder="Select your birthday and time" />
+        </div>
         <div class="mb-4">
           <label class="form-label text-capitalize fw-semibold">Avatar</label>
           <ImageUpload :max-images="1" :max-videos="0" folder="profiles" :heightImg="0" :widthImg="0"
@@ -233,6 +248,8 @@ const formData = reactive({
   id: '',
   email: '',
   password: '',
+  gender: true,
+  birthday: '',
   fullname: '',
   avatarUrl: '',
   phone: '',

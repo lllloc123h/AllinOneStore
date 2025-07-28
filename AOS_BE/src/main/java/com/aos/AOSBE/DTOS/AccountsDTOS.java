@@ -15,6 +15,8 @@ public class AccountsDTOS {
     private int id;
     private String email;
     private String password;
+    private boolean gender;
+    private LocalDateTime birthday;
     private String fullname;
     private String avatarUrl;
     private String phone;

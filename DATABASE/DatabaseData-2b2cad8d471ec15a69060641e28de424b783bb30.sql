@@ -1,9 +1,144 @@
 ﻿use all_in_store;
 
-INSERT INTO
-  accounts (
+--INSERT INTO
+--  accounts (
+--    email,
+--    password,
+--    fullname,
+--    avatar_url,
+--    phone,
+--    average_order_value,
+--    user_rank,
+--    total_spent,
+--    total_order,
+--    loyalty_point
+--  )
+--VALUES
+--  (
+--    'nguyenvana@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Nguyễn Văn A',
+--    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
+--    '0901234567',
+--    1500000.00,
+--    N'Bạc',
+--    7500000.00,
+--    5,
+--    200
+--  ),
+--  (
+--    'tranvanb@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Trần Văn B',
+--    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
+--    '0902345678',
+--    2000000.00,
+--    N'Vàng',
+--    10000000.00,
+--    5,
+--    300
+--  ),
+--  (
+--    'lethic@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Lê Thị C',
+--    'avatar_c.jpg',
+--    '0903456789',
+--    1200000.00,
+--    N'Đồng',
+--    6000000.00,
+--    5,
+--    150
+--  ),
+--  (
+--    'phamvand@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Phạm Văn D',
+--    'avatar_d.jpg',
+--    '0904567890',
+--    1800000.00,
+--    N'Bạc',
+--    9000000.00,
+--    5,
+--    250
+--  ),
+--  (
+--    'hoangthie@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Hoàng Thị E',
+--    'avatar_e.jpg',
+--    '0905678901',
+--    2500000.00,
+--    N'Vàng',
+--    12500000.00,
+--    5,
+--    400
+--  ),
+--  (
+--    'doquangf@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Đỗ Quang F',
+--    'avatar_f.jpg',
+--    '0906789012',
+--    1000000.00,
+--    N'Đồng',
+--    5000000.00,
+--    5,
+--    100
+--  ),
+--  (
+--    'buitranh@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Bùi Trần H',
+--    'avatar_h.jpg',
+--    '0907890123',
+--    1300000.00,
+--    N'Bạc',
+--    6500000.00,
+--    5,
+--    180
+--  ),
+--  (
+--    'vothik@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Võ Thị K',
+--    'avatar_k.jpg',
+--    '0908901234',
+--    1600000.00,
+--    N'Vàng',
+--    8000000.00,
+--    5,
+--    280
+--  ),
+--  (
+--    'dangvank@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Đặng Văn K',
+--    'avatar_k.jpg',
+--    '0909012345',
+--    1400000.00,
+--    N'Đồng',
+--    7000000.00,
+--    5,
+--    160
+--  ),
+--  (
+--    'truongvant@example.com',
+--    '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+--    N'Trương Văn T',
+--    'avatar_t.jpg',
+--    '0910123456',
+--    2200000.00,
+--    N'Bạc',
+--    11000000.00,
+--    5,
+--    350
+--  );
+INSERT INTO accounts (
     email,
     password,
+    gender,
+    birthday,
     fullname,
     avatar_url,
     phone,
@@ -11,12 +146,16 @@ INSERT INTO
     user_rank,
     total_spent,
     total_order,
-    loyalty_point
-  )
+    loyalty_point,
+    created_at,
+    updated_at
+)
 VALUES
   (
     'nguyenvana@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1990-01-01',
     N'Nguyễn Văn A',
     'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0901234567',
@@ -24,11 +163,15 @@ VALUES
     N'Bạc',
     7500000.00,
     5,
-    200
+    200,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'tranvanb@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1991-02-02',
     N'Trần Văn B',
     'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0902345678',
@@ -36,103 +179,137 @@ VALUES
     N'Vàng',
     10000000.00,
     5,
-    300
+    300,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'lethic@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    0,
+    '1992-03-03',
     N'Lê Thị C',
-    'avatar_c.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0903456789',
     1200000.00,
     N'Đồng',
     6000000.00,
     5,
-    150
+    150,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'phamvand@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1993-04-04',
     N'Phạm Văn D',
-    'avatar_d.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0904567890',
     1800000.00,
     N'Bạc',
     9000000.00,
     5,
-    250
+    250,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'hoangthie@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    0,
+    '1994-05-05',
     N'Hoàng Thị E',
-    'avatar_e.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0905678901',
     2500000.00,
     N'Vàng',
     12500000.00,
     5,
-    400
+    400,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'doquangf@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1995-06-06',
     N'Đỗ Quang F',
-    'avatar_f.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0906789012',
     1000000.00,
     N'Đồng',
     5000000.00,
     5,
-    100
+    100,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'buitranh@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1996-07-07',
     N'Bùi Trần H',
-    'avatar_h.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0907890123',
     1300000.00,
     N'Bạc',
     6500000.00,
     5,
-    180
+    180,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'vothik@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    0,
+    '1997-08-08',
     N'Võ Thị K',
-    'avatar_k.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0908901234',
     1600000.00,
     N'Vàng',
     8000000.00,
     5,
-    280
+    280,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'dangvank@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1998-09-09',
     N'Đặng Văn K',
-    'avatar_k.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0909012345',
     1400000.00,
     N'Đồng',
     7000000.00,
     5,
-    160
+    160,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'truongvant@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1999-10-10',
     N'Trương Văn T',
-    'avatar_t.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0910123456',
     2200000.00,
     N'Bạc',
     11000000.00,
     5,
-    350
+    350,
+    GETDATE(),
+    GETDATE()
   );
 
 INSERT INTO
