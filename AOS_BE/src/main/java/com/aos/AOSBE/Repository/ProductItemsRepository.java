@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.ProductItems;
 
 @Repository
@@ -84,10 +83,16 @@ public interface ProductItemsRepository
 						pit.safety_stock
 				FROM base_products bp
 				JOIN product_items pit ON bp.id = pit.base_id
+				JOIN Categories cate ON bp.category_id=cate.id
 				WHERE
 				    (:isSkuLikeListEmpty = 1 OR EXISTS (
 				        SELECT 1 FROM STRING_SPLIT(:skuLikeList, ',') c
 				        WHERE pit.sku LIKE '%' + c.value + '%'
+				    ))
+				AND
+				 (:isCategoriesEmpty = 1 OR EXISTS (
+				        SELECT 1 FROM STRING_SPLIT(:categoriesList, '-') c
+				        WHERE cate.name = c.value
 				    ))
 				AND
 				    (:minPriceIsEmpty = 1 OR  pit.price >TRY_CAST(:minPrice  AS FLOAT))
@@ -101,6 +106,7 @@ public interface ProductItemsRepository
 			@Param("isSkuLikeListEmpty") int isSkuLikeListEmpty, @Param("skuLikeList") String sizesJoined,
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
+			@Param("isCategoriesEmpty") int isCategoriesEmpty, @Param("categoriesList") String categoriesList,
 			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
 
 //	@Query("""
@@ -155,17 +161,15 @@ public interface ProductItemsRepository
 			""")
 	Page<ProductItems> findRelatedItems(Long categoryId, Long productId, Pageable pageable);
 
-
-
 	@Query("SELECT p.productItems FROM PromotionProducts p")
 	List<ProductItems> findAllDiscountedProductIds();
-	
-	 @Query("""
-		        SELECT pi FROM ProductItems pi
-		        JOIN pi.baseProducts bp
-		        WHERE bp.isActive = true
-		        AND pi.qty > 0
-		        ORDER BY bp.turnBuy DESC
-		        """)
-		    List<ProductItems> findBestSellersWithPrice(Pageable pageable);
+
+	@Query("""
+			SELECT pi FROM ProductItems pi
+			JOIN pi.baseProducts bp
+			WHERE bp.isActive = true
+			AND pi.qty > 0
+			ORDER BY bp.turnBuy DESC
+			""")
+	List<ProductItems> findBestSellersWithPrice(Pageable pageable);
 }

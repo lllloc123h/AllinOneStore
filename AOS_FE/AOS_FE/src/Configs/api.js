@@ -22,7 +22,8 @@ const excludedPaths = [
   '/openai/chat',
   '/Promotions/',
   '/Promotions',
-  '/shipping/fee'
+  '/shipping/fee',
+  '/CatalogCategoriesFilter'
 ]
 
 // Automatically attach token to each request
@@ -81,7 +82,7 @@ api.interceptors.response.use(
 const tokenRef = ref(localStorage.getItem('jwtToken'))
 const cartSize = ref(localStorage.getItem('cartSize') ? parseInt(localStorage.getItem('cartSize')) : 0);
 const authService = {
-async login(email, password) {
+  async login(email, password) {
     // console.log({ email, password })
     return api.post('/Accounts/login', { email, password })
       .then(async (response) => {
@@ -97,18 +98,18 @@ async login(email, password) {
         // Sync cart
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
-        
+
         // Check admin role
         authService.isAdmin();
-        
+
         // Navigate
         const redirectTo = localStorage.getItem('redirectTo') || '/';
         localStorage.removeItem('redirectTo'); // Clear redirect after use
-        
+
         setTimeout(() => {
           toast.success('Đăng nhập thành công !');
         }, 500);
-        
+
         await router.push(redirectTo);
       })
       .catch(error => {
@@ -118,7 +119,7 @@ async login(email, password) {
   },
   setTokenRef(token) {
     tokenRef.value = token;
-  } 
+  }
   ,
   isLogged() {
     return tokenRef.value != null;
@@ -135,7 +136,7 @@ async login(email, password) {
   ,
   setCart(qty) {
     cartSize.value = qty;
-        console.log('Cart size set:', cartSize.value)
+    console.log('Cart size set:', cartSize.value)
     localStorage.setItem('cartSize', cartSize.value);
   }
   ,
@@ -172,7 +173,7 @@ async login(email, password) {
         throw err;
       });
   },
-updateProfile(dto) {
+  updateProfile(dto) {
     return api.put('/Accounts/me', dto)
       .then(res => res.data)
       .catch(err => {
@@ -180,11 +181,11 @@ updateProfile(dto) {
         throw err;
       });
   },
-uploadAvatar(formData) {
-  return api.put("/Accounts/me/avatar", formData, {
-    headers: { "Content-Type": "multipart/form-data" }
-  }).then(res => res.data)
-},
+  uploadAvatar(formData) {
+    return api.put("/Accounts/me/avatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    }).then(res => res.data)
+  },
   changePassword(dto) {
     return api.put('/Accounts/change-password', dto)
       .then(res => res.data)

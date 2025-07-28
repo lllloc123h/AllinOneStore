@@ -9,10 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.*;
-import com.aos.AOSBE.Entity.Promotions;
-import com.aos.AOSBE.Mapper.*;
-import com.aos.AOSBE.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +18,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
+import com.aos.AOSBE.DTOS.ForeCastDTO;
+import com.aos.AOSBE.DTOS.ProductItemsDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Mapper.CostHistoriesMapper;
+import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
+import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Mapper.PromotionProductsMapper;
+import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.CostHistoriesRepository;
+import com.aos.AOSBE.Repository.OrderItemsRepository;
+import com.aos.AOSBE.Repository.PriceHistoriesRepository;
+import com.aos.AOSBE.Repository.ProductItemsRepository;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
+import com.aos.AOSBE.Repository.PromotionsRepository;
+import com.aos.AOSBE.Repository.ReturnsRepository;
+import com.aos.AOSBE.Repository.ReviewsRepository;
 
 @Service
 public class ProductItemsService {
@@ -58,6 +70,7 @@ public class ProductItemsService {
 	private CostHistoriesRepository costHistoriesRepository;
 	@Autowired
 	private PriceHistoriesRepository priceHistoriesRepository;
+
 	public List<DiscountedProductDTOS> getDiscountedProducts() {
 
 		List<Object[]> rows = productItemsRepository.getAllDiscountedProducts();
@@ -93,23 +106,26 @@ public class ProductItemsService {
 	}
 
 	public Page<Object[]> productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(int page, int size,
-			String skuColorLike, String skuSizeLike, String minPrice, String maxPrice, Integer idProductItem) {
+			String skuColorLike, String skuSizeLike, String minPrice, String maxPrice, String categories,
+			Integer idProductItem) {
 		Pageable pageable = PageRequest.of(page, size);
 		int isMinPriceEmpty = (minPrice == null || minPrice.isEmpty()) ? 1 : 0;
 		int isMaxPriceEmpty = (maxPrice == null || maxPrice.isEmpty()) ? 1 : 0;
+		int isCategoriesEmpty = (categories == null || categories.isEmpty()) ? 1 : 0;
 		int idProductItemIsEmpty = (idProductItem == null) ? 1 : 0;
 
 		skuColorLike = (skuColorLike == null) ? "" : skuColorLike;
+		categories = (categories == null) ? "" : categories;
 		skuSizeLike = (skuSizeLike == null) ? "" : skuSizeLike;
 		minPrice = (minPrice == null) ? "" : minPrice;
 		maxPrice = (maxPrice == null) ? "" : maxPrice;
 		HandleListSkuToFilter buildKey = new HandleListSkuToFilter();
 		String skuList = buildKey.buildKeyFilter(skuColorLike, skuSizeLike);
 		int isSkuLikeListEmpty = (skuList == null || skuColorLike.isEmpty()) ? 1 : 0;
-		System.out.println(skuList);
+
 		try {
 			return productItemsRepository.newFilterItems(pageable, isSkuLikeListEmpty, skuList, isMinPriceEmpty,
-					minPrice, isMaxPriceEmpty, maxPrice, idProductItemIsEmpty,
+					minPrice, isMaxPriceEmpty, maxPrice, isCategoriesEmpty, categories, idProductItemIsEmpty,
 					idProductItem != null ? idProductItem.intValue() : 0);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,10 +161,12 @@ public class ProductItemsService {
 
 		return relatedItems.stream().map(productItemsMapper::mapper).collect(Collectors.toList());
 	}
+
 	@Transactional
-	public List<ProductItems> findAllDiscountedProductIds(){
+	public List<ProductItems> findAllDiscountedProductIds() {
 		return productItemsRepository.findAllDiscountedProductIds();
 	};
+
 	public ForeCastDTO getForeCastDataLast30Days(int productItemId) {
 		ForeCastDTO foreCastDTO = new ForeCastDTO();
 		ProductItems result = productItemsRepository.findById(productItemId).get();
@@ -160,36 +178,36 @@ public class ProductItemsService {
 			foreCastDTO.setPrice(result.getPrice());
 			foreCastDTO.setStockQty(result.getQty());
 			foreCastDTO.setTurnBuy(result.getTurnBuy());
-			foreCastDTO.setAvgRatingLast30Days(
-					reviewsRepository.findAverageRatingByProductItemIdAndCreateAtBetween(result.getId(),
-							LocalDateTime.now().minusDays(30),
-							LocalDateTime.now()));
-			foreCastDTO.setReviewCountLast30Days(
-					reviewsRepository.countReviewsByProductItemIdAndCreateAtBetween(result.getId(),
-							LocalDateTime.now().minusDays(30),
-							LocalDateTime.now()));
+			foreCastDTO.setAvgRatingLast30Days(reviewsRepository.findAverageRatingByProductItemIdAndCreateAtBetween(
+					result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()));
+			foreCastDTO.setReviewCountLast30Days(reviewsRepository.countReviewsByProductItemIdAndCreateAtBetween(
+					result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()));
 			System.out.println(returnsRepository.findAll());
-			int returnCountLast30Days = returnsRepository.findReturnsByProductItemIdAndCreateAtBetween(
-					result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now());
-			double orderCountLast30Days = orderItemsRepository
-					.sumQuantityByProductIdAndDateRange(result.getId(),
-							LocalDateTime.now().minusDays(30),
-							LocalDateTime.now());
+			int returnCountLast30Days = returnsRepository.findReturnsByProductItemIdAndCreateAtBetween(result.getId(),
+					LocalDateTime.now().minusDays(30), LocalDateTime.now());
+			double orderCountLast30Days = orderItemsRepository.sumQuantityByProductIdAndDateRange(result.getId(),
+					LocalDateTime.now().minusDays(30), LocalDateTime.now());
 			System.out.println("Return Count Last 30 Days: " + returnCountLast30Days);
 			double returnRate = (Double.parseDouble(returnCountLast30Days + "") / orderCountLast30Days) * 100;
 			foreCastDTO.setReturnRateLast30Days(returnRate);
 			foreCastDTO.setSoldLast30Days((int) orderCountLast30Days);
-			foreCastDTO.setInPromotions(promotionsRepository.findPromotionsByDuration(result.getId(),
-					LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(promotionsMapper::mapper).toList());
+			foreCastDTO.setInPromotions(promotionsRepository
+					.findPromotionsByDuration(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now())
+					.stream().map(promotionsMapper::mapper).toList());
 //			foreCastDTO.setComboUsageLast30Days(promotionProductsRepository
 //					.countPromotionProductsByProductItemsIdAndPromotionsStartAtAfterOrPromotionsEndAtBefore(result.getId(),
 //							LocalDateTime.now().minusDays(30), LocalDateTime.now()));
-			foreCastDTO.setGiftUsageLast30Days(promotionProductsRepository.findPromotionProductsByProductItems_IdAndGiftIsTrue(
-					result.getId(), true).stream().map(promotionProductsMapper::mapper).toList());
-			foreCastDTO.setCostHistoriesLast30Days(costHistoriesRepository.findCostHistoriesByProductItems_IdAndCreatedAtBetween
-					(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(costHistoriesMapper::mapper).toList());
-			foreCastDTO.setPriceHistoriesLast30Days(priceHistoriesRepository.findPriceHistoriesByProductItems_IdAndCreatedAtBetween
-					(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(priceHistoriesMapper::mapper).toList());
+			foreCastDTO.setGiftUsageLast30Days(promotionProductsRepository
+					.findPromotionProductsByProductItems_IdAndGiftIsTrue(result.getId(), true).stream()
+					.map(promotionProductsMapper::mapper).toList());
+			foreCastDTO.setCostHistoriesLast30Days(costHistoriesRepository
+					.findCostHistoriesByProductItems_IdAndCreatedAtBetween(result.getId(),
+							LocalDateTime.now().minusDays(30), LocalDateTime.now())
+					.stream().map(costHistoriesMapper::mapper).toList());
+			foreCastDTO.setPriceHistoriesLast30Days(priceHistoriesRepository
+					.findPriceHistoriesByProductItems_IdAndCreatedAtBetween(result.getId(),
+							LocalDateTime.now().minusDays(30), LocalDateTime.now())
+					.stream().map(priceHistoriesMapper::mapper).toList());
 			return foreCastDTO;
 		}
 		return null;

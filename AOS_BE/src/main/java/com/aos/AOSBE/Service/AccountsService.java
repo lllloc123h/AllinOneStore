@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +25,6 @@ import com.aos.AOSBE.DTOS.RegisterRequestDTO;
 import com.aos.AOSBE.DTOS.UpdateProfileDTO;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Authorities;
-import com.aos.AOSBE.Entity.UserAddresses;
 import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Repository.AuthoritiesRepository;
 import com.aos.AOSBE.Repository.RolesRepository;
@@ -44,8 +42,6 @@ public class AccountsService {
 	private UserAddressesRepository addressRepository;
 	@Autowired
 	private GenericSpecificationBuilder specBuilder;
-
-
 
 	public Page<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -108,48 +104,39 @@ public class AccountsService {
 
 	@Transactional
 	public void updateProfile(UpdateProfileDTO dto) {
-	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	    Accounts account = accountsRepository.findByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Accounts account = accountsRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
-	    account.setFullname(dto.getFullname());
-	    account.setEmail(dto.getEmail());
-	    account.setPhone(dto.getPhone());
+		account.setFullname(dto.getFullname());
+		account.setEmail(dto.getEmail());
+		account.setPhone(dto.getPhone());
 
-
-	    accountsRepository.save(account);
+		accountsRepository.save(account);
 	}
+
 	@Transactional
 	public String uploadAvatarAndGetUrl(MultipartFile file) {
-	    try {
+		try {
 
-	        String uploadDir = "D:/AllinOneStore/uploads/avatar/";
-	        Files.createDirectories(Paths.get(uploadDir));
+			String uploadDir = "D:/AllinOneStore/uploads/avatar/";
+			Files.createDirectories(Paths.get(uploadDir));
 
-	        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-	        Path filePath = Paths.get(uploadDir + filename);
-	        Files.write(filePath, file.getBytes());
+			String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+			Path filePath = Paths.get(uploadDir + filename);
+			Files.write(filePath, file.getBytes());
 
-	        String avatarUrl = "/avatar/" + filename;
+			String avatarUrl = "/avatar/" + filename;
 
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsRepository.findByEmail(email)
+					.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+			account.setAvatarUrl(avatarUrl);
+			accountsRepository.save(account);
 
-	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts account = accountsRepository.findByEmail(email)
-	                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-	        account.setAvatarUrl(avatarUrl);
-	        accountsRepository.save(account);
-
-	        return avatarUrl;
-	    } catch (IOException e) {
-	        throw new RuntimeException("Không thể lưu ảnh đại diện", e);
-	    }
+			return avatarUrl;
+		} catch (IOException e) {
+			throw new RuntimeException("Không thể lưu ảnh đại diện", e);
+		}
 	}
 }
-	public void resetPasswordByEmail(String email, String newPassword) {
-	    Accounts account = accountsRepository.findByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản với email đã cung cấp"));
-
-	    account.setPassword(new BCryptPasswordEncoder().encode(newPassword));
-	    accountsRepository.save(account);
-	}
-

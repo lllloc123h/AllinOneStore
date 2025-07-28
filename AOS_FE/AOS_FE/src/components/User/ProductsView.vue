@@ -5,6 +5,29 @@
       <div class="col-3">
         <h3><span class="line"></span>Phân loại</h3>
         <div class="filter-section">
+          <div v-for="(items, groupName, index) in dropDowncatalogCategory" :key="groupName" class="filter-group">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  :data-bs-target="'#flush-collapseOne-' + index + 'category'" aria-expanded="false"
+                  aria-controls="flush-collapseOne">
+                  <h3><span class="line"></span> {{ groupName }}</h3>
+                </button>
+              </h2>
+              <div :id="'flush-collapseOne-' + index + 'category'" class="accordion-collapse collapse"
+                data-bs-parent="#accordionFlushExample">
+                <ul class="filter-list">
+                  <li v-for="item in items" :key="item.id">
+                    <label>
+                      <input type="checkbox" :name="groupName" :value="item.name"
+                        v-model="selectedCatalogCategory[groupName]" />
+                      {{ item.name }}
+                    </label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
           <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="filter-group">
             <div class="accordion-item">
               <h2 class="accordion-header">
@@ -157,10 +180,14 @@ import PageNavigative from "../Module/PageNavigative.vue";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from "ant-design-vue";
 import ProductCard from "../Module/ProductCard.vue";
+import { dropDown } from "../../Configs/DropDownList";
 const mapVarriants = ref({});
 const data = ref([]);
 const selected = ref([]);
+const selectedCatalogCategory = ref({});
 const skuColorLike = ref("");
+const categoriesFilter = ref([]);
+const catalogsFilter = ref([]);
 const skuSizeLike = ref("");
 const minPriceReq = ref(1);
 const maxPriceReq = ref(200000000);
@@ -172,7 +199,7 @@ const totalPages = ref(0);
 const showModal = ref(false);
 const selectedProduct = ref(null);
 const quantity = ref(1);
-
+const dropDowncatalogCategory = ref([]);
 const openModal = (product) => {
   selectedProduct.value = product;
   showModal.value = true;
@@ -199,6 +226,15 @@ onMounted(() => {
       products.value = resp.data;
     })
     .catch((error) => console.log("Error loading base products:", error));
+  api
+    .get("/CatalogCategoriesFilter")
+    .then(async (resp) => {
+      dropDowncatalogCategory.value = resp.data;
+      for (const groupName in dropDowncatalogCategory.value) {
+        selectedCatalogCategory.value[groupName] = [];
+      }
+    })
+    .catch((error) => console.log(error));
 });
 const itemCart = ref({
   id: "",
@@ -240,6 +276,12 @@ const fetchData = async () => {
   try {
     skuColorLike.value = selected.value["Màu sắc"].join("-");
     skuSizeLike.value = selected.value["Kích thước"].join("-");
+    for (const groupName in selectedCatalogCategory.value) {
+      if (selectedCatalogCategory.value[groupName].length > 0) {
+        categoriesFilter.value = categoriesFilter.value + (categoriesFilter.value.length <= 0 ? '' : '-') + selectedCatalogCategory.value[groupName].join("-")
+      }
+    }
+    console.log("categoriesFilter:", categoriesFilter.value);
     if (selectedPrice.value.includes("-")) {
       const [min, max] = selectedPrice.value.split("-").map((p) => p.trim());
       minPriceReq.value = min + "000";
@@ -250,7 +292,7 @@ const fetchData = async () => {
     }
     // console.log(minPriceReq.value, maxPriceReq.value)
     const response = await axios.get(
-      `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}`
+      `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}&categories=${categoriesFilter.value}`
     );
     data.value = response.data.totalPages;
     products.value = response.data.content;
@@ -263,12 +305,16 @@ const fetchData = async () => {
       })
     );
     products.value = updatedProducts;
+
+
   } catch (error) {
     console.error("Error fetching variants:", error);
   }
 };
 watch(() => selected.value["Kích thước"], fetchData);
 watch(() => selected.value["Màu sắc"], fetchData);
+watch(() => selectedCatalogCategory.value, fetchData,
+  { deep: true });
 watch(() => selectedPrice.value, fetchData);
 watch(() => pageIndex.value, fetchData);
 watch(() => pageSize.value, fetchData);

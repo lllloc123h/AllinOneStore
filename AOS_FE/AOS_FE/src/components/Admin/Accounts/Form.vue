@@ -31,7 +31,7 @@
 
         <div class="mb-4">
           <label class="form-label text-capitalize fw-semibold">Avatar</label>
-          <ImageUpload :max-images="1" :max-videos="1" folder="products" :heightImg="0" :widthImg="0"
+          <ImageUpload :max-images="1" :max-videos="0" folder="profiles" :heightImg="0" :widthImg="0"
             :videoDuration="60" ref="imageUploadRef" @result-uploaded="handleGetUploadUrl" class="upload-container" />
           <div v-if="formData.avatar" class="mt-3 text-center">
             <label class="form-label">Preview Avatar:</label>

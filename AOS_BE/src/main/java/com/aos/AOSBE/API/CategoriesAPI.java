@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,23 @@ public class CategoriesAPI {
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
 
+	}
+
+	@GetMapping("/CatalogCategoriesFilter")
+	public ResponseEntity<?> getAllVariantValuesApiToQuery(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "100") int size,
+			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
+		filters.remove("page");
+		filters.remove("size");
+		Map<String, List<CategoriesDTOS>> catalogCategoriesForList = new HashMap<>();
+
+		List<CategoriesDTOS> catalogCategories = new ArrayList<CategoriesDTOS>();
+		categoriesService.categoriesFindAll(page, size, filters).forEach(e -> {
+			catalogCategories.add(categoriesMapper.mapper(e));
+		});
+		catalogCategoriesForList = catalogCategories.stream()
+				.collect(Collectors.groupingBy(CategoriesDTOS::getCatalogs));
+		return ResponseEntity.ok(catalogCategoriesForList);
 	}
 
 	@GetMapping("/admin/Categories/{id}")
