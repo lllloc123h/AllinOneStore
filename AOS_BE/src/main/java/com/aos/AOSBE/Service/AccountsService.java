@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,4 +141,14 @@ public class AccountsService {
 			throw new RuntimeException("Không thể lưu ảnh đại diện", e);
 		}
 	}
+
+	public void resetPasswordByEmail(String email, String encodedPassword) {
+	    Accounts account = accountsRepository.findByEmail(email)
+	        .orElseThrow(() -> new UsernameNotFoundException("Email không tồn tại: " + email));
+
+	    account.setPassword(encodedPassword);
+	    accountsRepository.save(account);
+	}
+	
 }
+	

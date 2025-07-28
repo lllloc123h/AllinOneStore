@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.aos.AOSBE.Service.OtpStore;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -102,10 +104,16 @@ public final static String VERIFY_EMAIL_TO_REGISTER = "verifyEmailToRegister";
         }
         return null;
     }
-	public boolean checkOtpForgetPassword(String forgotPassword, String email, int code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean checkOtpForgetPassword(String forgotPasswordToken, String email, String inputOtp) {
+        String storedOtp = OtpStore.getOtpByEmail(email);
+        String storedToken = OtpStore.getTokenByEmail(email);
+
+        if (storedToken.equals(forgotPasswordToken) && storedOtp == inputOtp) {
+            return true;
+        }
+        
+        return false;
+    }
 }
 
 

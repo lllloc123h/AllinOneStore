@@ -33,10 +33,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // ✅ Nếu đường dẫn là public, bỏ qua xác thực JWT
         String path = request.getRequestURI();
-        if (path.startsWith("/forgot-password") || path.startsWith("/api/forgot-password")) {
+        if (path.contains("/forgot-password")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
 
         String authHeader = request.getHeader("Authorization");

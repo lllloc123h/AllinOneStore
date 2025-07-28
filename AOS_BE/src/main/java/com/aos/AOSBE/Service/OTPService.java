@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.aos.AOSBE.DTOS.OtpSessionData;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.DTOS.VerifyOtpDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,8 +31,14 @@ public class OTPService {
         return otpSessionData.generateOtpForForgotPassword(time, email);
     }
 
-    public boolean checkOtpToResetPassword(String email, int code) throws Exception {
-        return otpSessionData.checkOtpForgetPassword(OtpSessionData.FORGOT_PASSWORD, email, code);
+    public boolean checkOtpToResetPassword(String email, String code) {
+        VerifyOtpDTO storedOtp = OtpStore.getOtpDtoByEmail(email);
+
+        if (storedOtp == null) {
+            return false;
+        }
+
+        return storedOtp.getOtpCode().equals(code);
     }
 
     public String getEmailToResetPassword() {

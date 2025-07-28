@@ -1,10 +1,11 @@
 package com.aos.AOSBE.API;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import com.aos.AOSBE.Service.OtpStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
 import com.aos.AOSBE.DTOS.ForgotPasswordDTO;
 import com.aos.AOSBE.DTOS.OtpDTO;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
+import com.aos.AOSBE.DTOS.ResetPasswordDTO;
 import com.aos.AOSBE.DTOS.UpdateProfileDTO;
 import com.aos.AOSBE.DTOS.VerifyOtpDTO;
 import com.aos.AOSBE.DTOS.loginRequestDTOS;
@@ -45,6 +47,7 @@ import com.aos.AOSBE.Service.AuthoritiesService;
 import com.aos.AOSBE.Service.CartItemsService;
 import com.aos.AOSBE.Service.EmailService;
 import com.aos.AOSBE.Service.OTPService;
+import com.aos.AOSBE.Service.OtpStore;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -275,28 +278,54 @@ public class AccountsAPI {
 	
 	@PostMapping("/forgot-password/request")
 	public ResponseEntity<?> resetPassword(@RequestBody ForgotPasswordDTO dto) {
-	    String email = dto.getEmail();
-	    int otp = otpService.generateOtpToResetPassword(5 * 60 * 1000L, email); // OTP 5 phút
+	    String email = normalizeEmail(dto.getEmail());
+
+	    int otp = otpService.generateOtpToResetPassword(5 * 60 * 1000L, email);
+
 	    emailService.sendForgotPasswordOtp(email, String.valueOf(otp));
+
+	    VerifyOtpDTO otpDto = new VerifyOtpDTO(email, String.valueOf(otp), LocalDateTime.now());
+	    OtpStore.putOtp(email, otpDto);
+
 	    return ResponseEntity.ok("Đã gửi mã OTP đến email.");
 	}
+
 	@PostMapping("/forgot-password/verify")
 	public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpDTO dto) {
-	    try {
-	        String email = dto.getEmail(); // ✅ đúng cách
-	        int otpCode = dto.getOtp();    // ✅ đúng cách
+	    String email = normalizeEmail(dto.getEmail());
 
-	        boolean valid = otpService.checkOtpToResetPassword(email, otpCode);
-	        if (!valid) {
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP không hợp lệ hoặc đã hết hạn.");
-	        }
-
-	        return ResponseEntity.ok("Xác minh OTP thành công.");
-	    } catch (NumberFormatException e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("OTP phải là số hợp lệ.");
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra khi xác minh OTP.");
+	    boolean isValid = otpService.checkOtpToResetPassword(email, dto.getOtpCode());
+	    if (!isValid) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body("Mã OTP không hợp lệ hoặc đã hết hạn.");
 	    }
+
+	    return ResponseEntity.ok("Xác minh OTP thành công.");
+	}
+
+	// 🔧 Helper để chuẩn hóa email
+	private String normalizeEmail(String email) {
+	    return email.trim().toLowerCase();
+	}
+	@PostMapping("/forgot-password/change")
+	public ResponseEntity<?> changePassword(@RequestBody ResetPasswordDTO dto) {
+	    String email = dto.getEmail().trim().toLowerCase();
+	    String rawPassword = dto.getNewPassword();
+
+	    if (!OtpStore.hasOtp(email)) {
+	        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	            .body("Không thể đổi mật khẩu. OTP chưa được xác minh.");
+	    }
+
+	    // ✅ Mã hóa tại controller
+	    String encodedPassword = passwordEncoder.encode(rawPassword);
+
+	    // ✅ Gửi vào service để lưu
+	    accountsService.resetPasswordByEmail(email, encodedPassword);
+
+	    OtpStore.clearOtp(email);
+
+	    return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
 	}
 //	?
 

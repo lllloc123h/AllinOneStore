@@ -132,9 +132,10 @@ function verifyOtp() {
 
     const trimmedOtp = enteredOtp.value.trim();
     const payload = {
-      email: forgotEmail.value,
-      otp: trimmedOtp.toString(), // 🔥 ép kiểu sang string như backend yêu cầu
-    };
+  email: forgotEmail.value,
+  otpCode: trimmedOtp.toString(), 
+};
+
 
     console.log("📦 Payload gửi lên:", payload);
 
@@ -168,7 +169,7 @@ function verifyOtp() {
   }
 }
 function resetPassword() {
-  fetch("http://localhost:8080/api/forgot-password/reset", {
+  fetch("http://localhost:8080/api/forgot-password/change", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
