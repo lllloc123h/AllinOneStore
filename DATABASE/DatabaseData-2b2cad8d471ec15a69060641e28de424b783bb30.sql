@@ -2509,6 +2509,7 @@ INSERT INTO promotion_products (
 (2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
 
 -- INSERT 30 orders
+select * from orders where account_id = 2;
 DECLARE @i INT = 1;
 WHILE @i <= 30
 BEGIN
@@ -2535,7 +2536,7 @@ BEGIN
     N'Đang xử lý',
     25000.00,
     25000.00,
-    N'Chưa thanh toán',
+    N'Đã thanh toán',
     N'Giao trước 6 giờ tối',
     10,
     100000.00 + (@i * 1000),
@@ -2547,9 +2548,39 @@ BEGIN
 
   SET @i = @i + 1;
 END;
-
-
-
+-- test api Cancel orders
+INSERT INTO orders (
+    account_id,
+    payment_method_id,
+    shipping_method_id,
+    shipping_status,
+    estimated_shipping_fee,
+    actual_shipping_fee,
+    payment_status,
+    note,
+    point,
+    final_total,
+    order_infor,
+    order_code,
+    created_at,
+    updated_at
+)
+VALUES (
+    2,
+    (SELECT TOP 1 id FROM payment_methods ORDER BY NEWID()),
+    (SELECT TOP 1 id FROM shipping_methods ORDER BY NEWID()),
+    N'Đang xử lý',
+    0.00,
+    0.00,
+    N'Đã thanh toán',
+    N'Khách đã thanh toán trực tiếp',
+    0,
+    10000.00,
+    N'Nguyễn Văn A, 123 Đường ABC, Q.1, TP.HCM - 0123456789',
+    'ORD1001',
+    GETDATE(),
+    GETDATE()
+);
 -- INSERT order_items for each order
 DECLARE @order_id INT, @max_id INT, @pid INT, @j INT;
 
@@ -2677,3 +2708,22 @@ VALUES
 (8, N'Khách hủy đơn khi chưa thanh toán', 0, N'REJECTED', GETDATE(), GETDATE()),
 (9, N'Giao hàng trễ so với cam kết', 1, N'APPROVED', GETDATE(), GETDATE()),
 (10, N'Không cần nữa', 0, N'PENDING', GETDATE(), GETDATE());
+select * from e_wallets
+INSERT INTO e_wallets (
+    id,
+    account_id,
+    balance,
+    wallet_type,
+    is_active,
+    code_activce,
+    created_at
+)
+VALUES 
+-- Ví thật
+('WALLET_REAL_001', 1, 100000000.00, 'REAL', 1, N'CODE123REAL', GETDATE()),
+
+-- Ví ảo
+('WALLET_VIRTUAL_002', 2, 50000.00, 'VIRTUAL', 1, N'CODE456VIRTUAL', GETDATE()),
+
+-- Ví bị khóa
+('WALLET_REAL_003', 3, 0, 'REAL', 0, N'LOCKED789', GETDATE());

@@ -55,7 +55,9 @@ public class Security {
 								"/api/cart/**",
 								"/api/shipping/**",
 								"/api/ghn/**",
-								"/api/UserAddresses/**"
+								"/api/UserAddresses/**",
+								"/forgot-password/**",
+								"/api/forgot-password/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

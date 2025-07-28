@@ -55,9 +55,10 @@ public final static String VERIFY_EMAIL_TO_REGISTER = "verifyEmailToRegister";
     private static class OtpInfo {
         private int code;
         private long expireAt;
-        private RegisterRequestDTO registerRequestDTO;
-        public OtpInfo() {
-        }
+        private RegisterRequestDTO registerRequestDTO; // dùng cho đăng ký
+        private String email; // dùng cho quên mật khẩu
+
+        public OtpInfo() {}
 
         public OtpInfo(int code, long expireAt, RegisterRequestDTO registerRequestDTO) {
             this.code = code;
@@ -65,34 +66,46 @@ public final static String VERIFY_EMAIL_TO_REGISTER = "verifyEmailToRegister";
             this.registerRequestDTO = registerRequestDTO;
         }
 
-        public int getCode() {
-            return code;
-        }
-
-        public void setCode(int code) {
+        public OtpInfo(int code, long expireAt, String email) {
             this.code = code;
-        }
-
-        public long getExpireAt() {
-            return expireAt;
-        }
-
-        public void setExpireAt(long expireAt) {
             this.expireAt = expireAt;
+            this.email = email;
         }
 
-        public RegisterRequestDTO getRegisterRequestDTO() {
-            return registerRequestDTO;
-        }
+        public int getCode() { return code; }
 
-        public void setRegisterRequestDTO(RegisterRequestDTO registerRequestDTO) {
-            this.registerRequestDTO = registerRequestDTO;
-        }
+        public long getExpireAt() { return expireAt; }
+
+        public RegisterRequestDTO getRegisterRequestDTO() { return registerRequestDTO; }
+
+        public String getEmail() { return email; }
 
         public boolean isExpired() {
             return System.currentTimeMillis() > expireAt;
         }
     }
+    public final static String FORGOT_PASSWORD = "forgotPassword";
+
+    public int generateOtpForForgotPassword(Long time, String email) {
+        mapOtp.remove(FORGOT_PASSWORD);
+        int code = new Random().nextInt(900000) + 100000;
+        OtpInfo otpInfo = new OtpInfo(code, System.currentTimeMillis() + time, email);
+        System.err.println("OTP quên mật khẩu hết hạn lúc : " +
+            new SimpleDateFormat("HH:mm:ss").format(otpInfo.getExpireAt()));
+        mapOtp.put(FORGOT_PASSWORD, otpInfo);
+        return code;
+    }
+
+    public String getEmailFromOtp(String key) {
+        if (mapOtp.containsKey(key)) {
+            return mapOtp.get(key).getEmail();
+        }
+        return null;
+    }
+	public boolean checkOtpForgetPassword(String forgotPassword, String email, int code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
 
 

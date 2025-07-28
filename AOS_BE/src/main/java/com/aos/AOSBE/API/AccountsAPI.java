@@ -31,9 +31,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.aos.AOSBE.DTOS.AccountProfileDTO;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
+import com.aos.AOSBE.DTOS.ForgotPasswordDTO;
 import com.aos.AOSBE.DTOS.OtpDTO;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
 import com.aos.AOSBE.DTOS.UpdateProfileDTO;
+import com.aos.AOSBE.DTOS.VerifyOtpDTO;
 import com.aos.AOSBE.DTOS.loginRequestDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Mapper.AccountsMapper;
@@ -270,6 +272,32 @@ public class AccountsAPI {
 	        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
 	    }
 	}
+	
+	@PostMapping("/forgot-password/request")
+	public ResponseEntity<?> resetPassword(@RequestBody ForgotPasswordDTO dto) {
+	    String email = dto.getEmail();
+	    int otp = otpService.generateOtpToResetPassword(5 * 60 * 1000L, email); // OTP 5 phút
+	    emailService.sendForgotPasswordOtp(email, String.valueOf(otp));
+	    return ResponseEntity.ok("Đã gửi mã OTP đến email.");
+	}
+	@PostMapping("/forgot-password/verify")
+	public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpDTO dto) {
+	    try {
+	        String email = dto.getEmail(); // ✅ đúng cách
+	        int otpCode = dto.getOtp();    // ✅ đúng cách
 
+	        boolean valid = otpService.checkOtpToResetPassword(email, otpCode);
+	        if (!valid) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP không hợp lệ hoặc đã hết hạn.");
+	        }
+
+	        return ResponseEntity.ok("Xác minh OTP thành công.");
+	    } catch (NumberFormatException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("OTP phải là số hợp lệ.");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra khi xác minh OTP.");
+	    }
+	}
+//	?
 
 }

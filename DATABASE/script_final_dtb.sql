@@ -608,3 +608,22 @@ VALUES
             PRINT N'Đã thêm lịch sử thay đổi giá';
         END
     END
+UPDATE orders
+SET order_code = 'L3BXXN'
+WHERE id = 2;
+
+/**CREATE TRIGGER trg_update_user_address
+ON user_addresses
+AFTER UPDATE
+AS
+BEGIN
+  SET NOCOUNT ON;
+  UPDATE user_addresses
+  SET updated_at = GETDATE()
+  FROM inserted
+  WHERE user_addresses.id = inserted.id;
+END;**\
+
+USE master;
+ALTER DATABASE all_in_store SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE all_in_store;

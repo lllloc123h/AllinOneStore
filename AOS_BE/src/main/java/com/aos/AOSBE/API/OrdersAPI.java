@@ -186,30 +186,34 @@ public class OrdersAPI {
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("/Users/Orders/{id}")
+	@PutMapping("/Users/Orders/cancelRefundOrder/{id}")
 	public ResponseEntity<?> cancelRefundOrder(@PathVariable int id) {
 		try {
 			Orders OrderCancel = ordersService.ordersFindById(id).orElse(null);
 			if (OrderCancel != null) {
-				if (OrderCancel.getShippingStatus().equals("Pending")) {
-					if (OrderCancel.getPaymentStatus().equals("Paid")) {
+				if (OrderCancel.getShippingStatus().equals("Đang xử lý")) {
+					if (OrderCancel.getPaymentStatus().equals("Đã thanh toán")) {
 						Accounts ac = OrderCancel.getAccounts();
 						EWallets ew = EWalletsservice.eWalletsFindByAccountEmail(ac.getEmail()).orElse(null);
-						ew.setBalance(ew.getBalance() + OrderCancel.getFinalTotal());
-						EWalletsservice.eWalletsSave(ew);
-						Accounts admin = accountService.accountsFindById(1).orElse(null);
-						if (admin != null) {
-
-							EWallets ewadmin = EWalletsservice.eWalletsFindByAccountEmail(admin.getEmail())
-									.orElse(null);
-							ewadmin.setBalance(ewadmin.getBalance() - OrderCancel.getFinalTotal());
-							EWalletsservice.eWalletsSave(ewadmin);
-							OrderCancel.setShippingStatus("Cancel");
-							ordersService.ordersSave(OrderCancel);
-						} else {
-							return ResponseEntity.badRequest().body(Map.of("MESSAGE", "admin không tồn tại"));
+						if(ew != null) {
+							ew.setBalance(ew.getBalance() + OrderCancel.getFinalTotal());
+							EWalletsservice.eWalletsSave(ew);
+							Accounts admin = accountService.accountsFindById(1).orElse(null);
+							if (admin != null) {
+								EWallets ewadmin = EWalletsservice.eWalletsFindByAccountEmail(admin.getEmail())
+										.orElse(null);
+								ewadmin.setBalance(ewadmin.getBalance() - OrderCancel.getFinalTotal());
+								EWalletsservice.eWalletsSave(ewadmin);
+								OrderCancel.setShippingStatus("Cancel");
+								ordersService.ordersSave(OrderCancel);
+							} else {
+								return ResponseEntity.ok(Map.of("MESSAGE", "admin không tồn tại"));
+							}
+							return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn hoàn tiền thành công"));
+						}else {
+							return ResponseEntity.ok(Map.of("MESSAGE", "người dùng chưa có tài khoản Ewallet, vui lòng tạo tài khoản"));
 						}
-						return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn hoàn tiền thành công"));
+						
 					} else {
 						OrderCancel.setShippingStatus("Cancel");
 						ordersService.ordersSave(OrderCancel);
@@ -220,7 +224,7 @@ public class OrdersAPI {
 							.body(Map.of("MESSAGE", "Đơn hàng đã được vân chuyển, không thể hủy đơn"));
 				}
 			} else {
-				return ResponseEntity.badRequest().body(Map.of("MESSAGE", "không tìm thấy đơn hàng "));
+				return ResponseEntity.ok().body(Map.of("MESSAGE", "không tìm thấy đơn hàng "));
 			}
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "ĐÃ CÓ LỖI XẢY RA " + e.getMessage()));

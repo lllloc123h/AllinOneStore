@@ -145,4 +145,11 @@ public class AccountsService {
 	    }
 	}
 }
+	public void resetPasswordByEmail(String email, String newPassword) {
+	    Accounts account = accountsRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản với email đã cung cấp"));
+
+	    account.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+	    accountsRepository.save(account);
+	}
 
