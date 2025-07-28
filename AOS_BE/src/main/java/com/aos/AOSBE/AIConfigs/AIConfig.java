@@ -36,7 +36,6 @@ import java.util.Map;
                 .maxMessages(25)
                 .build();
     }
-
     @Bean
     PromptTemplate customPromptTemplate () {
        return PromptTemplate.builder()
@@ -97,8 +96,8 @@ import java.util.Map;
                                         .topK(5)
                                         .build())
                         .promptTemplate(customPromptTemplate()).build()
-                                ).
-                defaultUser("Xin chào, mình cần tư vấn sản phẩm")
+                                )
+//                .defaultUser("Xin chào, mình cần tư vấn sản phẩm")
                 .build();
     }
 

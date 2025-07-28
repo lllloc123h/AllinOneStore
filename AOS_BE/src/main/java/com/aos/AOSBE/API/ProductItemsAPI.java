@@ -256,6 +256,15 @@ public class ProductItemsAPI {
 		}
 	}
 
+	@GetMapping("/ProductItems/detail/test/{id}")
+	public ResponseEntity<?> getProductItemsById(@PathVariable int id) {
+		try {
+			return ResponseEntity.ok(productItemsService.getForeCastDataLast30Days(id));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Lỗi: " + e.getMessage()));
+		}
+	}
+
 	@GetMapping("/ProductItems/related/{id}")
 	public ResponseEntity<?> getRelatedProductItems(@PathVariable int id) {
     List<ProductItemsDTOS> relatedItems = productItemsService.getRelatedProductItems(id);

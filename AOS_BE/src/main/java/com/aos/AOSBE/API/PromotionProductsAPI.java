@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,9 +55,12 @@ public class PromotionProductsAPI {
 	private PromotionsService promotionsService;
 	@Autowired
 	private PromotionsMapper promotionsMapper;
+	@Autowired
+	private OrderItemsService orderItemsService;
+
 	@GetMapping("/admin/PromotionProducts")
 	public ResponseEntity<?> getAllPromotionProductsApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+														@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
 		Page<PromotionProducts> pageResult = promotionProductsService.promotionsFindAll(page, size, filters);
@@ -73,6 +77,7 @@ public class PromotionProductsAPI {
 		PromotionProducts promotionProduct = promotionProductsService.findById(id).orElse(new PromotionProducts());
 		return ResponseEntity.ok(promotionProductsMapper.mapper(promotionProduct));
 	}
+
 	@GetMapping("/admin/promotionproducts")
 	public ResponseEntity<?> getPromotionProductsByPromotionId(@RequestParam("promotionId") int promotionId) {
 		List<PromotionProducts> promotionProducts = promotionProductsService
@@ -92,6 +97,7 @@ public class PromotionProductsAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+
 	@PutMapping("/admin/PromotionProducts")
 	public ResponseEntity<?> updatePromotions(@RequestBody PromotionProductsDTOS entity) {
 		try {
@@ -125,20 +131,30 @@ public class PromotionProductsAPI {
 		promotionProductsService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+
 	@GetMapping("/admin/products/details/{id}")
-	public ResponseEntity<?> getPromotionProductsByProductItemsId(@PathVariable int id, @RequestParam("startAt")LocalDateTime startAt, @RequestParam("endAt")LocalDateTime endAt) {
+	public ResponseEntity<?> getPromotionProductsByProductItemsId(@PathVariable int id, @RequestParam("startAt") LocalDateTime startAt, @RequestParam("endAt") LocalDateTime endAt) {
+		System.out.println("Fetching details for product item ID: " + id + " from " + startAt + " to " + endAt);
 		List<PromotionsDTOS> promotions = promotionsService.findPromotionByProductItemAndDuration(id, startAt, endAt).stream().map(promotionsMapper::mapper).toList();
 		List<CostHistoriesDTOS> costHistories = costHistoriesService.findCostHistoriesByProductItemsIdBetween(id, startAt, endAt)
 				.stream().map(costHistoriesMapper::mapper).toList();
 		List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findPriceHistoriesByProductItemsIdAndCreatedAtBetween(id, startAt, endAt)
 				.stream().map(priceHistoriesMapper::mapper).toList();
+		Long turnBuy = orderItemsService.sumQuantityByProductId(id, startAt);
+		List<TurnBuyDTO> turnBuyByDay = new ArrayList<>();
+		while (startAt.isBefore(endAt) || startAt.isEqual(endAt)) {
+			turnBuyByDay.add(new TurnBuyDTO(startAt, orderItemsService.sumQuantityByProductId(id, startAt)));
+			startAt = startAt.plusDays(1);
+		}
 		DetailStatsDTO detailStatsDTO = new DetailStatsDTO();
+		detailStatsDTO.setData(turnBuyByDay);
 		detailStatsDTO.setPromotions(promotions);
 		detailStatsDTO.setCostHistories(costHistories);
 		detailStatsDTO.setPriceHistories(priceHistories);
+		System.out.println("DetailStatsDTO: " + detailStatsDTO);
 		return ResponseEntity.ok(detailStatsDTO);
 	}
-	}
+}
 
 
 

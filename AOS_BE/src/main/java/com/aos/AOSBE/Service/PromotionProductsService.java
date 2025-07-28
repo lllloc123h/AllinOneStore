@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.aos.AOSBE.DTOS.ForeCastDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,5 +61,6 @@ public class PromotionProductsService {
 	public List<PromotionProducts> findPromotionProductsByPromotionsId(int promotionsId) {
 		return promotionProductsRepository.findPromotionProductsByPromotions_Id(promotionsId);
 	}
+
 
 }

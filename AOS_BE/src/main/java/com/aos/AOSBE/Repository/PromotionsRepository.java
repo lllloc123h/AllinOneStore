@@ -27,6 +27,7 @@ public interface PromotionsRepository extends JpaRepository<Promotions, Integer>
             "ND p.start_at <= CURRENT_TIMESTAMP " +
             "AND p.end_at >= CURRENT_TIMESTAMP ", nativeQuery = true)
     Object[] findFirstTypePromotionByProductItemId(int productItemId);
-    @Query("SELECT pp.promotions FROM PromotionProducts pp WHERE pp.productItems.id= ?1 AND pp.promotions.startAt >= ?2 AND pp.promotions.endAt <= ?3")
+    @Query("SELECT pp.promotions FROM PromotionProducts pp" +
+            " WHERE pp.productItems.id= ?1 AND pp.promotions.startAt >= ?2 OR pp.promotions.endAt <= ?3")
     List<Promotions> findPromotionsByDuration(int productItemId, LocalDateTime startAt, LocalDateTime endAt);
 }

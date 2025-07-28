@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Mapper;
 
+import com.aos.AOSBE.Repository.ProductItemsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ import com.aos.AOSBE.Service.PromotionsService;
 public class PromotionProductsMapper {
 
 	@Autowired
-	private ProductItemsService productItemsService;
+	private ProductItemsRepository productItemsRepository;
 
 	@Autowired
 	private PromotionsService promotionsService;
@@ -37,7 +38,7 @@ public class PromotionProductsMapper {
 					entity.isGift(),
 					entity.getCreatedAt(),
 					entity.getUpdatedAt(),
-					productItemsService.productItemsFindById(entity.getProductItem().getId()).orElse(null),
+					productItemsRepository.findById(entity.getProductItem().getId()).orElse(null),
 					promotionsService.promotionsFindById(entity.getPromotionId()).orElse(null)
 			);
 	}
