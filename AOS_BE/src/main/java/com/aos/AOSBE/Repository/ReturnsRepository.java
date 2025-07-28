@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 @Repository
 public interface ReturnsRepository extends JpaRepository<Returns, Integer>, JpaSpecificationExecutor<Returns> {
 	// Add custom query methods here if needed
-    @Query("SELECT COUNT(r) FROM Returns r WHERE r.orderItems.productItems.id = ?1 and r.createdAt BETWEEN ?2 AND ?3")
+    @Query("SELECT SUM(r.qty) FROM Returns r WHERE r.orderItems.productItems.id = ?1 and r.createdAt BETWEEN ?2 AND ?3")
     Integer findReturnsByProductItemIdAndCreateAtBetween(Integer productItemId, LocalDateTime startDate, LocalDateTime endDate);
 }

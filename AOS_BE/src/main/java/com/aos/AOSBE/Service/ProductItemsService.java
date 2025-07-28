@@ -168,12 +168,14 @@ public class ProductItemsService {
 					reviewsRepository.countReviewsByProductItemIdAndCreateAtBetween(result.getId(),
 							LocalDateTime.now().minusDays(30),
 							LocalDateTime.now()));
+			System.out.println(returnsRepository.findAll());
 			int returnCountLast30Days = returnsRepository.findReturnsByProductItemIdAndCreateAtBetween(
 					result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now());
 			double orderCountLast30Days = orderItemsRepository
 					.sumQuantityByProductIdAndDateRange(result.getId(),
 							LocalDateTime.now().minusDays(30),
 							LocalDateTime.now());
+			System.out.println("Return Count Last 30 Days: " + returnCountLast30Days);
 			double returnRate = (Double.parseDouble(returnCountLast30Days + "") / orderCountLast30Days) * 100;
 			foreCastDTO.setReturnRateLast30Days(returnRate);
 			foreCastDTO.setSoldLast30Days((int) orderCountLast30Days);

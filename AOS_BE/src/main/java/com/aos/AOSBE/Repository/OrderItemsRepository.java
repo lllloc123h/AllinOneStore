@@ -18,7 +18,7 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer>
 	@Query("SELECT sum(orderItems.qty) FROM OrderItems orderItems WHERE orderItems.productItems.id = ?1 AND orderItems.createdAt <= ?2")
 	Long sumQuantityByProductId(Integer productItemId, LocalDateTime createdAt);
 	@Query("SELECT sum(orderItems.qty) FROM OrderItems orderItems WHERE orderItems.productItems.id = ?1" +
-			" AND orderItems.createdAt >= ?2 AND orderItems.createdAt <= ?3")
+			" AND orderItems.createdAt BETWEEN ?2 AND ?3")
 	Long sumQuantityByProductIdAndDateRange(Integer productItemId, LocalDateTime startAt, LocalDateTime endAt);
 
 
