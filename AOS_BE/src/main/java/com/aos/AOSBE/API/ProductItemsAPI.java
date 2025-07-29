@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
 import com.aos.AOSBE.Mapper.ProductImagesMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import com.aos.AOSBE.Service.PriceHistoriesService;
 import com.aos.AOSBE.Service.ProductImagesService;
 import com.aos.AOSBE.Service.ProductItemsService;
@@ -64,7 +66,8 @@ public class ProductItemsAPI {
 
 	@Autowired
 	private PromotionsMapper promotionsMapper;
-
+	@Autowired
+	private PromotionProductsRepository promotionProductsRepository;
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -145,9 +148,25 @@ public class ProductItemsAPI {
 
 	}
 
-	@GetMapping("/discounted")
+	// PromotionProductController.java
+	@GetMapping("/discounted-products")
 	public ResponseEntity<List<DiscountedProductDTOS>> getDiscountedProducts() {
-		return ResponseEntity.ok(productItemsService.getDiscountedProducts());
+	    LocalDateTime now = LocalDateTime.now();
+	    List<Map<String, Object>> rawResults = promotionProductsRepository.findDiscountedProductsNative();
+
+	    List<DiscountedProductDTOS> dtoList = rawResults.stream()
+	        .map(map -> new DiscountedProductDTOS(
+	            ((Number) map.get("productItemId")).longValue(),
+	            (String) map.get("productName"),
+	            ((Number) map.get("originalPrice")).doubleValue(),
+	            ((Number) map.get("discountValue")).doubleValue(),
+	            (String) map.get("promotionName"),
+	            ((Number) map.get("discountedPrice")).doubleValue(),
+	            (String) map.get("imageUrl")
+	        ))
+	        .collect(Collectors.toList());
+
+	    return ResponseEntity.ok(dtoList);
 	}
 
 	@GetMapping("/Product/MultiplrFilter")

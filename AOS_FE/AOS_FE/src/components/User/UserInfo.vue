@@ -81,29 +81,40 @@
     <section class="form-section">
       <h3>Đổi mật khẩu</h3>
       <div class="form-grid">
-        <div class="form-group full-width">
-  <label>Mật khẩu mới</label>
-  <div class="password-wrapper">
-   <input :type="showPasswordNew ? 'text' : 'password'" v-model="user.NewPassword" />
-<button type="button" class="toggle-password" @click="togglePasswordNew">
-  <span v-if="showPasswordNew">🙈</span>
-  <span v-else>👁️</span>
-</button>
+  <div class="form-group full-width">
+    <label>Mật khẩu hiện tại</label>
+    <div class="password-wrapper">
+      <input :type="showPasswordCurrent ? 'text' : 'password'" v-model="user.CurrentPassword" />
+      <button type="button" class="toggle-password" @click="togglePasswordCurrent">
+        <span v-if="showPasswordCurrent">🙈</span>
+        <span v-else>👁️</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group full-width">
+    <label>Mật khẩu mới</label>
+    <div class="password-wrapper">
+      <input :type="showPasswordNew ? 'text' : 'password'" v-model="user.NewPassword" />
+      <button type="button" class="toggle-password" @click="togglePasswordNew">
+        <span v-if="showPasswordNew">🙈</span>
+        <span v-else>👁️</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group full-width">
+    <label>Xác nhận mật khẩu</label>
+    <div class="password-wrapper">
+      <input :type="showPasswordConfirm ? 'text' : 'password'" v-model="user.ConfirmPassword" />
+      <button type="button" class="toggle-password" @click="togglePasswordConfirm">
+        <span v-if="showPasswordConfirm">🙈</span>
+        <span v-else>👁️</span>
+      </button>
+    </div>
   </div>
 </div>
 
-<div class="form-group full-width">
-  <label>Xác nhận mật khẩu</label>
-  <div class="password-wrapper">
-   <input :type="showPasswordConfirm ? 'text' : 'password'" v-model="user.ConfirmPassword" />
-<button type="button" class="toggle-password" @click="togglePasswordConfirm">
-  <span v-if="showPasswordConfirm">🙈</span>
-  <span v-else>👁️</span>
-</button>
-  </div>
-</div>
-
-      </div>
     </section>
 
             <div class="form-buttons">
@@ -198,6 +209,7 @@ const changePassword = async () => {
 
   try {
     const dto = {
+      currentPassword: user.value.CurrentPassword,
       newPassword: user.value.NewPassword,
       confirmPassword: user.value.ConfirmPassword
     }
@@ -206,12 +218,13 @@ const changePassword = async () => {
     alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.")
 
     authService.logout()
-
+    
   } catch (err) {
     const message = err.response?.data || "Lỗi khi đổi mật khẩu"
     alert(typeof message === 'string' ? message : message.message)
   }
 }
+
 const avatarInput = ref(null)
 
 const handleAvatarChange = async (event) => {

@@ -71,20 +71,7 @@ public class ProductItemsService {
 	@Autowired
 	private PriceHistoriesRepository priceHistoriesRepository;
 
-	public List<DiscountedProductDTOS> getDiscountedProducts() {
-
-		List<Object[]> rows = productItemsRepository.getAllDiscountedProducts();
-
-		return rows.stream().map(r -> new DiscountedProductDTOS((Integer) r[0], // productItemId
-				(String) r[1], // baseProductName
-				new BigDecimal(r[2].toString()), // price as BigDecimal
-				(String) r[3], // discountType
-				(String) r[4], // promotionName
-				((Timestamp) r[5]).toLocalDateTime(), // startAt
-				((Timestamp) r[6]).toLocalDateTime(), // endAt
-				(String) r[7] // imageUrl
-		)).toList();
-	}
+	
 
 	public Page<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
