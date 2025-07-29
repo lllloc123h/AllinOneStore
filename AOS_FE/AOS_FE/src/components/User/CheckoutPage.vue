@@ -159,6 +159,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api, { authService } from '../../Configs/api'
 import { onBeforeRouteLeave } from 'vue-router'
 import { dropDown } from '../../Configs/DropDownList'
+import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
 const dropdownShippingMethods = ref([])
 const shippingMethod = ref(null)
 
@@ -174,6 +175,8 @@ const defaultAddressData = ref(null)
 const dropdownPaymentMethods = ref([]);
 const couponCodeInput = ref('')
 const couponError = ref('')
+const timeSpent = ref(0);
+let timer = null;
 
 // ==== Computed Properties ====
 const totalPrice = computed(() =>
@@ -183,16 +186,13 @@ const totalPrice = computed(() =>
 const discountAmount = computed(() => {
     const coupon = selectedCoupon.value;
     const minOrder = coupon?.minOrderAmount ?? 0;
-
     if (!coupon || totalPrice.value < minOrder) return 0;
-
     if (coupon.discountType === 'PERCENT') {
         const discount = ((coupon.discountValue ?? 0) / 100) * totalPrice.value;
         return coupon.maxDiscountAmount != null
             ? Math.min(discount, coupon.maxDiscountAmount)
             : discount;
     }
-
     return coupon.discountValue ?? 0;
 });
 
@@ -201,8 +201,6 @@ const isCouponApplicable = computed(() => {
     if (!coupon) return false;
     return totalPrice.value >= (coupon.minOrderAmount ?? 0);
 });
-
-
 
 const finalPrice = computed(() =>
     totalPrice.value - discountAmount.value + shippingFee.value
@@ -214,7 +212,6 @@ const fullAddress = computed(() => {
 })
 
 // ==== Methods ====
-
 function goToAddress() {
     router.push({ name: 'shippingaddress', query: { fromCheckout: '1' } })
 }
@@ -222,14 +219,11 @@ function goToAddress() {
 async function applyCoupon() {
     couponError.value = ''
     selectedCoupon.value = null
-
     if (!couponCodeInput.value) {
         couponError.value = 'Vui lòng nhập mã giảm giá.'
         return
     }
-
     const hasCombo = selectedProducts.value.some(item => item.isCombo === true)
-
     try {
         const { data } = await api.get('/Coupons/validate', {
             params: {
@@ -245,25 +239,26 @@ async function applyCoupon() {
     }
 }
 
-
 async function confirmOrder() {
     const token = authService.getToken()
-
     if (!token) {
         alert('Bạn cần đăng nhập trước khi đặt hàng.')
         router.push({ name: 'login' })
         return
     }
-
     try {
-        // const payload = {
-        //     address: defaultAddressData.value.id,
-        //     // couponCode: selectedCoupon.value?.code || null,
-        //     discountCouponCode: selectedCoupon.value?.code || null,
-        //     paymentMethods: paymentMethod.value.name,
-        //     products: selectedProducts.value,
-        //     finalTotal: finalPrice.value
-        // }
+        clearInterval(timer);
+        selectedProducts.value.forEach(product => {
+            let payLoadUsetCatchEvent = {
+                id: '',
+                eventType: 'ORDER',
+                positionInList: '',
+                timeSpentSeconds: timeSpent.value,
+                productItemId: product.id,
+            }
+            catchUserEvent(payLoadUsetCatchEvent);
+        })
+
         const payload = {
             address: defaultAddressData.value.id,
             discountCouponCode: selectedCoupon.value?.code || null,
@@ -278,14 +273,12 @@ async function confirmOrder() {
             note: '',
             orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`
         }
-
         console.log('📦', payload);
         const response = await api.post('/user/Orders', { ...payload })
         console.log('✅ Đặt hàng thành công:', payload)
         alert('Đặt hàng thành công!')
         console.log(response.data)
         localStorage.removeItem('selectedCoupon')
-
         showSuccess.value = true
         localStorage.removeItem('checkoutProducts') // 🧹 Xoá khi đã đặt
     } catch (err) {
@@ -293,10 +286,11 @@ async function confirmOrder() {
         alert('Lỗi đặt hàng!')
     }
 }
-
 // ==== Lifecycle ====
-
 onMounted(async () => {
+    timer = setInterval(() => {
+        timeSpent.value++;
+    }, 1000);
     dropdownPaymentMethods.value = (await dropDown('PaymentMethods')).content;
     console.log('✅ Đã tải danh sách phương thức thanh toán:', dropdownPaymentMethods.value)
     if (route.query.products) {
@@ -309,12 +303,10 @@ onMounted(async () => {
     } else if (!selectedProducts.value.length && localStorage.getItem('checkoutProducts')) {
         selectedProducts.value = JSON.parse(localStorage.getItem('checkoutProducts'))
     }
-
     // ✅ Load coupon từ localStorage nếu có
     if (localStorage.getItem('selectedCoupon')) {
         selectedCoupon.value = JSON.parse(localStorage.getItem('selectedCoupon'))
     }
-
     try {
         const { data: addresses } = await api.get('/UserAddresses')
         defaultAddressData.value = addresses.find(addr => addr.default) || addresses[0]
@@ -325,7 +317,6 @@ onMounted(async () => {
     if (savedTab !== null) {
         currentTab.value = parseInt(savedTab)
     }
-
     const savedMethod = localStorage.getItem('paymentMethod')
     if (savedMethod) {
         paymentMethod.value = savedMethod
@@ -335,7 +326,6 @@ onMounted(async () => {
         shippingMethod.value = dropdownShippingMethods.value[0] // Gán mặc định
     }
     console.log('✅ Đã tải shipping methods:', dropdownShippingMethods.value)
-
 })
 onBeforeRouteLeave((to, from, next) => {
     const isGoingToShipping = to.name === 'shippingaddress'
