@@ -47,8 +47,8 @@ public class Security {
 						"/api/Orders/detail/**", "/api/ProductItems/detail/**", "/api/Promotions/**",
 						"/api/reviews/product/**",
 
-						"/api/cart/**", "/api/shipping/**", "/api/ghn/**", "/api/UserAddresses/**",
-						"/forgot-password/**", "/api/forgot-password/**"
+						"/api/cart/**", "/api/shipping/**", "/api/UserProductEvents/**", "/api/ghn/**",
+						"/api/UserAddresses/**", "/forgot-password/**", "/api/forgot-password/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

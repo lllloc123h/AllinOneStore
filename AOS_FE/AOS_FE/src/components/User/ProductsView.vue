@@ -76,7 +76,7 @@
             <hr class="divider" />
 
             <!-- Đánh giá -->
-            <h3><span class="line"></span> Đánh giá</h3>
+            <!-- <h3><span class="line"></span> Đánh giá</h3>
             <ul class="filter-list">
               <li>
                 <label><input type="checkbox" name="rating" value="5" />
@@ -93,7 +93,7 @@
                   <span class="stars">★★★☆☆</span> (3+)
                 </label>
               </li>
-            </ul>
+            </ul> -->
           </div>
         </div>
       </div>
@@ -180,7 +180,7 @@ import PageNavigative from "../Module/PageNavigative.vue";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from "ant-design-vue";
 import ProductCard from "../Module/ProductCard.vue";
-import { dropDown } from "../../Configs/DropDownList";
+import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
 const mapVarriants = ref({});
 const data = ref([]);
 const selected = ref([]);
@@ -200,6 +200,8 @@ const showModal = ref(false);
 const selectedProduct = ref(null);
 const quantity = ref(1);
 const dropDowncatalogCategory = ref([]);
+const timeSpent = ref(0);
+let timer = null;
 const openModal = (product) => {
   selectedProduct.value = product;
   showModal.value = true;
@@ -210,6 +212,9 @@ const closeModal = () => {
   showModal.value = false;
 };
 onMounted(() => {
+  timer = setInterval(() => {
+    timeSpent.value++;
+  }, 1000);
   api
     .get("/VariantValues")
     .then((resp) => {
@@ -236,6 +241,7 @@ onMounted(() => {
     })
     .catch((error) => console.log(error));
 });
+
 const itemCart = ref({
   id: "",
   accounts: "",
@@ -256,6 +262,17 @@ const addToCart = () => {
   if (!selectedProduct.value || quantity.value <= 0) return;
   if (quantity.value < selectedProduct.value.safetyStock) {
     authService.updateCart(quantity.value);
+    clearInterval(timer);
+
+    let payLoad = {
+      id: '',
+      eventType: 'ADDTOCART',
+      positionInList: '',
+      timeSpentSeconds: timeSpent.value,
+      productItemId: itemCart.value.productItems,
+    }
+    catchUserEvent(payLoad);
+
     finalHandleCartProgress(itemCart.value);
     notification.success({
       message: "Success",

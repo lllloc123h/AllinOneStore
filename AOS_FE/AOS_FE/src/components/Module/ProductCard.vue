@@ -59,7 +59,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-
+import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
 const props = defineProps({
   product: Object,
 });
@@ -67,6 +67,14 @@ const props = defineProps({
 const router = useRouter();
 
 function goToDetailPage(productId) {
+  let payLoad = {
+    id: '',
+    eventType: 'VIEWDETAIL',
+    positionInList: '',
+    timeSpentSeconds: 0,
+    productItemId: productId,
+  }
+  catchUserEvent(payLoad);
   router.push(`/product/${productId}`);
 }
 

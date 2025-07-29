@@ -21,6 +21,8 @@ DROP TABLE IF EXISTS orders;
 
 DROP TABLE IF EXISTS cart_items;
 
+DROP TABLE IF EXISTS message;
+
 DROP TABLE IF EXISTS reviews;
 
 DROP TABLE IF EXISTS customs;

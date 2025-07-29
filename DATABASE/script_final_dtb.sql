@@ -40,6 +40,8 @@ DROP TABLE IF EXISTS categories;
 
 DROP TABLE IF EXISTS catalogs;
 
+DROP TABLE IF EXISTS message;
+
 DROP TABLE IF EXISTS variant_values;
 
 DROP TABLE IF EXISTS variants;
@@ -563,26 +565,7 @@ VALUES
 		20,
 		'2025-06-05 00:00:00.000',
 		'2025-06-05 00:00:00.000'
-	);
-INSERT INTO
-	accounts (
-		email,
-		password,
-		gender,
-		birthday,
-		fullname,
-		avatar_url,
-		phone,
-		average_order_value,
-		user_rank,
-		total_spent,
-		total_order,
-		loyalty_point,
-		created_at,
-		updated_at
-	)
-VALUES
-	(
+	),(
 		'nkha79323@gmail.com',
 		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
 		1,
@@ -592,6 +575,21 @@ VALUES
 		'0866843926',
 		0.00,
 		'Bạc',
+		20.00,
+		20,
+		20,
+		'2025-06-05 00:00:00.000',
+		'2025-06-05 00:00:00.000'
+	),(
+		'nnkha.lop10c1.c3songdoc@gmail.com',
+		'$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+		1,
+		'2005-06-05',
+		'AdminToCountUserCatchEvent',
+		NULL,
+		'0866843926',
+		0.00,
+		'Platinum',
 		20.00,
 		20,
 		20,

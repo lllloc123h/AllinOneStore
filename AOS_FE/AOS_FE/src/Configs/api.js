@@ -22,7 +22,7 @@ const excludedPaths = [
   '/openai/chat',
   '/Promotions/',
   '/Promotions',
-  '/shipping/fee',
+  '/shipping/fee', "/ProductItems/detail", "/UserProductEvents",
   '/CatalogCategoriesFilter'
 ]
 

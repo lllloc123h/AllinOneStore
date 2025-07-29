@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,6 +70,13 @@ public class AccountsService {
 
 	public Optional<Accounts> accountsFindByEmail(String email) {
 		return accountsRepository.findByEmail(email);
+	}
+
+	public Accounts accountsFindByEmailToCatchEvent(String email) {
+		if (email == null || email.trim().isEmpty()) {
+			return accountsRepository.findAccountToCountEvents("AdminToCountUserCatchEvent").orElse(null);
+		}
+		return accountsRepository.findByEmail(email).orElse(null);
 	}
 
 	@Transactional
@@ -143,12 +149,11 @@ public class AccountsService {
 	}
 
 	public void resetPasswordByEmail(String email, String encodedPassword) {
-	    Accounts account = accountsRepository.findByEmail(email)
-	        .orElseThrow(() -> new UsernameNotFoundException("Email không tồn tại: " + email));
+		Accounts account = accountsRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Email không tồn tại: " + email));
 
-	    account.setPassword(encodedPassword);
-	    accountsRepository.save(account);
+		account.setPassword(encodedPassword);
+		accountsRepository.save(account);
 	}
-	
+
 }
-	
