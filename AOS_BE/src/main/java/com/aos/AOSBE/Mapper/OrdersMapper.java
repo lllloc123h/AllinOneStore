@@ -1,13 +1,18 @@
 package com.aos.AOSBE.Mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.PaymentMethods;
 import com.aos.AOSBE.Entity.ShippingMethods;
+import com.aos.AOSBE.Repository.OrderItemsRepository;
 import com.aos.AOSBE.Repository.PaymentMethodsRepository;
 import com.aos.AOSBE.Repository.ShippingMethodsRepository;
 import com.aos.AOSBE.Service.AccountsService;
@@ -27,6 +32,10 @@ public class OrdersMapper {
 
 	@Autowired
 	private PaymentMethodsRepository paymentMethodsRepository;
+	@Autowired
+	private OrderItemsRepository orderItemsRepository;
+	@Autowired
+	private OrderItemsMapper orderItemsMapper;
 
 	public OrdersDTOS mapper(Orders entity) {
 		return new OrdersDTOS(entity.getId(), entity.getShippingStatus(), entity.getEstimatedShippingFee(),
@@ -37,7 +46,28 @@ public class OrdersMapper {
 				entity.getPaymentMethods().getName(), // Name
 				entity.getShippingMethods().getId(), // ID
 				entity.getShippingMethods().getName(), // Name
-				entity.getGhnOrderCode());
+				entity.getGhnOrderCode(),orderItemsRepository
+				.findByOrdersId(entity.getId())
+				.stream()
+				.map(orderItemsMapper::mapper)
+				.collect(Collectors.toList()));
+	}
+	public OrdersDTOS mapperForOrderDetail(Orders entity) {
+		List<OrderItemsDTOS> list = orderItemsRepository
+				.findByOrdersId(entity.getId())
+				.stream()
+				.map(orderItemsMapper::mapper)
+				.collect(Collectors.toList());
+		return new OrdersDTOS(entity.getId(), entity.getShippingStatus(), entity.getEstimatedShippingFee(),
+				entity.getFreeshipCouponCode(), entity.getActualShippingFee(), entity.getDiscountCouponCode(),
+				entity.getDiscountValue(), entity.getShippedDate(), entity.getPaymentStatus(), entity.getNote(),
+				entity.getPoint(), entity.getFinalTotal(), entity.getOrderInfor(), entity.getCreatedAt(),
+				entity.getUpdatedAt(), entity.getAccounts().getId(), entity.getPaymentMethods().getId(), // ID
+				entity.getPaymentMethods().getName(), // Name
+				entity.getShippingMethods().getId(), // ID
+				entity.getShippingMethods().getName(), // Name
+				entity.getGhnOrderCode(),
+				list);	
 	}
 
 	public Orders mapperToObject(OrdersDTOS dto) {

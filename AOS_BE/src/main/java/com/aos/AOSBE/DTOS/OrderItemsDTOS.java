@@ -1,5 +1,6 @@
 package com.aos.AOSBE.DTOS;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.UUID;
 
@@ -27,5 +28,7 @@ public class OrderItemsDTOS {
     private UUID comboGroupId;
     private Integer comboQty;
     private Integer productItemId;
-
+    private String name;
+    private String main_image_url;
+    private double price;
 }

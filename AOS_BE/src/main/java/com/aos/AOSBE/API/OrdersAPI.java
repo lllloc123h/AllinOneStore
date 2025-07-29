@@ -27,6 +27,7 @@ import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.MessageDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
 import com.aos.AOSBE.DTOS.OrderItemDetailDTO;
+import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
@@ -274,4 +275,26 @@ public class OrdersAPI {
 			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
 		}
 	}
+	@GetMapping("/user/Orders")
+	public ResponseEntity<?> getOrdersByCurrentUser() {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			if (user == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
+			}
+
+			List<OrdersDTOS> orders = ordersService
+				.ordersFindByAccount(user.getId())
+				.stream()
+				.map(ordersMapper::mapperForOrderDetail)
+				.collect(Collectors.toList());
+			
+			return ResponseEntity.ok(orders);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống"));
+		}
+}
+
 }

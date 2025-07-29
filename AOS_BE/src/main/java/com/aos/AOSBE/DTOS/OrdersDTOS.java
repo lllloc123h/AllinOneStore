@@ -45,7 +45,7 @@ public class OrdersDTOS {
 		LocalDateTime updatedAt, int accounts,
 		int paymentMethodId, String paymentMethodName,
 		int shippingMethodId, String shippingMethodName,
-		String orderCode
+		String orderCode,List<OrderItemsDTOS> products
 	) {
 		this.id = id;
 		this.shippingStatus = shippingStatus;
@@ -68,5 +68,6 @@ public class OrdersDTOS {
 		this.shippingMethodId = shippingMethodId;
 		this.shippingMethodName = shippingMethodName;
 		this.orderCode = orderCode;
+		this.products = products;
 	}
 }

@@ -27,11 +27,14 @@ public class OrderItemsMapper {
 	        entity.getUpdatedAt(),
 	        entity.getOrders().getId(),
 	        entity.getProductItems().getId(),   // -> productItems
-	        entity.getPromotions().getId(),
+	        entity.getPromotions() == null ? -1 : (entity.getPromotions().getId()),
 	        entity.getComboGroup(),
 	        entity.getComboGroupId(),
 	        entity.getComboQty(),
-	        entity.getProductItems().getId()    // -> productItemId
+	        entity.getProductItems().getId(),    // -> productItemId
+			entity.getProductItems().getBaseProducts().getName(),
+			entity.getProductItems().getBaseProducts().getMainImageUrl(),
+			entity.getProductItems().getPrice()
 	    );
 	}
 

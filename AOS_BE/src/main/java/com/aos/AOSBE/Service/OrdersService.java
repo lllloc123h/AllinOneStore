@@ -179,4 +179,9 @@ public class OrdersService {
 			throw new RuntimeException("Lỗi khi gọi GHN API: " + e.getMessage());
 		}
 	}
+	@Transactional
+	public List<Orders> ordersFindByAccount(int accountId) {
+		return ordersRepository.findAllByAccountsId(accountId);
+	}
+
 }

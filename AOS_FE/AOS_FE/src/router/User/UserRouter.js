@@ -112,6 +112,11 @@ export default [
         path: '/user-orders',
         name: 'user-orders',
         component: () => import('../../components/User/UserOrders.vue')
+    },
+    {
+        path: '/order-list',
+        name: 'order-list',
+        component: ()=> import('../../components/User/OrderList.vue')
     }
-
+    
 ]

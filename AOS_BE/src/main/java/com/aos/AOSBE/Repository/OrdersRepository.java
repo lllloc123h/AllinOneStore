@@ -19,4 +19,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 
 	@Query("SELECT o FROM Orders o WHERE o.accounts.id = ?1 AND o.paymentStatus = ?2 AND o.paymentMethods.id= ?3")
 	List<Orders> findAllByAccountAndKeyPaymentPending(int account, String Key, int paymentMethod);
+
+	List<Orders> findAllByAccountsId(int accountId);
+
 }
