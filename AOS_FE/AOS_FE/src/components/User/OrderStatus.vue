@@ -70,7 +70,12 @@
     </div>
 
     <div class="actions">
-      <button class="cancel">Hủy đơn</button>
+      <button 
+        class="cancel" 
+        @click="cancelOrder" 
+        v-if="['Chờ xác nhận', 'Chờ lấy hàng','Đang xử lý'].includes(order.trangThai)">
+        Hủy đơn
+      </button>
       <button class="review">Đánh giá</button>
       <button>Mua lại</button>
       <button>In hóa đơn</button>
@@ -165,7 +170,21 @@ const loadOrder = async () => {
     console.error('Lỗi khi lấy chi tiết đơn hàng', error);
   }
 }
+const cancelOrder = async () => {
+  if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) return;
 
+  try {
+    const res = await api.put(`/Users/Orders/cancelRefundOrder/${maDon}`);
+    const msg = res.data.MESSAGE;
+    alert(msg);
+
+    if (msg.includes("thành công")) {
+      await loadOrder(); // Tải lại đơn để cập nhật trạng thái
+    }
+  } catch (error) {
+    alert("Đã xảy ra lỗi khi huỷ đơn hàng: " + error.message);
+  }
+}
 onMounted(loadOrder)
 
 // Gọi API cập nhật trạng thái từ GHN

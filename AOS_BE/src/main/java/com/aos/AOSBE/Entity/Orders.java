@@ -38,7 +38,7 @@ public class Orders {
     private String discountCouponCode;
 	
     @Column(name = "discount_value")
-    private Double discountValue;
+    private double discountValue;
 	
     @Column(name = "shipped_date")
     private LocalDateTime shippedDate;

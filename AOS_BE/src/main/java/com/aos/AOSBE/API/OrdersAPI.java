@@ -172,33 +172,40 @@ public class OrdersAPI {
 
 	@GetMapping("/Orders/detail/{id}")
 	public ResponseEntity<?> getOrderDetail(@PathVariable int id) {
-		Optional<Orders> orderOpt = ordersService.ordersFindById(id);
-		if (orderOpt.isEmpty()) {
-			return ResponseEntity.notFound().build();
+		try {
+			Optional<Orders> orderOpt = ordersService.ordersFindById(id);
+			if (orderOpt.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+
+			Orders order = orderOpt.get();
+			OrdersDTOS orderDTO = ordersMapper.mapper(order); // thông tin đơn hàng
+
+			// Lấy thông tin account
+			Accounts account = order.getAccounts();
+			AccountsDTOS accountDTO = accountsMapper.mapper(account); // ✔️ Dùng mapper đã có
+
+			// Lấy danh sách sản phẩm
+			List<OrderItems> items = orderItemsService.findByOrderId(id);
+			List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
+
+			for (OrderItems item : items) {
+				ProductItems pi = item.getProductItems();
+				String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
+
+				itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
+						pi.getSku(), productName, pi.getDescription()));
+			}
+
+			// Trả về full response
+			OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO, accountDTO);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.getMessage();
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("MESSAGE","Xảy ra lỗi"));
 		}
-
-		Orders order = orderOpt.get();
-		OrdersDTOS orderDTO = ordersMapper.mapper(order); // thông tin đơn hàng
-
-		// Lấy thông tin account
-		Accounts account = order.getAccounts();
-		AccountsDTOS accountDTO = accountsMapper.mapper(account); // ✔️ Dùng mapper đã có
-
-		// Lấy danh sách sản phẩm
-		List<OrderItems> items = orderItemsService.findByOrderId(id);
-		List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
-
-		for (OrderItems item : items) {
-			ProductItems pi = item.getProductItems();
-			String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
-
-			itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
-					pi.getSku(), productName, pi.getDescription()));
-		}
-
-		// Trả về full response
-		OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO, accountDTO);
-		return ResponseEntity.ok(response);
+		
 	}
 
 	@PutMapping("/Users/Orders/cancelRefundOrder/{id}")
@@ -206,7 +213,9 @@ public class OrdersAPI {
 		try {
 			Orders OrderCancel = ordersService.ordersFindById(id).orElse(null);
 			if (OrderCancel != null) {
-				if (OrderCancel.getShippingStatus().equals("Đang xử lý")) {
+				if (OrderCancel.getShippingStatus().equals("Đang xử lý")||
+					OrderCancel.getShippingStatus().equals("Chờ lấy hàng")||
+					OrderCancel.getShippingStatus().equals("Chờ xác nhận")) {
 					if (OrderCancel.getPaymentStatus().equals("Đã thanh toán")) {
 						Accounts ac = OrderCancel.getAccounts();
 						EWallets ew = EWalletsservice.eWalletsFindByAccountEmail(ac.getEmail()).orElse(null);
