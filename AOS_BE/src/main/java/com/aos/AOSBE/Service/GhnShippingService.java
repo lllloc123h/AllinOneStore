@@ -44,11 +44,20 @@ public class GhnShippingService {
 
 
 
-    public Map<String, Object> calculateShippingFee(int serviceId, int toDistrictId, String toWardCode) {
+    public Map<String, Object> calculateShippingFee(int toDistrictId, String toWardCode) {
         Map<String, Object> shop = getShopAddressFromGHN();
 
         Integer fromDistrictId = (Integer) shop.get("district_id");
         String fromWardCode = (String) shop.get("ward_code");
+
+        // 🆕 Lấy danh sách dịch vụ từ GHN
+        List<Map<String, Object>> services = getAvailableServices(toDistrictId);
+        if (services == null || services.isEmpty()) {
+            throw new RuntimeException("Không có dịch vụ vận chuyển khả dụng từ GHN");
+        }
+
+        // 🆗 Lấy service_id đầu tiên (hoặc lọc theo logic riêng)
+        Integer serviceId = (Integer) services.get(0).get("service_id");
 
         String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
 
@@ -77,4 +86,31 @@ public class GhnShippingService {
 
         throw new RuntimeException("Không tính được phí vận chuyển");
     }
+
+    
+    public List<Map<String, Object>> getAvailableServices(int toDistrictId) {
+        Map<String, Object> shop = getShopAddressFromGHN();
+        Integer fromDistrictId = (Integer) shop.get("district_id");
+
+        String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", ghnToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("shop_id", Integer.parseInt(ghnShopId));
+        body.put("from_district", fromDistrictId);
+        body.put("to_district", toDistrictId);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return (List<Map<String, Object>>) response.getBody().get("data");
+        }
+
+        throw new RuntimeException("Không lấy được danh sách dịch vụ GHN");
+    }
+
 }

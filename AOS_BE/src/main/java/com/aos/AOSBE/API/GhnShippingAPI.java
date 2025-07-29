@@ -17,17 +17,26 @@ public class GhnShippingAPI {
     private GhnShippingService ghnShippingService;
 
     @PostMapping("/fee")
-    public ResponseEntity<?> calculateFee(@RequestBody GhnShippingFeeDTO body) {
-        Map<String, Object> fee = ghnShippingService.calculateShippingFee(
-            body.getService_id(),
-            body.getTo_district_id(),
-            body.getTo_ward_code()
-        );
-        return ResponseEntity.ok(fee);
+    public ResponseEntity<?> calculateAutoFee(@RequestBody GhnShippingFeeDTO body) {
+        try {
+            Map<String, Object> fee = ghnShippingService.calculateShippingFee(
+                body.getTo_district_id(),
+                body.getTo_ward_code()
+            );
+            return ResponseEntity.ok(fee);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/shop")
     public ResponseEntity<?> getShopAddress() {
         return ResponseEntity.ok(ghnShippingService.getShopAddressFromGHN());
     }
+    
+    @GetMapping("/services")
+    public ResponseEntity<?> getAvailableServices(@RequestParam int toDistrictId) {
+        return ResponseEntity.ok(ghnShippingService.getAvailableServices(toDistrictId));
+    }
+
 }

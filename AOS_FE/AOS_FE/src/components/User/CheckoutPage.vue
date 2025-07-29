@@ -382,7 +382,6 @@ async function fetchShippingFee() {
         }));
 
         const payload = {
-            service_id: 53320,
             to_district_id: defaultAddressData.value.ghnDistrictId,
             to_ward_code: defaultAddressData.value.ghnWardCode,
             items: items
