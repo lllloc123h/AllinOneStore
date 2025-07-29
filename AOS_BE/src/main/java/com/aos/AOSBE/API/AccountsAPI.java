@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import com.aos.AOSBE.Service.OtpStore;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -82,7 +82,7 @@ public class AccountsAPI {
 		filters.remove("page");
 		filters.remove("size");
 		Page<Accounts> pageResult = accountsService.accountsFindAll(page, size, filters);
-		List<AccountsDTOS> accounts = pageResult.getContent().stream().map(accountsMapper::mapper)
+		List<AccountsDTOS> accounts = pageResult.getContent().stream().map(accountsMapper::mapperWithPasswordHidden)
 				.collect(Collectors.toList());
 //		List<AccountsDTOS> accountsResult = new ArrayList<>();
 //		accounts.forEach(e -> {
@@ -220,112 +220,103 @@ public class AccountsAPI {
 			return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/Accounts/me")
 	public ResponseEntity<?> getCurrentAccount() {
-	    try {
-	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts acc = accountsService.accountsFindByEmail(email)
-	                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+		try {
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts acc = accountsService.accountsFindByEmail(email)
+					.orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-	        AccountProfileDTO dto = new AccountProfileDTO(
-	                acc.getFullname(),
-	                acc.getEmail(),
-	                acc.getPhone(),
-	                acc.getAvatarUrl(),
-	                acc.getAverageOrderValue(),
-	                acc.getUserRank(),
-	                acc.getTotalSpent(),
-	                acc.getTotalOrder(),
-	                acc.getLoyaltyPoint()
-	        );
+			AccountProfileDTO dto = new AccountProfileDTO(acc.getFullname(), acc.getEmail(), acc.getPhone(),
+					acc.getAvatarUrl(), acc.getAverageOrderValue(), acc.getUserRank(), acc.getTotalSpent(),
+					acc.getTotalOrder(), acc.getLoyaltyPoint());
 
-	        return ResponseEntity.ok(dto);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                .body(Map.of("message", "Không xác thực được người dùng"));
-	    }
+			return ResponseEntity.ok(dto);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(Map.of("message", "Không xác thực được người dùng"));
+		}
 	}
 
 	@PutMapping("/Accounts/me/avatar")
 	public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) {
-	    try {
-	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	        Accounts acc = accountsService.accountsFindByEmail(email)
-	                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+		try {
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts acc = accountsService.accountsFindByEmail(email)
+					.orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-	        String url = accountsService.uploadAvatarAndGetUrl(file); // xử lý upload ảnh
-	        acc.setAvatarUrl(url);
-	        accountsService.accountsSave(acc);
+			String url = accountsService.uploadAvatarAndGetUrl(file); // xử lý upload ảnh
+			acc.setAvatarUrl(url);
+			accountsService.accountsSave(acc);
 
-	        return ResponseEntity.ok(Map.of("message", "Cập nhật ảnh đại diện thành công", "avatarUrl", url));
-	    } catch (Exception e) {
-	        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi khi cập nhật ảnh đại diện"));
-	    }
+			return ResponseEntity.ok(Map.of("message", "Cập nhật ảnh đại diện thành công", "avatarUrl", url));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi khi cập nhật ảnh đại diện"));
+		}
 	}
 
 	@PutMapping("/Accounts/me")
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
-	    try {
-	        accountsService.updateProfile(dto);
-	        return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
-	    } catch (RuntimeException e) {
-	        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-	    } catch (Exception e) {
-	        return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
-	    }
+		try {
+			accountsService.updateProfile(dto);
+			return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("message", "Lỗi hệ thống"));
+		}
 	}
-	
+
 	@PostMapping("/forgot-password/request")
 	public ResponseEntity<?> resetPassword(@RequestBody ForgotPasswordDTO dto) {
-	    String email = normalizeEmail(dto.getEmail());
+		String email = normalizeEmail(dto.getEmail());
 
-	    int otp = otpService.generateOtpToResetPassword(5 * 60 * 1000L, email);
+		int otp = otpService.generateOtpToResetPassword(5 * 60 * 1000L, email);
 
-	    emailService.sendForgotPasswordOtp(email, String.valueOf(otp));
+		emailService.sendForgotPasswordOtp(email, String.valueOf(otp));
 
-	    VerifyOtpDTO otpDto = new VerifyOtpDTO(email, String.valueOf(otp), LocalDateTime.now());
-	    OtpStore.putOtp(email, otpDto);
+		VerifyOtpDTO otpDto = new VerifyOtpDTO(email, String.valueOf(otp), LocalDateTime.now());
+		OtpStore.putOtp(email, otpDto);
 
-	    return ResponseEntity.ok("Đã gửi mã OTP đến email.");
+		return ResponseEntity.ok("Đã gửi mã OTP đến email.");
 	}
 
 	@PostMapping("/forgot-password/verify")
 	public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpDTO dto) {
-	    String email = normalizeEmail(dto.getEmail());
+		String email = normalizeEmail(dto.getEmail());
 
-	    boolean isValid = otpService.checkOtpToResetPassword(email, dto.getOtpCode());
-	    if (!isValid) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	            .body("Mã OTP không hợp lệ hoặc đã hết hạn.");
-	    }
+		boolean isValid = otpService.checkOtpToResetPassword(email, dto.getOtpCode());
+		if (!isValid) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP không hợp lệ hoặc đã hết hạn.");
+		}
 
-	    return ResponseEntity.ok("Xác minh OTP thành công.");
+		return ResponseEntity.ok("Xác minh OTP thành công.");
 	}
 
 	// 🔧 Helper để chuẩn hóa email
 	private String normalizeEmail(String email) {
-	    return email.trim().toLowerCase();
+		return email.trim().toLowerCase();
 	}
+
 	@PostMapping("/forgot-password/change")
 	public ResponseEntity<?> changePassword(@RequestBody ResetPasswordDTO dto) {
-	    String email = dto.getEmail().trim().toLowerCase();
-	    String rawPassword = dto.getNewPassword();
+		String email = dto.getEmail().trim().toLowerCase();
+		String rawPassword = dto.getNewPassword();
 
-	    if (!OtpStore.hasOtp(email)) {
-	        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-	            .body("Không thể đổi mật khẩu. OTP chưa được xác minh.");
-	    }
+		if (!OtpStore.hasOtp(email)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Không thể đổi mật khẩu. OTP chưa được xác minh.");
+		}
 
-	    // ✅ Mã hóa tại controller
-	    String encodedPassword = passwordEncoder.encode(rawPassword);
+		// ✅ Mã hóa tại controller
+		String encodedPassword = passwordEncoder.encode(rawPassword);
 
-	    // ✅ Gửi vào service để lưu
-	    accountsService.resetPasswordByEmail(email, encodedPassword);
+		// ✅ Gửi vào service để lưu
+		accountsService.resetPasswordByEmail(email, encodedPassword);
 
-	    OtpStore.clearOtp(email);
+		OtpStore.clearOtp(email);
 
-	    return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
+		return ResponseEntity.ok("Đặt lại mật khẩu thành công.");
 	}
 //	?
 
