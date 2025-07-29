@@ -30,207 +30,67 @@
     <div style="" class="container-fluid px-5">
       <!-- px-5 la container -->
       <!--start giảm giá -->
-      <div class="hstack mt-5 align-items-center">
-        <div>
-          <h3>San pham giam gia</h3>
-        </div>
-        <div class="ms-auto">
-          <p class="mb-0">
-            <!-- From Uiverse.io by alexmaracinaru -->
-            <button id="next">
-              <span>Xem thêm</span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 74 74" height="34" width="34">
-                <circle stroke-width="3" stroke="black" r="35.5" cy="37" cx="37"></circle>
-                <path fill="black"
-                  d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z">
-                </path>
-              </svg>
-            </button>
-          </p>
-        </div>
-      </div>
       <div class="row mt-4 g-4">
-        <div class="col-3">
-          <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
-            <!-- Label Giảm giá -->
-            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-              Giảm giá
-            </div>
+  <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
+    <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
+      
+      <!-- Label Khuyến mãi -->
+      <div
+        class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
+        style="border-radius: 12px; font-size: 0.85rem; z-index: 10"
+      >
+        Khuyến mãi
+      </div>
 
-            <!-- Bo góc ảnh luôn -->
-            <img class="card-img rounded-4 custom-shadow" style="object-fit: cover"
-              src="\src\assets\imgs\vay_yem_jean.png" alt="Card image" />
+      <!-- Hình ảnh -->
+      <img
+        class="card-img rounded-4 custom-shadow"
+        style="height: 450px; object-fit: cover"
+        :src="product.imageUrl"
+        :alt="product.productName"
+      />
 
-            <!-- Nội dung -->
-            <div class="card-body">
-              <div class="card-title">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-half text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <span> (5,4k) revivews</span>
-              </div>
-              <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
-
-              <p class="card-text">Áo thun nam</p>
-
-              <div class="d-flex justify-content-end">
-                <!-- From Uiverse.io by AKAspidey01 -->
-
-                <div class="main-section rounded-4">
-                  <button class="first-button">Còn hàng</button>
-                  <button class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    3,4k đã bán
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Nội dung -->
+      <div class="card-body">
+        <!-- Đánh giá giả lập -->
+        <div class="card-title">
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-half text-warning"></i>
+          <i class="bi bi-star text-warning"></i>
+          <span>(3.5 reviews)</span>
         </div>
-        <div class="col-3">
-          <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
-            <!-- Label Giảm giá -->
-            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-              Giảm giá
-            </div>
 
-            <!-- Bo góc ảnh luôn -->
-            <img class="card-img rounded-4 custom-shadow" style="object-fit: cover"
-              src="\src\assets\imgs\vay_yem_jean.png" alt="Card image" />
+        <!-- Giá -->
+        <h5 class="card-text">
+          <del>{{ product.originalPrice.toLocaleString() }} VND</del>
+          {{ product.discountedPrice.toLocaleString() }} VND
+        </h5>
 
-            <!-- Nội dung -->
-            <div class="card-body">
-              <div class="card-title">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-half text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <span> (5,4k) revivews</span>
-              </div>
-              <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
+        <!-- Tên sản phẩm -->
+        <p class="card-text">{{ product.productName }}</p>
 
-              <p class="card-text">Áo thun nam</p>
-
-              <div class="d-flex justify-content-end">
-                <!-- From Uiverse.io by AKAspidey01 -->
-
-                <div class="main-section rounded-4">
-                  <button class="first-button">Còn hàng</button>
-                  <button class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    3,4k đã bán
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-3">
-          <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
-            <!-- Label Giảm giá -->
-            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-              Giảm giá
-            </div>
-
-            <!-- Bo góc ảnh luôn -->
-            <img class="card-img rounded-4 custom-shadow" style="object-fit: cover"
-              src="\src\assets\imgs\vay_yem_jean.png" alt="Card image" />
-
-            <!-- Nội dung -->
-            <div class="card-body">
-              <div class="card-title">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-half text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <span> (5,4k) revivews</span>
-              </div>
-              <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
-
-              <p class="card-text">Áo thun nam</p>
-
-              <div class="d-flex justify-content-end">
-                <!-- From Uiverse.io by AKAspidey01 -->
-
-                <div class="main-section rounded-4">
-                  <button class="first-button">Còn hàng</button>
-                  <button class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    3,4k đã bán
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-3">
-          <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
-            <!-- Label Giảm giá -->
-            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-              Giảm giá
-            </div>
-
-            <!-- Bo góc ảnh luôn -->
-            <img class="card-img rounded-4 custom-shadow" style="object-fit: cover"
-              src="\src\assets\imgs\vay_yem_jean.png" alt="Card image" />
-
-            <!-- Nội dung -->
-            <div class="card-body">
-              <div class="card-title">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-half text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <span> (5,4k) revivews</span>
-              </div>
-              <h5 class="card-text"><del>450 000 VND</del> 300 000 VND</h5>
-
-              <p class="card-text">Áo thun nam</p>
-
-              <div class="d-flex justify-content-end">
-                <!-- From Uiverse.io by AKAspidey01 -->
-
-                <div class="main-section rounded-4">
-                  <button class="first-button">Còn hàng</button>
-                  <button class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    3,4k đã bán
-                  </button>
-                </div>
-              </div>
-            </div>
+        <!-- Hành động -->
+        <div class="d-flex justify-content-end">
+          <div class="main-section rounded-4">
+            <button class="first-button">Đang giảm</button>
+            <router-link :to="`/product/${product.productItemId}`" class="second-button">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              {{ product.discountValue.toLocaleString() }} VND tiết kiệm
+            </router-link>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+      
       <!--end giảm giá -->
       <!--start danh mục nổi bật -->
       <div class="row mt-5 g-4">
@@ -304,53 +164,59 @@
 
       <!-- Sản phẩm bán chạy -->
       <div class="row mt-4 g-4">
-        <div class="col-3" v-for="product in bestSellers" :key="product.id">
-          <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
-            <!-- Label Giảm giá -->
-            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-              Giảm giá
-            </div>
+  <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
+    <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
+      
+      <!-- Label Khuyến mãi -->
+      <div class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
+        style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+        Khuyến mãi
+      </div>
 
-            <!-- Hình ảnh -->
-            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-              :src="product.imageUrl" :alt="product.name" />
+      <!-- Hình ảnh -->
+      <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
+        :src="product.imageUrl" :alt="product.productName" />
 
-            <!-- Nội dung -->
-            <div class="card-body">
-              <div class="card-title">
-                <i v-for="n in Math.floor(product.rating)" :key="n" class="bi bi-star-fill text-warning"></i>
-                <i v-if="product.rating % 1 >= 0.5" class="bi bi-star-half text-warning"></i>
-                <i v-for="n in 5 - Math.ceil(product.rating)" :key="'e' + n" class="bi bi-star text-warning"></i>
-                <span>({{ product.rating }} reviews)</span>
-              </div>
+      <!-- Nội dung -->
+      <div class="card-body">
+        <!-- Đánh giá ảo tạm tính nếu backend chưa có -->
+        <div class="card-title">
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star text-warning"></i>
+          <i class="bi bi-star text-warning"></i>
+          <span>(3.0 reviews)</span>
+        </div>
 
-              <h5 class="card-text">
-                <del>{{ product.price.toLocaleString() }} VND</del>
-                {{ Math.round(product.price * 0.8).toLocaleString() }} VND
-              </h5>
+        <!-- Giá -->
+        <h5 class="card-text">
+          <del>{{ product.originalPrice.toLocaleString() }} VND</del>
+          {{ product.discountedPrice.toLocaleString() }} VND
+        </h5>
 
-              <p class="card-text">{{ product.name }}</p>
+        <!-- Tên sản phẩm -->
+        <p class="card-text">{{ product.productName }}</p>
 
-              <div class="d-flex justify-content-end">
-                <div class="main-section rounded-4">
-                  <button class="first-button">Còn hàng</button>
-                  <router-link :to="`/product/${product.id}`" class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                    </svg>
-                    {{ product.turnBuy.toLocaleString() }} đã bán
-                  </router-link>
-
-                </div>
-              </div>
-            </div>
+        <!-- Hành động -->
+        <div class="d-flex justify-content-end">
+          <div class="main-section rounded-4">
+            <button class="first-button">Đang giảm</button>
+            <router-link :to="`/product/${product.productItemId}`" class="second-button">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              Ưu đãi: {{ product.discountValue.toLocaleString() }} VND
+            </router-link>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
     </div>
     <!--start gioi thieu -->
@@ -507,7 +373,8 @@
     <!-- thong tin -->
   </main>
 </template>
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import { homeService } from '../../Configs/api';
 import { useRouter } from 'vue-router';
 
@@ -517,36 +384,21 @@ function goToDetail(id) {
   router.push(`/product/${id}`);
 }
 
-export default {
-  data() {
-    return {
-      bestSellers: []
-    };
-  },
-  mounted() {
-    this.loadBestSellers();
-  },
-  methods: {
-    formatPrice(value) {
-      return value.toLocaleString() + " VND";
-    },
-    getDiscountedPrice(price) {
-      return Math.round(price * 0.8);
-    }
-  },
-  methods: {
-    async loadBestSellers() {
-      try {
-        const data = await homeService.getBestSellers();
-        this.bestSellers = data;
-      } catch (error) {
-        console.error("Không thể tải sản phẩm bán chạy:", error);
-      }
-    }
+// Sản phẩm giảm giá
+const discountedProducts = ref([]);
+
+// Sản phẩm bán chạy
+const bestSellers = ref([]);
+
+// Gọi API khi component mount
+onMounted(async () => {
+  try {
+    discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
+    bestSellers.value = await homeService.getBestSellers();              // ✅ gọi từ homeService
+  } catch (error) {
+    console.error("Lỗi khi tải dữ liệu:", error);
   }
-
-};
-
+});
 </script>
 
 <style scoped>
@@ -630,5 +482,60 @@ export default {
   align-items: center;
   justify-content: center;
   transition-duration: 0.6s;
+}
+.hstack h3 {
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #333;
+}
+
+/* Nút "Xem thêm" */
+#next {
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-weight: 500;
+  color: #000;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#next:hover {
+  background-color: #ffe484;
+  cursor: pointer;
+}
+
+/* Card sản phẩm */
+.card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Ảnh sản phẩm */
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.04);
+}
+
+.card-img-top {
+  height: 240px;
+  object-fit: cover;
+  object-position: top center;
+  padding-top: 6px;
 }
 </style>
