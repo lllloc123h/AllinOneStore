@@ -191,8 +191,11 @@ export default {
           label: this.label,
           isDefault: false,
           note: this.note,
+          districtId: districtObj?.code || null,
+          wardCode: wardObj?.code || null,
           accounts: '',
         };
+
 
         const isContainAddress = this.shippingAddress.some(item =>
           item.province === formData.province &&

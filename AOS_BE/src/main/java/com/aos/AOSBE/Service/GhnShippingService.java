@@ -32,15 +32,17 @@ public class GhnShippingService {
         if (response.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> body = response.getBody();
             if (body != null && body.get("data") instanceof Map dataMap) {
-                List<Map<String, Object>> shops = (List<Map<String, Object>>) dataMap.get("shops");
-                if (!shops.isEmpty()) {
-                    return shops.get(0); // shop đầu tiên
+                Object shopsObj = dataMap.get("shops");
+                if (shopsObj instanceof List<?> shops && !shops.isEmpty() && shops.get(0) instanceof Map<?, ?>) {
+                    return (Map<String, Object>) shops.get(0); // lấy shop đầu tiên
                 }
             }
         }
 
         throw new RuntimeException("Không lấy được địa chỉ cửa hàng từ GHN");
     }
+
+
 
     public Map<String, Object> calculateShippingFee(int serviceId, int toDistrictId, String toWardCode) {
         Map<String, Object> shop = getShopAddressFromGHN();

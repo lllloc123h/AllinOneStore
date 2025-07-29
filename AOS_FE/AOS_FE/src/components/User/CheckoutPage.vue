@@ -353,7 +353,7 @@ async function fetchShippingFee() {
     // Kiểm tra xem địa chỉ đã được chọn chưa
     console.log("🧐 defaultAddressData:", defaultAddressData.value);
 
-    if (!defaultAddressData.value.districtId || !defaultAddressData.value.wardCode) {
+    if (!defaultAddressData.value.ghnDistrictId || !defaultAddressData.value.ghnWardCode) {
         console.warn('❗ Chưa chọn địa chỉ giao hàng đầy đủ.')
         return;
     }
@@ -382,23 +382,18 @@ async function fetchShippingFee() {
         }));
 
         const payload = {
-            to_district_id: defaultAddressData.value.districtId,
-            to_ward_code: defaultAddressData.value.wardCode,
+            service_id: 53320,
+            to_district_id: defaultAddressData.value.ghnDistrictId,
+            to_ward_code: defaultAddressData.value.ghnWardCode,
             items: items
         };
-        // Xóa dòng này nếu giữ dòng bên dưới:
-        const res = await api.post("/shipping/fee", {
-            to_district_id: defaultAddressData.value.ghn_district_id,
-            to_ward_code: defaultAddressData.value.ghn_ward_code,
-            items: items
-        });
-
-
 
         console.log('📦 Payload gửi tính phí:', payload);
 
         const { data } = await api.post('/shipping/fee', payload);
-        shippingFee.value = data.data.total;
+        console.log('✅ Phí vận chuyển nhận được:', data);
+        shippingFee.value = data.total;
+        console.log('✅ Phí vận chuyển:', shippingFee.value);
     } catch (err) {
         console.error('❌ Lỗi lấy phí vận chuyển:', err.response?.data || err.message);
         shippingFee.value = 0;
@@ -408,10 +403,7 @@ watch([defaultAddressData, selectedProducts, shippingMethod], () => {
     fetchShippingFee()
 }, { deep: true })
 
-
 </script>
-
-
 
 <style scoped>
 .checkout-page {
