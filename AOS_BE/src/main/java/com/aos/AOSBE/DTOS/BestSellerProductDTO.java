@@ -14,5 +14,4 @@ public class BestSellerProductDTO {
     private int turnBuy;
     private int rating;
     private double price;
-    private double cost;
 }

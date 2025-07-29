@@ -17,6 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,8 @@ public class AccountsService {
 	private UserAddressesRepository addressRepository;
 	@Autowired
 	private GenericSpecificationBuilder specBuilder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public Page<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -98,18 +101,23 @@ public class AccountsService {
 
 	@Transactional
 	public void changePassword(ChangePasswordDTOS dto) {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		Accounts account = accountsRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	    
+	    Accounts account = accountsRepository.findByEmail(email)
+	        .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
-		if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
-			throw new RuntimeException("Mật khẩu mới và xác nhận không khớp");
-		}
+	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	    if (!passwordEncoder.matches(dto.getCurrentPassword(), account.getPassword())) {
+	        throw new RuntimeException("Mật khẩu hiện tại không đúng");
+	    }
 
-		account.setPassword(new BCryptPasswordEncoder().encode(dto.getNewPassword()));
-		accountsRepository.save(account);
+	    if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+	        throw new RuntimeException("Mật khẩu mới và xác nhận mật khẩu không khớp");
+	    }
+
+	    account.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+	    accountsRepository.save(account);
 	}
-
 	@Transactional
 	public void updateProfile(UpdateProfileDTO dto) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();

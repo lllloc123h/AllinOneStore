@@ -27,9 +27,8 @@ public class BestSellerService {
                             bp.getMainImageUrl(),
                             bp.getTurnBuy(),
                             bp.getRating(),
-                            pi.getPrice(),
-                            pi.getCost()
-                    );
+                            pi.getPrice()
+                            );
                 })
                 .collect(Collectors.toList());
     }

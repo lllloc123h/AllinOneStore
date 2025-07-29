@@ -190,14 +190,23 @@ public class AccountsAPI {
 
 	@PutMapping("/Accounts/change-password")
 	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTOS dto) {
-		try {
-			accountsService.changePassword(dto);
-			return ResponseEntity.ok("Đổi mật khẩu thành công");
-		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().body("Lỗi hệ thống");
-		}
+	    try {
+	        accountsService.changePassword(dto);
+	        return ResponseEntity.ok(Map.of(
+	            "status", "success",
+	            "message", "Đổi mật khẩu thành công"
+	        ));
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(Map.of(
+	            "status", "error",
+	            "message", e.getMessage()
+	        ));
+	    } catch (Exception e) {
+	        return ResponseEntity.internalServerError().body(Map.of(
+	            "status", "error",
+	            "message", "Lỗi hệ thống"
+	        ));
+	    }
 	}
 
 	@PutMapping("/admin/Accounts/ResetPassword/{email}")
