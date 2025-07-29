@@ -390,6 +390,7 @@ create table
 		combo_group varchar(30) null, -- dùng để nhận diện combo ví dụ 2-4-5 , 2-1-1
 		combo_group_id UNIQUEIDENTIFIER, -- mỗi combo sẽ có id riêng, để dễ dàng thống kê
 		price_at_buy decimal(18, 2) not null,
+		cost_at_buy decimal(18,2) not null, 
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,
 		total AS (qty * selling_price) PERSISTED,

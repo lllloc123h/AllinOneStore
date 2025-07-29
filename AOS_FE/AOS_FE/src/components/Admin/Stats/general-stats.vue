@@ -62,125 +62,143 @@
               </h3>
             </div>
             <div class="row g-4">
-              <!-- Gross Revenue -->
-              <div class="col-xl-3 col-lg-6">
-                <div class="stat-card revenue-card">
-                  <div class="stat-icon gross-revenue-icon">
-                    <i class="bi bi-cash-stack"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Doanh Thu Gộp</h6>
-                    <div class="stat-value gross-revenue-value">
-                      {{ formatCurrency(stats.grossRevenue) }}
+              <!-- Row 1: Main Revenue Stats -->
+              <div class="col-12">
+                <div class="row g-4">
+                  <!-- Gross Revenue -->
+                  <div class="col-xl-4 col-lg-6">
+                    <div class="stat-card revenue-card">
+                      <div class="stat-icon gross-revenue-icon">
+                        <i class="bi bi-cash-stack"></i>
+                      </div>
+                      <div class="stat-content">
+                        <h6 class="stat-label">Doanh Thu Gộp</h6>
+                        <div class="stat-value gross-revenue-value">
+                          {{ formatCurrency(stats.grossRevenue) }}
+                        </div>
+                        <div class="stat-description">
+                          <span class="text-muted"
+                            >Tổng doanh thu ước tính
+                            <strong style="color: red"
+                              >(chưa và đã nhận đơn hàng, chưa chiết trừ chi phí, giảm
+                              giá, phí vận chuyển)</strong
+                            ></span
+                          >
+                        </div>
+                      </div>
                     </div>
-                    <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng doanh thu ước tính
-                        <strong style="color: red"
-                          >(chưa và đã nhận đơn hàng, chưa chiết trừ chi phí, giảm giá,
-                          phí vận chuyển)</strong
-                        ></span
-                      >
+                  </div>
+
+                  <!-- Raw Net Revenue -->
+                  <div class="col-xl-4 col-lg-6">
+                    <div class="stat-card raw-revenue-card">
+                      <div class="stat-icon raw-revenue-icon">
+                        <i class="bi bi-cash"></i>
+                      </div>
+                      <div class="stat-content">
+                        <h6 class="stat-label">Doanh Thu Các Đơn Đã Giao</h6>
+                        <div class="stat-value raw-revenue-value">
+                          {{ formatCurrency(stats.rawNetRevenue) }}
+                        </div>
+                        <div class="stat-description">
+                          <span class="text-muted"
+                            >Tổng doanh thu khi nhận được hàng</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Net Revenue -->
+                  <div class="col-xl-4 col-lg-6">
+                    <div class="stat-card revenue-card">
+                      <div class="stat-icon net-revenue-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                      </div>
+                      <div class="stat-content">
+                        <h6 class="stat-label">Doanh Thu Ròng</h6>
+                        <div class="stat-value net-revenue-value">
+                          {{ formatCurrency(stats.netRevenue) }}
+                        </div>
+                        <div class="stat-description">
+                          <span class="text-muted"
+                            >Doanh thu sau khi giao thành công và trừ các khoản
+                            <strong>(chiết khấu, giảm giá, phí vận chuyển)</strong></span
+                          >
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Net Revenue -->
-              <div class="col-xl-3 col-lg-6">
-                <div class="stat-card revenue-card">
-                  <div class="stat-icon net-revenue-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Doanh Thu Ròng</h6>
-                    <div class="stat-value net-revenue-value">
-                      {{ formatCurrency(stats.netRevenue) }}
+              <!-- Row 2: Cost and Profit Analysis -->
+              <div class="col-12">
+                <div class="row g-4">
+                  <!-- Total Cost Products -->
+                  <div class="col-xl-4 col-lg-6">
+                    <div class="stat-card cost-products-card">
+                      <div class="stat-icon cost-products-icon">
+                        <i class="bi bi-box-seam"></i>
+                      </div>
+                      <div class="stat-content">
+                        <h6 class="stat-label">Tổng Chi Phí Sản Phẩm</h6>
+                        <div class="stat-value cost-products-value">
+                          {{ formatCurrency(stats.totalCostProducts) }}
+                        </div>
+                        <div class="stat-description">
+                          <span class="text-muted"
+                            >Chi phí của các sản phẩm trong đơn hàng đã giao thành
+                            công</span
+                          >
+                        </div>
+                      </div>
                     </div>
-                    <div class="stat-description">
-                      <span class="text-muted"
-                        >Doanh thu sau khi giao thành công và trừ các khoản
-                        <strong>(chiết khấu, giảm giá, phí vận chuyển)</strong></span
-                      >
-                    </div>
                   </div>
-                </div>
-              </div>
 
-              <!-- cost products -->
-              <div class="col-xl-3 col-lg-6">
-                <div class="stat-card revenue-card">
-                  <div class="stat-icon net-revenue-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">
-                      Tổng chi phí các sản phẩm đã giao thành công
-                    </h6>
-                    <div class="stat-value net-revenue-value">
-                      {{ formatCurrency(stats.totalCostProducts) }}
+                  <!-- Total Cost For Discount -->
+                  <div class="col-xl-4 col-lg-6">
+                    <div class="stat-card cost-discount-card">
+                      <div class="stat-icon cost-discount-icon">
+                        <i class="bi bi-calculator-fill"></i>
+                      </div>
+                      <div class="stat-content">
+                        <h6 class="stat-label">Tổng Chiết Trừ Khuyến Mãi</h6>
+                        <div class="stat-value cost-discount-value">
+                          {{ formatCurrency(stats.totalCostForDiscount) }}
+                        </div>
+                        <div class="stat-description">
+                          <span class="text-muted"
+                            >Tổng chiết trừ giảm giá, vận chuyển</span
+                          >
+                        </div>
+                      </div>
                     </div>
-                    <div class="stat-description">
-                      <span class="text-muted"
-                        >Chi phí của các sản phẩm trong đơn hàng đã giao thành công
-                      </span>
-                    </div>
                   </div>
-                </div>
-              </div>
-              <!-- lợi nhuận -->
-              <div class="col-xl-3 col-lg-6">
-                <div class="stat-card revenue-card">
-                  <div class="stat-icon net-revenue-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Lợi nhuận</h6>
-                    <div class="stat-value net-revenue-value">
-                      {{
-                        formatCurrency(
-                          stats.netRevenue -
-                            stats.totalCostForDiscount -
-                            stats.totalCostProducts
-                        )
-                      }}
-                    </div>
-                    <div class="stat-description"></div>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Raw Net Revenue -->
-              <div class="col-xl-3 col-lg-6">
-                <div class="stat-card raw-revenue-card">
-                  <div class="stat-icon raw-revenue-icon">
-                    <i class="bi bi-cash"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Doanh Thu Các Đơn Đã Giao</h6>
-                    <div class="stat-value raw-revenue-value">
-                      {{ formatCurrency(stats.rawNetRevenue) }}
-                    </div>
-                    <div class="stat-description">
-                      <span class="text-muted">Tổng doanh thu khi nhận được hàng</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Total Cost For Discount -->
-              <div class="col-xl-3 col-lg-6">
-                <div class="stat-card cost-discount-card">
-                  <div class="stat-icon cost-discount-icon">
-                    <i class="bi bi-calculator-fill"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Tổng Chiết Trừ Khuyến Mãi</h6>
-                    <div class="stat-value cost-discount-value">
-                      {{ formatCurrency(stats.totalCostForDiscount) }}
-                    </div>
-                    <div class="stat-description">
-                      <span class="text-muted">Tổng chiết trừ giảm giá, vận chuyển</span>
+                  <!-- Profit -->
+                  <div class="col-xl-4 col-lg-6">
+                    <div class="stat-card profit-card">
+                      <div class="stat-icon profit-icon">
+                        <i class="bi bi-trophy-fill"></i>
+                      </div>
+                      <div class="stat-content">
+                        <h6 class="stat-label">Lợi Nhuận</h6>
+                        <div class="stat-value profit-value">
+                          {{
+                            formatCurrency(
+                              stats.netRevenue -
+                                stats.totalCostForDiscount -
+                                stats.totalCostProducts
+                            )
+                          }}
+                        </div>
+                        <div class="stat-description">
+                          <span class="text-muted"
+                            >Doanh thu ròng - Chi phí sản phẩm - Chiết trừ</span
+                          >
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -779,8 +797,16 @@ onMounted(() => {
   background: linear-gradient(135deg, #00bcd4, #0097a7);
 }
 
+.cost-products-icon {
+  background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+}
+
 .cost-discount-icon {
   background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.profit-icon {
+  background: linear-gradient(135deg, #ffd700, #ffb300);
 }
 
 /* Return Icons */

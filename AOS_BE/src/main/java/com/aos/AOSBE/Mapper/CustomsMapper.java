@@ -1,6 +1,5 @@
 package com.aos.AOSBE.Mapper;
 
-import java.time.LocalDateTime;
 import com.aos.AOSBE.DTOS.*;
 import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Service.*;
@@ -14,7 +13,7 @@ public class CustomsMapper {
 	public CustomsDTOS mapper(Customs entity) {
 		return new CustomsDTOS(
 				    entity.getId(),
-				    entity.getAccountId(),
+				    entity.getAccount().getId(),
 				    entity.getCanvasJson(),
 				    entity.getImageUrl(),
 				    entity.getDesignName(),
@@ -24,9 +23,11 @@ public class CustomsMapper {
 			);
 	}
 	public Customs mapperToObject(CustomsDTOS entity) {
+		Accounts account = new Accounts();
+		account.setId(entity.getAccountId());
 		return new Customs(
 					entity.getId(),
-					entity.getAccountId(),
+					account,
 					entity.getCanvasJson(),
 					entity.getImageUrl(),
 					entity.getDesignName(),

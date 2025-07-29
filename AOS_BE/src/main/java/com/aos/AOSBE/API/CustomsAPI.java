@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,6 +88,15 @@ public class CustomsAPI {
 	public ResponseEntity<Void> deleteCustoms(@PathVariable int id) {
 		customsService.customsDeleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+	@GetMapping("/customs/email")
+	public ResponseEntity<List<CustomsDTOS>> getCustomsByEmail() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		List<Customs> customsList = customsService.findCustomsByEmail(email);
+		List<CustomsDTOS> customsDTOSList = customsList.stream()
+				.map(customsMapper::mapper)
+				.collect(Collectors.toList());
+		return ResponseEntity.ok(customsDTOSList);
 	}
 
 }

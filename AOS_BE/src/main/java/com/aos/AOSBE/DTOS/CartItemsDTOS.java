@@ -27,4 +27,5 @@ public class CartItemsDTOS {
 	private Integer comboQty;
 	private UUID comboGroupId;
 	private Boolean isGift;
+	private boolean custom;
 }
