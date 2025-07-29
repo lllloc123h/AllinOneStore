@@ -26,11 +26,7 @@
         <tbody>
           <tr v-for="(item, index) in data" :key="index" class="table-row">
             <td v-for="key in columns" :key="key" class="table-cell">
-              <span v-if="typeof item[key] === 'boolean'" class="boolean-indicator">
-                <i v-if="item[key]" class="bi bi-check-circle-fill text-success fs-5"></i>
-                <i v-else class="bi bi-x-circle-fill text-danger fs-5"></i>
-              </span>
-              <span v-else class="cell-content">
+              <span class="cell-content">
                 <!-- {{ formatCell(key, item[key]) }} -->
                 <span v-html="formatCell(key, item[key])"></span>
               </span>
@@ -388,7 +384,21 @@ const prices = [
   "comboPrice",
 ];
 function formatCell(key, value) {
-  if (key.toLowerCase() === "createdat" && value) {
+
+
+  if (key.toLowerCase() === 'password') return
+  if (key.toLowerCase().includes("gender")) {
+    console.log("debug", key, value);
+    let genderRender = value === true
+      ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8" />
+      </svg>`
+      : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
+      </svg>`;
+
+    return genderRender;
+  } else if (key.toLowerCase() === "createdat" && value) {
     const now = new Date();
     const createdDate = new Date(value);
     const timeDiff = now.getTime() - createdDate.getTime();
@@ -610,7 +620,14 @@ function formatCell(key, value) {
     }
 
     return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;
+  } else if (typeof value === "boolean") {
+    return ` <span  class="boolean-indicator">
+        ${value ? `<i class="bi bi-check-circle-fill text-success fs-5"></i>` : `<i class="bi bi-x-circle-fill text-danger fs-5"></i>`}
+               
+              </span>`
   }
+
+
   return value;
 }
 
