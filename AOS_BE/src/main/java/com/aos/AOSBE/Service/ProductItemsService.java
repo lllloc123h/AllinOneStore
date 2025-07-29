@@ -154,42 +154,27 @@ public class ProductItemsService {
 		ProductItems result = productItemsRepository.findById(productItemId).get();
 		if (result != null) {
 			foreCastDTO.setProductItemId(result.getId());
+			foreCastDTO.setCreatedAt(result.getCreatedAt().toString());
 			foreCastDTO.setName(result.getBaseProducts().getName());
 			foreCastDTO.setCategory(result.getBaseProducts().getCategories().getName());
 			foreCastDTO.setCost(result.getCost());
 			foreCastDTO.setPrice(result.getPrice());
 			foreCastDTO.setStockQty(result.getQty());
 			foreCastDTO.setTurnBuy(result.getTurnBuy());
-			foreCastDTO.setAvgRatingLast30Days(
-					reviewsRepository.findAverageRatingByProductItemIdAndCreateAtBetween(result.getId(),
-							LocalDateTime.now().minusDays(30),
-							LocalDateTime.now()));
-			foreCastDTO.setReviewCountLast30Days(
-					reviewsRepository.countReviewsByProductItemIdAndCreateAtBetween(result.getId(),
-							LocalDateTime.now().minusDays(30),
-							LocalDateTime.now()));
-			System.out.println(returnsRepository.findAll());
-			int returnCountLast30Days = returnsRepository.findReturnsByProductItemIdAndCreateAtBetween(
-					result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now());
-			double orderCountLast30Days = orderItemsRepository
-					.sumQuantityByProductIdAndDateRange(result.getId(),
-							LocalDateTime.now().minusDays(30),
-							LocalDateTime.now());
-			System.out.println("Return Count Last 30 Days: " + returnCountLast30Days);
-			double returnRate = (Double.parseDouble(returnCountLast30Days + "") / orderCountLast30Days) * 100;
+			foreCastDTO.setAvgRatingLast30Days(reviewsRepository.findAverageRatingByProductItemIdAndCreateAtBetween(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()));
+			foreCastDTO.setReviewCountLast30Days(reviewsRepository.countReviewsByProductItemIdAndCreateAtBetween(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()));
+			Integer returnCountLast30Days = returnsRepository.findReturnsByProductItemIdAndCreateAtBetween(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now());
+			double orderCountLast30Days = orderItemsRepository.sumQuantityByProductIdAndDateRange(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now());
+			double returnRate = returnCountLast30Days == null ? 0.0 :  (Double.parseDouble(returnCountLast30Days + "") / orderCountLast30Days) * 100;
 			foreCastDTO.setReturnRateLast30Days(returnRate);
 			foreCastDTO.setSoldLast30Days((int) orderCountLast30Days);
-			foreCastDTO.setInPromotions(promotionsRepository.findPromotionsByDuration(result.getId(),
-					LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(promotionsMapper::mapper).toList());
+			foreCastDTO.setInPromotions(promotionsRepository.findPromotionsByDuration(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(promotionsMapper::mapper).toList());
 //			foreCastDTO.setComboUsageLast30Days(promotionProductsRepository
 //					.countPromotionProductsByProductItemsIdAndPromotionsStartAtAfterOrPromotionsEndAtBefore(result.getId(),
 //							LocalDateTime.now().minusDays(30), LocalDateTime.now()));
-			foreCastDTO.setGiftUsageLast30Days(promotionProductsRepository.findPromotionProductsByProductItems_IdAndGiftIsTrue(
-					result.getId(), true).stream().map(promotionProductsMapper::mapper).toList());
-			foreCastDTO.setCostHistoriesLast30Days(costHistoriesRepository.findCostHistoriesByProductItems_IdAndCreatedAtBetween
-					(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(costHistoriesMapper::mapper).toList());
-			foreCastDTO.setPriceHistoriesLast30Days(priceHistoriesRepository.findPriceHistoriesByProductItems_IdAndCreatedAtBetween
-					(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(priceHistoriesMapper::mapper).toList());
+			foreCastDTO.setGiftUsageLast30Days(promotionProductsRepository.findPromotionProductsByProductItems_IdAndGiftIsTrue(result.getId(), true).stream().map(promotionProductsMapper::mapper).toList());
+			foreCastDTO.setCostHistoriesLast30Days(costHistoriesRepository.findCostHistoriesByProductItems_IdAndCreatedAtBetween(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(costHistoriesMapper::mapper).toList());
+			foreCastDTO.setPriceHistoriesLast30Days(priceHistoriesRepository.findPriceHistoriesByProductItems_IdAndCreatedAtBetween(result.getId(), LocalDateTime.now().minusDays(30), LocalDateTime.now()).stream().map(priceHistoriesMapper::mapper).toList());
 			return foreCastDTO;
 		}
 		return null;

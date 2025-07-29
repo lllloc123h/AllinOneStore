@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.aos.AOSBE.DTOS.GeneralStatsDTO;
+import com.aos.AOSBE.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,20 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.PaymentMethods;
 import com.aos.AOSBE.Entity.ShippingMethods;
-import com.aos.AOSBE.Repository.CouponsRepository;
-import com.aos.AOSBE.Repository.OrdersRepository;
-import com.aos.AOSBE.Repository.PaymentMethodsRepository;
-import com.aos.AOSBE.Repository.ShippingMethodsRepository;
 
 @Service
 public class OrdersService {
@@ -45,7 +38,8 @@ public class OrdersService {
 	private PaymentMethodsRepository paymentMethodsRepository;
 	@Autowired
 	private ShippingMethodsRepository shippingMethodsRepository;
-
+	@Autowired
+	private ReturnsRepository returnsRepository;
 	private final String ghnToken = System.getProperty("GHN_TOKEN");
 	private final String ghnShopId = System.getProperty("GHN_SHOPID");
 
@@ -178,5 +172,31 @@ public class OrdersService {
 			e.printStackTrace();
 			throw new RuntimeException("Lỗi khi gọi GHN API: " + e.getMessage());
 		}
+	}
+
+	public GeneralStatsDTO getGeneralStats() {
+		GeneralStatsDTO stats = new GeneralStatsDTO();
+		stats.setGrossRevenue(ordersRepository.grossRevenue());
+		stats.setRawNetRevenue(ordersRepository.rawNetRevenue());
+		stats.setTotalCostForDiscount(ordersRepository.totalCostForDiscount());
+		Double raw = ordersRepository.rawNetRevenue();
+		Double totalCost = ordersRepository.totalCostForDiscount();
+
+		stats.setNetRevenue((raw == null ? 0.0 : raw) - (totalCost == null ? 0.0 : totalCost));
+		stats.setCountDeliveredOrders(ordersRepository.countDeliveredOrders());
+
+
+		stats.setCountReturnedOrders(ordersRepository.countReturnedOrders());
+		stats.setTotalOrderReturned(ordersRepository.totalOrderReturned());
+		stats.setTotalActualShippingFee(ordersRepository.totalActualShippingFee());
+		stats.setTotalEstimatedShippingFee(ordersRepository.totalEstimatedShippingFee());
+		stats.setTotalActualShippingFeeDelivered(ordersRepository.totalActualShippingFeeDelivered());
+		stats.setTotalReturnedAmount(returnsRepository.findTotalRefundAmount());
+
+		stats.setTotalEstimatedDiscountValue(ordersRepository.totalEstimatedDiscountValue());
+		stats.setTotalDiscountValueDilivered(ordersRepository.totalDiscountValueDelivered());
+
+		stats.setTotalCostProducts(ordersRepository.totalCostProducts());
+		return stats;
 	}
 }

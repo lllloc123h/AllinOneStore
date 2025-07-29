@@ -33,10 +33,29 @@ public class OpenAI {
                 conversationId = userEmail;
             }
             // Logic to call OpenAI API and return response
-            String response = openAIService.normalChatBot(chat.getMessage(),userEmail);
+            String response = openAIService.userChatBot(chat.getMessage(),conversationId);
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.status(500).body(null);
+        }
+     }
+     @PostMapping("/openai/forecast")
+     public ResponseEntity<?> forecastWithOpenAI(@RequestBody ChatDTO chat) {
+        try {
+            String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            System.out.println("User Email ở OPEN AI: " + userEmail);
+            String conversationId = "";
+            if (userEmail.contains("anonymousUser")) {
+                conversationId = session.getId();
+            }else{
+                conversationId = userEmail;
+            }
+            // Logic to call OpenAI API and return response
+            String response = openAIService.forecastChatBot(chat.getMessage(),conversationId);
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            e.getStackTrace();
+            return ResponseEntity.status(500).body(e.getMessage());
         }
      }
 }

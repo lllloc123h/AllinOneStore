@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ForeCastDTO {
     private int productItemId;
+    private String createdAt;
     private String name;
     private String category;
     private double price;

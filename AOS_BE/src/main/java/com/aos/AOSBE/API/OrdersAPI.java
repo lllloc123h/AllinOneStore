@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.DTOS.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aos.AOSBE.DTOS.AccountsDTOS;
-import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
-import com.aos.AOSBE.DTOS.OrderItemDetailDTO;
-import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Entity.OrderItems;
@@ -235,6 +232,15 @@ public class OrdersAPI {
 					updatedOrder.getShippingStatus()));
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
+		}
+	}
+	@GetMapping("/admin/Orders/general-stats")
+	public ResponseEntity<?> getGeneralStats() {
+		try {
+			GeneralStatsDTO generalStats = ordersService.getGeneralStats();
+			return ResponseEntity.ok(generalStats);
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
 		}

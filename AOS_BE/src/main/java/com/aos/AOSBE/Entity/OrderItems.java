@@ -27,6 +27,9 @@ public class OrderItems {
 	
     @Column(name = "price_at_buy")
     private double priceAtBuy;
+
+    @Column(name = "cost_at_buy")
+    private double costAtBuy;
 	
     @Column(name = "is_gift")
     private boolean isGift;
