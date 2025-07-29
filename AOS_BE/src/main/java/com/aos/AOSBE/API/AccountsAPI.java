@@ -84,10 +84,6 @@ public class AccountsAPI {
 		Page<Accounts> pageResult = accountsService.accountsFindAll(page, size, filters);
 		List<AccountsDTOS> accounts = pageResult.getContent().stream().map(accountsMapper::mapperWithPasswordHidden)
 				.collect(Collectors.toList());
-//		List<AccountsDTOS> accountsResult = new ArrayList<>();
-//		accounts.forEach(e -> {
-//			accountsResult.put
-//		});
 		Map<String, Object> response = new HashMap<>();
 		response.put("content", accounts);
 		response.put("totalPages", pageResult.getTotalPages());

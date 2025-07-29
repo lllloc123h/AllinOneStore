@@ -22,20 +22,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.CommonFunctions.CommonKeyConstant;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
+import com.aos.AOSBE.DTOS.MessageDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
 import com.aos.AOSBE.DTOS.OrderItemDetailDTO;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
+import com.aos.AOSBE.Entity.Message;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.AccountsMapper;
+import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.EWalletsService;
+import com.aos.AOSBE.Service.MessageService;
 import com.aos.AOSBE.Service.OrderItemsService;
 import com.aos.AOSBE.Service.OrdersService;
 
@@ -57,6 +62,12 @@ public class OrdersAPI {
 	private AccountsService accountService;
 	@Autowired
 	private AccountsMapper accountsMapper;
+
+	@Autowired
+	private MessageService messageService;
+	@Autowired
+	private MessageMapper messageMapper;
+	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
 
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
@@ -114,6 +125,10 @@ public class OrdersAPI {
 			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
 			entity.setAccounts(user.getId());
 
+			MessageDTOS entityMessage = new MessageDTOS();
+			entityMessage.setKeyMessage(commonKeyConstant.MessageOrder);
+			entityMessage.setAccounts(userEmail);
+			Message messageSaved = messageService.messageSave(messageMapper.mapperToObject(entityMessage));
 			// Lưu đơn hàng trước
 			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 
@@ -195,7 +210,7 @@ public class OrdersAPI {
 					if (OrderCancel.getPaymentStatus().equals("Đã thanh toán")) {
 						Accounts ac = OrderCancel.getAccounts();
 						EWallets ew = EWalletsservice.eWalletsFindByAccountEmail(ac.getEmail()).orElse(null);
-						if(ew != null) {
+						if (ew != null) {
 							ew.setBalance(ew.getBalance() + OrderCancel.getFinalTotal());
 							EWalletsservice.eWalletsSave(ew);
 							Accounts admin = accountService.accountsFindById(1).orElse(null);
@@ -210,10 +225,11 @@ public class OrdersAPI {
 								return ResponseEntity.ok(Map.of("MESSAGE", "admin không tồn tại"));
 							}
 							return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn hoàn tiền thành công"));
-						}else {
-							return ResponseEntity.ok(Map.of("MESSAGE", "người dùng chưa có tài khoản Ewallet, vui lòng tạo tài khoản"));
+						} else {
+							return ResponseEntity.ok(
+									Map.of("MESSAGE", "người dùng chưa có tài khoản Ewallet, vui lòng tạo tài khoản"));
 						}
-						
+
 					} else {
 						OrderCancel.setShippingStatus("Cancel");
 						ordersService.ordersSave(OrderCancel);

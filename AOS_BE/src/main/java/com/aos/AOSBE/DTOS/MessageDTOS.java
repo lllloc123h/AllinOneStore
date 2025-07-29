@@ -1,9 +1,7 @@
 package com.aos.AOSBE.DTOS;
-import jakarta.persistence.*;
 
-import java.time.*;
-import java.math.*;
-import java.util.*;
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,8 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDTOS {
-    private int id;
-    private String keyMessage;
-    private String notification;
-    private int accounts;
+	private int id;
+	private String keyMessage;
+	private String notification;
+	private LocalDateTime createdAt;
+	private String accounts;
 }

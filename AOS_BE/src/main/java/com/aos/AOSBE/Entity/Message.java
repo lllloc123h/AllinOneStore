@@ -27,6 +27,9 @@ public class Message {
 	
     @Column(name = "notification")
     private String notification;
+	@CreationTimestamp
+    @Column(name = "created_at",updatable = false)
+    private LocalDateTime createdAt;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Accounts accounts;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.Entity.Message;
+import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Repository.MessageRepository;
 
 @Service
@@ -21,6 +22,8 @@ public class MessageService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private MessageRepository messageRepository;
+	@Autowired
+	private AccountsRepository accountsRepository;
 
 	public Page<Message> messageFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -37,8 +40,14 @@ public class MessageService {
 		return messageRepository.findById(id);
 	}
 
+	public Page<Message> messageFindByAccountEmail(int page, int size, String email) {
+		Pageable pageable = PageRequest.of(page, size);
+		return messageRepository.findByAccountEmail(email, pageable);
+	}
+
 	@Transactional
 	public void messageDeleteById(int id) {
 		messageRepository.deleteById(id);
 	}
+
 }
