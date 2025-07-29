@@ -12,6 +12,7 @@ const listDashBoard = [
     "Customs",
     "EWalletTransactions",
     "EWallets",
+    "Message",
     "News",
     "OrderItems",
     "Orders",
@@ -26,13 +27,13 @@ const listDashBoard = [
     "Roles",
     "ShippingMethods",
     "UserAddresses",
-    "UserLogs",
+    "UserProductEvents",
     "VariantValues",
     "Variants",
 ]
 export default [
     {
-        path:'products/details/stats',
+        path: 'products/details/stats',
         component: () => import('../../components/Admin/Stats/index.vue'),
     },
     {
@@ -274,6 +275,26 @@ export default [
         path: 'EWallets/update/:id',
         component: () => import('../../components/Admin/EWallets/Form.vue'),
         props: route => ({ TableName: 'EWallets', action: 'update', id: route.params.id, })
+    },
+    {
+        path: 'Message',
+        component: import('../../components/Admin/Message/index.vue'),
+        props: route => ({ TableName: 'Message' })
+    },
+    {
+        path: 'Message/create',
+        component: () => import('../../components/Admin/Message/Form.vue'),
+        props: route => ({ TableName: 'Message', action: 'create' })
+    },
+    {
+        path: 'Message/view/:id',
+        component: () => import('../../components/Admin/Message/Form.vue'),
+        props: route => ({ TableName: 'Message', action: 'view', id: route.params.id, })
+    },
+    {
+        path: 'Message/update/:id',
+        component: () => import('../../components/Admin/Message/Form.vue'),
+        props: route => ({ TableName: 'Message', action: 'update', id: route.params.id, })
     },
     {
         path: 'News',
@@ -556,24 +577,24 @@ export default [
         props: route => ({ TableName: 'UserAddresses', action: 'update', id: route.params.id, })
     },
     {
-        path: 'UserLogs',
-        component: import('../../components/Admin/UserLogs/index.vue'),
-        props: route => ({ TableName: 'UserLogs' })
+        path: 'UserProductEvents',
+        component: import('../../components/Admin/UserProductEvents/index.vue'),
+        props: route => ({ TableName: 'UserProductEvents' })
     },
     {
-        path: 'UserLogs/create',
-        component: () => import('../../components/Admin/UserLogs/Form.vue'),
-        props: route => ({ TableName: 'UserLogs', action: 'create' })
+        path: 'UserProductEvents/create',
+        component: () => import('../../components/Admin/UserProductEvents/Form.vue'),
+        props: route => ({ TableName: 'UserProductEvents', action: 'create' })
     },
     {
-        path: 'UserLogs/view/:id',
-        component: () => import('../../components/Admin/UserLogs/Form.vue'),
-        props: route => ({ TableName: 'UserLogs', action: 'view', id: route.params.id, })
+        path: 'UserProductEvents/view/:id',
+        component: () => import('../../components/Admin/UserProductEvents/Form.vue'),
+        props: route => ({ TableName: 'UserProductEvents', action: 'view', id: route.params.id, })
     },
     {
-        path: 'UserLogs/update/:id',
-        component: () => import('../../components/Admin/UserLogs/Form.vue'),
-        props: route => ({ TableName: 'UserLogs', action: 'update', id: route.params.id, })
+        path: 'UserProductEvents/update/:id',
+        component: () => import('../../components/Admin/UserProductEvents/Form.vue'),
+        props: route => ({ TableName: 'UserProductEvents', action: 'update', id: route.params.id, })
     },
     {
         path: 'VariantValues',

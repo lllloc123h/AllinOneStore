@@ -518,6 +518,16 @@ CREATE TABLE
 		FOREIGN KEY (wallet_id) REFERENCES e_wallets (id) ON DELETE CASCADE
 	);
 	go
+create table message(
+	id int identity (1,1) primary key ,
+	[user_id] int not null,
+	key_message nvarchar(max),
+	[notification] nvarchar(max)
+	FOREIGN KEY ([user_id]) REFERENCES accounts (id) ON DELETE CASCADE
+)
+	go 
+
+
 INSERT INTO
 	accounts (
 		email,
