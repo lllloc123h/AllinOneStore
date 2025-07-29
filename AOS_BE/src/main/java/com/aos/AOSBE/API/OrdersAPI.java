@@ -39,6 +39,7 @@ import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Service.CartItemsService;
 import com.aos.AOSBE.Service.EWalletsService;
 import com.aos.AOSBE.Service.MessageService;
 import com.aos.AOSBE.Service.OrderItemsService;
@@ -48,6 +49,7 @@ import com.aos.AOSBE.Service.OrdersService;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class OrdersAPI {
+
 	@Autowired
 	private OrdersService ordersService;
 	@Autowired
@@ -63,6 +65,8 @@ public class OrdersAPI {
 	@Autowired
 	private AccountsMapper accountsMapper;
 
+	@Autowired
+	private CartItemsService cartItemsService;
 	@Autowired
 	private MessageService messageService;
 	@Autowired
@@ -106,6 +110,7 @@ public class OrdersAPI {
 		try {
 			Orders isExist = ordersService.ordersFindById(id).orElse(null);
 			if (isExist != null) {
+
 				Orders update = ordersMapper.mapperToObject(entity);
 				ordersService.ordersSave(update);
 				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
@@ -124,13 +129,14 @@ public class OrdersAPI {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
 			entity.setAccounts(user.getId());
-
+			cartItemsService.cartItemsDeleteAll(userEmail);
+			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 			MessageDTOS entityMessage = new MessageDTOS();
 			entityMessage.setKeyMessage(commonKeyConstant.MessageOrder);
 			entityMessage.setAccounts(userEmail);
+			entityMessage.setNotification("Bạn có đơn hàng: " + saved.getId());
 			Message messageSaved = messageService.messageSave(messageMapper.mapperToObject(entityMessage));
 			// Lưu đơn hàng trước
-			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 
 			// Mapping các item
 			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
@@ -193,8 +199,8 @@ public class OrdersAPI {
 				ProductItems pi = item.getProductItems();
 				String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
 
-				itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(), item.isGift(),
-						pi.getSku(), productName, pi.getDescription()));
+				itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(),
+						item.isGift(), pi.getSku(), productName, pi.getDescription()));
 			}
 
 			// Trả về full response
@@ -203,9 +209,9 @@ public class OrdersAPI {
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("MESSAGE","Xảy ra lỗi"));
+			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "Xảy ra lỗi"));
 		}
-		
+
 	}
 
 	@PutMapping("/Users/Orders/cancelRefundOrder/{id}")
@@ -213,9 +219,9 @@ public class OrdersAPI {
 		try {
 			Orders OrderCancel = ordersService.ordersFindById(id).orElse(null);
 			if (OrderCancel != null) {
-				if (OrderCancel.getShippingStatus().equals("Đang xử lý")||
-					OrderCancel.getShippingStatus().equals("Chờ lấy hàng")||
-					OrderCancel.getShippingStatus().equals("Chờ xác nhận")) {
+				if (OrderCancel.getShippingStatus().equals("Đang xử lý")
+						|| OrderCancel.getShippingStatus().equals("Chờ lấy hàng")
+						|| OrderCancel.getShippingStatus().equals("Chờ xác nhận")) {
 					if (OrderCancel.getPaymentStatus().equals("Đã thanh toán")) {
 						Accounts ac = OrderCancel.getAccounts();
 						EWallets ew = EWalletsservice.eWalletsFindByAccountEmail(ac.getEmail()).orElse(null);

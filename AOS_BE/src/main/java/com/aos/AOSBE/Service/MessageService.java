@@ -42,7 +42,7 @@ public class MessageService {
 
 	public Page<Message> messageFindByAccountEmail(int page, int size, String email) {
 		Pageable pageable = PageRequest.of(page, size);
-		return messageRepository.findByAccountEmail(email, pageable);
+		return messageRepository.findByAccountsEmail(email, pageable);
 	}
 
 	@Transactional

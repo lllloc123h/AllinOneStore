@@ -2,45 +2,25 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top shadow-sm">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
-        <img src="/src/assets/imgs/logo.png" style="height: 75px" alt="" /> ALL-IN-ONE</a
-      >
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-border-width"
-          viewBox="0 0 16 16"
-        >
+        <img src="/src/assets/imgs/logo.png" style="height: 75px" alt="" /> ALL-IN-ONE</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-border-width"
+          viewBox="0 0 16 16">
           <path
-            d="M0 3.5A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 5A.5.5 0 0 1 .5 8h15a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5"
-          />
+            d="M0 3.5A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 5A.5.5 0 0 1 .5 8h15a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5" />
         </svg>
       </button>
       <div class="collapse navbar-collapse row" id="navbarSupportedContent">
         <ul class="navbar-nav mb-2 mb-lg-0 col-3">
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/"
-              >Home</RouterLink
-            >
+            <RouterLink class="nav-link active" aria-current="page" to="/">Home</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/products"
-              >Product</RouterLink
-            >
+            <RouterLink class="nav-link active" aria-current="page" to="/products">Product</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/Customizer"
-              >Customizer
+            <RouterLink class="nav-link active" aria-current="page" to="/Customizer">Customizer
             </RouterLink>
           </li>
         </ul>
@@ -48,26 +28,17 @@
         <ul class="navbar-nav mb-2 mb-lg-0 col-3">
           <li class="nav-item mx-2">
             <RouterLink class="nav-link position-relative" aria-current="page" to="/cart">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-basket-fill"
-                viewBox="0 0 16 16"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-basket-fill" viewBox="0 0 16 16">
                 <path
-                  d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z"
-                />
+                  d="M5.071 1.243a.5.5 0 0 1 .858.514L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 6h1.717zM3.5 10.5a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0zm2.5 0a.5.5 0 1 0-1 0v3a.5.5 0 0 0 1 0z" />
               </svg>
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge"
-              >
-                {{ cartSize  }}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
+                {{ cartSize }}
               </span>
             </RouterLink>
           </li>
-          <li class="nav-item mx-2">
+          <!-- <li class="nav-item mx-2">
             <a class="nav-link" aria-current="page" href="">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -82,22 +53,32 @@
                 />
               </svg>
             </a>
+          </li> -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill"
+                viewBox="0 0 16 16">
+                <path
+                  d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
+              </svg>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
+                {{ messageCount }}
+              </span>
+            </a>
+            <ul class="dropdown-menu notification-dropdown p-2">
+              <li v-for="item in messages" :key="item.id" class="dropdown-item notification-item">
+                <span v-html="formatCell(item)"></span>
+              </li>
+            </ul>
           </li>
 
           <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa-solid fa-user"></i>
             </a>
             <ul class="dropdown-menu">
               <li>
-                <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="isAdmin"
-                  >Admin
+                <RouterLink class="dropdown-item" to="/admin/Accounts" v-if="isAdmin">Admin
                 </RouterLink>
               </li>
               <li>
@@ -110,9 +91,7 @@
                 <RouterLink class="dropdown-item" to="/login" v-else>Login</RouterLink>
               </li>
               <li>
-                <RouterLink class="dropdown-item" to="/register" v-if="!isLogged"
-                  >Register</RouterLink
-                >
+                <RouterLink class="dropdown-item" to="/register" v-if="!isLogged">Register</RouterLink>
               </li>
             </ul>
           </li>
@@ -123,8 +102,8 @@
 </template>
 <script setup>
 // ...existing code...
-import { computed, watch } from "vue";
-import { authService } from "../../Configs/api";
+import { computed, onMounted, watch, ref } from "vue";
+import api, { authService } from "../../Configs/api";
 const isLogged = computed(() => {
   return !!authService.isLogged();
 });
@@ -134,16 +113,73 @@ const isAdmin = computed(() => {
 const cartSize = computed(() => {
   return authService.getCartSize();
 });
-
+const messages = ref([]);
+const messageCount = ref(0);
 const logout = () => {
   authService.logout();
 };
+function formatCell(item) {
+  switch (item.keyMessage) {
+    case 'MessagePromotion':
+      return `<span class="text-success"><i class="bi bi-megaphone-fill"></i> ${item.notification}</span>`;
+
+    case 'MessageOrder':
+      return `<span class="text-primary"><i class="bi bi-bag-check-fill"></i> ${item.notification}</span>`;
+
+    case 'MessageReturn':
+      return `<span class="text-warning"><i class="bi bi-arrow-counterclockwise"></i> ${item.notification}</span>`;
+
+    case 'MessageCancle':
+      return `<span class="text-danger"><i class="bi bi-x-circle-fill"></i> ${item.notification}</span>`;
+
+    case 'MessageEwallet':
+      return `<span class="text-info"><i class="bi bi-wallet-fill"></i> ${item.notification}</span>`;
+
+    default:
+      return `<span>${item.notification}</span>`;
+  }
+}
+async function getNotification() {
+  try {
+    const response = await api.get(`/user/Message`);
+    console.log(response.data);
+    messages.value = response.data.content;
+    messageCount.value = response.data.totalElements;
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
+}
+onMounted(
+  getNotification
+)
 </script>
 <style scope>
 /* Footer */
 #footer {
   padding: 60px 0;
   background-color: rgb(28, 28, 28);
+}
+
+.table-cell {
+  padding: 1rem 0.8rem;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+  color: #495057;
+  font-size: 0.9rem;
+  min-width: 120px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.cell-content {
+  font-weight: 500;
+  max-width: 250px;
+  display: inline-block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  line-height: 1.4;
 }
 
 section .section-title {
@@ -170,6 +206,29 @@ section .section-title {
 
 #footer ul.social li {
   padding: 3px 0;
+}
+
+.notification-dropdown {
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+.notification-item {
+  white-space: normal;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
 }
 
 #footer ul.social li a i {

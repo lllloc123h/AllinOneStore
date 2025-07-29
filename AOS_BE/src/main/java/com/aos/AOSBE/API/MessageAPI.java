@@ -62,6 +62,7 @@ public class MessageAPI {
 		Map<String, Object> response = new HashMap<>();
 		response.put("content", message);
 		response.put("totalPages", pageResult.getTotalPages());
+		response.put("totalElements", pageResult.getTotalElements());
 		return ResponseEntity.ok(response);
 	}
 

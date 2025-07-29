@@ -5,23 +5,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.aos.AOSBE.DTOS.CreateComboDTO;
-import com.aos.AOSBE.Entity.Accounts;
-import com.aos.AOSBE.Entity.ProductItems;
-import com.aos.AOSBE.Entity.Promotions;
-import com.aos.AOSBE.Repository.ProductItemsRepository;
-import com.aos.AOSBE.Repository.PromotionProductsRepository;
-import com.aos.AOSBE.Repository.PromotionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.aos.AOSBE.DTOS.CreateComboDTO;
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.CartItems;
 import com.aos.AOSBE.Repository.CartItemsRepository;
-import org.springframework.transaction.annotation.Transactional;
+import com.aos.AOSBE.Repository.ProductItemsRepository;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
+import com.aos.AOSBE.Repository.PromotionsRepository;
 
 @Service
 public class CartItemsService {
@@ -29,12 +27,13 @@ public class CartItemsService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private CartItemsRepository cartItemsRepository;
-@Autowired
-private ProductItemsRepository productItemsRepository;
-@Autowired
-private PromotionsRepository promotionsRepository;
-@Autowired
-private PromotionProductsRepository promotionProductsRepository;
+	@Autowired
+	private ProductItemsRepository productItemsRepository;
+	@Autowired
+	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private PromotionProductsRepository promotionProductsRepository;
+
 	public Page<CartItems> cartItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
 		Specification<CartItems> spec = specBuilder.buildFilter(filters);
@@ -44,17 +43,27 @@ private PromotionProductsRepository promotionProductsRepository;
 	public List<CartItems> cartItemsFindAccounts(String email) {
 		return cartItemsRepository.findByAccountsEmail(email);
 	}
+
 	@Transactional
 	public CartItems cartItemsSave(CartItems cartItems) {
 		return cartItemsRepository.save(cartItems);
 	}
+
+	@Transactional
+	public void cartItemsDeleteAll(String email) {
+		List<CartItems> listCartNeedToRemove = cartItemsFindAccounts(email);
+		cartItemsRepository.deleteAll(listCartNeedToRemove);
+	}
+
 	public Optional<CartItems> cartItemsFindById(int id) {
 		return cartItemsRepository.findById(id);
 	}
+
 	@Transactional
 	public void cartItemsDeleteById(int id) {
 		cartItemsRepository.deleteById(id);
 	}
+
 	public CartItems cartFindByAccountEmailAndProductItemId(String email, int id) {
 		return cartItemsRepository.findByAccountsEmailAndProductItemsId(email, id).orElse(null);
 	}
@@ -73,7 +82,7 @@ private PromotionProductsRepository promotionProductsRepository;
 			// kiểm tra số lượng ở các item trong combo
 			boolean flag = true;
 			for (int i = 0; i < cartItems.size(); i++) {
-				int tempQty = cartItems.get(i).getQty()/cartItems.get(i).getComboQty();
+				int tempQty = cartItems.get(i).getQty() / cartItems.get(i).getComboQty();
 				if (tempQty != entity.getItems().get(i).getQuantity()) {
 					flag = false;
 					break;
@@ -83,20 +92,21 @@ private PromotionProductsRepository promotionProductsRepository;
 				// nếu số lượng bằng thì tặng 1 đơn vị
 				for (int i = 0; i < cartItems.size(); i++) {
 					cartItems.get(i).setComboQty(cartItems.get(i).getComboQty() + 1);
-					cartItems.get(i).setQty(cartItems.get(i).getQty()+entity.getItems().get(i).getQuantity());
+					cartItems.get(i).setQty(cartItems.get(i).getQty() + entity.getItems().get(i).getQuantity());
 					cartItemsRepository.save(cartItems.get(i));
 				}
 			} else {
 				// không bằng thì tạo mới combo
 				UUID uuid = UUID.randomUUID();
-				for (CreateComboDTO.Items item : entity.getItems()){
+				for (CreateComboDTO.Items item : entity.getItems()) {
 					CartItems cartItem = new CartItems();
 					cartItem.setAccounts(account);
 					cartItem.setComboGroup(comboGroupString);
 					cartItem.setQty(item.getQuantity());
 					cartItem.setComboGroupId(uuid);
 					cartItem.setComboQty(1);
-					cartItem.setIsGift(promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
+					cartItem.setIsGift(
+							promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
 					cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 					cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
 					cartItemsRepository.save(cartItem);
@@ -104,14 +114,15 @@ private PromotionProductsRepository promotionProductsRepository;
 			}
 		} else {
 			UUID uuid = UUID.randomUUID();
-			for (CreateComboDTO.Items item : entity.getItems()){
+			for (CreateComboDTO.Items item : entity.getItems()) {
 				CartItems cartItem = new CartItems();
 				cartItem.setAccounts(account);
 				cartItem.setComboGroup(comboGroupString);
 				cartItem.setQty(item.getQuantity());
 				cartItem.setComboGroupId(uuid);
 				cartItem.setComboQty(1);
-				cartItem.setIsGift(promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
+				cartItem.setIsGift(
+						promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
 				cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 				cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
 				cartItemsRepository.save(cartItem);
@@ -119,11 +130,13 @@ private PromotionProductsRepository promotionProductsRepository;
 
 		}
 	}
+
 	public List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroup) {
-		return cartItemsRepository.findCartItemsByAccountsAndComboGroupId(accounts ,comboGroup);
+		return cartItemsRepository.findCartItemsByAccountsAndComboGroupId(accounts, comboGroup);
 	}
-	public void deleteCombo(Accounts account,UUID comboGroupId) {
-		List<CartItems> cartItems = cartItemsRepository.findCartItemsByAccountsAndComboGroupId(account,comboGroupId);
+
+	public void deleteCombo(Accounts account, UUID comboGroupId) {
+		List<CartItems> cartItems = cartItemsRepository.findCartItemsByAccountsAndComboGroupId(account, comboGroupId);
 		if (cartItems.size() > 0) {
 			for (CartItems item : cartItems) {
 				cartItemsRepository.delete(item);
