@@ -186,34 +186,27 @@ public class OrdersAPI {
 			}
 
 			Orders order = orderOpt.get();
-			OrdersDTOS orderDTO = ordersMapper.mapper(order); // thông tin đơn hàng
+			OrdersDTOS orderDTO = ordersMapper.mapper(order); // ✔️ Thông tin đơn hàng
 
-			// Lấy thông tin account
+			// ✔️ Lấy account
 			Accounts account = order.getAccounts();
-			AccountsDTOS accountDTO = accountsMapper.mapper(account); // ✔️ Dùng mapper đã có
+			AccountsDTOS accountDTO = accountsMapper.mapper(account);
 
-			// Lấy danh sách sản phẩm
+			// ✔️ Lấy danh sách sản phẩm và dùng OrderItemsMapper
 			List<OrderItems> items = orderItemsService.findByOrderId(id);
-			List<OrderItemDetailDTO> itemsDTO = new ArrayList<>();
+			List<OrderItemsDTOS> itemsDTO = items.stream()
+				.map(orderItemsMapper::mapper)
+				.toList(); // Hoặc .collect(Collectors.toList())
 
-			for (OrderItems item : items) {
-				ProductItems pi = item.getProductItems();
-				String productName = (pi.getBaseProducts() != null) ? pi.getBaseProducts().getName() : "N/A";
-
-				itemsDTO.add(new OrderItemDetailDTO(item.getQty(), item.getSellingPrice(), item.getTotal(),
-						item.isGift(), pi.getSku(), productName, pi.getDescription()));
-			}
-
-			// Trả về full response
-			OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, itemsDTO, accountDTO);
+			// ✔️ Trả về response
+			OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, accountDTO, itemsDTO);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
-			e.getMessage();
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "Xảy ra lỗi"));
 		}
-
 	}
+
 
 	@PutMapping("/Users/Orders/cancelRefundOrder/{id}")
 	public ResponseEntity<?> cancelRefundOrder(@PathVariable int id) {

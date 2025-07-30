@@ -148,7 +148,7 @@ const loadOrder = async () => {
         trangThai: orderData.order.paymentStatus
       },
       sanPham: orderData.items.map(i => ({
-        anh: i.image || 'no-image.png',
+        anh: i.main_image_url || 'no-image.png',
         ten: i.name,
         soLuong: i.qty,
         gia: i.price
