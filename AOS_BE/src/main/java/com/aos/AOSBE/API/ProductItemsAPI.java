@@ -68,6 +68,7 @@ public class ProductItemsAPI {
 	private PromotionsMapper promotionsMapper;
 	@Autowired
 	private PromotionProductsRepository promotionProductsRepository;
+
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -151,22 +152,17 @@ public class ProductItemsAPI {
 	// PromotionProductController.java
 	@GetMapping("/discounted-products")
 	public ResponseEntity<List<DiscountedProductDTOS>> getDiscountedProducts() {
-	    LocalDateTime now = LocalDateTime.now();
-	    List<Map<String, Object>> rawResults = promotionProductsRepository.findDiscountedProductsNative();
+		LocalDateTime now = LocalDateTime.now();
+		List<Map<String, Object>> rawResults = promotionProductsRepository.findDiscountedProductsNative();
 
-	    List<DiscountedProductDTOS> dtoList = rawResults.stream()
-	        .map(map -> new DiscountedProductDTOS(
-	            ((Number) map.get("productItemId")).longValue(),
-	            (String) map.get("productName"),
-	            ((Number) map.get("originalPrice")).doubleValue(),
-	            ((Number) map.get("discountValue")).doubleValue(),
-	            (String) map.get("promotionName"),
-	            ((Number) map.get("discountedPrice")).doubleValue(),
-	            (String) map.get("imageUrl")
-	        ))
-	        .collect(Collectors.toList());
+		List<DiscountedProductDTOS> dtoList = rawResults.stream()
+				.map(map -> new DiscountedProductDTOS(((Number) map.get("productItemId")).longValue(),
+						(String) map.get("productName"), ((Number) map.get("originalPrice")).doubleValue(),
+						((Number) map.get("discountValue")).doubleValue(), (String) map.get("promotionName"),
+						((Number) map.get("discountedPrice")).doubleValue(), (String) map.get("imageUrl")))
+				.collect(Collectors.toList());
 
-	    return ResponseEntity.ok(dtoList);
+		return ResponseEntity.ok(dtoList);
 	}
 
 	@GetMapping("/Product/MultiplrFilter")
@@ -174,10 +170,11 @@ public class ProductItemsAPI {
 			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
 			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq, @RequestParam("minPriceReq") String minPriceReq,
 			@RequestParam("maxPriceReq") String maxPriceReq, @RequestParam("categories") String categories,
-			@RequestParam(required = false) Integer idProductItem) {
+			@RequestParam("keyWord") String keyWord, @RequestParam(required = false) Integer idProductItem) {
 		try {
 			Page<Object[]> pageResult = productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(
-					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq, categories, idProductItem);
+					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq, categories, keyWord,
+					idProductItem);
 			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
 			pageResult.getContent().forEach(e -> {
 				filterAdvanceDTOS item = new filterAdvanceDTOS();

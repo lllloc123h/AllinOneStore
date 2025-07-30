@@ -101,7 +101,7 @@
       <div class="col-9">
         <h1>Sản phẩm của chúng tôi</h1>
         <div class="searchBox mt-4">
-          <input class="searchInput" type="text" name="" placeholder="Search something" />
+          <input class="searchInput" type="text" v-model="keyWord" placeholder="Search something" />
           <button class="searchButton" href="#">
             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
               <g clip-path="url(#clip0_2_17)">
@@ -201,6 +201,7 @@ const selectedProduct = ref(null);
 const quantity = ref(1);
 const dropDowncatalogCategory = ref([]);
 const timeSpent = ref(0);
+const keyWord = ref("");
 let timer = null;
 const openModal = (product) => {
   selectedProduct.value = product;
@@ -309,7 +310,7 @@ const fetchData = async () => {
     }
     // console.log(minPriceReq.value, maxPriceReq.value)
     const response = await axios.get(
-      `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}&categories=${categoriesFilter.value}`
+      `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}&categories=${categoriesFilter.value}&keyWord=${keyWord.value}`
     );
     data.value = response.data.totalPages;
     products.value = response.data.content;
@@ -332,6 +333,7 @@ watch(() => selected.value["Kích thước"], fetchData);
 watch(() => selected.value["Màu sắc"], fetchData);
 watch(() => selectedCatalogCategory.value, fetchData,
   { deep: true });
+watch(() => keyWord.value, fetchData);
 watch(() => selectedPrice.value, fetchData);
 watch(() => pageIndex.value, fetchData);
 watch(() => pageSize.value, fetchData);
