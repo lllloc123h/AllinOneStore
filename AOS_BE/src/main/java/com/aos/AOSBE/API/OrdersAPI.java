@@ -1,13 +1,11 @@
 package com.aos.AOSBE.API;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.CommonFunctions.CommonKeyConstant;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
+import com.aos.AOSBE.DTOS.GeneralStatsDTO;
 import com.aos.AOSBE.DTOS.MessageDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
-import com.aos.AOSBE.DTOS.OrderItemDetailDTO;
 import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
+import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Entity.Message;
 import com.aos.AOSBE.Entity.OrderItems;
@@ -41,11 +40,13 @@ import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Service.BaseProductsService;
 import com.aos.AOSBE.Service.CartItemsService;
 import com.aos.AOSBE.Service.EWalletsService;
 import com.aos.AOSBE.Service.MessageService;
 import com.aos.AOSBE.Service.OrderItemsService;
 import com.aos.AOSBE.Service.OrdersService;
+import com.aos.AOSBE.Service.ProductItemsService;
 
 @RestController
 @RequestMapping("/api")
@@ -67,6 +68,10 @@ public class OrdersAPI {
 	@Autowired
 	private AccountsMapper accountsMapper;
 
+	@Autowired
+	private ProductItemsService productItemsService;
+	@Autowired
+	private BaseProductsService baseProductsService;
 	@Autowired
 	private CartItemsService cartItemsService;
 	@Autowired
@@ -143,6 +148,16 @@ public class OrdersAPI {
 			// Mapping các item
 			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
 				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
+				ProductItems updateTurnBuy = orderItem.getProductItems();
+				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
+				updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
+
+				BaseProducts updateTurnBuyForBP = orderItem.getProductItems().getBaseProducts();
+				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
+//				updateTurnBuyForBP.setQty(updateTurnBuyForBP.getQty() - saved.getQty());
+				productItemsService.productItemsSave(updateTurnBuy);
+				baseProductsService.baseProductsSave(updateTurnBuyForBP);
+
 				orderItem.setOrders(saved);
 				return orderItem;
 			}).collect(Collectors.toList());
@@ -195,9 +210,8 @@ public class OrdersAPI {
 
 			// ✔️ Lấy danh sách sản phẩm và dùng OrderItemsMapper
 			List<OrderItems> items = orderItemsService.findByOrderId(id);
-			List<OrderItemsDTOS> itemsDTO = items.stream()
-				.map(orderItemsMapper::mapper)
-				.toList(); // Hoặc .collect(Collectors.toList())
+			List<OrderItemsDTOS> itemsDTO = items.stream().map(orderItemsMapper::mapper).toList(); // Hoặc
+																									// .collect(Collectors.toList())
 
 			// ✔️ Trả về response
 			OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, accountDTO, itemsDTO);
@@ -207,7 +221,6 @@ public class OrdersAPI {
 			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "Xảy ra lỗi"));
 		}
 	}
-
 
 	@PutMapping("/Users/Orders/cancelRefundOrder/{id}")
 	public ResponseEntity<?> cancelRefundOrder(@PathVariable int id) {
@@ -269,6 +282,7 @@ public class OrdersAPI {
 			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
 		}
 	}
+
 	@GetMapping("/admin/Orders/general-stats")
 	public ResponseEntity<?> getGeneralStats() {
 		try {
@@ -278,6 +292,7 @@ public class OrdersAPI {
 			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
 		}
 	}
+
 	@GetMapping("/user/Orders")
 	public ResponseEntity<?> getOrdersByCurrentUser() {
 		try {
@@ -287,17 +302,14 @@ public class OrdersAPI {
 				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
 			}
 
-			List<OrdersDTOS> orders = ordersService
-				.ordersFindByAccount(user.getId())
-				.stream()
-				.map(ordersMapper::mapperForOrderDetail)
-				.collect(Collectors.toList());
+			List<OrdersDTOS> orders = ordersService.ordersFindByAccount(user.getId()).stream()
+					.map(ordersMapper::mapperForOrderDetail).collect(Collectors.toList());
 
 			return ResponseEntity.ok(orders);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống"));
 		}
-}
+	}
 
 }
