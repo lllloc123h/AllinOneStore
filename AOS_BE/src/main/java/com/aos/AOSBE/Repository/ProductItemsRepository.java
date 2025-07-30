@@ -89,6 +89,9 @@ public interface ProductItemsRepository
 				        SELECT 1 FROM STRING_SPLIT(:skuLikeList, ',') c
 				        WHERE pit.sku LIKE '%' + c.value + '%'
 				    ))
+				    AND
+				     (:isKeyWordEmpty = 1 OR   bp.name like '%' + :keyWord + '%'
+				    )
 				AND
 				 (:isCategoriesEmpty = 1 OR EXISTS (
 				        SELECT 1 FROM STRING_SPLIT(:categoriesList, '-') c
@@ -107,6 +110,7 @@ public interface ProductItemsRepository
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
 			@Param("isCategoriesEmpty") int isCategoriesEmpty, @Param("categoriesList") String categoriesList,
+			@Param("isKeyWordEmpty") int isKeyWordEmpty, @Param("keyWord") String keyWord,
 			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
 
 //	@Query("""
