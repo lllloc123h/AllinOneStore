@@ -95,9 +95,14 @@ function closePopup() {
 async function pay(orderID) {
     try {
         console.log("Order ID:", orderID);
-        const response = await api.post(`/e-wallet/orderpay`, { OrderId: orderID.id, finalToTal: orderID.finalTotal })
+        console.log("Order ID:", orderID.id);
+        const payLoad = { orderId: orderID.id, finalToTal: orderID.finalTotal }
+
+        console.log("Order ID:", payLoad);
+        console.log("Order ID:", orderID.id);
+        const response = await api.post(`/e-wallet/orderpay`, payLoad)
         console.log("Payment URL:", response.data);
-        payURL.value = response.data;
+        payURL.value = response.data.payUrl;
         showPopUp.value = true
     } catch (err) {
         console.error()

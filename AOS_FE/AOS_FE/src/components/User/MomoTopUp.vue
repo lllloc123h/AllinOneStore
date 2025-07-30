@@ -6,17 +6,43 @@
         <form @submit.prevent="momoTopUp">
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount</label>
-                <input type="number" class="form-control" id="amount" v-model="topUpAmount" required min="10000" />
+                <input type="number" class="form-control" id="amount" v-model="topUpAmount" required min="10000"
+                    max="500000" />
+            </div>
+            <div>
+                <p>Your amount is too small. Please choose:</p>
+                <button class="btn btn-outline-primary" @click="() => (topUpAmount = topUpAmount * 1000)">{{ topUpAmount
+                    * 1000 }}</button>
+                <button class="btn btn-outline-primary" @click="() => (topUpAmount = topUpAmount * 100000)">{{
+                    topUpAmount
+                    * 100000 }}</button>
             </div>
             <div class="mb-3">
-                <label for="paymentMethod" class="form-label">Payment Method</label>
-                <select class="form-select" v-model="paymentMethod" required>
-                    <option value="" disabled>Select a method</option>
-                    <option value="momo" selected>MoMo</option>
-                    <option value="bank">Bank Transfer</option>
-                    <option value="card">Credit/Debit Card</option>
-                </select>
+                <label class="form-label">Payment Method</label>
+                <div class="d-flex gap-3">
+                    <button type="button" class="btn"
+                        :class="paymentMethod === 'momo' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                        @click="paymentMethod = 'momo'">
+                        <i class="bi bi-phone" style="font-size: 1.5rem;"></i><br />
+                        MoMo
+                    </button>
+
+                    <button type="button" class="btn"
+                        :class="paymentMethod === 'bank' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                        @click="paymentMethod = 'bank'">
+                        <i class="bi bi-bank" style="font-size: 1.5rem;"></i><br />
+                        Bank
+                    </button>
+
+                    <button type="button" class="btn"
+                        :class="paymentMethod === 'card' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                        @click="paymentMethod = 'card'">
+                        <i class="bi bi-credit-card" style="font-size: 1.5rem;"></i><br />
+                        Card
+                    </button>
+                </div>
             </div>
+
             <div class="button-holder">
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-wallet2 me-2"></i> Top Up
@@ -24,7 +50,7 @@
             </div>
         </form>
     </div>
-    <div v-if="payURL && showPopUp" class="popup-overlay" @click.self="closePopup">
+    <div v-if="!payURL && showPopUp" class="popup-overlay" @click.self="closePopup">
         <div class="popup-iframe text-center">
             <h5 class="mb-3">MoMo Payment</h5>
             <a :href="payURL" target="_blank" class="btn btn-primary">Open Payment</a>
@@ -43,15 +69,26 @@ const paymentMethod = ref('')
 const message = ref('')
 const payURL = ref('')
 const showPopUp = ref(false)
+const showAmountOptions = ref(false);
 function closePopup() {
     showPopUp.value = false
     payURL.value = ''
 }
-
+function submitAmount(selectedAmount) {
+    api.post(`/e-wallet/topup`, {
+        userId: -1,
+        amount: selectedAmount
+    }).then((res) => {
+        payURL.value = res.data.payUrl;
+        showPopUp.value = true;
+        showAmountOptions.value = false;
+    });
+}
 async function momoTopUp() {
     try {
         const response = await api.post(`/e-wallet/topup`, { userId: - 1, amount: topUpAmount.value })
-        payURL.value = response.data;
+        console.log(response.data.payUrl)
+        payURL.value = response.data.payUrl;
         showPopUp.value = true
     } catch (err) {
         console.error()
@@ -149,5 +186,61 @@ h3 {
     height: 500px;
     border: none;
     border-radius: 0.5rem;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px 25px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    transition: border 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+.button-holder {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004b9d;
 }
 </style>

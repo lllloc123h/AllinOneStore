@@ -39,7 +39,7 @@ public class HandleListSkuToFilter {
 		String[] signalSku = sku.split("-");
 		System.out.println(signalSku[0] + " " + signalSku[1]);
 		for (int i = 1; i < signalSku.length; i++) {
-			VariantValues var = variantValuesRepository.findBySignalSku(signalSku[i]);
+			VariantValues var = variantValuesRepository.findBySignalSku(signalSku[i].trim());
 			if (var != null) {
 				result[i - 1] = var.getDescription();
 			}

@@ -511,7 +511,7 @@ CREATE TABLE
 		wallet_id nvarchar(40) NOT NULL,
 		amount DECIMAL(18, 2) NOT NULL,
 		transaction_type NVARCHAR (50) CHECK (
-			transaction_type IN ('TOP_UP', 'PURCHASE', 'WITHDRAW', 'RECEIVE')
+			transaction_type IN ('TOP_UP', 'PURCHASE', 'WITHDRAW', 'RECEIVE', 'MOMOPAY')
 		),
 		order_id NVARCHAR(max) NOT NULL,
 		status NVARCHAR(max) NOT NULL,
