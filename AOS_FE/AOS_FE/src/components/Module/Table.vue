@@ -33,15 +33,28 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <button type="button" @click="goToView(item.id)" class="btn btn-info btn-sm action-btn"
-                  title="Xem chi tiết">
+                <button
+                  type="button"
+                  @click="goToView(item.id)"
+                  class="btn btn-info btn-sm action-btn"
+                  title="Xem chi tiết"
+                >
                   <i class="bi bi-eye"></i>
                 </button>
-                <button type="button" @click="goToEdit(item.id)" class="btn btn-warning btn-sm action-btn"
-                  title="Chỉnh sửa">
+                <button
+                  type="button"
+                  @click="goToEdit(item.id)"
+                  class="btn btn-warning btn-sm action-btn"
+                  title="Chỉnh sửa"
+                >
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button type="button" @click="deleteById(item.id)" class="btn btn-danger btn-sm action-btn" title="Xóa">
+                <button
+                  type="button"
+                  @click="deleteById(item.id)"
+                  class="btn btn-danger btn-sm action-btn"
+                  title="Xóa"
+                >
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -51,12 +64,16 @@
       </table>
     </div>
     <div v-if="!data.length && !loading && !error" class="text-muted"></div>
-    <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
+    <PageNavigative
+      :totalPage="totalPage"
+      v-model:currentPage="currentPage"
+      v-model:currentSize="currentSize"
+    >
     </PageNavigative>
   </div>
 </template>
 <style scoped>
-.pageselect>select#pageSize {
+.pageselect > select#pageSize {
   width: 50px;
 }
 
@@ -384,16 +401,15 @@ const prices = [
   "comboPrice",
 ];
 function formatCell(key, value) {
-
-
-  if (key.toLowerCase() === 'password') return
+  if (key.toLowerCase() === "password") return;
   if (key.toLowerCase().includes("gender")) {
     console.log("debug", key, value);
-    let genderRender = value === true
-      ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
+    let genderRender =
+      value === true
+        ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-male" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8" />
       </svg>`
-      : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
+        : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gender-female" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5" />
       </svg>`;
 
@@ -541,7 +557,16 @@ function formatCell(key, value) {
       value <= 0 ? "Hết hàng" : value <= 5 ? "Sắp hết" : value <= 20 ? "Ít" : "Đủ hàng";
 
     return `<span class="badge ${badgeClass} ${textClass}">${value} - ${statusText}</span>`;
-  } else if (typeof value === "string" && !isNaN(Date.parse(value))) {
+  } else if (
+    typeof value === "string" &&
+    !isNaN(Date.parse(value)) &&
+    (key.toLowerCase().includes("date") ||
+      key.toLowerCase().includes("time") ||
+      key.toLowerCase().includes("at") ||
+      /^\d{4}-\d{2}-\d{2}/.test(value) ||
+      /^\d{2}\/\d{2}\/\d{4}/.test(value))
+  ) {
+    // Chỉ format thành ngày tháng nếu field name chứa date/time/at hoặc value có format ngày tháng rõ ràng
     return dayjs(value).format("DD/MM/YYYY HH:mm:ss");
   } else if (prices.includes(key)) {
     return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
@@ -622,11 +647,14 @@ function formatCell(key, value) {
     return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;
   } else if (typeof value === "boolean") {
     return ` <span  class="boolean-indicator">
-        ${value ? `<i class="bi bi-check-circle-fill text-success fs-5"></i>` : `<i class="bi bi-x-circle-fill text-danger fs-5"></i>`}
+        ${
+          value
+            ? `<i class="bi bi-check-circle-fill text-success fs-5"></i>`
+            : `<i class="bi bi-x-circle-fill text-danger fs-5"></i>`
+        }
                
-              </span>`
+              </span>`;
   }
-
 
   return value;
 }
