@@ -22,4 +22,8 @@ public class UserProductEventsDTOS {
 	private String referrer;
 	private String accounts;
 	private int productItems;
+
+	private String gender;
+	private int birthday;
+
 }

@@ -237,23 +237,23 @@ const homeService = {
   getDiscountedProducts(limit = 8) {
     return api.get('/discounted-products', {
       params: { limit }
-    })
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Lỗi lấy sản phẩm giảm giá:', err);
-        throw err;
-      });  
+    }).data
+    // .then(res => res.data)
+    // .catch(err => {
+    //   console.error('Lỗi lấy sản phẩm giảm giá:', err);
+    //   throw err;
+    // });  
   },
   getProductsByCategory(categoryId, limit = 12) {
-  return api.get('/Product/ByCategory', {
-    params: { categoryId, limit }
-  })
-  .then(res => res.data)
-  .catch(err => {
-    console.error('Lỗi lấy sản phẩm theo danh mục:', err);
-    throw err;
-  });
-}
+    return api.get('/Product/ByCategory', {
+      params: { categoryId, limit }
+    }).data
+    // .then(res => res.data)
+    // .catch(err => {
+    //   console.error('Lỗi lấy sản phẩm theo danh mục:', err);
+    //   throw err;
+    // });
+  }
 
 };
 
