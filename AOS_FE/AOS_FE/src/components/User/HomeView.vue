@@ -31,6 +31,7 @@
       <!-- px-5 la container -->
       <!--start giảm giá -->
       <div class="row mt-4 g-4">
+        <h3>Sản phẩm đang giảm giá</h3>
   <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
     <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
       
