@@ -1,5 +1,5 @@
+import platform from "platform";
 import api, { authService } from "./api";
-import platform from 'platform';
 const deviceInfo = {
     name: platform.name,             // Browser name (e.g. Chrome)
     version: platform.version,       // Browser version

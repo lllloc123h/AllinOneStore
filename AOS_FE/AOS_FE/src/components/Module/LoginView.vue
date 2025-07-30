@@ -33,12 +33,26 @@
         <button type="submit" class="btn mt-3">Đăng Nhập</button>
       </form>
 
-      <a class="btn btn-facebook mt-3" href="http://localhost:8080/oauth2/authorization/facebook">
-        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" style="height: 30px" alt="Facebook" />
+      <a
+        class="btn btn-facebook mt-3"
+        href="http://localhost:8080/oauth2/authorization/facebook"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/733/733547.png"
+          style="height: 30px"
+          alt="Facebook"
+        />
         Đăng nhập bằng Facebook
       </a>
-      <a class="btn btn-google mt-3" href="http://localhost:8080/oauth2/authorization/google">
-        <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" style="height: 30px" alt="Google" />
+      <a
+        class="btn btn-google mt-3"
+        href="http://localhost:8080/oauth2/authorization/google"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
+          style="height: 30px"
+          alt="Google"
+        />
         Đăng nhập bằng Google
       </a>
 
@@ -52,19 +66,36 @@
         <button type="button" @click="sendOtp" class="btn mt-2">📨 Gửi mã OTP</button>
 
         <div v-if="otpSent" class="mt-3">
-          <input v-model="enteredOtp" class="form-control mt-2" placeholder="Nhập mã OTP" />
-          <button type="button" @click="verifyOtp" class="btn mt-2">✅ Xác minh OTP</button>
+          <input
+            v-model="enteredOtp"
+            class="form-control mt-2"
+            placeholder="Nhập mã OTP"
+          />
+          <button type="button" @click="verifyOtp" class="btn mt-2">
+            ✅ Xác minh OTP
+          </button>
         </div>
 
         <div v-if="otpVerified" class="mt-3">
-          <input v-model="newPassword" type="password" class="form-control mt-2" placeholder="Nhập mật khẩu mới" />
-          <button type="button" @click="resetPassword" class="btn mt-2">🔒 Đặt lại mật khẩu</button>
+          <input
+            v-model="newPassword"
+            type="password"
+            class="form-control mt-2"
+            placeholder="Nhập mật khẩu mới"
+          />
+          <button type="button" @click="resetPassword" class="btn mt-2">
+            🔒 Đặt lại mật khẩu
+          </button>
         </div>
       </div>
     </div>
 
     <div class="col-sm-6 benphai" style="padding: 0px">
-      <img style="width: 100%; padding: 0px" src="/src/assets/imgs/tải xuống.jpg" alt="" />
+      <img
+        style="width: 100%; padding: 0px"
+        src="/src/assets/imgs/tải xuống.jpg"
+        alt=""
+      />
     </div>
   </div>
 </template>
@@ -96,7 +127,6 @@ async function handleLogin() {
   try {
     await authService.login(formData.email, formData.password);
     await syncLocalCartToServer();
-    toast.success("Đăng nhập thành công");
   } catch (error) {
     toast.error("Đăng nhập thất bại");
   }
@@ -132,10 +162,9 @@ function verifyOtp() {
 
     const trimmedOtp = enteredOtp.value.trim();
     const payload = {
-  email: forgotEmail.value,
-  otpCode: trimmedOtp.toString(), 
-};
-
+      email: forgotEmail.value,
+      otpCode: trimmedOtp.toString(),
+    };
 
     console.log("📦 Payload gửi lên:", payload);
 
