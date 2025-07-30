@@ -156,8 +156,8 @@ const menuItems = [
     title: "Thống kê",
     children: [
       {
-        name: "Quản lý Promotions",
-        path: "/Admin/Promotions",
+        name: "Thống kê tổng quát",
+        path: "/Admin/products/general/stats",
       },
       {
         name: "Thống kê theo sản phẩm",

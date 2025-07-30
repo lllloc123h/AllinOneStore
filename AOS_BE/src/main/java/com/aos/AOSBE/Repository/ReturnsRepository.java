@@ -14,4 +14,6 @@ public interface ReturnsRepository extends JpaRepository<Returns, Integer>, JpaS
 	// Add custom query methods here if needed
     @Query("SELECT SUM(r.qty) FROM Returns r WHERE r.orderItems.productItems.id = ?1 and r.createdAt BETWEEN ?2 AND ?3")
     Integer findReturnsByProductItemIdAndCreateAtBetween(Integer productItemId, LocalDateTime startDate, LocalDateTime endDate);
+    @Query("SELECT SUM(r.refundAmount) FROM Returns r WHERE r.refundType = 'REFUND' AND r.status = 'COMPLETED' AND r.isReturnedMoney = true ")
+    Double findTotalRefundAmount();
 }

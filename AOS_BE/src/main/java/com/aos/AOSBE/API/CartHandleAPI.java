@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.aos.AOSBE.DTOS.CreateComboDTO;
+import com.aos.AOSBE.DTOS.CustomsDTOS;
 import com.aos.AOSBE.DTOS.UpdateComboDTO;
 import com.aos.AOSBE.Entity.Accounts;
+import com.aos.AOSBE.Entity.Customs;
 import com.aos.AOSBE.Entity.Promotions;
-import com.aos.AOSBE.Service.PromotionProductsService;
-import com.aos.AOSBE.Service.PromotionsService;
+import com.aos.AOSBE.Mapper.CustomsMapper;
+import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,8 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aos.AOSBE.DTOS.CartItemsDTOS;
 import com.aos.AOSBE.Entity.CartItems;
 import com.aos.AOSBE.Mapper.CartItemsMapper;
-import com.aos.AOSBE.Service.AccountsService;
-import com.aos.AOSBE.Service.CartItemsService;
 
 @RestController
 @RequestMapping("/api")
@@ -45,6 +46,10 @@ public class CartHandleAPI {
 	PromotionProductsService promotionProductsService;
 	@Autowired
 	PromotionsService promotionsService;
+	@Autowired
+	private CustomsService customsService;
+	@Autowired
+	private CustomsMapper customsMapper;
 
 	@PostMapping("/addToCart")
 	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
@@ -169,6 +174,29 @@ public class CartHandleAPI {
 			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
 	cartItemsService.deleteCombo(account, comboGroupId);
 			return ResponseEntity.ok(Map.of("message", "Combo deleted successfully"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+	@GetMapping("/customs/email")
+	public ResponseEntity<List<CustomsDTOS>> getCustomsByEmail() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		System.out.println(">> Email: " + email);
+		List<Customs> customsList = customsService.findCustomsByEmail(email);
+		List<CustomsDTOS> customsDTOSList = customsList.stream()
+				.map(customsMapper::mapper)
+				.collect(Collectors.toList());
+		System.out.println(">> Customs List: " + customsDTOSList);
+		return ResponseEntity.ok(customsDTOSList);
+	}
+	@PostMapping("/customs/save")
+	public ResponseEntity<?> addCustoms(@RequestBody CustomsDTOS entity) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
+			customsService.customsSave(customsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(Map.of("message", "Customs added successfully"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));

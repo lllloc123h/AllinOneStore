@@ -71,13 +71,18 @@ export default [
         name: 'OrderStatus',
         component: OrderStatus
     },
-
     {
-        path: '/Customizer',
-        name: 'Customizer',
-        component: () => import('../../components/User/CustomizerView.vue')
+        path: '/Customizer/create/:id',
+        name: 'CustomizerCreate',
+        component: () => import('../../components/User/CustomizerView.vue'),
+        props: route => ({ productItemId: route.params.id, action: 'create' })
     },
-
+    {
+        path: '/Customizer/update/:id',
+        name: 'CustomizerUpdate',
+        component: () => import('../../components/User/CustomizerView.vue'),
+        props: route => ({ customId: route.params.id, action: 'update' })
+    },
     {
         path: '/Crop',
         name: 'CropCrop',

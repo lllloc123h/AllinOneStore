@@ -20,13 +20,13 @@ public class ProductItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
     @Column(name = "id")
-    private int id;
+    private Integer id;
 	
     @Column(name = "cost")
-    private double cost;
+    private Double cost;
 	
     @Column(name = "price")
-    private double price;
+    private Double price;
 	
     @Column(name = "turn_buy")
     private int turnBuy;

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.DTOS.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -268,6 +269,15 @@ public class OrdersAPI {
 			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
 		}
 	}
+	@GetMapping("/admin/Orders/general-stats")
+	public ResponseEntity<?> getGeneralStats() {
+		try {
+			GeneralStatsDTO generalStats = ordersService.getGeneralStats();
+			return ResponseEntity.ok(generalStats);
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
+		}
+	}
 	@GetMapping("/user/Orders")
 	public ResponseEntity<?> getOrdersByCurrentUser() {
 		try {
@@ -282,7 +292,7 @@ public class OrdersAPI {
 				.stream()
 				.map(ordersMapper::mapperForOrderDetail)
 				.collect(Collectors.toList());
-			
+
 			return ResponseEntity.ok(orders);
 		} catch (Exception e) {
 			e.printStackTrace();

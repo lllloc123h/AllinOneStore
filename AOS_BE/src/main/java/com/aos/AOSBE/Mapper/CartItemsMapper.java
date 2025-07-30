@@ -2,6 +2,7 @@ package com.aos.AOSBE.Mapper;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
 import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Repository.ProductItemsRepository;
 import com.aos.AOSBE.Repository.VariantValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class CartItemsMapper {
 	@Autowired
 	private AccountsService accountsService;
 	@Autowired
-	private ProductItemsService productItemsService;
+	private ProductItemsRepository productItemsRepository;
 	@Autowired
 	private PromotionsService promotionsService;
 	@Autowired
@@ -47,7 +48,8 @@ public class CartItemsMapper {
 				entity.getComboGroup(),
 				entity.getComboQty(),
 				entity.getComboGroupId(),
-				entity.getIsGift());
+				entity.getIsGift(),
+				productItemsRepository.findById(entity.getProductItems().getId()).get().getBaseProducts().isCustom());
 	}
 
 	public CartItems mapperToObject(CartItemsDTOS entity) {
@@ -57,7 +59,7 @@ public class CartItemsMapper {
 				entity.getCreatedAt(),
 				entity.getUpdatedAt(),
 				accountsService.accountsFindByEmail(entity.getAccounts()).orElse(null),
-				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
+				productItemsRepository.findById(entity.getProductItems()).orElse(null),
 				entity.getPromotions(),
 				entity.getComboGroup(),
 				entity.getComboQty(),

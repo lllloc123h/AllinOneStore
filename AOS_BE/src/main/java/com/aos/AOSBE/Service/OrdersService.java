@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.aos.AOSBE.DTOS.GeneralStatsDTO;
+import com.aos.AOSBE.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +47,8 @@ public class OrdersService {
 	private PaymentMethodsRepository paymentMethodsRepository;
 	@Autowired
 	private ShippingMethodsRepository shippingMethodsRepository;
-
+	@Autowired
+	private ReturnsRepository returnsRepository;
 	private final String ghnToken = System.getProperty("GHN_TOKEN");
 	private final String ghnShopId = System.getProperty("GHN_SHOPID");
 
@@ -178,6 +181,32 @@ public class OrdersService {
 			e.printStackTrace();
 			throw new RuntimeException("Lỗi khi gọi GHN API: " + e.getMessage());
 		}
+	}
+
+	public GeneralStatsDTO getGeneralStats() {
+		GeneralStatsDTO stats = new GeneralStatsDTO();
+		stats.setGrossRevenue(ordersRepository.grossRevenue());
+		stats.setRawNetRevenue(ordersRepository.rawNetRevenue());
+		stats.setTotalCostForDiscount(ordersRepository.totalCostForDiscount());
+		Double raw = ordersRepository.rawNetRevenue();
+		Double totalCost = ordersRepository.totalCostForDiscount();
+
+		stats.setNetRevenue((raw == null ? 0.0 : raw) - (totalCost == null ? 0.0 : totalCost));
+		stats.setCountDeliveredOrders(ordersRepository.countDeliveredOrders());
+
+
+		stats.setCountReturnedOrders(ordersRepository.countReturnedOrders());
+		stats.setTotalOrderReturned(ordersRepository.totalOrderReturned());
+		stats.setTotalActualShippingFee(ordersRepository.totalActualShippingFee());
+		stats.setTotalEstimatedShippingFee(ordersRepository.totalEstimatedShippingFee());
+		stats.setTotalActualShippingFeeDelivered(ordersRepository.totalActualShippingFeeDelivered());
+		stats.setTotalReturnedAmount(returnsRepository.findTotalRefundAmount());
+
+		stats.setTotalEstimatedDiscountValue(ordersRepository.totalEstimatedDiscountValue());
+		stats.setTotalDiscountValueDilivered(ordersRepository.totalDiscountValueDelivered());
+
+		stats.setTotalCostProducts(ordersRepository.totalCostProducts());
+		return stats;
 	}
 	@Transactional
 	public List<Orders> ordersFindByAccount(int accountId) {

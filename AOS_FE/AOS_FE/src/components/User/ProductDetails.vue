@@ -21,20 +21,23 @@
               style="cursor: pointer; width: 100%; aspect-ratio: 1/1; object-fit: cover"
             />
           </div>
-          <div class="col-9 position-relative overflow-hidden rounded" style="padding: 0 32px;">
+          <div
+            class="col-9 position-relative overflow-hidden rounded"
+            style="padding: 0 32px"
+          >
             <img :src="currentImage" alt="main" class="img-fluid border rounded w-100" />
-            
+
             <button
               class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm"
               @click="prevImage"
-              style="z-index: 10; transform: translateY(-50%) translateX(-50%);"
+              style="z-index: 10; transform: translateY(-50%) translateX(-50%)"
             >
               ‹
             </button>
             <button
               class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm"
               @click="nextImage"
-              style="z-index: 10; transform: translateY(-50%) translateX(50%);"
+              style="z-index: 10; transform: translateY(-50%) translateX(50%)"
             >
               ›
             </button>
@@ -48,43 +51,60 @@
 
         <!-- Giá hiện tại và giảm giá -->
         <p class="fs-4 fw-bold">
-        <!-- Nếu có giảm giá thực sự -->
-        <template v-if="discountedPrice !== currentPrice">
-          <span class="text-danger">{{ formatPrice(discountedPrice) }}</span>
-          <del class="text-muted ms-2">{{ formatPrice(currentPrice) }}</del>
-          <small class="text-danger ms-2">-{{ promotion.promotions.discountPercent }}%</small>
-        </template>
+          <!-- Nếu có giảm giá thực sự -->
+          <template v-if="discountedPrice !== currentPrice">
+            <span class="text-danger">{{ formatPrice(discountedPrice) }}</span>
+            <del class="text-muted ms-2">{{ formatPrice(currentPrice) }}</del>
+            <small class="text-danger ms-2"
+              >-{{ promotion.promotions.discountPercent }}%</small
+            >
+          </template>
 
-        <!-- Nếu không có giảm giá (hoặc bằng nhau) -->
-        <template v-else>
-          <span class="text-dark">{{ formatPrice(currentPrice) }}</span>
-        </template>
+          <!-- Nếu không có giảm giá (hoặc bằng nhau) -->
+          <template v-else>
+            <span class="text-dark">{{ formatPrice(currentPrice) }}</span>
+          </template>
 
-        <small class="text-muted">| {{ averageRating }} ★ ({{ totalReviews }} đánh giá)</small>
+          <small class="text-muted"
+            >| {{ averageRating }} ★ ({{ totalReviews }} đánh giá)</small
+          >
         </p>
 
         <p class="text-muted mb-3">{{ product.material }}</p>
 
         <div class="mb-2" v-if="promotion && promotion.promotions">
           <span class="badge bg-danger">
-            KM: {{ promotion.promotions.name }} ({{ promotion.promotions.discountPercent }}%)
+            KM: {{ promotion.promotions.name }} ({{
+              promotion.promotions.discountPercent
+            }}%)
           </span>
           <div class="text-muted small">
-            Áp dụng từ {{ formatDate(promotion.promotions.startDate) }} đến {{ formatDate(promotion.promotions.endDate) }}
+            Áp dụng từ {{ formatDate(promotion.promotions.startDate) }} đến
+            {{ formatDate(promotion.promotions.endDate) }}
           </div>
         </div>
 
         <!-- Số lượng và nút -->
         <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <div class="d-flex align-items-center justify-content-center border rounded-pill"
-              style="height: 48px; min-width: 120px; max-width: 160px; padding: 0 8px;">
-            <button @click="decreaseQty"
-                    class="btn btn-sm border-0 px-2 py-1 fs-5"
-                    style="background-color: transparent;">−</button>
+          <div
+            class="d-flex align-items-center justify-content-center border rounded-pill"
+            style="height: 48px; min-width: 120px; max-width: 160px; padding: 0 8px"
+          >
+            <button
+              @click="decreaseQty"
+              class="btn btn-sm border-0 px-2 py-1 fs-5"
+              style="background-color: transparent"
+            >
+              −
+            </button>
             <span class="fw-medium fs-5 mx-2">{{ quantity }}</span>
-            <button @click="increaseQty"
-                    class="btn btn-sm border-0 px-2 py-1 fs-5"
-                    style="background-color: transparent;">+</button>
+            <button
+              @click="increaseQty"
+              class="btn btn-sm border-0 px-2 py-1 fs-5"
+              style="background-color: transparent"
+            >
+              +
+            </button>
           </div>
           <button @click="addToCart" class="flex-grow-1 text-white add-to-cart-btn">
             Thêm vào giỏ
@@ -92,7 +112,16 @@
         </div>
 
         <div class="mb-3">
-          <button class="w-100" style="background-color: #fdf3ed; color: #000; border: 1px solid #000; border-radius: 999px; padding: 14px 0;">
+          <button
+            class="w-100"
+            style="
+              background-color: #fdf3ed;
+              color: #000;
+              border: 1px solid #000;
+              border-radius: 999px;
+              padding: 14px 0;
+            "
+          >
             Mua ngay
           </button>
         </div>
@@ -108,33 +137,67 @@
     <div class="mt-5">
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <button class="nav-link" :class="{ active: activeTab === 'desc' }" @click="activeTab = 'desc'">Mô tả</button>
+          <button
+            class="nav-link"
+            :class="{ active: activeTab === 'desc' }"
+            @click="activeTab = 'desc'"
+          >
+            Mô tả
+          </button>
         </li>
         <li class="nav-item">
-          <button class="nav-link" :class="{ active: activeTab === 'review' }" @click="activeTab = 'review'">Đánh giá</button>
+          <button
+            class="nav-link"
+            :class="{ active: activeTab === 'review' }"
+            @click="activeTab = 'review'"
+          >
+            Đánh giá
+          </button>
         </li>
       </ul>
       <div class="tab-content border border-top-0 p-4 bg-light-subtle">
         <div v-show="activeTab === 'desc'">
           <h6 class="fw-bold">{{ product.name }}</h6>
           <p><strong>Chất liệu:</strong> {{ product.material }}</p>
-          <p><strong>Mô tả:</strong> {{ product.description || 'Chưa có mô tả' }}</p>
+          <p><strong>Mô tả:</strong> {{ product.description || "Chưa có mô tả" }}</p>
           <p><strong>Mã sản phẩm:</strong> {{ product.sku }}</p>
           <p><strong>Tồn kho:</strong> {{ product.qty }} sản phẩm</p>
           <p><strong>Lượt mua:</strong> {{ product.turnBuy }} lượt</p>
         </div>
 
         <div v-show="activeTab === 'review'">
-          <div v-for="review in reviews" :key="review.name" class="mb-3 p-3 border rounded bg-white">
+          <div
+            v-for="review in reviews"
+            :key="review.name"
+            class="mb-3 p-3 border rounded bg-white"
+          >
             <strong>{{ review.accountName }}</strong>
             <p class="text-muted small mb-1">{{ review.comment }}</p>
             <div class="review-images mt-2">
-              <img v-if="review.imageUrl1" :src="review.imageUrl1" alt="Ảnh 1" class="img-thumbnail me-2" width="100" />
-              <img v-if="review.imageUrl2" :src="review.imageUrl2" alt="Ảnh 2" class="img-thumbnail me-2" width="100" />
-              <img v-if="review.imageUrl3" :src="review.imageUrl3" alt="Ảnh 3" class="img-thumbnail me-2" width="100" />
+              <img
+                v-if="review.imageUrl1"
+                :src="review.imageUrl1"
+                alt="Ảnh 1"
+                class="img-thumbnail me-2"
+                width="100"
+              />
+              <img
+                v-if="review.imageUrl2"
+                :src="review.imageUrl2"
+                alt="Ảnh 2"
+                class="img-thumbnail me-2"
+                width="100"
+              />
+              <img
+                v-if="review.imageUrl3"
+                :src="review.imageUrl3"
+                alt="Ảnh 3"
+                class="img-thumbnail me-2"
+                width="100"
+              />
             </div>
             <div class="text-warning small">
-              <span v-for="i in 5" :key="i">{{ i <= review.rating ? '★' : '☆' }}</span>
+              <span v-for="i in 5" :key="i">{{ i <= review.rating ? "★" : "☆" }}</span>
             </div>
             <small class="text-muted">{{ formatTimeAgo(review.createdAt) }}</small>
           </div>
@@ -143,47 +206,68 @@
           <form @submit.prevent="submitReview" class="p-3 border rounded bg-white">
             <div class="mb-2">
               <label class="form-label">Hình ảnh (tùy chọn)</label>
-              <CloudinaryUploader :key="uploaderKey" @uploaded="handleImageUploaded"/>
+              <CloudinaryUploader :key="uploaderKey" @uploaded="handleImageUploaded" />
             </div>
             <div class="mb-2">
               <label class="form-label">Đánh giá</label>
-              <textarea class="form-control rounded" rows="3" v-model="newReview.text" required></textarea>
+              <textarea
+                class="form-control rounded"
+                rows="3"
+                v-model="newReview.text"
+                required
+              ></textarea>
             </div>
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center gap-1">
-                <span v-for="star in 5" :key="star" @click="newReview.rating = star" style="cursor: pointer;">
-                  <span :class="star <= newReview.rating ? 'text-warning' : 'text-secondary'">★</span>
+                <span
+                  v-for="star in 5"
+                  :key="star"
+                  @click="newReview.rating = star"
+                  style="cursor: pointer"
+                >
+                  <span
+                    :class="star <= newReview.rating ? 'text-warning' : 'text-secondary'"
+                    >★</span
+                  >
                 </span>
               </div>
-              <button type="submit" class="btn btn-dark rounded-pill">Đăng bình luận</button>
+              <button type="submit" class="btn btn-dark rounded-pill">
+                Đăng bình luận
+              </button>
             </div>
           </form>
-          <div class="d-flex justify-content-center align-items-center gap-2 mt-3" v-if="totalPages > 1">
-          <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="changePage(currentPage - 1)"
-            :disabled="currentPage === 0"
+          <div
+            class="d-flex justify-content-center align-items-center gap-2 mt-3"
+            v-if="totalPages > 1"
           >
-            ← Trước
-          </button>
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              @click="changePage(currentPage - 1)"
+              :disabled="currentPage === 0"
+            >
+              ← Trước
+            </button>
 
-          <button
-            v-for="page in totalPages"
-            :key="page"
-            @click="changePage(page - 1)"
-            :class="['btn btn-sm', page - 1 === currentPage ? 'btn-dark' : 'btn-outline-secondary']"
-          >
-            {{ page }}
-          </button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              @click="changePage(page - 1)"
+              :class="[
+                'btn btn-sm',
+                page - 1 === currentPage ? 'btn-dark' : 'btn-outline-secondary',
+              ]"
+            >
+              {{ page }}
+            </button>
 
-          <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="changePage(currentPage + 1)"
-            :disabled="currentPage === totalPages - 1"
-          >
-            Tiếp →
-          </button>
-        </div>
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              @click="changePage(currentPage + 1)"
+              :disabled="currentPage === totalPages - 1"
+            >
+              Tiếp →
+            </button>
+          </div>
           <!-- Danh sách đánh giá -->
         </div>
       </div>
@@ -191,30 +275,34 @@
   </div>
   <p v-else>Đang tải chi tiết sản phẩm...</p>
   <!-- Sản phẩm liên quan -->
-<div class="container mt-5" v-if="relatedItems.length > 0">
-  <h5 class="mb-3">Sản phẩm liên quan</h5>
-  <div class="row row-cols-2 row-cols-md-4 g-3">
-    <div class="col" v-for="item in relatedItems.slice(0, 4)" :key="item.id">
-      <div class="card h-100 shadow-sm related-card">
-        <img :src="item.imageUrl" class="card-img-top" alt="..." />
-        <div class="card-body p-2">
-          <h6 class="card-title text-truncate mb-1">{{ item.name }}</h6>
-          <p class="card-text text-danger fw-bold mb-2">{{ formatPrice(item.price) }}</p>
-          <router-link :to="`/product/${item.id}`" class="btn btn-outline-dark btn-sm w-100">
-            Xem chi tiết
-          </router-link>
+  <div class="container mt-5" v-if="relatedItems.length > 0">
+    <h5 class="mb-3">Sản phẩm liên quan</h5>
+    <div class="row row-cols-2 row-cols-md-4 g-3">
+      <div class="col" v-for="item in relatedItems.slice(0, 4)" :key="item.id">
+        <div class="card h-100 shadow-sm related-card">
+          <img :src="item.imageUrl" class="card-img-top" alt="..." />
+          <div class="card-body p-2">
+            <h6 class="card-title text-truncate mb-1">{{ item.name }}</h6>
+            <p class="card-text text-danger fw-bold mb-2">
+              {{ formatPrice(item.price) }}
+            </p>
+            <router-link
+              :to="`/product/${item.id}`"
+              class="btn btn-outline-dark btn-sm w-100"
+            >
+              Xem chi tiết
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import api from "../../Configs/api";
+import { onMounted, ref, computed, watch } from "vue";
+import { useRoute } from "vue-router";
+import api, { authService } from "../../Configs/api";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from "ant-design-vue";
 import CloudinaryUploader from "../Module/Cloudinary.vue";
@@ -227,13 +315,13 @@ const images = ref([]);
 const priceHistories = ref([]);
 const promotion = ref(null);
 
-const currentImage = ref('');
+const currentImage = ref("");
 const currentPrice = ref(0);
 const quantity = ref(1);
-const activeTab = ref('desc');
+const activeTab = ref("desc");
 
 const reviews = ref([]);
-const newReview = ref({ text: '', rating: 5 });
+const newReview = ref({ text: "", rating: 5 });
 
 const relatedItems = ref([]);
 
@@ -242,10 +330,11 @@ const pageSize = ref(5);
 const totalPages = ref(0);
 const uploaderKey = ref(Date.now());
 
-
 const discountedPrice = computed(() => {
   if (promotion.value?.promotions?.discountPercent) {
-    return Math.round(currentPrice.value * (1 - promotion.value.promotions.discountPercent / 100));
+    return Math.round(
+      currentPrice.value * (1 - promotion.value.promotions.discountPercent / 100)
+    );
   }
   return currentPrice.value;
 });
@@ -286,14 +375,16 @@ onMounted(async () => {
   await fetchTotalReviews();
 });
 
-
 // Gọi lại khi ID trên URL thay đổi
-watch(() => route.params.id, (newId) => {
-  productId.value = newId;
-  fetchProductData(newId);
-  fetchReviews();
-  fetchAverageRating();
-});
+watch(
+  () => route.params.id,
+  (newId) => {
+    productId.value = newId;
+    fetchProductData(newId);
+    fetchReviews();
+    fetchAverageRating();
+  }
+);
 
 function increaseQty() {
   quantity.value++;
@@ -308,7 +399,6 @@ async function submitReview() {
 
   try {
     await api.post("/admin/Reviews", {
-      
       productItems: product.value.id,
       rating: newReview.value.rating,
       comment: newReview.value.text,
@@ -318,9 +408,9 @@ async function submitReview() {
     notification.success({ message: "Gửi đánh giá thành công" });
 
     // Reset form
-    newReview.value.text = '';
+    newReview.value.text = "";
     newReview.value.rating = 5;
-    reviewImageUrl.value = '';
+    reviewImageUrl.value = "";
     uploaderKey.value = Date.now();
     await fetchReviews();
   } catch (err) {
@@ -329,14 +419,13 @@ async function submitReview() {
   }
 }
 
-
 function formatPrice(price) {
-  return price.toLocaleString('vi-VN') + '₫';
+  return price.toLocaleString("vi-VN") + "₫";
 }
 
 function formatDate(dateStr) {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('vi-VN');
+  return d.toLocaleDateString("vi-VN");
 }
 
 const itemCart = ref({
@@ -358,6 +447,7 @@ const addToCart = () => {
     qty: quantity.value,
     promotions: promotion.value?.promotions?.id || null,
   };
+  authService.updateCart(quantity.value);
 
   if (quantity.value <= product.value.qty) {
     finalHandleCartProgress(newCartItem);
@@ -389,8 +479,7 @@ const prevImage = () => {
 
 const nextImage = () => {
   if (images.value.length === 0) return;
-  currentImageIndex.value =
-    (currentImageIndex.value + 1) % images.value.length;
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
   currentImage.value = images.value[currentImageIndex.value].imageUrl;
 };
 function selectImage(idx) {
@@ -403,8 +492,8 @@ const fetchReviews = async () => {
     const res = await api.get(`/reviews/product/${product.value.id}`, {
       params: {
         page: currentPage.value,
-        size: pageSize.value
-      }
+        size: pageSize.value,
+      },
     });
 
     reviews.value = res.data.content || [];
@@ -413,7 +502,6 @@ const fetchReviews = async () => {
     console.error("Lỗi tải đánh giá:", err);
   }
 };
-
 
 const averageRating = ref(0);
 
@@ -437,7 +525,6 @@ const fetchTotalReviews = async () => {
   }
 };
 
-
 function formatTimeAgo(dateStr) {
   const now = new Date();
   const past = new Date(dateStr);
@@ -460,8 +547,7 @@ const changePage = async (page) => {
   await fetchReviews();
 };
 
-
-const reviewImageUrl = ref('');
+const reviewImageUrl = ref("");
 
 const handleImageUploaded = (url) => {
   reviewImageUrl.value = url;
@@ -469,9 +555,7 @@ const handleImageUploaded = (url) => {
 };
 
 const fileInputRef = ref(null);
-
 </script>
-
 
 <style scoped>
 .img-thumbnail.border-primary {
@@ -528,5 +612,4 @@ del {
   background-color: rgba(255, 255, 255, 1);
   cursor: pointer;
 }
-
 </style>

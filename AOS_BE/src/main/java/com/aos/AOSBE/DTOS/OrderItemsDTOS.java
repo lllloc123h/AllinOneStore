@@ -15,6 +15,7 @@ public class OrderItemsDTOS {
     private int id;
     private int qty;
     private double priceAtBuy;
+    private double costAtBuy;
     private boolean isGift;
     private double sellingPrice;
     private double total;

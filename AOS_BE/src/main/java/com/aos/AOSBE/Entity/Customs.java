@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.*;
-import java.math.*;
-import java.util.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,9 +20,9 @@ public class Customs {
 	
     @Column(name = "id")
     private int id;
-	
-    @Column(name = "account_id")
-    private int accountId;
+	@ManyToOne
+    @JoinColumn(name = "account_id")
+    private Accounts account;
 	
     @Column(name = "canvas_json")
     private String canvasJson;
