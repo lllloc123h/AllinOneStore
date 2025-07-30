@@ -97,7 +97,7 @@
       <div class="row mt-5 g-4">
         <div class="col text-center">
           <h1>Các danh mục nổi bật</h1>
-          <p>Top san pham cua nam ajfdlsfjlsdjlfjlsjfdljf</p>
+          <p>Top sản phẩm của năm</p>
         </div>
       </div>
       <!--end danh mục nổi bật -->
