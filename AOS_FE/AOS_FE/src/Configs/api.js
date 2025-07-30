@@ -227,22 +227,22 @@ const homeService = {
     return api.get('/homepage/bestsellers', {
       params: { limit }
     })
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Lỗi lấy sản phẩm bán chạy:', err);
-        throw err;
-      });
+    // .then(res => { res.data, console.log(res.data) })
+    // .catch(err => {
+    //   console.error('Lỗi lấy sản phẩm bán chạy:', err);
+    //   throw err;
+    // });
   },
 
   getDiscountedProducts(limit = 8) {
     return api.get('/discounted-products', {
       params: { limit }
     })
-      .then(res => res.data)
-      .catch(err => {
-        console.error('Lỗi lấy sản phẩm giảm giá:', err);
-        throw err;
-      });
+    // .then(res => { res.data, console.log(res.data) })
+    // .catch(err => {
+    //   console.error('Lỗi lấy sản phẩm giảm giá:', err);
+    //   throw err;
+    // });
   }
 };
 

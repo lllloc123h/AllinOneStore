@@ -31,66 +31,60 @@
       <!-- px-5 la container -->
       <!--start giảm giá -->
       <div class="row mt-4 g-4">
-  <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
-    <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
-      
-      <!-- Label Khuyến mãi -->
-      <div
-        class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
-        style="border-radius: 12px; font-size: 0.85rem; z-index: 10"
-      >
-        Khuyến mãi
-      </div>
+        <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
+          <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
 
-      <!-- Hình ảnh -->
-      <img
-        class="card-img rounded-4 custom-shadow"
-        style="height: 450px; object-fit: cover"
-        :src="product.imageUrl"
-        :alt="product.productName"
-      />
+            <!-- Label Khuyến mãi -->
+            <div class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
+              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+              Khuyến mãi
+            </div>
 
-      <!-- Nội dung -->
-      <div class="card-body">
-        <!-- Đánh giá giả lập -->
-        <div class="card-title">
-          <i class="bi bi-star-fill text-warning"></i>
-          <i class="bi bi-star-fill text-warning"></i>
-          <i class="bi bi-star-fill text-warning"></i>
-          <i class="bi bi-star-half text-warning"></i>
-          <i class="bi bi-star text-warning"></i>
-          <span>(3.5 reviews)</span>
-        </div>
+            <!-- Hình ảnh -->
+            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
+              :src="product.imageUrl" :alt="product.productName" />
 
-        <!-- Giá -->
-        <h5 class="card-text">
-          <del>{{ product.originalPrice.toLocaleString() }} VND</del>
-          {{ product.discountedPrice.toLocaleString() }} VND
-        </h5>
+            <!-- Nội dung -->
+            <div class="card-body">
+              <!-- Đánh giá giả lập -->
+              <div class="card-title">
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-half text-warning"></i>
+                <i class="bi bi-star text-warning"></i>
+                <span>(3.5 reviews)</span>
+              </div>
 
-        <!-- Tên sản phẩm -->
-        <p class="card-text">{{ product.productName }}</p>
+              <!-- Giá -->
+              <h5 class="card-text">
+                <del>{{ product.originalPrice.toLocaleString() }} VND</del>
+                {{ product.discountedPrice.toLocaleString() }} VND
+              </h5>
 
-        <!-- Hành động -->
-        <div class="d-flex justify-content-end">
-          <div class="main-section rounded-4">
-            <button class="first-button">Đang giảm</button>
-            <router-link :to="`/product/${product.productItemId}`" class="second-button">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-              </svg>
-              {{ product.discountValue.toLocaleString() }} VND tiết kiệm
-            </router-link>
+              <!-- Tên sản phẩm -->
+              <p class="card-text">{{ product.productName }}</p>
+
+              <!-- Hành động -->
+              <div class="d-flex justify-content-end">
+                <div class="main-section rounded-4">
+                  <button class="first-button">Đang giảm</button>
+                  <router-link :to="`/product/${product.productItemId}`" class="second-button">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="9" cy="21" r="1"></circle>
+                      <circle cx="20" cy="21" r="1"></circle>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    {{ product.discountValue.toLocaleString() }} VND tiết kiệm
+                  </router-link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-      
+
       <!--end giảm giá -->
       <!--start danh mục nổi bật -->
       <div class="row mt-5 g-4">
@@ -160,63 +154,108 @@
             </button>
           </p>
         </div>
-      </div>
 
+      </div>
       <!-- Sản phẩm bán chạy -->
       <div class="row mt-4 g-4">
-  <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
-    <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
-      
-      <!-- Label Khuyến mãi -->
-      <div class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
-        style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
-        Khuyến mãi
-      </div>
+        <div class="col-3" v-for="product in bestSellers" :key="product.id">
+          <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
+            <!-- Label Giảm giá -->
+            <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 m-3 shadow-sm"
+              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+              Giảm giá
+            </div>
+            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
+              :src="product.imageUrl" :alt="product.name" />
 
-      <!-- Hình ảnh -->
-      <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-        :src="product.imageUrl" :alt="product.productName" />
+            <!-- Nội dung -->
+            <div class="card-body">
+              <div class="card-title">
+                <i v-for="n in Math.floor(product.rating)" :key="n" class="bi bi-star-fill text-warning"></i>
+                <i v-if="product.rating % 1 >= 0.5" class="bi bi-star-half text-warning"></i>
+                <i v-for="n in 5 - Math.ceil(product.rating)" :key="'e' + n" class="bi bi-star text-warning"></i>
+                <span>({{ product.rating }} reviews)</span>
+              </div>
+            </div>
+            <h5 class="card-text">
+              <del>{{ product.price }} VND</del>
+              {{ product.cost }} VND
+            </h5>
 
-      <!-- Nội dung -->
-      <div class="card-body">
-        <!-- Đánh giá ảo tạm tính nếu backend chưa có -->
-        <div class="card-title">
-          <i class="bi bi-star-fill text-warning"></i>
-          <i class="bi bi-star-fill text-warning"></i>
-          <i class="bi bi-star-fill text-warning"></i>
-          <i class="bi bi-star text-warning"></i>
-          <i class="bi bi-star text-warning"></i>
-          <span>(3.0 reviews)</span>
-        </div>
+            <p class="card-text">{{ product.name }}</p>
 
-        <!-- Giá -->
-        <h5 class="card-text">
-          <del>{{ product.originalPrice.toLocaleString() }} VND</del>
-          {{ product.discountedPrice.toLocaleString() }} VND
-        </h5>
-
-        <!-- Tên sản phẩm -->
-        <p class="card-text">{{ product.productName }}</p>
-
-        <!-- Hành động -->
-        <div class="d-flex justify-content-end">
-          <div class="main-section rounded-4">
-            <button class="first-button">Đang giảm</button>
-            <router-link :to="`/product/${product.productItemId}`" class="second-button">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-              </svg>
-              Ưu đãi: {{ product.discountValue.toLocaleString() }} VND
-            </router-link>
+            <div class="d-flex justify-content-end">
+              <div class="main-section rounded-4">
+                <button class="first-button">Còn hàng</button>
+                <button class="second-button">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="#ffd300" stroke-width="2" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                  {{ product.turnBuy }} đã bán
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+      <!-- Sản phẩm bán chạy -->
+      <div class="row mt-4 g-4">
+        <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
+          <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
+
+            <!-- Label Khuyến mãi -->
+            <div class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
+              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+              Khuyến mãi
+            </div>
+
+            <!-- Hình ảnh -->
+            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
+              :src="product.imageUrl" :alt="product.productName" />
+
+            <!-- Nội dung -->
+            <div class="card-body">
+              <!-- Đánh giá ảo tạm tính nếu backend chưa có -->
+              <div class="card-title">
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star text-warning"></i>
+                <i class="bi bi-star text-warning"></i>
+                <span>(3.0 reviews)</span>
+              </div>
+
+              <!-- Giá -->
+              <h5 class="card-text">
+                <del>{{ product.originalPrice.toLocaleString() }} VND</del>
+                {{ product.discountedPrice.toLocaleString() }} VND
+              </h5>
+
+              <!-- Tên sản phẩm -->
+              <p class="card-text">{{ product.productName }}</p>
+
+              <!-- Hành động -->
+              <div class="d-flex justify-content-end">
+                <div class="main-section rounded-4">
+                  <button class="first-button">Đang giảm</button>
+                  <router-link :to="`/product/${product.productItemId}`" class="second-button">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="9" cy="21" r="1"></circle>
+                      <circle cx="20" cy="21" r="1"></circle>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Ưu đãi: {{ product.discountValue.toLocaleString() }} VND
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
     <!--start gioi thieu -->
@@ -393,8 +432,8 @@ const bestSellers = ref([]);
 // Gọi API khi component mount
 onMounted(async () => {
   try {
-    discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
-    bestSellers.value = await homeService.getBestSellers();              // ✅ gọi từ homeService
+    discountedProducts.value = (await homeService.getDiscountedProducts()).data; // ✅ gọi từ homeService
+    bestSellers.value = (await homeService.getBestSellers()).data;
   } catch (error) {
     console.error("Lỗi khi tải dữ liệu:", error);
   }
@@ -483,6 +522,7 @@ onMounted(async () => {
   justify-content: center;
   transition-duration: 0.6s;
 }
+
 .hstack h3 {
   font-weight: 700;
   font-size: 1.6rem;
