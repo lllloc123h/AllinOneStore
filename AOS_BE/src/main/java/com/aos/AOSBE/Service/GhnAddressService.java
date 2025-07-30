@@ -22,10 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class GhnAddressService {
 
-    @Value("${GHN_TOKEN}")
+    @Value("${GHN_TOKEN_AD}")
     private String ghnToken;
 
-    @Value("${GHN_SHOPID}")
+    @Value("${GHN_SHOPID_AD}")
     private String ghnShopId;
 
     private final RestTemplate restTemplate = new RestTemplate();
