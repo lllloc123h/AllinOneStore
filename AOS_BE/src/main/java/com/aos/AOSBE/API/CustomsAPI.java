@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.Service.AccountsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,8 @@ public class CustomsAPI {
 
 	@Autowired
 	private CustomsMapper customsMapper;
-
+	@Autowired
+	private AccountsService accountsService;
 	@GetMapping("/admin/Customs")
 	public ResponseEntity<?> getAllCustomsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -89,14 +91,6 @@ public class CustomsAPI {
 		customsService.customsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
-	@GetMapping("/customs/email")
-	public ResponseEntity<List<CustomsDTOS>> getCustomsByEmail() {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		List<Customs> customsList = customsService.findCustomsByEmail(email);
-		List<CustomsDTOS> customsDTOSList = customsList.stream()
-				.map(customsMapper::mapper)
-				.collect(Collectors.toList());
-		return ResponseEntity.ok(customsDTOSList);
-	}
+
 
 }

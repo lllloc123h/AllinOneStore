@@ -33,7 +33,7 @@ import java.util.Map;
     ChatMemory memory (){
         return  MessageWindowChatMemory.builder()
                 .chatMemoryRepository(jdbcChatMemoryRepository)
-                .maxMessages(25)
+                .maxMessages(15)
                 .build();
     }
     @Bean

@@ -6,7 +6,7 @@
         <div class="rounded" style="width: 600px; height: 700px">
           <canvas
             ref="canvasRef"
-            width="600"
+            width="560"
             height="700"
             class="w-100 rounded-2"
             style="display: block; border: 1px dashed #ccc"
@@ -52,7 +52,7 @@
                 type="button"
                 role="tab"
               >
-                Contact
+                Hành động
               </button>
             </li>
           </ul>
@@ -133,7 +133,6 @@
                   </select>
                 </label>
               </div>
-              <button class="btn border mt-2" @click="exportJSON">💾 Xuất JSON</button>
             </div>
 
             <!-- Tab: Vẽ -->
@@ -190,7 +189,10 @@
 
             <!-- Tab: Contact -->
             <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" tabindex="0">
+              <span>Tải ảnh lên: </span>
               <input type="file" @change="handleImageUpload" />
+              <br />
+              <input type="text" value="custom-1" />
               <br />
               <button class="btn border mt-2" @click="exportImage">Xuất ảnh</button>
               <br />
@@ -217,7 +219,25 @@
 import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { fabric } from "fabric";
 import komiImage from "../../assets/imgs/komi.jpg";
-
+import api from "../../Configs/api";
+const props = defineProps({
+  productItemId: {
+    type: Number, // For create mode
+  }, // For create mode
+  customId: {
+    type: Number, // For create mode
+  }, // For update mode
+  action: {
+    type: String, // For create mode
+  }, // 'create' or 'update'
+});
+if (props.action === "create") {
+  console.log("isCreateMode");
+} else if (props.action === "update") {
+  console.log("isUpdateMode");
+} else {
+  console.error("Invalid action prop:", props.action);
+}
 // Canvas
 const canvasRef = ref();
 let canvas;
@@ -319,23 +339,51 @@ function mode() {
 onMounted(() => {
   canvas = new fabric.Canvas(canvasRef.value);
   canvas.hoverCursor = "pointer";
-  fabric.Image.fromURL("/src/assets/imgs/ao_bomber_nu.webp", (img) => {
-    // Tính scale để không méo ảnh
-    const canvasW = canvas.getWidth();
-    const canvasH = canvas.getHeight();
-    const scale = Math.min(canvasW / img.width, canvasH / img.height);
-    img.scale(scale);
+  if (props.action === "create") {
+    api.get(`/ProductItems/detail/${props.productItemId}`).then((response) => {
+      const productItem = response.data;
+      console.log("productItem    ", productItem.images[0].imageUrl);
 
-    // Căn giữa ảnh trong canvas
-    img.set({
-      left: (canvasW - img.width * scale) / 2,
-      top: (canvasH - img.height * scale) / 2,
-      originX: "left",
-      originY: "top",
+      if (productItem) {
+        fabric.Image.fromURL(productItem.images[0].imageUrl, (img) => {
+          // Tính scale để không méo ảnh
+          const canvasW = canvas.getWidth();
+          const canvasH = canvas.getHeight();
+          const scale = Math.min(canvasW / img.width, canvasH / img.height);
+          img.scale(scale);
+
+          // Căn giữa ảnh trong canvas
+          img.set({
+            left: (canvasW - img.width * scale) / 2,
+            top: (canvasH - img.height * scale) / 2,
+            originX: "left",
+            originY: "top",
+          });
+
+          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+        });
+      }
     });
+  } else if (props.action === "update") {
+  }
 
-    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-  });
+  // fabric.Image.fromURL("/src/assets/imgs/ao_bomber_nu.webp", (img) => {
+  //   // Tính scale để không méo ảnh
+  //   const canvasW = canvas.getWidth();
+  //   const canvasH = canvas.getHeight();
+  //   const scale = Math.min(canvasW / img.width, canvasH / img.height);
+  //   img.scale(scale);
+
+  //   // Căn giữa ảnh trong canvas
+  //   img.set({
+  //     left: (canvasW - img.width * scale) / 2,
+  //     top: (canvasH - img.height * scale) / 2,
+  //     originX: "left",
+  //     originY: "top",
+  //   });
+
+  //   canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+  // });
   fabric.Object.prototype.set({
     transparentCorners: false,
     cornerColor: "blue",
@@ -538,13 +586,9 @@ function exportImage() {
 }
 function saveCanvas() {
   const json = canvas.toJSON();
-  localStorage.setItem("savedCanvas", JSON.stringify(json));
 }
 
 function loadCanvas() {
-  const saved = localStorage.getItem("savedCanvas");
-  if (!saved) return;
-
   canvas.loadFromJSON(JSON.parse(saved), () => {
     canvas.renderAll();
   });
@@ -714,11 +758,6 @@ function updateFormFromObject() {
   console.error("bold ", bold.value);
   console.error("bg ", bgColor.value);
   console.error("updateFormFromObject styles", styles);
-}
-
-// Xuất JSON
-function exportJSON() {
-  exportedJson.value = JSON.stringify(canvas.toJSON(), null, 2);
 }
 </script>
 

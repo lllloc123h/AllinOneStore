@@ -37,12 +37,15 @@ public class OpenAIService {
 				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId)).call().content();
 		return resp;
 	}
+
 	public String forecastChatBot(String message, String conversationId) {
 		ToolCallback[] foreTools = ToolCallbacks.from(aiTools);
 		String resp = this.chatClientForForecast.prompt().toolCallbacks(foreTools).user(message)
 				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId)).call().content();
 		return resp;
 	}
+
+
 
 
 //        sử dụng khi bấm nút muốn làm chức năng gì đó, chỉ gán vào 1 lần request này
