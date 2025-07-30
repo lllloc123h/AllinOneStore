@@ -263,12 +263,18 @@ async function confirmOrder() {
             address: defaultAddressData.value.id,
             discountCouponCode: selectedCoupon.value?.code || null,
             paymentMethodId: paymentMethod.value.id,
-            shippingMethodId: shippingMethod.value.id, // ✅ thêm dòng này
+            shippingMethodId: shippingMethod.value.id,
             products: selectedProducts.value.map(item => ({
-                productId: item.id,
-                productItemId: item.productItemId, // ✅ Thêm dòng này
-                quantity: item.quantity
+                productItemId: item.productItemId,
+                quantity: item.quantity,
+                isGift: item.isGift || false,
+                comboId: item.comboId || null,
+                comboQty: item.comboQty || null,
+                comboGroup: item.comboGroup || null,
+                comboGroupId: item.comboGroupId || null,
+                couponCode: item.couponCode || null
             })),
+
             finalTotal: finalPrice.value,
             note: '',
             orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`

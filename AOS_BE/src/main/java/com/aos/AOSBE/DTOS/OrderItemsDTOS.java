@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderItemsDTOS {
     private int id;
+    @JsonProperty("quantity")
     private int qty;
     private double priceAtBuy;
     private double costAtBuy;
