@@ -97,7 +97,6 @@
       <div class="row mt-5 g-4">
         <div class="col text-center">
           <h1>Các danh mục nổi bật</h1>
-          <p>Top san pham cua nam ajfdlsfjlsdjlfjlsjfdljf</p>
         </div>
       </div>
       <!--end danh mục nổi bật -->
@@ -221,22 +220,22 @@
 
     </div>
     <!--start gioi thieu -->
-    <section style="
+    <!-- <section style="
         background-color: #f1cdbd;
         padding: 8rem 2rem;
         margin-top: 100px;
         margin-bottom: 100px;
       ">
       <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center"> -->
           <!-- Bên trái -->
-          <div class="col-md-6 mb-4 mb-md-0">
+          <!-- <div class="col-md-6 mb-4 mb-md-0">
             <h2 class="fw-bold text-white mb-4">
               Hãy xem qua những điểm bán hàng độc đáo của chúng tôi
             </h2>
-            <p class="mb-0">
+            <p class="mb-0"> -->
               <!-- From Uiverse.io by alexmaracinaru -->
-              <button id="next">
+              <!-- <button id="next">
                 <span>Xem thêm</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 74 74" height="34" width="34">
                   <circle stroke-width="3" stroke="black" r="35.5" cy="37" cx="37"></circle>
@@ -246,10 +245,10 @@
                 </svg>
               </button>
             </p>
-          </div>
+          </div> -->
 
           <!-- Bên phải -->
-          <div class="col-md-6 text-white">
+          <!-- <div class="col-md-6 text-white">
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius
               enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros
@@ -275,7 +274,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
     <!--end gioi thieu -->
     <!-- thong tin -->
     <section style="padding: 8rem 2rem; margin-top: 100px; margin-bottom: 100px">
@@ -371,7 +370,7 @@
         </div>
       </div>
     </section>
-    <!-- thong tin -->
+    <!-- thong tin -->  
   </main>
 </template>
 <script setup>
