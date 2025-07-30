@@ -276,7 +276,6 @@ async function confirmOrder() {
         console.log('📦', payload);
         const response = await api.post('/user/Orders', { ...payload })
         console.log('✅ Đặt hàng thành công:', payload)
-        alert('Đặt hàng thành công!')
         console.log(response.data)
         localStorage.removeItem('selectedCoupon')
         showSuccess.value = true
