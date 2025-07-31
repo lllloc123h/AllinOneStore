@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -40,12 +41,6 @@ import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
-import com.aos.AOSBE.Service.AccountsService;
-import com.aos.AOSBE.Service.CartItemsService;
-import com.aos.AOSBE.Service.EWalletsService;
-import com.aos.AOSBE.Service.MessageService;
-import com.aos.AOSBE.Service.OrderItemsService;
-import com.aos.AOSBE.Service.OrdersService;
 
 @RestController
 @RequestMapping("/api")
@@ -74,6 +69,8 @@ public class OrdersAPI {
 	@Autowired
 	private MessageMapper messageMapper;
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
+    @Autowired
+    private ProductItemsService productItemsService;
 
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
@@ -127,6 +124,7 @@ public class OrdersAPI {
 
 	@PostMapping("/user/Orders")
 	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody OrdersDTOS entity) {
+		System.err.println("dữ liệu nhận vào " + entity);
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
@@ -141,14 +139,10 @@ public class OrdersAPI {
 			// Lưu đơn hàng trước
 
 			// Mapping các item
-			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
-				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
-				orderItem.setOrders(saved);
-				return orderItem;
-			}).collect(Collectors.toList());
+entity.getProducts().stream().forEach(product -> {
 
+});
 			// Lưu các item
-			orderItemsService.orderItemsSaveAll(orderItems);
 
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
@@ -286,13 +280,12 @@ public class OrdersAPI {
 			if (user == null) {
 				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
 			}
-
+			System.out.println("order " +ordersService.ordersFindByAccount(user.getId()));
 			List<OrdersDTOS> orders = ordersService
 				.ordersFindByAccount(user.getId())
 				.stream()
 				.map(ordersMapper::mapperForOrderDetail)
 				.collect(Collectors.toList());
-
 			return ResponseEntity.ok(orders);
 		} catch (Exception e) {
 			e.printStackTrace();
