@@ -418,7 +418,8 @@ const bestSellers = ref([]);
 onMounted(async () => {
   try {
     discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
-    bestSellers.value = await homeService.getBestSellers();              // ✅ gọi từ homeService
+    bestSellers.value = await homeService.getBestSellers();   // ✅ gọi từ homeService
+    console.log("danh sách sản phẩm giảm giá "+discountedProducts.value);           
   } catch (error) {
     console.error("Lỗi khi tải dữ liệu:", error);
   }

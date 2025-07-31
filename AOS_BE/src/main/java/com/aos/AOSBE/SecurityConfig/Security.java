@@ -46,7 +46,7 @@ public class Security {
 						"/api/Product/**", "/api/e-wallet/callback", "/api/openai/**", "/api/webhook/status",
 						"/api/Orders/detail/**", "/api/ProductItems/detail/**", "/api/Promotions/**",
 						"/api/reviews/product/**",
-
+						"api/discounted-products",
 						"/api/cart/**", "/api/shipping/**", "/api/UserProductEvents/**", "/api/ghn/**",
 						"/api/UserAddresses/**", "/forgot-password/**", "/api/forgot-password/**",
 						"/api/homepage/bestsellers/**", "/api/discounted-products/**"
