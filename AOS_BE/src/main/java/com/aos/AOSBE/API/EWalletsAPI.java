@@ -144,7 +144,7 @@ public class EWalletsAPI {
 				return ResponseEntity.badRequest().body(Map.of("message", "OTP expired or not found."));
 			}
 			long currentTime = System.currentTimeMillis();
-			if (currentTime - sentTime > 60_000) {
+			if (currentTime - sentTime > 300_000) {
 				session.removeAttribute("otp_" + userEmail);
 				session.removeAttribute("otp_time_" + userEmail);
 				return ResponseEntity.badRequest().body(Map.of("message", "OTP has expired."));

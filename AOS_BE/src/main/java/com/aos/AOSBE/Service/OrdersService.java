@@ -27,8 +27,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.aos.AOSBE.Entity.Coupons;
+import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.PaymentMethods;
+import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.ShippingMethods;
 import com.aos.AOSBE.Repository.CouponsRepository;
 import com.aos.AOSBE.Repository.OrdersRepository;
@@ -49,6 +51,12 @@ public class OrdersService {
 	private ShippingMethodsRepository shippingMethodsRepository;
 	@Autowired
 	private ReturnsRepository returnsRepository;
+	@Autowired
+	private ProductItemsRepository productItemsRepository;
+
+	@Autowired
+	private OrderItemsRepository orderItemsRepository; // nếu cần
+
 	private final String ghnToken = System.getProperty("GHN_TOKEN");
 	private final String ghnShopId = System.getProperty("GHN_SHOPID");
 
@@ -110,12 +118,45 @@ public class OrdersService {
 					throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
 				}
 			}
+			// Lưu đơn hàng trước để có ID (vì OrderItems cần `orders`)
+	        Orders savedOrder = ordersRepository.save(orders);
 
-			return ordersRepository.save(orders);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+	        // Kiểm tra và xử lý từng OrderItem
+	        if (orders.getOrderItems() != null && !orders.getOrderItems().isEmpty()) {
+	            for (OrderItems item : orders.getOrderItems()) {
+	                // Gắn đơn hàng cho từng item
+	                item.setOrders(savedOrder);
+
+	                // Lấy productItem để cập nhật tồn kho
+	                ProductItems productItem = item.getProductItems();
+
+	                if (productItem == null) {
+	                    throw new IllegalArgumentException("Không tìm thấy sản phẩm cho đơn hàng.");
+	                }
+
+	                int orderedQty = item.getQty();
+	                int currentStock = productItem.getQty();
+
+	                if (orderedQty > currentStock) {
+	                    throw new IllegalStateException("Sản phẩm " + productItem.getId() + " không đủ tồn kho.");
+	                }
+
+	                productItem.setQty(currentStock - orderedQty);
+
+	                // Lưu lại cập nhật tồn kho
+	                productItemsRepository.save(productItem);
+	            }
+
+	            // Lưu tất cả order items
+	            orderItemsRepository.saveAll(orders.getOrderItems());
+	        }
+
+	        return savedOrder;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
 	}
 
 	public List<Orders> ordersFindByAccountAndKeyShippingStatus(int account, String key) {

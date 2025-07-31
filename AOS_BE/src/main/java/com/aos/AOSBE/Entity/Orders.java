@@ -81,4 +81,8 @@ public class Orders {
 
     @Transient
     private Integer shippingMethodId;
+    
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItems> orderItems;
+
 }

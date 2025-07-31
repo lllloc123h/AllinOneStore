@@ -86,8 +86,8 @@
     <div class="password-wrapper">
       <input :type="showPasswordCurrent ? 'text' : 'password'" v-model="user.CurrentPassword" />
       <button type="button" class="toggle-password" @click="togglePasswordCurrent">
-        <span v-if="showPasswordCurrent">🙈</span>
-        <span v-else>👁️</span>
+        <span v-if="showPasswordCurrent"><i class="fa-solid fa-eye-slash"></i></span>
+        <span v-else><i class="fa-solid fa-eye"></i></span>
       </button>
     </div>
   </div>
@@ -97,8 +97,8 @@
     <div class="password-wrapper">
       <input :type="showPasswordNew ? 'text' : 'password'" v-model="user.NewPassword" />
       <button type="button" class="toggle-password" @click="togglePasswordNew">
-        <span v-if="showPasswordNew">🙈</span>
-        <span v-else>👁️</span>
+        <span v-if="showPasswordNew"><i class="fa-solid fa-eye-slash"></i></span>
+        <span v-else><i class="fa-solid fa-eye"></i></span>
       </button>
     </div>
   </div>
@@ -108,8 +108,8 @@
     <div class="password-wrapper">
       <input :type="showPasswordConfirm ? 'text' : 'password'" v-model="user.ConfirmPassword" />
       <button type="button" class="toggle-password" @click="togglePasswordConfirm">
-        <span v-if="showPasswordConfirm">🙈</span>
-        <span v-else>👁️</span>
+        <span v-if="showPasswordConfirm"><i class="fa-solid fa-eye-slash"></i></span>
+        <span v-else><i class="fa-solid fa-eye"></i></span>
       </button>
     </div>
   </div>
@@ -150,6 +150,7 @@ const user = ref({
 const showPopupTaiKhoan = ref(false)
 const showPopupDoiMatKhau = ref(false)
 
+
 // 🧭 Các nút điều hướng
 const openPopupTaiKhoan = () => { showPopupTaiKhoan.value = true }
 const openPopupDoiMatKhau = () => { showPopupDoiMatKhau.value = true }
@@ -158,6 +159,7 @@ const openPopupDiaChi = () => { router.push({ name: "shippingaddress" }) }
 const redirectOrder = () => { router.push({ name: "user-orders" }) }
 const showPasswordNew = ref(false)
 const showPasswordConfirm = ref(false)
+const showPasswordCurrent = ref(false)
 
 const togglePasswordNew = () => {
   showPasswordNew.value = !showPasswordNew.value
@@ -165,6 +167,9 @@ const togglePasswordNew = () => {
 
 const togglePasswordConfirm = () => {
   showPasswordConfirm.value = !showPasswordConfirm.value
+}
+const togglePasswordCurrent = () => {
+  showPasswordCurrent.value = !showPasswordCurrent.value
 }
 
 // ✅ Lấy thông tin người dùng từ API qua authService

@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class MOMOPAYRequestDTO {
-	private int OrderId;
+	private int orderId;
 	private BigDecimal finalToTal;
 }

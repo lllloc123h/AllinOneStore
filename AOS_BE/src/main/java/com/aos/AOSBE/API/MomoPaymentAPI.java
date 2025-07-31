@@ -70,7 +70,7 @@ public class MomoPaymentAPI {
 
 		String orderId = "TOPUP" + System.currentTimeMillis();
 		String requestId = UUID.randomUUID().toString();
-		String returnUrl = "http://localhost:5173/AllinOneStore/momo/return";
+		String returnUrl = "http://localhost:5173/momo/return";
 		String notifyUrl = domain + "/api/e-wallet/callback";
 		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
 		transaction.setEWallets(eWallets.getId());
@@ -130,13 +130,14 @@ public class MomoPaymentAPI {
 		String secretKey = System.getProperty("MOMO_SECRECT_KEY");
 
 		String requestId = UUID.randomUUID().toString();
-		String returnUrl = "http://localhost:5173/AllinOneStore/momo/return";
+		String returnUrl = "http://localhost:5173/momo/return";
 		String notifyUrl = domain + "/api/e-wallet/callback";
 		Orders order = ordersService.ordersFindById(dto.getOrderId()).orElse(null);
-		if (order == null) {
+		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
+		if (order == null || eWallets == null) {
 			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra: Không tìm thấy Order"));
 		}
-		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
+
 		order.setPaymentStatus("PENDING");
 		Orders updated = ordersService.ordersSave(order);
 		transaction.setEWallets(eWallets.getId());
@@ -145,11 +146,14 @@ public class MomoPaymentAPI {
 		transaction.setRelatedWalletId(user.getId());
 		transaction.setOrderId("" + dto.getOrderId());
 		transaction.setStatus("PENDING");
-
+		String total = dto.getFinalToTal().toString();
+		if (total.endsWith("0")) {
+			total = total.substring(0, total.length() - 1);
+		}
 		// Create payment data
 		Map<String, String> rawData = new LinkedHashMap<>();
 		rawData.put("accessKey", accessKey);
-		rawData.put("amount", dto.getFinalToTal().toString());
+		rawData.put("amount", total);
 		rawData.put("extraData", "");
 		rawData.put("ipnUrl", notifyUrl);
 		rawData.put("orderId", dto.getOrderId() + "");

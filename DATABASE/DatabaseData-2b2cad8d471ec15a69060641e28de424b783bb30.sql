@@ -134,6 +134,7 @@
 --    5,
 --    350
 --  );
+select * from accounts
 INSERT INTO accounts (
     email,
     password,
@@ -2776,6 +2777,7 @@ BEGIN
       product_item_id,
       qty,
       price_at_buy,
+	  cost_at_buy,
       selling_price,
       coupon_code,
       created_at,
@@ -2786,6 +2788,7 @@ BEGIN
       @pid,
       1 + ABS(CHECKSUM(NEWID()) % 5),  -- qty từ 1-5
       (SELECT price FROM product_items WHERE id = @pid),
+      (SELECT cost FROM product_items WHERE id = @pid),
       (SELECT price FROM product_items WHERE id = @pid),
       NULL,
       GETDATE(),

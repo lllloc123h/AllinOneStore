@@ -52,14 +52,8 @@
                   {{ formatCurrency(wallet.balance || 0) }}
                 </div>
                 <div class="stat-status">
-                  <span
-                    class="badge"
-                    :class="wallet.active === true ? 'status-active' : 'status-pending'"
-                  >
-                    <i
-                      class="bi"
-                      :class="wallet.active === true ? 'bi-check-circle' : 'bi-clock'"
-                    ></i>
+                  <span class="badge" :class="wallet.active === true ? 'status-active' : 'status-pending'">
+                    <i class="bi" :class="wallet.active === true ? 'bi-check-circle' : 'bi-clock'"></i>
                     {{ wallet.active === true ? "Đã xác minh" : "Chờ xác minh" }}
                   </span>
                 </div>
@@ -130,18 +124,10 @@
                     <div class="info-item">
                       <label class="info-label">Trạng thái</label>
                       <div class="info-value">
-                        <span
-                          class="badge"
-                          :class="
-                            wallet.active === true ? 'status-active' : 'status-pending'
-                          "
-                        >
-                          <i
-                            class="bi"
-                            :class="
-                              wallet.active === true ? 'bi-check-circle' : 'bi-clock'
-                            "
-                          ></i>
+                        <span class="badge" :class="wallet.active === true ? 'status-active' : 'status-pending'
+                          ">
+                          <i class="bi" :class="wallet.active === true ? 'bi-check-circle' : 'bi-clock'
+                            "></i>
                           {{
                             wallet.active === true ? "Đang hoạt động" : "Chưa xác minh"
                           }}
@@ -177,21 +163,13 @@
               </div>
               <div class="detail-body">
                 <div class="transaction-list">
-                  <div
-                    class="transaction-item"
-                    v-for="(txn, index) in recentTransactions"
-                    :key="index"
-                  >
+                  <div class="transaction-item" v-for="(txn, index) in recentTransactions" :key="index">
                     <div class="transaction-info">
                       <div class="transaction-description">{{ txn.description }}</div>
                       <div class="transaction-date">{{ formatDate(txn.date) }}</div>
                       <div class="transaction-status">
-                        <span
-                          class="badge"
-                          :class="
-                            txn.status === 'PENDING' ? 'status-pending' : 'status-success'
-                          "
-                        >
+                        <span class="badge" :class="txn.status === 'PENDING' ? 'status-pending' : 'status-success'
+                          ">
                           {{
                             txn.status === "PENDING"
                               ? "Giao dịch quá hạn"
@@ -201,9 +179,7 @@
                       </div>
                     </div>
                     <div class="transaction-amount">
-                      <span
-                        :class="txn.amount > 0 ? 'amount-positive' : 'amount-negative'"
-                      >
+                      <span :class="txn.amount > 0 ? 'amount-positive' : 'amount-negative'">
                         {{ formatCurrency(txn.amount) }}
                       </span>
                     </div>
@@ -255,15 +231,8 @@
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">ID ví (tùy chọn)</label>
-            <input
-              type="text"
-              v-model="formDataWallet.id"
-              class="form-control"
-              placeholder="Nhập ID ví..."
-            />
-            <small class="form-text"
-              >Chỉ chứa chữ cái, số, dấu gạch ngang hoặc gạch dưới</small
-            >
+            <input type="text" v-model="formDataWallet.id" class="form-control" placeholder="Nhập ID ví..." />
+            <small class="form-text">Chỉ chứa chữ cái, số, dấu gạch ngang hoặc gạch dưới</small>
           </div>
           <div class="confirmation-text">
             <p>Bạn có chắc chắn muốn tạo ví mới?</p>
@@ -301,13 +270,8 @@
           </div>
           <div class="form-group">
             <label class="form-label">Mã xác minh</label>
-            <input
-              type="text"
-              v-model="verifyCode"
-              class="form-control otp-input"
-              placeholder="Nhập mã 6 số..."
-              maxlength="6"
-            />
+            <input type="text" v-model="verifyCode" class="form-control otp-input" placeholder="Nhập mã 6 số..."
+              maxlength="6" />
           </div>
         </div>
         <div class="modal-footer">
@@ -445,11 +409,11 @@ async function fetchInfor() {
     showVerifyModal.value = !response.data.active;
     const transactions = transactionResponse.data;
     totalTopup.value = transactions
-      .filter((txn) => txn.transactionType === "TOP_UP")
+      .filter((txn) => txn.transactionType === "TOP_UP" && txn.status === "SUCCESS")
       .reduce((sum, txn) => sum + txn.amount, 0);
     topupUpdated.value = formatDate(new Date());
     totalSpent.value = transactions
-      .filter((txn) => txn.transactionType === "SPENT")
+      .filter((txn) => txn.transactionType === "MOMOPAY")
       .reduce((sum, txn) => sum + txn.amount, 0);
     spentUpdated.value = formatDate(new Date());
 

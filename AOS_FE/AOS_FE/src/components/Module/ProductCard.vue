@@ -25,6 +25,7 @@
           <h5 class="card-text"> <!--<del>450 000 VND</del>  -->{{ props.product.price }}</h5>
 
           <p class="card-text">{{ props.product.name }}</p>
+          <p class="card-text">{{ props.product.descriptionOfSku }}</p>
 
           <div class="d-flex justify-content-end">
             <!-- From Uiverse.io by AKAspidey01 -->

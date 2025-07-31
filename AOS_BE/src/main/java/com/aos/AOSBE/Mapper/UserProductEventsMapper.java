@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.aos.AOSBE.DTOS.UserProductEventsDTOS;
 import com.aos.AOSBE.Entity.UserProductEvents;
+import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.ProductItemsService;
 
@@ -13,13 +14,17 @@ public class UserProductEventsMapper {
 	@Autowired
 	private AccountsService accountsService;
 	@Autowired
+	private AccountsRepository accountsRepository;
+	@Autowired
 	private ProductItemsService productItemsService;
 
 	public UserProductEventsDTOS mapper(UserProductEvents entity) {
+
 		return new UserProductEventsDTOS(entity.getId(), entity.getEventType(), entity.getEventTime(),
 				entity.getSessionId(), entity.getDevice(), entity.getIpAddress(), entity.getUserAgent(),
 				entity.getPositionInList(), entity.getTimeSpentSeconds(), entity.getReferrer(),
-				entity.getAccounts().getEmail(), entity.getProductItems().getId());
+				entity.getAccounts().getEmail(), entity.getProductItems().getId(),
+				entity.getAccounts().isGender() ? "Male" : "Female", entity.getAccounts().getBirthday().getYear());
 	}
 
 	public UserProductEvents mapperToObject(UserProductEventsDTOS entity) {

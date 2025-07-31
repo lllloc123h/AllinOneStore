@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
 import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.DTOS.PriceHistoriesDTOS;
 import com.aos.AOSBE.DTOS.ProductImagesDTOS;
@@ -46,6 +47,8 @@ public class ProductItemsAPI {
 	@Autowired
 	private ProductItemsService productItemsService;
 
+	@Autowired
+	private HandleListSkuToFilter handleListSkuToFilter;
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
 
@@ -182,6 +185,7 @@ public class ProductItemsAPI {
 				item.setProductItemId((int) e[1]);
 				item.setName((String) e[2]);
 				item.setMaterial((String) e[3]);
+				item.setDescriptionOfSku(handleListSkuToFilter.getDescriptionOfSku((String) e[8]));
 				item.setCategoryId((int) e[4]);
 				item.setMainImage((String) e[5]);
 				item.setCustom((boolean) e[6]);
