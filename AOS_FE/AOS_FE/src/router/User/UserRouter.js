@@ -6,6 +6,7 @@ import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
 import OrderStatus from '../../components/User/OrderStatus.vue'
 import ImageUpload from '../../components/Module/ImageUpload.vue'
+import uploadProducts from '../../components/Module/upload-products.vue'
 export default [
     {
         path: '',
@@ -21,6 +22,16 @@ export default [
         path: 'uploads',
         name: 'uploads',
         component: ImageUpload,
+    },
+    {
+        path: 'upload1',
+        name: 'upload1',
+        component: uploadProducts,
+    },
+     {
+        path: 'upload2',
+        name: 'upload2',
+        component: () => import('../../components/Module/upload-single-img-video.vue'),
     },
     {
         path: 'products',
@@ -82,11 +93,6 @@ export default [
         name: 'CustomizerUpdate',
         component: () => import('../../components/User/CustomizerView.vue'),
         props: route => ({ customId: route.params.id, action: 'update' })
-    },
-    {
-        path: '/Crop',
-        name: 'CropCrop',
-        component: () => import('../../components/User/CropImage.vue')
     },
     {
         path: '/Checkoutpage',
