@@ -103,9 +103,9 @@ ALTER TRIGGER trgg_auto_insert_history_cost_and_price
             PRINT N'Đã thêm lịch sử thay đổi giá';
         END
     END
-UPDATE orders
-SET order_code = 'L3BXXN'
-WHERE id = 2;
+	--UPDATE orders
+	--SET order_code = 'L3BXXN'
+	--WHERE id = 2;
 
 /**CREATE TRIGGER trg_update_user_address
 ON user_addresses

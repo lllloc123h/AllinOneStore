@@ -447,6 +447,7 @@ VALUES
     1,
     N'Giao hàng vào giờ ăn trưa'
   );
+  select * from catalogs
 
 INSERT INTO
   catalogs (name)
