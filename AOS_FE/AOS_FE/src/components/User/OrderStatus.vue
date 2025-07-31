@@ -126,6 +126,7 @@ const loadOrder = async () => {
   try {
     const res = await api.get(`/Orders/detail/${maDon}`)
     const orderData = res.data;
+    const [tenKH, sdtKH, diaChiKH] = orderData.order.orderInfor?.split(' - ') || [];
 
     order.value = {
       maDon: orderData.order.id,
@@ -135,10 +136,11 @@ const loadOrder = async () => {
       tongTien: orderData.order.finalTotal,
 
       khachHang: {
-        ten: orderData.account?.fullname || 'N/A',
-        diaChi: orderData.orderInfor?.address || 'N/A',
-        sdt: orderData.account?.phone || 'N/A'
+        ten: tenKH || 'N/A',
+        sdt: sdtKH || 'N/A',
+        diaChi: diaChiKH || 'N/A'
       },
+
       vanChuyen: {
         ten: orderData.order.shippingMethods?.name || 'N/A',
         maVanDon: orderData.order.orderCode || 'Đang cập nhật'
@@ -150,7 +152,7 @@ const loadOrder = async () => {
       sanPham: orderData.items.map(i => ({
         anh: i.main_image_url || 'no-image.png',
         ten: i.name,
-        soLuong: i.qty,
+        soLuong: i.quantity,
         gia: i.price
       })),
       lichSu: [

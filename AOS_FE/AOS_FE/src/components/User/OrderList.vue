@@ -76,7 +76,7 @@ const loadOrders = async () => {
     sanPham: (order.products || []).map(i => ({
       anh: i.main_image_url || 'no-image.png',
       ten: i.name,
-      soLuong: i.qty,
+      soLuong: i.quantity,
       gia: i.price
     }))
   }))
