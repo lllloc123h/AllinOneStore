@@ -22,7 +22,7 @@
               <i :class="i <= props.product.rating ? 'bi bi-star-fill text-warning' : 'bi bi-star text-warning'"></i>
             </span>
           </div>
-          <h5 class="card-text"> <!--<del>450 000 VND</del>  -->{{ props.product.price }}</h5>
+          <h5 class="card-text"> <!--<del>450 000 VND</del>  -->{{ displayPrice }}</h5>
 
           <p class="card-text">{{ props.product.name }}</p>
           <p class="card-text">{{ props.product.descriptionOfSku }}</p>
@@ -59,6 +59,7 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
 const props = defineProps({
@@ -66,7 +67,28 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const listPrice = ref([]);
+const displayPrice = ref([]);
 
+onMounted(() => {
+  listPrice.value = props.product.listPrice;
+  const sortedPrices = Array.from(
+    new Set(
+      String(listPrice.value)      // Ensure it's a string
+        .split(",")                // Split to array
+        .map(str => Number(str.trim())) // Convert to numbers
+        .filter(n => !isNaN(n))    // Remove invalid numbers
+    )
+  ).sort((a, b) => a - b);
+
+  // listPrice.value = listStringPriceToNumber.split(",").stringList.map(Number).sort((a, b) => a - b)
+
+  displayPrice.value =
+    sortedPrices.length > 1
+      ? `${sortedPrices[0]}₫ - ${sortedPrices[sortedPrices.length - 1]}₫`
+      : `${sortedPrices[0]}₫`;
+
+});
 function goToDetailPage(productId) {
   let payLoad = {
     id: '',

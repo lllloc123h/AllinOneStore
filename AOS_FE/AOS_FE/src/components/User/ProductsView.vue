@@ -295,27 +295,24 @@ const fetchData = async () => {
     skuColorLike.value = selected.value["Màu sắc"].join("-");
     skuSizeLike.value = selected.value["Kích thước"].join("-");
     categoriesFilter.value = '';
-    console.log(selectedCatalogCategory.value)
     for (const groupName in selectedCatalogCategory.value) {
       if (selectedCatalogCategory.value[groupName].length > 0) {
         categoriesFilter.value = categoriesFilter.value + (categoriesFilter.value.length <= 0 ? '' : '-') + selectedCatalogCategory.value[groupName].join("-")
       }
     }
-    console.log(categoriesFilter.value)
     if (selectedPrice.value.includes("-")) {
       const [min, max] = selectedPrice.value.split("-").map((p) => p.trim());
       minPriceReq.value = min + "000";
       maxPriceReq.value = max + "000";
     } else if (selectedPrice.value.startsWith(">")) {
       maxPriceReq.value = 10000000000;
-      minPriceReq.value =  selectedPrice.value.replace(">", "").trim() + "000";
-      console.log("max "+ maxPriceReq.value);
-      console.log("min "+ minPriceReq.value);
+      minPriceReq.value = selectedPrice.value.replace(">", "").trim() + "000";
     }
     // console.log(minPriceReq.value, maxPriceReq.value)
     const response = await axios.get(
       `http://localhost:8080/api/Product/MultiplrFilter?page=${pageIndex.value}&size=${pageSize.value}&skuColorLikeReq=${skuColorLike.value}&skuSizeLikeReq=${skuSizeLike.value}&minPriceReq=${minPriceReq.value}&maxPriceReq=${maxPriceReq.value}&categories=${categoriesFilter.value}&keyWord=${keyWord.value}`
     );
+    console.log(response.data)
     data.value = response.data.totalPages;
     products.value = response.data.content;
     const rawProducts = response.data.content;

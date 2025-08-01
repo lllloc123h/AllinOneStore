@@ -22,4 +22,5 @@ public class filterAdvanceDTOS {
 	private int qty;
 	private double price;
 	private int safetyStock;
+	private String listPrice;
 }

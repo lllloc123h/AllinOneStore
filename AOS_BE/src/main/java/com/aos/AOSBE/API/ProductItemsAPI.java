@@ -182,20 +182,20 @@ public class ProductItemsAPI {
 			pageResult.getContent().forEach(e -> {
 				filterAdvanceDTOS item = new filterAdvanceDTOS();
 				item.setId((int) e[0]);
-				item.setProductItemId((int) e[1]);
-				item.setName((String) e[2]);
-				item.setMaterial((String) e[3]);
-				item.setDescriptionOfSku(handleListSkuToFilter.getDescriptionOfSku((String) e[8]));
-				item.setCategoryId((int) e[4]);
-				item.setMainImage((String) e[5]);
-				item.setCustom((boolean) e[6]);
-				item.setTurnBuy((int) e[7]);
-				item.setSku((String) e[8]);
-				item.setRating((int) e[9]);
-				item.setActive((boolean) e[10]);
-				item.setQty((int) e[11]);
-				item.setPrice(((Number) e[12]).doubleValue());
-				item.setSafetyStock(((int) e[13]));
+//				item.setProductItemId((int) e[1]);
+				item.setName((String) e[1]);
+				item.setMaterial((String) e[2]);
+//				item.setDescriptionOfSku(handleListSkuToFilter.getDescriptionOfSku((String) e[8]));
+				item.setCategoryId((int) e[3]);
+				item.setMainImage((String) e[4]);
+				item.setCustom((boolean) e[5]);
+				item.setTurnBuy((int) e[6]);
+//				item.setSku((String) e[8]);
+				item.setRating((int) e[7]);
+				item.setActive((boolean) e[8]);
+				item.setQty((int) e[9]);
+//				item.setSafetyStock(((int) e[10]));
+				item.setListPrice((String) e[10]);
 				productItems.add(item);
 			});
 
