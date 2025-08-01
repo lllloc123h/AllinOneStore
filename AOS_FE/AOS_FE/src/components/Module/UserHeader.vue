@@ -4,7 +4,7 @@
       <RouterLink class="navbar-brand modern-brand" to="/">
         <div class="brand-container">
           <img src="/src/assets/imgs/logo.png" class="brand-logo" alt="Logo" />
-          <span class="brand-text">ALL-IN-ONE</span>
+          <span class="brand-text">ALL IN ONE</span>
         </div>
       </RouterLink>
       <button
@@ -28,7 +28,7 @@
               aria-current="page"
               to="/products"
             >
-              <i class="bi bi-grid-fill me-2"></i>Products
+              <i class="bi bi-grid-fill me-2"></i>Sản phẩm
             </RouterLink>
           </li>
           <li class="nav-item">
@@ -46,7 +46,7 @@
               aria-current="page"
               to="/order-list"
             >
-              <i class="bi bi-list-check me-2"></i>Orders
+              <i class="bi bi-list-check me-2"></i>Đơn hàng của bạn
             </RouterLink>
           </li>
         </ul>
@@ -117,15 +117,33 @@
                 <div class="user-avatar-placeholder">
                   <i class="bi bi-person-fill"></i>
                 </div>
-                <span class="user-text d-none d-md-inline">Sign In</span>
+                <span class="user-text d-none d-md-inline">Đăng nhập</span>
               </div>
               <div class="user-profile-container" v-else>
                 <div class="user-avatar">
                   <img
-                    :src="
-                      user.avatarUrl ||
-                      'https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg'
+                    v-if="
+                      user?.avatarUrl &&
+                      user.avatarUrl !== 'null' &&
+                      user.avatarUrl !== ''
                     "
+                    :src="user.avatarUrl"
+                    :alt="user?.fullname"
+                    :crossorigin="
+                      user.avatarUrl.includes('googleusercontent.com')
+                        ? 'anonymous'
+                        : undefined
+                    "
+                    :referrerpolicy="
+                      user.avatarUrl.includes('googleusercontent.com')
+                        ? 'no-referrer'
+                        : undefined
+                    "
+                    @error="handleAvatarError"
+                  />
+                  <img
+                    v-else
+                    src="https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg"
                     :alt="user?.fullname"
                   />
                 </div>
@@ -139,10 +157,28 @@
                 <div class="user-profile-header">
                   <div class="user-avatar-large">
                     <img
-                      :src="
-                        user?.avatarUrl ||
-                        'https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg'
+                      v-if="
+                        user?.avatarUrl &&
+                        user.avatarUrl !== 'null' &&
+                        user.avatarUrl !== ''
                       "
+                      :src="user.avatarUrl"
+                      :alt="user?.fullname"
+                      :crossorigin="
+                        user.avatarUrl.includes('googleusercontent.com')
+                          ? 'anonymous'
+                          : undefined
+                      "
+                      :referrerpolicy="
+                        user.avatarUrl.includes('googleusercontent.com')
+                          ? 'no-referrer'
+                          : undefined
+                      "
+                      @error="handleAvatarError"
+                    />
+                    <img
+                      v-else
+                      src="https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg"
                       :alt="user?.fullname"
                     />
                   </div>
@@ -158,17 +194,12 @@
                   class="dropdown-item modern-dropdown-item"
                   to="/admin/Accounts"
                 >
-                  <i class="bi bi-shield-check me-2"></i>Admin Panel
+                  <i class="bi bi-shield-check me-2"></i>Trang quản trị
                 </RouterLink>
               </li>
               <li v-if="isLogged">
                 <RouterLink class="dropdown-item modern-dropdown-item" to="/UserInfo">
-                  <i class="bi bi-gear me-2"></i>Settings
-                </RouterLink>
-              </li>
-              <li v-if="isLogged">
-                <RouterLink class="dropdown-item modern-dropdown-item" to="/UserInfo">
-                  <i class="bi bi-person me-2"></i>My Profile
+                  <i class="bi bi-gear me-2"></i>Cài đặt tài khoản
                 </RouterLink>
               </li>
               <hr class="dropdown-divider" />
@@ -177,17 +208,17 @@
                   class="dropdown-item modern-dropdown-item text-danger"
                   @click="logout"
                 >
-                  <i class="bi bi-box-arrow-right me-2"></i>Logout
+                  <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
                 </button>
               </li>
               <li v-else>
                 <RouterLink class="dropdown-item modern-dropdown-item" to="/login">
-                  <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
                 </RouterLink>
               </li>
               <li v-if="!isLogged">
                 <RouterLink class="dropdown-item modern-dropdown-item" to="/register">
-                  <i class="bi bi-person-plus me-2"></i>Register
+                  <i class="bi bi-person-plus me-2"></i>Đăng ký
                 </RouterLink>
               </li>
             </ul>
@@ -251,6 +282,14 @@ async function getNotification() {
   }
 }
 onMounted(getNotification);
+
+const handleAvatarError = (event) => {
+  event.target.style.display = "none";
+  const fallback = event.target.nextElementSibling;
+  if (fallback) {
+    fallback.style.display = "block";
+  }
+};
 </script>
 <style scoped>
 /* Modern Navbar Styling */
@@ -271,6 +310,12 @@ onMounted(getNotification);
   color: #333 !important;
   font-weight: 700;
   transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 5px;
+}
+.modern-brand:hover {
+  color: #667eea !important;
+  background: rgba(102, 126, 234, 0.1);
 }
 
 .brand-container {
@@ -410,6 +455,7 @@ onMounted(getNotification);
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 36px;
 }
 
 /* Avatar */
@@ -421,6 +467,10 @@ onMounted(getNotification);
   overflow: hidden;
   border: 2px solid #e9ecef;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .user-avatar:hover {
@@ -456,6 +506,7 @@ onMounted(getNotification);
   font-size: 14px;
   border: 2px solid #e9ecef;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .user-avatar-placeholder:hover {

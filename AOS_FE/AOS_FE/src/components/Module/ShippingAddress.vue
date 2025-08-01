@@ -1,114 +1,294 @@
 <template>
-  <div>
-    <div class="address-container">
-      <div class="address row">
-        <div class="container mt-4 mb-3" v-if="fromCheckout">
-          <button class="btn btn-outline-secondary" @click="goBackToCheckout">
-            ← Quay lại trang thanh toán
+  <div class="shipping-address-page">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <i class="bi bi-geo-alt-fill me-3"></i>
+            Quản lý địa chỉ giao hàng
+          </h1>
+          <p class="hero-subtitle">
+            Thêm và quản lý địa chỉ giao hàng của bạn một cách dễ dàng
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="container">
+        <!-- Back to Checkout Button -->
+        <div v-if="fromCheckout" class="back-button-container">
+          <button class="back-button" @click="goBackToCheckout">
+            <i class="bi bi-arrow-left me-2"></i>
+            Quay lại trang thanh toán
           </button>
         </div>
 
-        <div class="form col-sm-12">
-          <h2 class="form-title">ĐỊA CHỈ GIAO HÀNG</h2>
-          <p class="form-subtitle">
-            All in One Store luôn lắng nghe tận tâm từ khách hàng
-          </p>
+        <div class="content-wrapper">
+          <!-- Address Management Section -->
+          <div class="address-management-card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="bi bi-house-door me-2"></i>
+                Địa chỉ đã lưu
+              </h2>
+              <p class="card-subtitle">Quản lý các địa chỉ giao hàng của bạn</p>
+            </div>
 
-          <div
-            class="address-item mb-4 p-3 rounded-xl position-relative"
-            v-for="(address, index) in shippingAddress"
-          >
-            <label class="form-label mb-1">Địa chỉ giao hàng</label>
-            <input
-              type="text"
-              :value="
-                address.street +
-                ', ' +
-                address.ward +
-                ', ' +
-                address.district +
-                ', ' +
-                address.province
-              "
-              readonly
-              class="form-control"
-            />
-            <span class="default-label" v-if="address.default">Mặc định</span>
-            <button class="default-label" v-else @click="setAddressDefault(address.id)">
-              Chọn là mặc định
-            </button>
+            <div class="address-list">
+              <!-- No Address State -->
+              <div v-if="!shippingAddress.length" class="no-address-state">
+                <div class="no-address-icon">
+                  <i class="bi bi-house-add"></i>
+                </div>
+                <h3 class="no-address-title">Chưa có địa chỉ giao hàng</h3>
+                <p class="no-address-description">
+                  Thêm địa chỉ đầu tiên để bắt đầu đặt hàng
+                </p>
+                <button class="add-first-address-btn" @click="showModal = true">
+                  <i class="bi bi-plus-lg me-2"></i>
+                  Thêm địa chỉ đầu tiên
+                </button>
+              </div>
 
-            <button
-              title="Xoá địa chỉ"
-              class="btn-remove"
-              @click="removeAddress(address.id)"
-            >
-              ×
-            </button>
-          </div>
+              <!-- Address Cards -->
+              <div v-else class="address-cards">
+                <div
+                  v-for="(address, index) in shippingAddress"
+                  :key="address.id"
+                  :class="['address-card', { 'default-address': address.default }]"
+                >
+                  <div class="address-card-header">
+                    <div class="address-label">
+                      <i :class="getAddressIcon(address.label)" class="label-icon"></i>
+                      <span class="label-text">{{ address.label || "Địa chỉ" }}</span>
+                    </div>
+                    <div class="address-actions">
+                      <span v-if="address.default" class="default-badge">
+                        <i class="bi bi-star-fill me-1"></i>
+                        Mặc định
+                      </span>
+                      <button
+                        v-else
+                        class="set-default-btn"
+                        @click="setAddressDefault(address.id)"
+                        title="Đặt làm mặc định"
+                      >
+                        <i class="bi bi-star me-1"></i>
+                        Chọn mặc định
+                      </button>
+                      <button
+                        class="delete-btn"
+                        @click="removeAddress(address.id)"
+                        title="Xóa địa chỉ"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
 
-          <div class="text-center mt-4 mx-3">
-            <button class="btn btn-add" @click="showModal = true">
-              Thêm địa chỉ mới
-            </button>
+                  <div class="address-details">
+                    <div class="recipient-info">
+                      <h4 class="recipient-name">{{ address.recipientName }}</h4>
+                      <span class="recipient-phone">
+                        <i class="bi bi-telephone me-1"></i>
+                        {{ address.phone }}
+                      </span>
+                    </div>
+                    <div class="full-address">
+                      <i class="bi bi-geo-alt me-2"></i>
+                      {{ getFullAddress(address) }}
+                    </div>
+                    <div v-if="address.note" class="address-note">
+                      <i class="bi bi-sticky me-1"></i>
+                      {{ address.note }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add New Address Button -->
+              <div v-if="shippingAddress.length" class="add-address-section">
+                <button class="add-address-btn" @click="showModal = true">
+                  <i class="bi bi-plus-circle me-2"></i>
+                  Thêm địa chỉ mới
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal Add Address -->
-    <div v-if="showModal" class="overlay">
-      <div class="form-container">
-        <h3>Thêm địa chỉ</h3>
-        <div class="input-group">
-          <input type="text" placeholder="Họ và tên" v-model="name" />
-          <input type="text" placeholder="Số điện thoại" v-model="phone" />
+    <!-- Add/Edit Address Modal -->
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="bi bi-house-add me-2"></i>
+            Thêm địa chỉ mới
+          </h3>
+          <button class="modal-close-btn" @click="closeModal">
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
 
-        <select class="input-group" v-model="selectedProvince" @change="loadDistricts">
-          <option value="" disabled>Chọn Tỉnh/Thành phố</option>
-          <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
-            {{ prov.name }}
-          </option>
-        </select>
+        <div class="modal-content">
+          <form @submit.prevent="addAddress" class="address-form">
+            <!-- Personal Information -->
+            <div class="form-section">
+              <h4 class="section-title">
+                <i class="bi bi-person me-2"></i>
+                Thông tin người nhận
+              </h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="bi bi-person-circle me-1"></i>
+                    Họ và tên
+                  </label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    placeholder="Nhập họ và tên"
+                    v-model="name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="bi bi-telephone me-1"></i>
+                    Số điện thoại
+                  </label>
+                  <input
+                    type="tel"
+                    class="form-input"
+                    placeholder="Nhập số điện thoại"
+                    v-model="phone"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
 
-        <select
-          class="input-group"
-          v-model="selectedDistrict"
-          @change="loadWards"
-          :disabled="!districts.length"
-        >
-          <option value="" disabled>Chọn Quận/Huyện</option>
-          <option v-for="dist in districts" :key="dist.code" :value="dist.code">
-            {{ dist.name }}
-          </option>
-        </select>
+            <!-- Address Information -->
+            <div class="form-section">
+              <h4 class="section-title">
+                <i class="bi bi-geo-alt me-2"></i>
+                Thông tin địa chỉ
+              </h4>
 
-        <select class="input-group" v-model="selectedWard" :disabled="!wards.length">
-          <option value="" disabled>Chọn Phường/Xã</option>
-          <option v-for="ward in wards" :key="ward.code" :value="ward.code">
-            {{ ward.name }}
-          </option>
-        </select>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Tỉnh/Thành phố</label>
+                  <select
+                    class="form-select"
+                    v-model="selectedProvince"
+                    @change="loadDistricts"
+                    required
+                  >
+                    <option value="" disabled>Chọn Tỉnh/Thành phố</option>
+                    <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
+                      {{ prov.name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Quận/Huyện</label>
+                  <select
+                    class="form-select"
+                    v-model="selectedDistrict"
+                    @change="loadWards"
+                    :disabled="!districts.length"
+                    required
+                  >
+                    <option value="" disabled>Chọn Quận/Huyện</option>
+                    <option v-for="dist in districts" :key="dist.code" :value="dist.code">
+                      {{ dist.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
 
-        <input type="text" placeholder="Địa chỉ cụ thể" v-model="detailAddress" />
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Phường/Xã</label>
+                  <select
+                    class="form-select"
+                    v-model="selectedWard"
+                    :disabled="!wards.length"
+                    required
+                  >
+                    <option value="" disabled>Chọn Phường/Xã</option>
+                    <option v-for="ward in wards" :key="ward.code" :value="ward.code">
+                      {{ ward.name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Loại địa chỉ</label>
+                  <select class="form-select" v-model="label">
+                    <option value="Nhà Riêng">🏠 Nhà Riêng</option>
+                    <option value="Nơi làm việc">🏢 Nơi làm việc</option>
+                    <option value="Khác">📍 Khác</option>
+                  </select>
+                </div>
+              </div>
 
-        <div class="map-box">
-          <button class="add-location">+ Thêm vị trí</button>
-        </div>
-        <div class="address-type">
-          <label>Loại địa chỉ:</label>
-          <select v-model="label">
-            <option value="Nhà Riêng">Nhà Riêng</option>
-            <option value="Nơi làm việc">Nơi làm việc</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <input type="text" placeholder="Ghi chú" v-model="note" />
-        </div>
-        <div class="actions">
-          <button class="cancel-btn" @click="showModal = false">Quay lại</button>
-          <button class="submit-btn" @click="addAddress(1)">Xác nhận</button>
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="bi bi-house-door me-1"></i>
+                  Địa chỉ cụ thể
+                </label>
+                <input
+                  type="text"
+                  class="form-input"
+                  placeholder="Số nhà, tên đường..."
+                  v-model="detailAddress"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="bi bi-chat-text me-1"></i>
+                  Ghi chú (tùy chọn)
+                </label>
+                <textarea
+                  class="form-textarea"
+                  placeholder="Ghi chú thêm về địa chỉ..."
+                  v-model="note"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Location Helper -->
+            <div class="location-helper">
+              <div class="location-icon">
+                <i class="bi bi-geo-alt-fill"></i>
+              </div>
+              <div class="location-text">
+                <h6>Định vị chính xác</h6>
+                <p>
+                  Chúng tôi sẽ sử dụng thông tin này để giao hàng chính xác nhất đến bạn
+                </p>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="button" class="cancel-btn" @click="closeModal">
+                <i class="bi bi-x-circle me-2"></i>
+                Hủy bỏ
+              </button>
+              <button type="submit" class="submit-btn" :disabled="!isFormValid">
+                <i class="bi bi-check-circle me-2"></i>
+                Lưu địa chỉ
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -122,13 +302,13 @@ export default {
   data() {
     return {
       showModal: false,
-      name: "Tran Huu Loc",
-      phone: "0969214372",
-      detailAddress: "95 ap 1",
+      name: "",
+      phone: "",
+      detailAddress: "",
       provinces: [],
       districts: [],
       wards: [],
-      label: "",
+      label: "Nhà Riêng",
       note: "",
       selectedProvince: "",
       selectedDistrict: "",
@@ -136,6 +316,18 @@ export default {
       shippingAddress: [],
       fromCheckout: false,
     };
+  },
+  computed: {
+    isFormValid() {
+      return (
+        this.name &&
+        this.phone &&
+        this.selectedProvince &&
+        this.selectedDistrict &&
+        this.selectedWard &&
+        this.detailAddress
+      );
+    },
   },
   mounted() {
     this.loadProvinces();
@@ -145,6 +337,36 @@ export default {
     }
   },
   methods: {
+    getAddressIcon(label) {
+      const iconMap = {
+        "Nhà Riêng": "bi-house-door",
+        "Nơi làm việc": "bi-building",
+        Khác: "bi-geo-alt",
+      };
+      return iconMap[label] || "bi-geo-alt";
+    },
+
+    getFullAddress(address) {
+      return `${address.street}, ${address.ward}, ${address.district}, ${address.province}`;
+    },
+
+    closeModal() {
+      this.showModal = false;
+      this.resetForm();
+    },
+
+    resetForm() {
+      this.name = "";
+      this.phone = "";
+      this.detailAddress = "";
+      this.selectedProvince = "";
+      this.selectedDistrict = "";
+      this.selectedWard = "";
+      this.districts = [];
+      this.wards = [];
+      this.label = "Nhà Riêng";
+      this.note = "";
+    },
     async loadProvinces() {
       const res = await fetch("https://provinces.open-api.vn/api/p/");
       this.provinces = await res.json();
@@ -245,18 +467,7 @@ export default {
 
         await api.post(`/UserAddresses`, formData);
 
-        // Reset form
-        this.name = "";
-        this.phone = "";
-        this.detailAddress = "";
-        this.selectedProvince = "";
-        this.selectedDistrict = "";
-        this.selectedWard = "";
-        this.districts = [];
-        this.wards = [];
-        this.label = "";
-        this.note = "";
-
+        this.resetForm();
         this.fetchData();
         this.showModal = false;
         notification.success({
@@ -279,226 +490,692 @@ export default {
 </script>
 
 <style scoped>
-/* ==== Layout tổng thể ==== */
-.address-container {
+/* ==================== GLOBAL STYLES ==================== */
+.shipping-address-page {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+/* ==================== HERO SECTION ==================== */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 0 2rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
+    repeat-x;
+  background-size: 1000px 100px;
+  animation: wave 10s infinite linear;
+}
+
+@keyframes wave {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1000px;
+  }
+}
+
+.hero-content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.main-content {
+  padding: 2rem 0;
+  margin-top: -1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ==================== BACK BUTTON ==================== */
+.back-button-container {
+  margin-bottom: 2rem;
+}
+
+.back-button {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 600;
+  color: #6c757d;
+  transition: all 0.3s ease;
   display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  padding: 0 16px;
+  align-items: center;
 }
 
-.address {
-  width: 700px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.back-button:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
 }
 
-.form {
-  padding: 30px;
+/* ==================== ADDRESS MANAGEMENT CARD ==================== */
+.address-management-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
-/* ==== Tiêu đề ==== */
-.form-title {
+.card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  padding: 2rem;
+  border-bottom: 1px solid #e9ecef;
+  text-align: center;
+}
+
+.card-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.form-subtitle {
-  color: #6b7280;
-  font-size: 0.95rem;
-  margin-bottom: 24px;
+.card-subtitle {
+  color: #6c757d;
+  font-size: 1rem;
+  margin: 0;
 }
 
-/* ==== Card địa chỉ ==== */
-.address-item {
-  background-color: #fefefe;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  position: relative;
-  transition: box-shadow 0.2s ease;
+/* ==================== NO ADDRESS STATE ==================== */
+.no-address-state {
+  padding: 4rem 2rem;
+  text-align: center;
 }
 
-.address-item:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+.no-address-icon {
+  font-size: 4rem;
+  color: #e9ecef;
+  margin-bottom: 1.5rem;
 }
 
-.form-label {
-  font-weight: 600;
-  color: #4b5563;
-  font-size: 0.9rem;
+.no-address-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
   margin-bottom: 0.5rem;
 }
 
-.form-control {
-  width: 100%;
-  background-color: white;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  padding: 10px 14px;
-  font-size: 0.95rem;
-  color: #374151;
-  outline: none;
+.no-address-description {
+  color: #6c757d;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
 }
 
-/* ==== Nút Mặc định & Chọn mặc định ==== */
-.default-label {
-  position: absolute;
-  top: 16px;
-  right: 60px;
-  font-size: 0.75rem;
-  background-color: #fde68a;
-  color: #92400e;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-button.default-label {
-  background-color: #e0f2fe;
-  color: #0284c7;
-  border: none;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-button.default-label:hover {
-  background-color: #bae6fd;
-}
-
-/* ==== Nút Xoá địa chỉ ==== */
-.btn-remove {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  font-size: 1.2rem;
-  background-color: transparent;
-  color: #9ca3af;
-  border: none;
-  transition: color 0.2s;
-}
-
-.btn-remove:hover {
-  color: #dc2626;
-}
-
-/* ==== Nút Thêm địa chỉ ==== */
-.btn-add {
-  background-color: #1f2937;
+.add-first-address-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 12px 36px;
-  font-size: 1rem;
-  border-radius: 24px;
   border: none;
-  transition: background-color 0.3s;
+  border-radius: 50px;
+  padding: 15px 35px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
-.btn-add:hover {
-  background-color: #111827;
+.add-first-address-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
 }
 
-/* ==== Modal thêm địa chỉ ==== */
-.overlay {
+/* ==================== ADDRESS CARDS ==================== */
+.address-cards {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.address-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.address-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #e9ecef 0%, #e9ecef 100%);
+  transition: all 0.3s ease;
+}
+
+.address-card:hover {
+  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.address-card:hover::before {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.address-card.default-address {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+}
+
+.address-card.default-address::before {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.address-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.address-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label-icon {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.label-text {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.address-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.default-badge {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  border: 1px solid #f59e0b;
+}
+
+.set-default-btn {
+  background: transparent;
+  color: #6c757d;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.set-default-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.delete-btn {
+  background: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.delete-btn:hover {
+  background: #dc3545;
+  color: white;
+  transform: scale(1.1);
+}
+
+.address-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recipient-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.recipient-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.recipient-phone {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.full-address {
+  color: #6c757d;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.address-note {
+  color: #8b5cf6;
+  font-style: italic;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+/* ==================== ADD ADDRESS SECTION ==================== */
+.add-address-section {
+  padding: 1.5rem;
+  text-align: center;
+  border-top: 1px solid #e9ecef;
+}
+
+.add-address-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 15px 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.add-address-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* ==================== MODAL STYLES ==================== */
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 2rem;
 }
 
-.form-container {
-  background-color: #ffffff;
-  width: 450px;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
-}
-
-/* ==== Form trong modal ==== */
-.input-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-input,
-select {
+.modal-container {
+  background: white;
+  border-radius: 20px;
   width: 100%;
-  padding: 12px;
-  font-size: 0.95rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  background-color: #f9fafb;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.3s ease;
 }
 
-/* ==== Map placeholder box ==== */
-.map-box {
-  background: #f3f4f6;
-  height: 100px;
-  margin-bottom: 10px;
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.add-location {
-  border: 1px solid #ccc;
-  background: white;
-  padding: 8px 15px;
-  cursor: pointer;
-  border-radius: 4px;
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* ==== Loại địa chỉ ==== */
-.address-type {
-  margin: 15px 0;
+.modal-content {
+  padding: 2rem;
+  max-height: calc(90vh - 200px);
+  overflow-y: auto;
 }
 
-.address-type label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-/* ==== Nút xác nhận & quay lại trong modal ==== */
-.actions {
+/* ==================== FORM STYLES ==================== */
+.address-form {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 15px;
+  padding: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 12px 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-select:disabled {
+  background: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+/* ==================== LOCATION HELPER ==================== */
+.location-helper {
+  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+  border: 1px solid #0284c7;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.location-icon {
+  color: #0284c7;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.location-text h6 {
+  font-weight: 700;
+  color: #0c4a6e;
+  margin: 0 0 0.25rem 0;
+}
+
+.location-text p {
+  color: #075985;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ==================== FORM ACTIONS ==================== */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
 }
 
 .cancel-btn {
-  background-color: #f3f4f6;
-  color: #374151;
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: none;
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 12px 24px;
   font-weight: 600;
-  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .cancel-btn:hover {
-  background-color: #e5e7eb;
+  border-color: #6c757d;
+  color: #495057;
 }
 
 .submit-btn {
-  background-color: #ef4444;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
   border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
   font-weight: 600;
-  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
-.submit-btn:hover {
-  background-color: #dc2626;
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .card-header {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .address-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .address-actions {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+
+  .modal-container {
+    margin: 1rem;
+    max-width: none;
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .location-helper {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 1rem 0;
+  }
+
+  .content-wrapper {
+    padding: 0 1rem;
+  }
+
+  .no-address-state {
+    padding: 2rem 1rem;
+  }
+
+  .address-cards {
+    padding: 1rem;
+  }
+
+  .address-card {
+    padding: 1rem;
+  }
 }
 </style>

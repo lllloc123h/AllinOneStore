@@ -77,11 +77,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			auth.setAccounts(userRegister);
 			auth.setRoles(rolesRepository.findByName("USER").get());
 			authorityRepository.save(auth);
-		} else {
-			System.out.println("user ko null");
-			user.get().setFullname(fullname);
-			user.get().setAvatarUrl(picture);
-			userRepository.save(user.get());
 		}
 		// Lấy role từ database
 		List<Authorities> authorities = authorityRepository.findAllByEmail(email);

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,4 +19,8 @@ public class AccountProfileDTO {
     private double totalSpent;
     private int totalOrder;
     private int loyaltyPoint;
+    private boolean gender;
+    private LocalDateTime birthday;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

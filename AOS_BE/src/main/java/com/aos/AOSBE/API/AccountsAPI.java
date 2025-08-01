@@ -235,7 +235,7 @@ public class AccountsAPI {
 
 			AccountProfileDTO dto = new AccountProfileDTO(acc.getFullname(), acc.getEmail(), acc.getPhone(),
 					acc.getAvatarUrl(), acc.getAverageOrderValue(), acc.getUserRank(), acc.getTotalSpent(),
-					acc.getTotalOrder(), acc.getLoyaltyPoint());
+					acc.getTotalOrder(), acc.getLoyaltyPoint(),acc.isGender(), acc.getBirthday(), acc.getCreatedAt(),acc.getUpdatedAt());
 
 			return ResponseEntity.ok(dto);
 		} catch (Exception e) {
@@ -264,8 +264,8 @@ public class AccountsAPI {
 	@PutMapping("/Accounts/me")
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
 		try {
-			accountsService.updateProfile(dto);
-			return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công"));
+			Accounts acc= accountsService.updateProfile(dto);
+			return ResponseEntity.ok(acc);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
 		} catch (Exception e) {
