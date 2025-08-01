@@ -136,16 +136,15 @@ public class AccountsService {
 	    accountsRepository.save(account);
 	}
 	@Transactional
-	public void updateProfile(UpdateProfileDTO dto) {
+	public Accounts updateProfile(UpdateProfileDTO dto) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Accounts account = accountsRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
-
 		account.setFullname(dto.getFullname());
-		account.setEmail(dto.getEmail());
 		account.setPhone(dto.getPhone());
-
-		accountsRepository.save(account);
+		account.setBirthday(dto.getBirthday());
+		account.setGender(dto.isGender());
+		return accountsRepository.save(account);
 	}
 
 	@Transactional

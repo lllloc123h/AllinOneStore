@@ -13,6 +13,14 @@ onMounted(() => {
     localStorage.setItem("jwtToken", token);
     authService.setTokenRef(token);
     authService.setCart(cartSize);
+    authService
+      .getProfile()
+      .then((data) => {
+        authService.setUserHeader(data);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy thông tin người dùng:", error);
+      });
     const redirect = localStorage.getItem("redirectTo") || "/";
     console.log("Đăng nhập thành công với với oauth2");
     router.push(redirect);
