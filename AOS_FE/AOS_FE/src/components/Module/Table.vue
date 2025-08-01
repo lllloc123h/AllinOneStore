@@ -572,8 +572,6 @@ function formatCell(key, value) {
     return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
   } else if (Array.isArray(value)) {
     return value.join(", ");
-  } else if (value === null || value === undefined) {
-    return "N/A";
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
     // Kiểm tra nếu là avatar URL từ Google hoặc URL khác
     if (value.includes("googleusercontent.com") || key.toLowerCase().includes("avatar")) {
@@ -582,6 +580,14 @@ function formatCell(key, value) {
     } else {
       return `<img src="${value}" alt="image" style="max-width: 100px; max-height: 60px; object-fit: contain;" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display:none; padding: 4px 8px; background: #f8f9fa; border-radius: 4px; font-size: 0.8rem;">Không thể tải ảnh</span>`;
     }
+  } else if (
+    key.toLowerCase().includes("avatar") &&
+    (value === null || value === undefined || value === "")
+  ) {
+    // Avatar mặc định khi không có avatar
+    const defaultAvatar =
+      "https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg";
+    return `<img src="${defaultAvatar}" alt="ảnh mặc định" style="max-width: 60px; max-height: 60px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd;" /><span class="ms-1 text-muted" style="font-size: 0.7rem;"></span>`;
   } else if (key.toLowerCase().includes("rating")) {
     const maxStars = 5;
     let stars = "";
@@ -654,6 +660,8 @@ function formatCell(key, value) {
         }
                
               </span>`;
+  } else if (value === null || value === undefined) {
+    return "N/A";
   }
 
   return value;

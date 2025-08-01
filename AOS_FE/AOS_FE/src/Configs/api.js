@@ -71,8 +71,7 @@ api.interceptors.response.use(
         localStorage.removeItem('user');
         cartSize.value = 0;
         tokenRef.value = null;
-        userHeader.value = null;
-
+        this.removeUserHeader();
         router.push('/login')
         setTimeout(() => {
           alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
@@ -107,8 +106,7 @@ const authService = {
         // Navigate
         const redirectTo = localStorage.getItem('redirectTo') || '/';
         localStorage.removeItem('redirectTo'); // Clear redirect after use
-        userHeader.value = await this.getProfile();
-                        localStorage.setItem('user',JSON.stringify(userHeader.value));
+        this.setUserHeader(await this.getProfile());
         setTimeout(() => {
           toast.success('Đăng nhập thành công !');
         }, 500);
@@ -124,9 +122,18 @@ const authService = {
     tokenRef.value = token;
   }
   ,
-  getUserInfor(){
+  getUserHeader(){
     return userHeader.value;
   },
+  setUserHeader(user) {
+    localStorage.setItem('user', JSON.stringify(user));
+    userHeader.value = user;
+  },
+  removeUserHeader(){
+    localStorage.removeItem('user');
+    userHeader.value = null;
+  }
+  ,
   isLogged() {
     return tokenRef.value != null;
   }
@@ -203,8 +210,7 @@ const authService = {
 
   logout() {
     localStorage.removeItem('jwtToken');
-    localStorage.removeItem('user');
-    userHeader.value = null;
+    this.removeUserHeader();
     router.push('/');
     setTimeout(() => {
       toast.success('Đăng xuất thành công !');

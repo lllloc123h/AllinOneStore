@@ -1,26 +1,87 @@
 <template>
   <main>
     <!-- start carouselcarousel -->
-    <div id="carouselExampleFade" class="carousel slide carousel-fade">
+    <div
+      id="carouselExampleFade"
+      class="carousel slide carousel-fade"
+      data-bs-ride="carousel"
+      data-bs-interval="3000"
+    >
+      <!-- Carousel Indicators -->
+      <div class="carousel-indicators">
+        <button
+          type="button"
+          data-bs-target="#carouselExampleFade"
+          data-bs-slide-to="0"
+          class="active"
+          aria-current="true"
+          aria-label="Slide 1"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleFade"
+          data-bs-slide-to="1"
+          aria-label="Slide 2"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleFade"
+          data-bs-slide-to="2"
+          aria-label="Slide 3"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleFade"
+          data-bs-slide-to="3"
+          aria-label="Slide 4"
+        ></button>
+      </div>
+
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="../../assets/imgs/banner1.png" class="d-block w-100" alt="..." />
+          <img
+            src="../../assets/imgs/banner1.png"
+            class="d-block w-100 carousel-image"
+            alt="Banner 1"
+          />
         </div>
         <div class="carousel-item">
-          <img src="../../assets/imgs/banner2.png" class="d-block w-100" alt="..." />
+          <img
+            src="../../assets/imgs/banner2.png"
+            class="d-block w-100 carousel-image"
+            alt="Banner 2"
+          />
         </div>
         <div class="carousel-item">
-          <img src="../../assets/imgs/banner3.png" class="d-block w-100" alt="..." />
+          <img
+            src="../../assets/imgs/banner3.png"
+            class="d-block w-100 carousel-image"
+            alt="Banner 3"
+          />
         </div>
         <div class="carousel-item">
-          <img src="../../assets/imgs/banner4.png" class="d-block w-100" alt="..." />
+          <img
+            src="../../assets/imgs/banner4.png"
+            class="d-block w-100 carousel-image"
+            alt="Banner 4"
+          />
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExampleFade"
+        data-bs-slide="prev"
+      >
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleFade"
+        data-bs-slide="next"
+      >
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
       </button>
@@ -32,18 +93,30 @@
       <!--start giảm giá -->
       <div class="row mt-4 g-4">
         <h3>Sản phẩm đang giảm giá</h3>
-        <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
-          <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
-
+        <div
+          class="col-3"
+          v-for="product in discountedProducts"
+          :key="product.productItemId"
+        >
+          <div
+            class="card position-relative overflow-hidden rounded-4"
+            style="border: 0px"
+          >
             <!-- Label Khuyến mãi -->
-            <div class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+            <div
+              class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
+              style="border-radius: 12px; font-size: 0.85rem; z-index: 10"
+            >
               Khuyến mãi
             </div>
 
             <!-- Hình ảnh -->
-            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-              :src="product.imageUrl" :alt="product.productName" />
+            <img
+              class="card-img rounded-4 custom-shadow"
+              style="height: 450px; object-fit: cover"
+              :src="product.imageUrl"
+              :alt="product.productName"
+            />
 
             <!-- Nội dung -->
             <div class="card-body">
@@ -70,12 +143,25 @@
               <div class="d-flex justify-content-end">
                 <div class="main-section rounded-4">
                   <button class="first-button">Đang giảm</button>
-                  <router-link :to="`/product/${product.productItemId}`" class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round">
+                  <router-link
+                    :to="`/product/${product.productItemId}`"
+                    class="second-button"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="#f04e31"
+                      stroke-width="2"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <circle cx="9" cy="21" r="1"></circle>
                       <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                      <path
+                        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                      ></path>
                     </svg>
                     {{ product.discountValue.toLocaleString() }} VND tiết kiệm
                   </router-link>
@@ -97,73 +183,120 @@
       <!--start phân loại -->
       <div class="row mt-5 g-4">
         <div class="col-4">
-          <div style="border: 0px" class="card position-relative overflow-hidden rounded-4">
+          <div
+            style="border: 0px"
+            class="card position-relative overflow-hidden rounded-4"
+          >
             <!-- Bo góc ảnh luôn -->
-            <img class="card-img rounded-4 custom-shadow" style="height: 700px; object-fit: cover"
+            <img
+              class="card-img rounded-4 custom-shadow"
+              style="height: 700px; object-fit: cover"
               src="../../assets/imgs/Vàng nhạt và Xanh ngọc lam Nghệ thuật sắp chữ In đậm Tiệm cà phê Biểu trưng Cà phê.png"
-              alt="Card image" />
+              alt="Card image"
+            />
           </div>
         </div>
-          <div class="col-4">
-            <div class="row">
-              <div class="col">
-                <div style="border: 0px" class="card position-relative overflow-hidden rounded-4 group">
-                  <!-- Ảnh -->
-                  <img class="card-img rounded-4 custom-shadow" style="height: 338px; object-fit: cover"
-                    src="../../assets/imgs/banner1.png" alt="Card image" />
+        <div class="col-4">
+          <div class="row">
+            <div class="col">
+              <div
+                style="border: 0px"
+                class="card position-relative overflow-hidden rounded-4 group"
+              >
+                <!-- Ảnh -->
+                <img
+                  class="card-img rounded-4 custom-shadow"
+                  style="height: 338px; object-fit: cover"
+                  src="../../assets/imgs/banner1.png"
+                  alt="Card image"
+                />
 
-                  <!-- Overlay hiển thị khi hover -->
-                  <div
-                    class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-                    style="background-color: rgba(0,0,0,0.4); opacity: 0; transition: 0.3s;"
-                    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-                    <!-- Router link -->
-                    <a href="/products" class="btn btn-light rounded-pill px-4 py-2 text-dark">
-                      Xem các danh mục
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row mt-4">
-              <div class="col">
-                <div style="border: 0px" class="card position-relative overflow-hidden rounded-4 group">
-                  <!-- Ảnh -->
-                  <img class="card-img rounded-4 custom-shadow" style="height: 338px; object-fit: cover"
-                    src="../../assets/imgs/banner2.png" alt="Card image" />
-
-                  <!-- Overlay hiển thị khi hover -->
-                  <div
-                    class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-                    style="background-color: rgba(0,0,0,0.4); opacity: 0; transition: 0.3s;"
-                    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-                    <!-- Router link -->
-                    <a href="/products" class="btn btn-light rounded-pill px-4 py-2 text-dark">
-                      Xem các danh mục
-                    </a>
-                  </div>
+                <!-- Overlay hiển thị khi hover -->
+                <div
+                  class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+                  style="
+                    background-color: rgba(0, 0, 0, 0.4);
+                    opacity: 0;
+                    transition: 0.3s;
+                  "
+                  onmouseover="this.style.opacity='1'"
+                  onmouseout="this.style.opacity='0'"
+                >
+                  <!-- Router link -->
+                  <a
+                    href="/products"
+                    class="btn btn-light rounded-pill px-4 py-2 text-dark"
+                  >
+                    Xem các danh mục
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-4">
-            <div style="border: 0px" class="card position-relative overflow-hidden rounded-4 group">
-              <!-- Ảnh -->
-              <img class="card-img rounded-4 custom-shadow" style="height: 700px; object-fit: cover"
-                src="../../assets/imgs/banner5.jpg" alt="Card image" />
+          <div class="row mt-4">
+            <div class="col">
+              <div
+                style="border: 0px"
+                class="card position-relative overflow-hidden rounded-4 group"
+              >
+                <!-- Ảnh -->
+                <img
+                  class="card-img rounded-4 custom-shadow"
+                  style="height: 338px; object-fit: cover"
+                  src="../../assets/imgs/banner2.png"
+                  alt="Card image"
+                />
 
-              <!-- Overlay hiển thị khi hover -->
-              <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-                style="background-color: rgba(0,0,0,0.4); opacity: 0; transition: 0.3s;"
-                onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-                <!-- Router link -->
-                <a href="/products" class="btn btn-light rounded-pill px-4 py-2 text-dark">
-                  Xem các danh mục
-                </a>
+                <!-- Overlay hiển thị khi hover -->
+                <div
+                  class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+                  style="
+                    background-color: rgba(0, 0, 0, 0.4);
+                    opacity: 0;
+                    transition: 0.3s;
+                  "
+                  onmouseover="this.style.opacity='1'"
+                  onmouseout="this.style.opacity='0'"
+                >
+                  <!-- Router link -->
+                  <a
+                    href="/products"
+                    class="btn btn-light rounded-pill px-4 py-2 text-dark"
+                  >
+                    Xem các danh mục
+                  </a>
+                </div>
               </div>
             </div>
-
           </div>
+        </div>
+        <div class="col-4">
+          <div
+            style="border: 0px"
+            class="card position-relative overflow-hidden rounded-4 group"
+          >
+            <!-- Ảnh -->
+            <img
+              class="card-img rounded-4 custom-shadow"
+              style="height: 700px; object-fit: cover"
+              src="../../assets/imgs/banner5.jpg"
+              alt="Card image"
+            />
+
+            <!-- Overlay hiển thị khi hover -->
+            <div
+              class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+              style="background-color: rgba(0, 0, 0, 0.4); opacity: 0; transition: 0.3s"
+              onmouseover="this.style.opacity='1'"
+              onmouseout="this.style.opacity='0'"
+            >
+              <!-- Router link -->
+              <a href="/products" class="btn btn-light rounded-pill px-4 py-2 text-dark">
+                Xem các danh mục
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
       <!--end phân loại -->
 
@@ -176,10 +309,18 @@
           <p class="mb-0">
             <button id="next">
               <span>Xem thêm</span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 74 74" height="34" width="34">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 74 74"
+                height="34"
+                width="34"
+              >
                 <circle stroke-width="3" stroke="black" r="35.5" cy="37" cx="37"></circle>
-                <path fill="black"
-                  d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z" />
+                <path
+                  fill="black"
+                  d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z"
+                />
               </svg>
             </button>
           </p>
@@ -188,18 +329,30 @@
 
       <!-- Sản phẩm bán chạy -->
       <div class="row mt-4 g-4">
-        <div class="col-3" v-for="product in discountedProducts" :key="product.productItemId">
-          <div class="card position-relative overflow-hidden rounded-4" style="border: 0px">
-
+        <div
+          class="col-3"
+          v-for="product in discountedProducts"
+          :key="product.productItemId"
+        >
+          <div
+            class="card position-relative overflow-hidden rounded-4"
+            style="border: 0px"
+          >
             <!-- Label Khuyến mãi -->
-            <div class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10">
+            <div
+              class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
+              style="border-radius: 12px; font-size: 0.85rem; z-index: 10"
+            >
               Khuyến mãi
             </div>
 
             <!-- Hình ảnh -->
-            <img class="card-img rounded-4 custom-shadow" style="height: 450px; object-fit: cover"
-              :src="product.imageUrl" :alt="product.productName" />
+            <img
+              class="card-img rounded-4 custom-shadow"
+              style="height: 450px; object-fit: cover"
+              :src="product.imageUrl"
+              :alt="product.productName"
+            />
 
             <!-- Nội dung -->
             <div class="card-body">
@@ -226,12 +379,25 @@
               <div class="d-flex justify-content-end">
                 <div class="main-section rounded-4">
                   <button class="first-button">Đang giảm</button>
-                  <router-link :to="`/product/${product.productItemId}`" class="second-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f04e31" stroke-width="2" fill="none"
-                      stroke-linecap="round" stroke-linejoin="round">
+                  <router-link
+                    :to="`/product/${product.productItemId}`"
+                    class="second-button"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      stroke="#f04e31"
+                      stroke-width="2"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <circle cx="9" cy="21" r="1"></circle>
                       <circle cx="20" cy="21" r="1"></circle>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                      <path
+                        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                      ></path>
                     </svg>
                     Ưu đãi: {{ product.discountValue.toLocaleString() }} VND
                   </router-link>
@@ -241,7 +407,6 @@
           </div>
         </div>
       </div>
-
     </div>
     <!--start gioi thieu -->
     <!-- <section style="
@@ -313,11 +478,24 @@
               <!-- From Uiverse.io by alexmaracinaru -->
               <button id="next">
                 <span>Xem thêm</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 74 74" height="34" width="34">
-                  <circle stroke-width="3" stroke="black" r="35.5" cy="37" cx="37"></circle>
-                  <path fill="black"
-                    d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z">
-                  </path>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 74 74"
+                  height="34"
+                  width="34"
+                >
+                  <circle
+                    stroke-width="3"
+                    stroke="black"
+                    r="35.5"
+                    cy="37"
+                    cx="37"
+                  ></circle>
+                  <path
+                    fill="black"
+                    d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z"
+                  ></path>
                 </svg>
               </button>
             </p>
@@ -328,13 +506,21 @@
             <div class="accordion" id="accordionPanelsStayOpenExample">
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
-                    aria-controls="panelsStayOpen-collapseOne">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
                     Accordion Item #1
                   </button>
                 </h2>
-                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                >
                   <div class="accordion-body">
                     <strong>This is the first item’s accordion body.</strong> It is shown
                     by default, until the collapse plugin adds the appropriate classes
@@ -349,9 +535,14 @@
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseTwo">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseTwo"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseTwo"
+                  >
                     Accordion Item #2
                   </button>
                 </h2>
@@ -370,13 +561,21 @@
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseThree">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseThree"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseThree"
+                  >
                     Accordion Item #3
                   </button>
                 </h2>
-                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                <div
+                  id="panelsStayOpen-collapseThree"
+                  class="accordion-collapse collapse"
+                >
                   <div class="accordion-body">
                     <strong>This is the third item’s accordion body.</strong> It is hidden
                     by default, until the collapse plugin adds the appropriate classes
@@ -398,9 +597,9 @@
   </main>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
-import { homeService } from '../../Configs/api';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { homeService } from "../../Configs/api";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
@@ -418,7 +617,7 @@ const bestSellers = ref([]);
 onMounted(async () => {
   try {
     discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
-    bestSellers.value = await homeService.getBestSellers();              // ✅ gọi từ homeService
+    bestSellers.value = await homeService.getBestSellers(); // ✅ gọi từ homeService
   } catch (error) {
     console.error("Lỗi khi tải dữ liệu:", error);
   }
@@ -450,7 +649,7 @@ onMounted(async () => {
   background: #c4e201;
 }
 
-#next>svg {
+#next > svg {
   width: 34px;
   margin-left: 10px;
   transition: transform 0.3s ease-in-out;
@@ -562,5 +761,103 @@ onMounted(async () => {
   object-fit: cover;
   object-position: top center;
   padding-top: 6px;
+}
+
+.carousel-image {
+  min-height: 400px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.carousel-indicators {
+  bottom: 20px;
+}
+
+.carousel-indicators [data-bs-target] {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: 0 6px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicators .active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.carousel-control-prev {
+  left: 20px;
+}
+
+.carousel-control-next {
+  right: 20px;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Pause carousel on hover */
+.carousel:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth fade transition */
+.carousel-fade .carousel-item {
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.8s;
+}
+
+.carousel-fade .carousel-item.active {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .carousel {
+    margin-top: 60px; /* Smaller margin for mobile */
+  }
+
+  .carousel-image {
+    height: 50vh;
+    min-height: 300px;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 45px;
+    height: 45px;
+  }
+
+  .carousel-control-prev {
+    left: 10px;
+  }
+
+  .carousel-control-next {
+    right: 10px;
+  }
 }
 </style>

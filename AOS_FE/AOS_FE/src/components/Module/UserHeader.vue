@@ -121,7 +121,13 @@
               </div>
               <div class="user-profile-container" v-else>
                 <div class="user-avatar">
-                  <img :src="user.avatarUrl" :alt="user?.fullname" />
+                  <img
+                    :src="
+                      user.avatarUrl ||
+                      'https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg'
+                    "
+                    :alt="user?.fullname"
+                  />
                 </div>
                 <div class="user-info d-none d-md-block">
                   <span class="user-name">{{ user?.fullname || "User" }}</span>
@@ -132,7 +138,13 @@
               <li class="dropdown-header user-dropdown-header" v-if="isLogged">
                 <div class="user-profile-header">
                   <div class="user-avatar-large">
-                    <img :src="user?.avatarUrl" :alt="user?.fullname" />
+                    <img
+                      :src="
+                        user?.avatarUrl ||
+                        'https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg'
+                      "
+                      :alt="user?.fullname"
+                    />
                   </div>
                   <div class="user-info-header">
                     <div class="user-fullname">{{ user?.fullname || "User" }}</div>
@@ -155,7 +167,7 @@
                 </RouterLink>
               </li>
               <li v-if="isLogged">
-                <RouterLink class="dropdown-item modern-dropdown-item" to="/profile">
+                <RouterLink class="dropdown-item modern-dropdown-item" to="/UserInfo">
                   <i class="bi bi-person me-2"></i>My Profile
                 </RouterLink>
               </li>
@@ -193,7 +205,7 @@ const isLogged = computed(() => {
   return !!authService.isLogged();
 });
 const user = computed(() => {
-  return authService.getUserInfor();
+  return authService.getUserHeader();
 });
 
 const isAdmin = computed(() => {
