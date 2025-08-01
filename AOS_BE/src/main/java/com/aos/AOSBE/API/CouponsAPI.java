@@ -107,9 +107,12 @@ public class CouponsAPI {
 	}
 	
 	@GetMapping("/Coupons/validate")
-	public ResponseEntity<?> validateCoupon(@RequestParam String code,
-	                                        @RequestParam(defaultValue = "false") boolean hasCombo,
-	                                        Principal principal) {
+	public ResponseEntity<?> validateCoupon(
+	        @RequestParam String code,
+	        @RequestParam(defaultValue = "false") boolean hasCombo,
+	        @RequestParam(defaultValue = "false") boolean hasPromotionItems,
+	        Principal principal) {
+
 	    Optional<Coupons> couponOpt = couponsRepository.findByCode(code);
 
 	    if (couponOpt.isEmpty()) {
@@ -138,26 +141,23 @@ public class CouponsAPI {
 
 	    // 4. Kiểm tra hạng khách hàng
 	    Map<String, Integer> rankLevels = Map.of(
-	    	    "ALL", 0,
-	    	    "Đồng", 1,
-	    	    "Bạc", 2,
-	    	    "Vàng", 3,
-	    	    "Platinum", 4,
-	    	    "Kim cương", 5,
-	    	    "VIP", 6
-	    	);
+	    		"ALL", 0, "Đồng", 1, "Bạc", 2, "Vàng", 3,
+		        "Platinum", 4, "Kim cương", 5, "VIP", 6
+		    );
+		    int couponLevel = rankLevels.getOrDefault(coupon.getCustomerGroup(), 0);
+		    int userLevel = rankLevels.getOrDefault(currentUser.getUserRank(), 0);
+		    if (userLevel < couponLevel) {
+		        return ResponseEntity.badRequest().body("Mã này không áp dụng cho hạng của bạn.");
+		    }
 
-	    	int couponLevel = rankLevels.getOrDefault(coupon.getCustomerGroup(), 0);
-	    	int userLevel = rankLevels.getOrDefault(currentUser.getUserRank(), 0);
-
-	    	if (userLevel < couponLevel) {
-	    	    return ResponseEntity.badRequest().body("Mã này không áp dụng cho hạng của bạn.");
-	    	}
-
-
-	    // 5. Không cho dùng nếu có combo mà không cho phép voucher
-	    if (hasCombo && !coupon.isAllowVoucher()) {
-	        return ResponseEntity.badRequest().body("Mã này không áp dụng cùng lúc với combo giảm giá.");
+		// 5. Check coupon type-specific restrictions
+		if ("G-DISCOUNT".equalsIgnoreCase(coupon.getDiscountType())) {
+		    if (hasCombo && !coupon.isAllowVoucher()) {
+		        return ResponseEntity.badRequest().body("Mã giảm giá không áp dụng cho combo.");
+		    }
+		    if (hasPromotionItems) {
+		        return ResponseEntity.badRequest().body("Mã giảm giá không áp dụng cho sản phẩm đang khuyến mãi.");
+		    }
 	    }
 	    
 	    // 5.5. Kiểm tra số lần sử dụng của khách hàng
