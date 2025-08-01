@@ -22,10 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class GhnAddressService {
 
-    @Value("${GHN_TOKEN_AD}")
+    @Value("${GHN_TOKEN}")
     private String ghnToken;
 
-    @Value("${GHN_SHOPID_AD}")
+    @Value("${GHN_SHOPID}")
     private String ghnShopId;
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -46,7 +46,7 @@ public class GhnAddressService {
     // =================== PROVINCES ===================
     @Cacheable("ghnProvinces")
     public List<ProvinceDTO> getProvinces() {
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/master-data/province";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province";
         ResponseEntity<JsonNode> response = restTemplate.exchange(
             url,
             HttpMethod.GET,
@@ -95,7 +95,7 @@ public class GhnAddressService {
             return districtCache.get(provinceId);
         }
 
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/master-data/district";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district";
         Map<String, Object> body = Map.of("province_id", provinceId);
 
         ResponseEntity<JsonNode> response = restTemplate.exchange(
@@ -134,7 +134,7 @@ public class GhnAddressService {
             return wardCache.get(districtId);
         }
 
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/master-data/ward";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id";
         Map<String, Object> body = Map.of("district_id", districtId);
 
         ResponseEntity<JsonNode> response = restTemplate.exchange(

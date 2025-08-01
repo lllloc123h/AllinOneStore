@@ -32,8 +32,6 @@ public class AosBeApplication {
 		System.setProperty("QDRANT_HOST", dotenv.get("QDRANT_HOST"));
 		System.setProperty("GHN_TOKEN", dotenv.get("GHN_TOKEN"));
 		System.setProperty("GHN_SHOPID", dotenv.get("GHN_SHOPID"));
-		System.setProperty("GHN_TOKEN_AD", dotenv.get("GHN_TOKEN_AD"));
-		System.setProperty("GHN_SHOPID_AD", dotenv.get("GHN_SHOPID_AD"));
 		SpringApplication.run(AosBeApplication.class, args);
 	}
 
