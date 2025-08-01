@@ -32,10 +32,6 @@ import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.PaymentMethods;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.ShippingMethods;
-import com.aos.AOSBE.Repository.CouponsRepository;
-import com.aos.AOSBE.Repository.OrdersRepository;
-import com.aos.AOSBE.Repository.PaymentMethodsRepository;
-import com.aos.AOSBE.Repository.ShippingMethodsRepository;
 
 @Service
 public class OrdersService {
@@ -53,6 +49,8 @@ public class OrdersService {
 	private ReturnsRepository returnsRepository;
 	@Autowired
 	private ProductItemsRepository productItemsRepository;
+	@Autowired
+	private GhnService ghnService;
 
 	@Autowired
 	private OrderItemsRepository orderItemsRepository; // nếu cần
@@ -150,6 +148,16 @@ public class OrdersService {
 	            // Lưu tất cả order items
 	            orderItemsRepository.saveAll(orders.getOrderItems());
 	        }
+
+			try {
+				// Gọi GHN để tạo vận đơn và lấy order_code
+				String ghnOrderCode = ghnService.createGhnOrderCode();
+				savedOrder.setGhnOrderCode(ghnOrderCode);
+				ordersRepository.save(savedOrder); // Lưu lại order_code vào DB
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 
 	        return savedOrder;
 

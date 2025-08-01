@@ -43,6 +43,7 @@ import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.BaseProductsService;
 import com.aos.AOSBE.Service.CartItemsService;
 import com.aos.AOSBE.Service.EWalletsService;
+import com.aos.AOSBE.Service.GhnService;
 import com.aos.AOSBE.Service.MessageService;
 import com.aos.AOSBE.Service.OrderItemsService;
 import com.aos.AOSBE.Service.OrdersService;
@@ -67,6 +68,9 @@ public class OrdersAPI {
 	private AccountsService accountService;
 	@Autowired
 	private AccountsMapper accountsMapper;
+	@Autowired
+	private GhnService ghnService;
+
 
 	@Autowired
 	private ProductItemsService productItemsService;
@@ -105,6 +109,11 @@ public class OrdersAPI {
 	public ResponseEntity<?> userAddNewOrders(@RequestBody OrdersDTOS entity) {
 		try {
 			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+			String ghnOrderCode = ghnService.createGhnOrderCode();
+
+			// 👉 Gán mã GHN vào đơn hàng nếu cần
+			saved.setGhnOrderCode(ghnOrderCode); // Nếu bạn có field orderCode trong entity
+			ordersService.ordersSave(saved);
 
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
