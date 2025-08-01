@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrdersDTOS {
-
 	private int id;
 	private String shippingStatus;
 	private double estimatedShippingFee;
 	private String freeshipCouponCode;
 	private double actualShippingFee;
 	private String discountCouponCode;
-	private double discountValue;
+	private Double discountValue;
 	private LocalDateTime shippedDate;
 	private String paymentStatus;
 	private String note;
@@ -37,37 +36,4 @@ public class OrdersDTOS {
 
 	private List<OrderItemsDTOS> products;
 	private String orderCode;
-
-	public OrdersDTOS(
-		int id, String shippingStatus, double estimatedShippingFee, String freeshipCouponCode,
-		double actualShippingFee, String discountCouponCode, double discountValue, LocalDateTime shippedDate,
-		String paymentStatus, String note, int point, double finalTotal, String orderInfor, LocalDateTime createdAt,
-		LocalDateTime updatedAt, int accounts,
-		int paymentMethodId, String paymentMethodName,
-		int shippingMethodId, String shippingMethodName,
-		String orderCode,List<OrderItemsDTOS> products
-	) {
-		this.id = id;
-		this.shippingStatus = shippingStatus;
-		this.estimatedShippingFee = estimatedShippingFee;
-		this.freeshipCouponCode = freeshipCouponCode;
-		this.actualShippingFee = actualShippingFee;
-		this.discountCouponCode = discountCouponCode;
-		this.discountValue = discountValue;
-		this.shippedDate = shippedDate;
-		this.paymentStatus = paymentStatus;
-		this.note = note;
-		this.point = point;
-		this.finalTotal = finalTotal;
-		this.orderInfor = orderInfor;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.accounts = accounts;
-		this.paymentMethodId = paymentMethodId;
-		this.paymentMethodName = paymentMethodName;
-		this.shippingMethodId = shippingMethodId;
-		this.shippingMethodName = shippingMethodName;
-		this.orderCode = orderCode;
-		this.products = products;
-	}
 }

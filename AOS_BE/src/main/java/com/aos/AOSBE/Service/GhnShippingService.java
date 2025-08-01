@@ -11,10 +11,10 @@ import java.util.*;
 @Service
 public class GhnShippingService {
 
-    @Value("${GHN_TOKEN}")
+    @Value("${GHN_TOKEN_AD}")
     private String ghnToken;
 
-    @Value("${GHN_SHOPID}")
+    @Value("${GHN_SHOPID_AD}")
     private String ghnShopId;
 
     private final RestTemplate restTemplate = new RestTemplate();

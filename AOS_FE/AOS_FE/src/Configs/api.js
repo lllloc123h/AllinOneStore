@@ -68,8 +68,11 @@ api.interceptors.response.use(
         router.push('/403')
       } else if (status === 401 && err.response.data.includes('Token đã hết hạn')) {
         localStorage.removeItem('jwtToken')
+        localStorage.removeItem('user');
         cartSize.value = 0;
         tokenRef.value = null;
+        userHeader.value = null;
+
         router.push('/login')
         setTimeout(() => {
           alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
@@ -81,6 +84,7 @@ api.interceptors.response.use(
 )
 const tokenRef = ref(localStorage.getItem('jwtToken'))
 const cartSize = ref(localStorage.getItem('cartSize') ? parseInt(localStorage.getItem('cartSize')) : 0);
+const userHeader = ref(JSON.parse(localStorage.getItem('user')) || null);
 const authService = {
   async login(email, password) {
     // console.log({ email, password })
@@ -98,14 +102,13 @@ const authService = {
         // Sync cart
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
-
         // Check admin role
         authService.isAdmin();
-
         // Navigate
         const redirectTo = localStorage.getItem('redirectTo') || '/';
         localStorage.removeItem('redirectTo'); // Clear redirect after use
-
+        userHeader.value = await this.getProfile();
+                        localStorage.setItem('user',JSON.stringify(userHeader.value));
         setTimeout(() => {
           toast.success('Đăng nhập thành công !');
         }, 500);
@@ -121,6 +124,9 @@ const authService = {
     tokenRef.value = token;
   }
   ,
+  getUserInfor(){
+    return userHeader.value;
+  },
   isLogged() {
     return tokenRef.value != null;
   }
@@ -197,6 +203,8 @@ const authService = {
 
   logout() {
     localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    userHeader.value = null;
     router.push('/');
     setTimeout(() => {
       toast.success('Đăng xuất thành công !');

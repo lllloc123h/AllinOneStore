@@ -227,7 +227,7 @@ public class ProductItemsAPI {
 			List<PromotionsDTOS> promotions = promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(id)
 					.stream().map(promotionsMapper::mapper).collect(Collectors.toList());
 
-			ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, priceHistories, promotions);
+			ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, promotions);
 
 			return ResponseEntity.ok(detail);
 

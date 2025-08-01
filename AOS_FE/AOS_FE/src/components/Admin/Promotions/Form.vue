@@ -386,7 +386,7 @@
                 >
                   <div class="summary-card">
                     <img
-                      :src="group.baseProduct.mainImagePreviewImg"
+                      :src="group.baseProduct.mainImage"
                       alt="Base Product"
                       class="summary-image"
                     />
@@ -1279,7 +1279,7 @@ onMounted(async () => {
     // Load base products dropdown first
     dropDownListBaseProduct.value = await dropDown("BaseProducts");
     console.log("=== BASE PRODUCTS DROPDOWN ===");
-    console.log("Base products loaded:", dropDownListBaseProduct.value?.length, "items");
+    console.log("Base products loaded:", dropDownListBaseProduct.value);
     if (dropDownListBaseProduct.value?.length > 0) {
       console.log("First base product:", dropDownListBaseProduct.value[0]);
     }
