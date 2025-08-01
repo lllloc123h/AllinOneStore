@@ -50,13 +50,11 @@ public class GhnShippingService {
         Integer fromDistrictId = (Integer) shop.get("district_id");
         String fromWardCode = (String) shop.get("ward_code");
 
-        // 🆕 Lấy danh sách dịch vụ từ GHN
         List<Map<String, Object>> services = getAvailableServices(toDistrictId);
         if (services == null || services.isEmpty()) {
             throw new RuntimeException("Không có dịch vụ vận chuyển khả dụng từ GHN");
         }
 
-        // 🆗 Lấy service_id đầu tiên (hoặc lọc theo logic riêng)
         Integer serviceId = (Integer) services.get(0).get("service_id");
 
         String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
@@ -67,7 +65,7 @@ public class GhnShippingService {
 
         Map<String, Object> body = new HashMap<>();
         body.put("service_id", serviceId);
-        body.put("insurance_value", 100000); // Tổng tiền đơn hàng
+        body.put("insurance_value", 100000);
         body.put("from_district_id", fromDistrictId);
         body.put("from_ward_code", fromWardCode);
         body.put("to_district_id", toDistrictId);
@@ -78,14 +76,21 @@ public class GhnShippingService {
         body.put("height", 10);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            return (Map<String, Object>) response.getBody().get("data");
+            Map<String, Object> feeData = (Map<String, Object>) response.getBody().get("data");
+
+            // 🕒 Thêm thời gian dự kiến
+            long leadtime = estimateDeliveryTime(toDistrictId, toWardCode);
+            feeData.put("leadtime", leadtime); // Thêm leadtime vào response
+
+            return feeData;
         }
 
         throw new RuntimeException("Không tính được phí vận chuyển");
     }
+
 
     
     public List<Map<String, Object>> getAvailableServices(int toDistrictId) {
@@ -111,6 +116,49 @@ public class GhnShippingService {
         }
 
         throw new RuntimeException("Không lấy được danh sách dịch vụ GHN");
+    }
+    
+    public long estimateDeliveryTime(int toDistrictId, String toWardCode) {
+        Map<String, Object> shop = getShopAddressFromGHN();
+
+        Integer fromDistrictId = (Integer) shop.get("district_id");
+        String fromWardCode = (String) shop.get("ward_code");
+
+        List<Map<String, Object>> services = getAvailableServices(toDistrictId);
+        if (services == null || services.isEmpty()) {
+            throw new RuntimeException("Không có dịch vụ vận chuyển khả dụng từ GHN");
+        }
+
+        Integer serviceId = (Integer) services.get(0).get("service_id");
+
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", ghnToken);
+        headers.set("ShopId", ghnShopId);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("from_district_id", fromDistrictId);
+        body.put("from_ward_code", fromWardCode);
+        body.put("to_district_id", toDistrictId);
+        body.put("to_ward_code", toWardCode);
+        body.put("service_id", serviceId);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
+            Object raw = data.get("leadtime");
+
+            if (raw instanceof Number num) {
+                return num.longValue();
+            }
+            throw new RuntimeException("Giá trị leadtime không hợp lệ: " + raw);
+        }
+
+        throw new RuntimeException("Không lấy được thời gian dự kiến giao hàng");
     }
 
 }
