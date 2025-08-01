@@ -28,7 +28,7 @@
           <i class="bi bi-cloud-upload drop-icon"></i>
           <h5>Kéo thả ảnh vào đây</h5>
           <p>hoặc</p>
-          <button class="browse-btn" @click="triggerFileInput">
+          <button type="button" class="browse-btn" @click.prevent="triggerFileInput">
             <i class="bi bi-folder2-open me-2"></i>
             Chọn ảnh từ máy tính
           </button>
@@ -41,7 +41,7 @@
             style="display: none"
           />
           <div class="file-info">
-            <small>Hỗ trợ: JPG, PNG, GIF. Tối đa 10 ảnh.</small>
+            <small>Hỗ trợ: JPG, PNG, GIF. Tối đa {{ props.maxFiles }} ảnh.</small>
           </div>
         </div>
       </div>
@@ -50,13 +50,14 @@
       <div v-if="images.length > 0" class="image-gallery">
         <div class="gallery-header">
           <div class="image-count">
-            <span class="count-badge">{{ images.length }}/10</span>
+            <span class="count-badge">{{ images.length }}/{{ props.maxFiles }}</span>
             <span class="primary-label">Ảnh chính</span>
           </div>
           <div class="header-actions">
             <button
+              type="button"
               class="upload-all-btn"
-              @click="uploadAllImages"
+              @click.prevent="uploadAllImages"
               v-if="hasUnuploadedImages"
               :disabled="isUploading"
             >
@@ -65,9 +66,10 @@
             </button>
 
             <button
+              type="button"
               class="add-more-btn"
-              @click="triggerFileInput"
-              v-if="images.length < 10"
+              @click.prevent="triggerFileInput"
+              v-if="images.length < props.maxFiles"
             >
               <i class="bi bi-plus-circle me-1"></i>
               Thêm ảnh
@@ -94,29 +96,32 @@
             </div>
 
             <!-- Image -->
-            <div class="image-wrapper">
+            <div class="image-wrapper" :style="{ paddingBottom: aspectRatioPadding }">
               <img :src="image.url" :alt="`Ảnh ${index + 1}`" />
 
               <!-- Overlay Controls -->
               <div class="image-overlay">
                 <button
+                  type="button"
                   class="control-btn preview-btn"
-                  @click="previewImage(image)"
+                  @click.prevent="previewImage(image)"
                   title="Xem trước"
                 >
                   <i class="bi bi-eye"></i>
                 </button>
                 <button
+                  type="button"
                   class="control-btn upload-btn"
-                  @click="uploadSingleImage(index)"
+                  @click.prevent="uploadSingleImage(index)"
                   v-if="!image.uploading && !image.cloudinaryUrl && !image.isUrl"
                   title="Tải lên"
                 >
                   <i class="bi bi-cloud-upload"></i>
                 </button>
                 <button
+                  type="button"
                   class="control-btn delete-btn"
-                  @click="removeImage(index)"
+                  @click.prevent="removeImage(index)"
                   title="Xóa ảnh"
                 >
                   <i class="bi bi-trash"></i>
@@ -155,7 +160,12 @@
           </div>
 
           <!-- Add More Slot -->
-          <div v-if="images.length < 10" class="add-more-slot" @click="triggerFileInput">
+          <div
+            v-if="images.length < props.maxFiles"
+            class="add-more-slot"
+            :style="{ paddingBottom: aspectRatioPadding }"
+            @click="triggerFileInput"
+          >
             <div class="add-content">
               <i class="bi bi-plus-lg"></i>
               <span>Thêm ảnh</span>
@@ -189,8 +199,9 @@
           @keyup.enter="addImageFromUrl"
         />
         <button
+          type="button"
           class="url-add-btn"
-          @click="addImageFromUrl"
+          @click.prevent="addImageFromUrl"
           :disabled="!imageUrl || images.length >= 10"
         >
           <i class="bi bi-plus"></i>
@@ -201,7 +212,7 @@
     <!-- Preview Modal -->
     <div v-if="previewModal.show" class="preview-modal mt-5" @click="closePreview">
       <div class="preview-content" @click.stop>
-        <button class="close-btn" @click="closePreview">
+        <button type="button" class="close-btn" @click.prevent="closePreview">
           <i class="bi bi-x-lg"></i>
         </button>
         <img :src="previewModal.image?.url" :alt="previewModal.image?.name" />
@@ -236,6 +247,14 @@ const props = defineProps({
     type: String,
     default: "products", // Thư mục upload trên Cloudinary
   },
+  aspectRatio: {
+    type: String,
+    default: "4:5", // Tỷ lệ khung hình: "1:1", "4:5", "16:9", "3:4", v.v.
+    validator: (value) => {
+      // Kiểm tra format "width:height"
+      return /^\d+:\d+$/.test(value);
+    },
+  },
 });
 
 const emit = defineEmits(["update:images", "primary-changed"]);
@@ -257,6 +276,12 @@ const previewModal = ref({
 // Computed
 const hasUnuploadedImages = computed(() => {
   return images.value.some((img) => !img.cloudinaryUrl && !img.isUrl && !img.uploading);
+});
+
+// Tính toán padding-bottom dựa vào aspectRatio
+const aspectRatioPadding = computed(() => {
+  const [width, height] = props.aspectRatio.split(":").map(Number);
+  return `${(height / width) * 100}%`;
 });
 
 // Methods
@@ -580,6 +605,39 @@ const updateParent = () => {
   }
 };
 
+// Load từ danh sách URLs
+const loadFromUrls = (urlList) => {
+  if (!Array.isArray(urlList) || urlList.length === 0) {
+    console.warn("URL list phải là một mảng và không được rỗng");
+    return;
+  }
+
+  try {
+    // Convert URLs thành image objects
+    const loadedImages = urlList.map((url, index) => ({
+      id: Date.now() + index + Math.random(),
+      name: url.split("/").pop() || `Image ${index + 1}`,
+      size: 0,
+      url: url,
+      cloudinaryUrl: url,
+      publicId: url.includes("cloudinary") ? url.split("/").pop().split(".")[0] : null,
+      isUrl: !url.includes("cloudinary"),
+      uploading: false,
+    }));
+
+    // Thay thế danh sách images hiện tại
+    images.value = loadedImages;
+    updateParent();
+
+    console.log(`Đã load ${loadedImages.length} ảnh từ danh sách URLs`);
+    return loadedImages;
+  } catch (error) {
+    console.error("Load images from URLs failed:", error);
+    alert("Không thể tải ảnh từ danh sách URLs.");
+    return [];
+  }
+};
+
 // Expose methods for parent component
 defineExpose({
   addFiles,
@@ -598,6 +656,7 @@ defineExpose({
   getImageUrls: () => images.value.map((img) => img.cloudinaryUrl || img.url), // Lấy tất cả URL
 
   // Load methods
+  loadFromUrls, // Load từ danh sách URLs đơn giản
   loadImagesFromProduct, // Load ảnh từ backend theo productId
   loadImagesAndReplace, // Load ảnh từ danh sách URLs và thay thế
   uploadSingleImage, // Upload ảnh đơn lẻ
@@ -864,7 +923,7 @@ defineExpose({
   position: relative;
   width: 100%;
   height: 0;
-  padding-bottom: 125%; /* 5/4 * 100% = 125% cho tỷ lệ 4:5 */
+  /* padding-bottom được set động qua :style binding */
   overflow: hidden;
   background: #f3f4f6;
   border-radius: 8px 8px 0 0; /* Chỉ bo góc trên */
@@ -1058,7 +1117,7 @@ defineExpose({
 .add-more-slot {
   width: 100%;
   height: 0;
-  padding-bottom: 125%; /* 5/4 * 100% = 125% cho tỷ lệ 4:5 */
+  /* padding-bottom được set động qua :style binding */
   border: 2px dashed #d1d5db;
   border-radius: 12px;
   position: relative;
@@ -1257,14 +1316,7 @@ defineExpose({
     height: 44px;
   }
 
-  /* Đảm bảo tỷ lệ 4:5 được giữ nguyên */
-  .image-wrapper {
-    padding-bottom: 125%; /* Giữ tỷ lệ 4:5 */
-  }
-
-  .add-more-slot {
-    padding-bottom: 125%; /* Giữ tỷ lệ 4:5 */
-  }
+  /* Aspect ratio được set động qua :style binding - không cần CSS cố định */
 }
 
 @media (max-width: 480px) {
@@ -1290,14 +1342,7 @@ defineExpose({
     justify-content: center;
   }
 
-  /* Đảm bảo tỷ lệ 4:5 được giữ nguyên trên mobile */
-  .image-wrapper {
-    padding-bottom: 125%; /* Giữ tỷ lệ 4:5 */
-  }
-
-  .add-more-slot {
-    padding-bottom: 125%; /* Giữ tỷ lệ 4:5 */
-  }
+  /* Aspect ratio được set động qua :style binding - không cần CSS cố định */
 
   .drop-zone {
     padding: 20px 12px;
