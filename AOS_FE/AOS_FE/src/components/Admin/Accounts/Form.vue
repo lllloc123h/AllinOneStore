@@ -14,10 +14,17 @@
             props.action === 'view' || props.action === 'create' ? 'display:none;' : ''
           "
         >
-          <label for="id" class="form-label text-capitalize"></label>
+          <label
+            for="id"
+            v-if="props.action !== 'create'"
+            :hidden="props.action === 'view'"
+            class="form-label text-capitalize"
+            >Id</label
+          >
           <input
             id="id"
             v-model="formData.id"
+            readonly
             v-if="props.action !== 'create'"
             :hidden="props.action === 'view'"
             type="number"
@@ -98,17 +105,13 @@
         </div>
         <div class="mb-4">
           <label class="form-label text-capitalize fw-semibold">Avatar</label>
-          <uploadProducts ref="uploadRef" :maxFiles="1" :aspectRatio="'1:1'" />
-
-          <div v-if="formData.avatar" class="mt-3 text-center">
-            <label class="form-label">Preview Avatar:</label>
-            <img
-              :src="formData.avatar"
-              alt="Avatar Preview"
-              class="img-thumbnail avatar-preview rounded-circle"
-              style="width: 100px; height: 100px; object-fit: cover"
-            />
-          </div>
+          <uploadProducts
+            ref="uploadRef"
+            :maxFiles="1"
+            :aspectRatio="'1:1'"
+            @update:images="handleImagesUpdate"
+            @delete-image="handleImagesDelete"
+          />
         </div>
 
         <div class="row mb-4">
@@ -242,6 +245,7 @@ import { dropDown } from "../../../Configs/DropDownList.js";
 import api from "../../../Configs/api.js";
 import uploadProducts from "../../Module/upload-products.vue";
 import uploadProduct2 from "../../Module/upload-products.vue";
+import { notification } from "ant-design-vue";
 const uploadRef = ref(null);
 const props = defineProps({
   TableName: {
@@ -288,6 +292,11 @@ async function submitUpdateForm() {
     console.log("Form updated successfully:", response.data);
     await updateRoles(formData.id);
     router.push(`/Admin/${props.TableName}`);
+    notification.success({
+      message: "Cập nhật thành công",
+      description: `Người dùng ${formData.id} đã được cập nhật thành công.`,
+      duration: 3,
+    });
   } catch (error) {
     console.error("Insert failed:", error);
   }
@@ -312,7 +321,7 @@ const fetchData = async () => {
     selectedRoles.value = responseAuthorities.data.map((role) => role.roles.id);
     const response = await formTableService.getById(props.id);
     Object.assign(formData, response.data);
-    
+
     // Kiểm tra uploadRef có tồn tại và có avatarUrl trước khi load
     if (uploadRef.value && response.data.avatarUrl) {
       uploadRef.value.loadFromUrls([response.data.avatarUrl]);
@@ -321,17 +330,80 @@ const fetchData = async () => {
     console.error("Get failed:", err);
   }
 };
-
-// Hàm tiện ích để load avatar an toàn
-const loadAvatar = (avatarUrl) => {
-  if (uploadRef.value && avatarUrl) {
-    try {
-      uploadRef.value.loadFromUrls([avatarUrl]);
-    } catch (error) {
-      console.error("Failed to load avatar:", error);
+// Xử lý khi danh sách ảnh thay đổi
+const handleImagesUpdate = (images) => {
+  console.log("Images updated:", images);
+  // Cập nhật avatarUrl với ảnh đầu tiên (nếu có)
+  if (images.length > 0) {
+    formData.avatarUrl = images[0].cloudinaryUrl || images[0].url;
+    if (images[0].cloudinaryUrl) {
+      formData.avatarUrl = images[0].cloudinaryUrl;
+      const payload = {
+        ...formData, // Add this if your backend needs role IDs
+      };
+      api
+        .put(`/admin/${props.TableName}/` + props.id, payload)
+        .then(() => {
+          notification.success({
+            message: "Cập nhật thành công",
+            description: `Avatar đã được cập nhật thành công.`,
+            duration: 3,
+          });
+        })
+        .catch((error) => {
+          notification.error({
+            message: "Cập nhật thất bại",
+            description: `Không thể cập nhật avatar.`,
+            duration: 3,
+          });
+          console.error("Failed to update avatar:", error);
+        });
     }
+  } else {
+    formData.avatarUrl = null;
+  }
+
+  // Hiển thị thông báo khi có thay đổi
+  if (images.length > 0) {
+    console.log("Avatar updated:", formData.avatarUrl);
   }
 };
+const handleImagesDelete = (index) => {
+  console.log("Deleting image at index:", index);
+  // Xử lý xóa ảnh tại index
+  formData.avatarUrl = null; // Xóa ảnh khỏi formData
+  const payload = {
+    ...formData, // Add this if your backend needs role IDs
+  };
+  api
+    .put(`/admin/${props.TableName}/` + props.id, payload)
+    .then(() => {
+      notification.success({
+        message: "Xóa thành công",
+        description: `Ảnh đã được xóa thành công.`,
+        duration: 3,
+      });
+      console.log("Image deleted successfully");
+    })
+    .catch((error) => {
+      notification.error({
+        message: "Xóa thất bại",
+        description: `Không thể xóa ảnh.`,
+        duration: 3,
+      });
+      console.error("Failed to delete image:", error);
+    });
+};
+
+// Xử lý khi ảnh chính thay đổi
+// const handlePrimaryImageChanged = (primaryImage) => {
+//   console.log("Primary image changed:", primaryImage);
+
+//   if (primaryImage) {
+//     formData.avatarUrl = primaryImage.cloudinaryUrl || primaryImage.url;
+//     console.log("New primary avatar:", formData.avatarUrl);
+//   }
+// };
 async function updateRoles(id) {
   try {
     console.log("Roles need successfully:", {

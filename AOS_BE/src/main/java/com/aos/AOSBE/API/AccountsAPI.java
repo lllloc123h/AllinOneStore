@@ -116,7 +116,7 @@ public class AccountsAPI {
 				entity.setId(isExist.getId());
 				if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
 					// Only encode if the password is new or changed
-					if (!passwordEncoder.matches(entity.getPassword(), isExist.getPassword())) {
+					if (!entity.getPassword().equals(isExist.getPassword())) {
 						entity.setPassword(passwordEncoder.encode(entity.getPassword()));
 					} else {
 						entity.setPassword(isExist.getPassword());

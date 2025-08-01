@@ -1,256 +1,323 @@
-  <template>
-    <div class="mt-2 mx-5">
-      <h2><strong> Cài đặt tài khoản</strong></h2>
-      <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
+<template>
+  <div class="mt-2 mx-5">
+    <h2><strong> Cài đặt tài khoản</strong></h2>
+    <h6 class="mb-5">WEAR WHAT MAKES YOU FEEL CONFIDENT</h6>
+  </div>
+  <div class="account-card">
+    <!-- Ảnh đại diện + thông tin chính -->
+    <div class="account-header">
+      <div class="avatar-wrapper">
+        <img
+          :src="
+            user.avatarUrl ||
+            'https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg'
+          "
+          alt="avatar"
+          class="avatar-img"
+        />
+        <button
+          class="avatar-upload-btn"
+          @click="$refs.avatarInput.click()"
+          title="Đổi ảnh đại diện"
+        >
+          📷
+        </button>
+        <input
+          type="file"
+          ref="avatarInput"
+          @change="handleAvatarChange"
+          accept="image/*"
+          hidden
+        />
+      </div>
+
+      <h4 class="username">{{ user.fullname }}</h4>
+      <p class="user-email">{{ user.email }}</p>
     </div>
-    <div class="account-card">
-  <!-- Ảnh đại diện + thông tin chính -->
-  <div class="account-header">
-   <div class="avatar-wrapper">
-  <img :src="user.Avatar" alt="avatar" class="avatar-img" />
-  <button class="avatar-upload-btn" @click="$refs.avatarInput.click()" title="Đổi ảnh đại diện">
-    📷
-  </button>
-  <input type="file" ref="avatarInput" @change="handleAvatarChange" accept="image/*" hidden />
-</div>
 
-    <h4 class="username">{{ user.Name }}</h4>
-    <p class="user-email">{{ user.Email }}</p>
+    <!-- Thông tin xếp hạng / điểm / chi tiêu -->
+    <div class="account-info-stats">
+      <div class="stat-box">
+        <span class="stat-icon">🏅</span>
+        <p class="label">Hạng thành viên</p>
+        <strong>{{ user.userRank || "Chưa xếp hạng" }}</strong>
+      </div>
+      <div class="stat-box">
+        <span class="stat-icon">💰</span>
+        <p class="label">Tổng chi tiêu</p>
+        <strong>{{ user.totalSpent.toLocaleString() }}₫</strong>
+      </div>
+      <div class="stat-box">
+        <span class="stat-icon">🌟</span>
+        <p class="label">Điểm tích lũy</p>
+        <strong>{{ user.loyaltyPoint }}</strong>
+      </div>
+    </div>
+
+    <!-- Các nút chức năng -->
+    <div class="button-holder">
+      <button class="open-popup-btn" @click="openPopupTaiKhoan">
+        Cài đặt thông tin tài khoản
+      </button>
+      <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
+      <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
+      <button class="open-popup-btn" @click="redirectOrder">Đơn Hàng</button>
+      <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
+    </div>
   </div>
 
-  <!-- Thông tin xếp hạng / điểm / chi tiêu -->
-<div class="account-info-stats">
-  <div class="stat-box">
-    <span class="stat-icon">🏅</span>
-    <p class="label">Hạng thành viên</p>
-    <strong>{{ user.Rank || 'Chưa xếp hạng' }}</strong>
-  </div>
-  <div class="stat-box">
-    <span class="stat-icon">💰</span>
-    <p class="label">Tổng chi tiêu</p>
-    <strong>{{ user.TotalSpent.toLocaleString() }}₫</strong>
-  </div>
-  <div class="stat-box">
-    <span class="stat-icon">🌟</span>
-    <p class="label">Điểm tích lũy</p>
-    <strong>{{ user.LoyaltyPoint }}</strong>
-  </div>
-</div>
-
-
-  <!-- Các nút chức năng -->
-  <div class="button-holder">
-    <button class="open-popup-btn" @click="openPopupTaiKhoan">Cài đặt thông tin tài khoản</button>
-    <button class="open-popup-btn" @click="openPopupDoiMatKhau">Đổi mật khẩu</button>
-    <button class="open-popup-btn" @click="openPopupTopUp">Nạp tiền</button>
-    <button class="open-popup-btn" @click="redirectOrder">Đơn Hàng</button>
-    <button class="open-popup-btn" @click="openPopupDiaChi">Địa chỉ nhận hàng</button>
-  </div>
-</div>
-
-
-        <div v-if="showPopupTaiKhoan" class="popup-overlay">
-          <form class="form-container">
-            <section class="form-section">
-              <h3>Thông tin khách hàng</h3>
-              <div class="form-grid">
-                <div class="form-group">
-                  <label>Họ và tên</label>
-                  <input type="text" v-model="user.Name" />
-                </div>
-                <div class="form-group">
-                  <label>Số điện thoại</label>
-                  <input type="text" v-model="user.Phone" />
-                </div>
-                <div class="form-group full-width">
-                  <label>Địa chỉ Email</label>
-                  <input type="email" v-model="user.Email" />
-                </div>
-              </div>
-            </section>
-
-            <div class="form-buttons">
-              <button class="submit-btn" @click.prevent="updateProfile">Lưu thay đổi</button>
-              <button class="cancel-btn" @click.prevent="showPopupTaiKhoan = false">Hủy</button>
-            </div>
-          </form>
+  <div v-if="showPopupTaiKhoan" class="popup-overlay">
+    <form class="form-container">
+      <section class="form-section">
+        <h3>Thông tin khách hàng</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Họ và tên</label>
+            <input type="text" v-model="dto.fullname" />
+          </div>
+          <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" v-model="dto.phone" />
+          </div>
+          <div class="form-group full-width">
+            <label>Địa chỉ Email</label>
+            <input type="email" v-model="dto.email" />
+          </div>
         </div>
+      </section>
 
-        <div v-if="showPopupDoiMatKhau" class="popup-overlay">
-  <form class="form-container">
-    <section class="form-section">
-      <h3>Đổi mật khẩu</h3>
-      <div class="form-grid">
-  <div class="form-group full-width">
-    <label>Mật khẩu hiện tại</label>
-    <div class="password-wrapper">
-      <input :type="showPasswordCurrent ? 'text' : 'password'" v-model="user.CurrentPassword" />
-      <button type="button" class="toggle-password" @click="togglePasswordCurrent">
-        <span v-if="showPasswordCurrent"><i class="fa-solid fa-eye-slash"></i></span>
-        <span v-else><i class="fa-solid fa-eye"></i></span>
-      </button>
-    </div>
+      <div class="form-buttons">
+        <button class="submit-btn" @click.prevent="updateProfile">Lưu thay đổi</button>
+        <button class="cancel-btn" @click.prevent="clearDto">Hủy</button>
+      </div>
+    </form>
   </div>
 
-  <div class="form-group full-width">
-    <label>Mật khẩu mới</label>
-    <div class="password-wrapper">
-      <input :type="showPasswordNew ? 'text' : 'password'" v-model="user.NewPassword" />
-      <button type="button" class="toggle-password" @click="togglePasswordNew">
-        <span v-if="showPasswordNew"><i class="fa-solid fa-eye-slash"></i></span>
-        <span v-else><i class="fa-solid fa-eye"></i></span>
-      </button>
-    </div>
-  </div>
-
-  <div class="form-group full-width">
-    <label>Xác nhận mật khẩu</label>
-    <div class="password-wrapper">
-      <input :type="showPasswordConfirm ? 'text' : 'password'" v-model="user.ConfirmPassword" />
-      <button type="button" class="toggle-password" @click="togglePasswordConfirm">
-        <span v-if="showPasswordConfirm"><i class="fa-solid fa-eye-slash"></i></span>
-        <span v-else><i class="fa-solid fa-eye"></i></span>
-      </button>
-    </div>
-  </div>
-</div>
-
-    </section>
-
-            <div class="form-buttons">
-              <button class="submit-btn" @click.prevent="changePassword">Đổi mật khẩu</button>
-              <button class="cancel-btn" @click.prevent="showPopupDoiMatKhau = false">Hủy</button>
+  <div v-if="showPopupDoiMatKhau" class="popup-overlay">
+    <form class="form-container">
+      <section class="form-section">
+        <h3>Đổi mật khẩu</h3>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Mật khẩu hiện tại</label>
+            <div class="password-wrapper">
+              <input
+                :type="showPasswordCurrent ? 'text' : 'password'"
+                v-model="user.CurrentPassword"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                @click="togglePasswordCurrent"
+              >
+                <span v-if="showPasswordCurrent"
+                  ><i class="fa-solid fa-eye-slash"></i
+                ></span>
+                <span v-else><i class="fa-solid fa-eye"></i></span>
+              </button>
             </div>
-          </form>
-        </div>
+          </div>
 
-  </template>
+          <div class="form-group full-width">
+            <label>Mật khẩu mới</label>
+            <div class="password-wrapper">
+              <input
+                :type="showPasswordNew ? 'text' : 'password'"
+                v-model="user.NewPassword"
+              />
+              <button type="button" class="toggle-password" @click="togglePasswordNew">
+                <span v-if="showPasswordNew"><i class="fa-solid fa-eye-slash"></i></span>
+                <span v-else><i class="fa-solid fa-eye"></i></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Xác nhận mật khẩu</label>
+            <div class="password-wrapper">
+              <input
+                :type="showPasswordConfirm ? 'text' : 'password'"
+                v-model="user.ConfirmPassword"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                @click="togglePasswordConfirm"
+              >
+                <span v-if="showPasswordConfirm"
+                  ><i class="fa-solid fa-eye-slash"></i
+                ></span>
+                <span v-else><i class="fa-solid fa-eye"></i></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="form-buttons">
+        <button class="submit-btn" @click.prevent="changePassword">Đổi mật khẩu</button>
+        <button class="cancel-btn" @click.prevent="showPopupDoiMatKhau = false">
+          Hủy
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { authService } from '../../Configs/api'
-const router = useRouter()
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { authService } from "../../Configs/api";
+import { notification } from "ant-design-vue";
+const router = useRouter();
 
 // 👤 Dữ liệu người dùng
 const user = ref({
-  Name: '',
-  Email: '',
-  Phone: '',
-  Avatar: '', 
-  Rank: '',
-  TotalSpent: 0,
-  LoyaltyPoint: 0,
-  NewPassword: '',
-  ConfirmPassword: ''
-})
-
+  fullname: "",
+  email: "",
+  phone: "",
+  avatarUrl: "",
+  userRank: "",
+  totalSpent: 0,
+  totalOrder: 0,
+  loyaltyPoint: 0,
+  NewPassword: "",
+  ConfirmPassword: "",
+  averageOrderValue: 0,
+});
 
 // 🔄 Trạng thái popup
-const showPopupTaiKhoan = ref(false)
-const showPopupDoiMatKhau = ref(false)
-
+const showPopupTaiKhoan = ref(false);
+const showPopupDoiMatKhau = ref(false);
 
 // 🧭 Các nút điều hướng
-const openPopupTaiKhoan = () => { showPopupTaiKhoan.value = true }
-const openPopupDoiMatKhau = () => { showPopupDoiMatKhau.value = true }
-const openPopupTopUp = () => { router.push({ name: "wallet" }) }
-const openPopupDiaChi = () => { router.push({ name: "shippingaddress" }) }
-const redirectOrder = () => { router.push({ name: "user-orders" }) }
-const showPasswordNew = ref(false)
-const showPasswordConfirm = ref(false)
-const showPasswordCurrent = ref(false)
+const openPopupTaiKhoan = () => {
+  showPopupTaiKhoan.value = true;
+};
+const openPopupDoiMatKhau = () => {
+  showPopupDoiMatKhau.value = true;
+};
+const openPopupTopUp = () => {
+  router.push({ name: "wallet" });
+};
+const openPopupDiaChi = () => {
+  router.push({ name: "shippingaddress" });
+};
+const redirectOrder = () => {
+  router.push({ name: "user-orders" });
+};
+const showPasswordNew = ref(false);
+const showPasswordConfirm = ref(false);
+const showPasswordCurrent = ref(false);
 
 const togglePasswordNew = () => {
-  showPasswordNew.value = !showPasswordNew.value
-}
+  showPasswordNew.value = !showPasswordNew.value;
+};
 
 const togglePasswordConfirm = () => {
-  showPasswordConfirm.value = !showPasswordConfirm.value
-}
+  showPasswordConfirm.value = !showPasswordConfirm.value;
+};
 const togglePasswordCurrent = () => {
-  showPasswordCurrent.value = !showPasswordCurrent.value
-}
-
+  showPasswordCurrent.value = !showPasswordCurrent.value;
+};
+const dto = ref({
+  fullname: "",
+  email: "",
+  phone: "",
+});
 // ✅ Lấy thông tin người dùng từ API qua authService
 onMounted(async () => {
   try {
-    const data = await authService.getProfile()
-    user.value.Name = data.fullname
-    user.value.Email = data.email
-    user.value.Phone = data.phone
-    user.value.Avatar = data.avatarUrl
-    user.value.Rank = data.userRank
-    user.value.TotalSpent = data.totalSpent
-    user.value.LoyaltyPoint = data.loyaltyPoint
+    const data = await authService.getProfile();
+    console.log("Thông tin người dùng:", data);
+
+    user.value.fullname = data.fullname;
+    user.value.email = data.email;
+    user.value.phone = data.phone;
+    user.value.avatarUrl = data.avatarUrl;
+    user.value.userRank = data.userRank;
+    user.value.totalSpent = data.totalSpent;
+    user.value.loyaltyPoint = data.loyaltyPoint;
+    user.value.averageOrderValue = data.averageOrderValue;
+    dto.value = {
+      fullname: data.fullname,
+      email: data.email,
+      phone: data.phone,
+    };
   } catch (err) {
-    console.error("Không thể lấy thông tin tài khoản", err)
+    console.error("Không thể lấy thông tin tài khoản", err);
   }
-})
-
-
+});
 // ✅ Cập nhật thông tin người dùng
 const updateProfile = async () => {
   try {
-    const dto = {
-      fullname: user.value.Name,
-      email: user.value.Email,
-      phone: user.value.Phone
-    }
-    await authService.updateProfile(dto)
-    alert("Cập nhật thông tin thành công")
-    showPopupTaiKhoan.value = false
+    await authService.updateProfile(dto.value);
+    notification.success({
+      message: "Cập nhật thành công",
+      description: "Thông tin tài khoản đã được cập nhật.",
+    });
+    user.value = {
+      ...user.value,
+      fullname: dto.value.fullname,
+      email: dto.value.email,
+      phone: dto.value.phone,
+    };
+    authService.setUserHeader(user.value);
+    showPopupTaiKhoan.value = false;
   } catch (err) {
-    alert(err.response?.data?.message || "Lỗi cập nhật thông tin")
+    alert(err.response?.data?.message || "Lỗi cập nhật thông tin");
   }
-}
+};
 
 // ✅ Đổi mật khẩu người dùng
 const changePassword = async () => {
   if (user.value.NewPassword !== user.value.ConfirmPassword) {
-    alert("Mật khẩu xác nhận không khớp")
-    return
+    alert("Mật khẩu xác nhận không khớp");
+    return;
   }
 
   try {
     const dto = {
       currentPassword: user.value.CurrentPassword,
       newPassword: user.value.NewPassword,
-      confirmPassword: user.value.ConfirmPassword
-    }
+      confirmPassword: user.value.ConfirmPassword,
+    };
 
-    await authService.changePassword(dto)
-    alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.")
+    await authService.changePassword(dto);
+    alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.");
 
-    authService.logout()
-    
+    authService.logout();
   } catch (err) {
-    const message = err.response?.data || "Lỗi khi đổi mật khẩu"
-    alert(typeof message === 'string' ? message : message.message)
+    const message = err.response?.data || "Lỗi khi đổi mật khẩu";
+    alert(typeof message === "string" ? message : message.message);
   }
-}
-
-const avatarInput = ref(null)
+};
+const clearDto = () => {
+  dto.value = {
+    fullname: user.value.fullname,
+    email: user.value.email,
+    phone: user.value.phone,
+  };
+  showPopupTaiKhoan.value = false;
+};
+const avatarInput = ref(null);
 
 const handleAvatarChange = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
+  const file = event.target.files[0];
+  if (!file) return;
 
-  const formData = new FormData()
-  formData.append("file", file)
+  const formData = new FormData();
+  formData.append("file", file);
 
   try {
-    const res = await authService.uploadAvatar(formData)
-    user.value.Avatar = res.avatarUrl
-    alert("Cập nhật ảnh đại diện thành công!")
+    const res = await authService.uploadAvatar(formData);
+    user.value.avatarUrl = res.avatarUrl;
+    alert("Cập nhật ảnh đại diện thành công!");
   } catch (err) {
-    alert(err.response?.data?.message || "Lỗi khi cập nhật ảnh đại diện")
+    alert(err.response?.data?.message || "Lỗi khi cập nhật ảnh đại diện");
   }
-}
-
+};
 </script>
-
-
 
 <style scoped>
 /* Form popup layout giống mẫu */
@@ -493,7 +560,7 @@ textarea {
   font-size: 14px;
   margin-top: 5px;
 }
-  .password-wrapper {
+.password-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -576,7 +643,7 @@ textarea {
   padding: 8px;
   font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: background 0.3s, transform 0.2s;
 }
 
@@ -584,5 +651,4 @@ textarea {
   background-color: #ffcbb5;
   transform: scale(1.1);
 }
-
-  </style>
+</style>

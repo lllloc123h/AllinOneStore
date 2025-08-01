@@ -603,7 +603,11 @@ async function submitReview() {
       imageUrl1: reviewImageUrl.value || null,
     });
 
-    notification.success({ message: "Gửi đánh giá thành công" });
+    notification.success({
+      message: "Gửi đánh giá thành công",
+      description: "Cảm ơn bạn đã đánh giá sản phẩm!",
+      duration: 2.5,
+    });
 
     // Reset form
     newReview.value.text = "";
@@ -612,7 +616,11 @@ async function submitReview() {
     uploaderKey.value = Date.now();
     await fetchReviews();
   } catch (err) {
-    notification.error({ message: "Lỗi gửi đánh giá" });
+    notification.error({
+      message: "Lỗi gửi đánh giá",
+      description: "Vui lòng thử lại sau!",
+      duration: 4.5,
+    });
     console.error(err);
   }
 }
@@ -652,11 +660,13 @@ const addToCart = () => {
     notification.success({
       message: "Thành công",
       description: `Đã thêm ${quantity.value} x ${product.value.name} vào giỏ hàng`,
+      duration: 4.5,
     });
   } else {
     notification.error({
       message: "Thất bại",
       description: `Số lượng tồn kho chỉ còn ${product.value.qty} sản phẩm!`,
+      duration: 4.5,
     });
   }
 };

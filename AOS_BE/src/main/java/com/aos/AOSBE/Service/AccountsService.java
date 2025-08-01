@@ -62,6 +62,23 @@ public class AccountsService {
 	public Accounts accountsSave(Accounts accounts) {
 		return accountsRepository.save(accounts);
 	}
+	public Accounts updateAccount(Accounts accounts) {
+		Optional<Accounts> existingAccount = accountsRepository.findById(accounts.getId());
+		if (existingAccount.isPresent()) {
+			Accounts updatedAccount = existingAccount.get();
+			updatedAccount.setEmail(accounts.getEmail());
+			updatedAccount.setFullname(accounts.getFullname());
+			updatedAccount.setPhone(accounts.getPhone());
+			updatedAccount.setAvatarUrl(accounts.getAvatarUrl());
+			if(accounts.getPassword() != existingAccount.get().getPassword()){
+				// Do not change password if it is the same as the existing one
+				updatedAccount.setPassword(new BCryptPasswordEncoder().encode(accounts.getPassword()));
+			}
+			return accountsRepository.save(updatedAccount);
+		} else {
+			throw new RuntimeException("Tài khoản không tồn tại");
+		}
+	}
 
 	public Optional<Accounts> accountsFindById(int id) {
 		return accountsRepository.findById(id);

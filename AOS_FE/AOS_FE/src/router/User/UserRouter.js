@@ -128,6 +128,6 @@ export default [
         path: '/order-list',
         name: 'order-list',
         component: ()=> import('../../components/User/OrderList.vue')
-    }
+    }, 
     
 ]

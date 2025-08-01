@@ -3,8 +3,8 @@
     <div class="upload-header">
       <h4 class="upload-title">
         <i class="bi bi-images me-2"></i>
-        Hình ảnh sản phẩm
-        <span class="info-icon" title="Ảnh đầu tiên sẽ là ảnh chính của sản phẩm">
+        Tải lên ảnh {{ props.titleUpload }}
+        <span class="info-icon" :title="'Tải lên ảnh của ' + props.titleUpload">
           <i class="bi bi-info-circle"></i>
         </span>
       </h4>
@@ -255,9 +255,13 @@ const props = defineProps({
       return /^\d+:\d+$/.test(value);
     },
   },
+  titleUpload: {
+    type: String,
+    default: " người dùng",
+  },
 });
 
-const emit = defineEmits(["update:images", "primary-changed"]);
+const emit = defineEmits(["update:images", "primary-changed", "delete-image"]);
 
 // Reactive Data
 const images = ref([]);
@@ -362,8 +366,6 @@ const addFiles = async (files) => {
 
     images.value.push(imageObj);
   }
-
-  updateParent();
 };
 
 // Upload functions
@@ -455,11 +457,8 @@ const loadImagesFromProduct = async (productId) => {
   try {
     isUploading.value = true;
     const loadedImages = await uploadAPI.upload.loadImagesByProductId(productId);
-
     // Thay thế danh sách images hiện tại
     images.value = loadedImages;
-    updateParent();
-
     console.log(`Đã load ${loadedImages.length} ảnh của sản phẩm ${productId}`);
     return loadedImages;
   } catch (error) {
@@ -487,7 +486,6 @@ const loadImagesAndReplace = async (imageUrls) => {
 
     // Thay thế danh sách images hiện tại
     images.value = loadedImages;
-    updateParent();
 
     console.log(`Đã load ${loadedImages.length} ảnh từ danh sách URLs`);
     return loadedImages;
@@ -541,7 +539,7 @@ const removeImage = (index) => {
   }
 
   images.value.splice(index, 1);
-  updateParent();
+  emit("delete-image", index); // Emit sự kiện xóa ảnh
 };
 
 // Drag and Drop Sorting
@@ -608,7 +606,7 @@ const updateParent = () => {
 // Load từ danh sách URLs
 const loadFromUrls = (urlList) => {
   if (!Array.isArray(urlList) || urlList.length === 0) {
-    console.warn("URL list phải là một mảng và không được rỗng");
+    console.warn("Không có ảnh để tải !");
     return;
   }
 
@@ -627,8 +625,6 @@ const loadFromUrls = (urlList) => {
 
     // Thay thế danh sách images hiện tại
     images.value = loadedImages;
-    updateParent();
-
     console.log(`Đã load ${loadedImages.length} ảnh từ danh sách URLs`);
     return loadedImages;
   } catch (error) {
