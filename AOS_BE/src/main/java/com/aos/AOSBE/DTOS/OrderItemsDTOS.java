@@ -1,7 +1,10 @@
 package com.aos.AOSBE.DTOS;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,8 +15,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderItemsDTOS {
     private int id;
+    @JsonProperty("quantity")
     private int qty;
     private double priceAtBuy;
+    private double costAtBuy;
     private boolean isGift;
     private double sellingPrice;
     private double total;
@@ -26,4 +31,8 @@ public class OrderItemsDTOS {
     private String comboGroup;
     private UUID comboGroupId;
     private Integer comboQty;
+    private Integer productItemId;
+    private String name;
+    private String main_image_url;
+    private double price;
 }

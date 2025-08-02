@@ -9,17 +9,30 @@ import com.aos.AOSBE.Entity.Promotions;
 public class PromotionsMapper {
 
 	public PromotionsDTOS mapper(Promotions entity) {
-		return new PromotionsDTOS(entity.getId(), entity.getName(), entity.getDescription(), entity.getType(),
-				 entity.getDiscountValue() != null ? entity.getDiscountValue() : 0.0,
+		return new PromotionsDTOS(
+				entity.getId(),
+				entity.getName(),
+				entity.getDescription(),
+				entity.getType(),
+				entity.getDiscountValue() != null ? entity.getDiscountValue() : 0.0,
 				entity.getComboPrice() != null ? entity.getComboPrice() : 0.0, entity.getQty(),
 				entity.getStartAt(), entity.getEndAt(), entity.isActive(), entity.getCreatedAt(),
 				entity.getUpdatedAt());
 	}
 
 	public Promotions mapperToObject(PromotionsDTOS entity) {
-		return new Promotions(entity.getId(), entity.getName(), entity.getDescription(), entity.getType(),
-				entity.getDiscountValue(), entity.getComboPrice(), entity.getQty(),
-				entity.getStartAt(), entity.getEndAt(), entity.isActive(), entity.getCreatedAt(),
+		return new Promotions(
+				entity.getId(),
+				entity.getName(),
+				entity.getDescription(),
+				entity.getType(),
+				entity.getDiscountValue(),
+				entity.getComboPrice(),
+				entity.getQty(),
+				entity.getStartAt(),
+				entity.getEndAt(),
+				entity.isActive(),
+				entity.getCreatedAt(),
 				entity.getUpdatedAt());
 	}
 

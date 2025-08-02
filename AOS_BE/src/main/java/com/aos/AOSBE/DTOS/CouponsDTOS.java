@@ -14,9 +14,9 @@ public class CouponsDTOS {
     private String code;
     private String description;
     private String discountType;
-    private double discountValue;
-    private double minOrderAmount;
-    private double maxDiscountAmount;
+    private Double discountValue;
+    private Double minOrderAmount;
+    private Double maxDiscountAmount;
     private int qty;
     private int usagePerCustomer;
     private boolean isAllowVoucher;

@@ -38,7 +38,7 @@ public class Orders {
     private String discountCouponCode;
 	
     @Column(name = "discount_value")
-    private double discountValue;
+    private Double discountValue;
 	
     @Column(name = "shipped_date")
     private LocalDateTime shippedDate;
@@ -72,4 +72,17 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "shipping_method_id")
     private ShippingMethods shippingMethods;
+    @Column(name = "order_code")
+    private String ghnOrderCode;
+    
+    @Transient
+    private Integer paymentMethodId;
+
+
+    @Transient
+    private Integer shippingMethodId;
+    
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItems> orderItems;
+
 }

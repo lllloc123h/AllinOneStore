@@ -40,19 +40,16 @@ public class Security {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable) // AbstractHttpConfigurer::disable
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers(
-						"/api/Accounts/login"
-								, "/api/Accounts/register",
-						"/api/test",
-								"/api/Accounts/verify-otp",
-								"/api/BaseProducts/**",
-								"/api/test",
-						"/api/Accounts/verify-otp",
-								"/api/VariantValues", "/api/Product/**", "/api/e-wallet/callback",
-						"/api/openai/**", "/api/webhook/status", "/api/Orders/detail/**", "/api/ProductItems/detail/**",
-						"/api/Promotions/**",
-
-								"/api/cart/**"
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/Accounts/login", "/api/Accounts/register",
+						"/api/test", "/api/Accounts/verify-otp", "/api/BaseProducts/**", "/api/test",
+						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/CatalogCategoriesFilter",
+						"/api/Product/**", "/api/e-wallet/callback", "/api/openai/**", "/api/webhook/status",
+						"/api/Orders/detail/**", "/api/ProductItems/detail/**", "/api/Promotions/**",
+						"/api/reviews/product/**", "api/discounted-products", "/api/cart/**", "/api/shipping/**",
+						"/api/UserProductEvents/**", "/api/ghn/**", "/api/UserAddresses/**", "/forgot-password/**",
+						"/api/forgot-password/**", "/api/homepage/bestsellers/**", "/api/discounted-products/**",
+						"/api/ProductItems/related/**", "/api/reviews/product/count/**",
+						"/api/reviews/product/average-rating/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

@@ -23,4 +23,8 @@ public class UserAddressesDTOS {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private String accounts;
+	private Integer ghnProvinceId;
+	private Integer ghnDistrictId;
+	private String ghnWardCode;
+
 }

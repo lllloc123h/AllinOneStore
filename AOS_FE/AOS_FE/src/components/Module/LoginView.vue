@@ -5,11 +5,10 @@
       <div class="mx-3">
         <p style="font-size: small">
           Bạn đã có tài khoản.
-          <RouterLink to="/register" style="color: black"
-            >Tạo 1 tài khoản mới
-          </RouterLink>
+          <RouterLink to="/register" style="color: black">Tạo 1 tài khoản mới</RouterLink>
         </p>
       </div>
+
       <form @submit.prevent="handleLogin">
         <label for="emailInput" class="form-label mt-3">Nhập Email</label>
         <input
@@ -30,34 +29,67 @@
             placeholder="......"
           />
         </div>
+
         <button type="submit" class="btn mt-3">Đăng Nhập</button>
-        <a
-          class="btn btn-facebook mt-3"
-          href="http://localhost:8080/oauth2/authorization/facebook"
-        >
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/733/733547.png"
-            style="height: 30px"
-            alt="Facebook"
-          />
-          Đăng nhập bằng Facebook
-        </a>
-        <a
-          class="btn btn-google mt-3"
-          href="http://localhost:8080/oauth2/authorization/google"
-        >
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
-            style="height: 30px"
-            alt="Google"
-          />
-          Đăng nhập bằng Google
-        </a>
-        <div class="quenMK mt-4">
-          <a href="#">Quên mật khẩu</a>
-        </div>
       </form>
+
+      <a
+        class="btn btn-facebook mt-3"
+        href="http://localhost:8080/oauth2/authorization/facebook"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/733/733547.png"
+          style="height: 30px"
+          alt="Facebook"
+        />
+        Đăng nhập bằng Facebook
+      </a>
+      <a
+        class="btn btn-google mt-3"
+        href="http://localhost:8080/oauth2/authorization/google"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/281/281764.png"
+          style="height: 30px"
+          alt="Google"
+        />
+        Đăng nhập bằng Google
+      </a>
+
+      <div class="quenMK mt-4">
+        <a class="btn btn-outline-secondary btn-sm" @click.prevent="showForgotPassword = true">Quên mật khẩu</a>
+      </div>
+
+      <div v-if="showForgotPassword" class="mt-4">
+        <h5 class="text-center">Khôi phục mật khẩu</h5>
+        <input v-model="forgotEmail" class="form-control mt-2" placeholder="Nhập Email" />
+        <button type="button" @click="sendOtp" class="btn mt-2">📨 Gửi mã OTP</button>
+
+        <div v-if="otpSent" class="mt-3">
+          <input
+            v-model="enteredOtp"
+            class="form-control mt-2"
+            placeholder="Nhập mã OTP"
+          />
+          <button type="button" @click="verifyOtp" class="btn mt-2">
+            ✅ Xác minh OTP
+          </button>
+        </div>
+
+        <div v-if="otpVerified" class="mt-3">
+          <input
+            v-model="newPassword"
+            type="password"
+            class="form-control mt-2"
+            placeholder="Nhập mật khẩu mới"
+          />
+          <button type="button" @click="resetPassword" class="btn mt-2">
+            🔒 Đặt lại mật khẩu
+          </button>
+        </div>
+      </div>
     </div>
+
     <div class="col-sm-6 benphai" style="padding: 0px">
       <img
         style="width: 100%; padding: 0px"
@@ -67,24 +99,120 @@
     </div>
   </div>
 </template>
+
 <script setup>
-import { reactive, ref, onMounted, watch } from "vue";
+import { reactive, ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
-const router = useRouter();
 import { authService } from "../../Configs/api";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { syncLocalCartToServer } from "../../Configs/cart";
 import { toast } from "vue3-toastify";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+const router = useRouter();
+
 const formData = reactive({
   email: "adminCUDE@gmail.com",
   password: "123",
 });
+
+const showForgotPassword = ref(false);
+const forgotEmail = ref("");
+const enteredOtp = ref("");
+const otpSent = ref(false);
+const otpVerified = ref(false);
+const newPassword = ref("");
+
 async function handleLogin() {
-  authService.login(formData.email, formData.password);
-  await syncLocalCartToServer();
+  try {
+    await authService.login(formData.email, formData.password);
+    await syncLocalCartToServer();
+  } catch (error) {
+    toast.error("Đăng nhập thất bại");
+  }
+}
+
+function sendOtp() {
+  fetch("http://localhost:8080/api/forgot-password/request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      // Nếu API yêu cầu xác thực, thêm dòng sau:
+      // "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({ email: forgotEmail.value }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Gửi OTP thất bại");
+      toast.success("Đã gửi mã OTP đến email.");
+      otpSent.value = true;
+    })
+    .catch(() => toast.error("Không gửi được mã OTP."));
+}
+
+function verifyOtp() {
+  try {
+    console.log("✅ Hàm verifyOtp đã được gọi");
+
+    if (!enteredOtp.value) {
+      console.error("🚫 Không có giá trị OTP");
+      toast.error("Vui lòng nhập mã OTP.");
+      return;
+    }
+
+    const trimmedOtp = enteredOtp.value.trim();
+    const payload = {
+      email: forgotEmail.value,
+      otpCode: trimmedOtp.toString(),
+    };
+
+    console.log("📦 Payload gửi lên:", payload);
+
+    fetch("http://localhost:8080/api/forgot-password/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(async (res) => {
+        const msg = await res.text();
+        console.log("📨 Server trả về:", res.status, msg);
+
+        if (!res.ok) {
+          toast.error("❌ " + msg);
+          return;
+        }
+
+        if (msg.includes("thành công")) {
+          toast.success(msg);
+          otpVerified.value = true;
+        } else {
+          toast.error(msg);
+        }
+      })
+      .catch((err) => {
+        console.error("❌ Lỗi kết nối:", err);
+        toast.error("Lỗi xác minh OTP.");
+      });
+  } catch (error) {
+    console.error("🔥 Lỗi trong verifyOtp:", error);
+  }
+}
+function resetPassword() {
+  fetch("http://localhost:8080/api/forgot-password/change", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: forgotEmail.value,
+      otp: enteredOtp.value.toString(),
+      newPassword: newPassword.value,
+    }),
+  })
+    .then((res) => res.text())
+    .then((msg) => toast.success(msg))
+    .catch(() => toast.error("Không thể đặt lại mật khẩu."));
 }
 </script>
+
 <style scoped>
 body {
   font-family: Arial, sans-serif;

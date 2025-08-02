@@ -2,15 +2,13 @@ package com.aos.AOSBE.DTOS;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class UpdateProfileDTO {
-    private String fullname;
-    private String email;
-    private String phone;
-    private String avatar;
-    private String address;
-
-    private Integer provinceName;
-    private Integer districtName;
-    private String wardName;
+	private String fullname;
+	private String phone;
+	private String avatarUrl;
+	private boolean gender;
+	private LocalDateTime birthday;
 }

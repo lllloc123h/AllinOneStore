@@ -3,37 +3,39 @@
     <div class="aside col-3">
       <Dashboard></Dashboard>
     </div>
-    <div class="article col-9">
-      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
-        <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
-          <label for="id" class="form-label text-capitalize"></label>
+    <div class="article col-9 p-4">
+      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()" class="form-container">
+        <div class="mb-4" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
+          <label for="id" class="form-label text-capitalize fw-bold"></label>
           <input id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
-            type="number" class="form-control" placeholder="`Enter id`" />
+            type="number" class="form-control shadow-sm" placeholder="`Enter id`" />
         </div>
-        <div class="dropdown mb-3">
-          Select Catalog
-          <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-            <span v-if="selectedCatalog">
+        <div class="dropdown mb-4">
+          <label class="form-label fw-bold mb-2">Select Catalog</label>
+          <button class="btn btn-outline-secondary dropdown-toggle w-100 shadow-sm" type="button"
+            data-bs-toggle="dropdown">
+            <span v-if="selectedCatalog" class="text-dark">
               {{ selectedCatalog.name }}
             </span>
-            <span v-else>Select a catalog</span>
+            <span v-else class="text-muted">Select a catalog</span>
           </button>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu shadow">
             <li v-for="catalog in dropDownListCatalog" :key="catalog.id" @click="selectCatalog(catalog)"
-              class="dropdown-item d-flex align-items-center" style="cursor: pointer;">
+              class="dropdown-item d-flex align-items-center hover-highlight" style="cursor: pointer;">
               <div>
-                <strong>{{ catalog.name }}</strong><br />
+                <strong>{{ catalog.name }}</strong>
               </div>
             </li>
           </ul>
         </div>
-        <div class="mb-3">
-          <label for="name" class="form-label text-capitalize">name</label>
-          <input id="name" v-model="formData.name" type="text" class="form-control" :placeholder="`Enter name`" />
+        <div class="mb-4">
+          <label for="name" class="form-label text-capitalize fw-bold">Name</label>
+          <input id="name" v-model="formData.name" type="text" class="form-control shadow-sm"
+            placeholder="Enter name" />
         </div>
 
-
-        <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary">
+        <button type="submit" :disabled="props.action == 'view'"
+          class="btn btn-primary px-4 py-2 shadow-sm hover-scale">
           <span v-if="props.action === 'create'">Create</span>
           <span v-else>Update</span>
         </button>

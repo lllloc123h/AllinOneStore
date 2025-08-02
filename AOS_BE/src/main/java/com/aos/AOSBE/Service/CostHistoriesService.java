@@ -1,5 +1,7 @@
 package com.aos.AOSBE.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,5 +41,8 @@ public class CostHistoriesService {
 	@Transactional
 	public void costHistoriesDeleteById(int id) {
 		costHistoriesRepository.deleteById(id);
+	}
+	public List<CostHistories> findCostHistoriesByProductItemsIdBetween(int productItemId, LocalDateTime startDate, LocalDateTime endDate) {
+		return costHistoriesRepository.findCostHistoriesByProductItems_IdAndCreatedAtBetween(productItemId,startDate,endDate);
 	}
 }

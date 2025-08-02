@@ -35,6 +35,14 @@ public class AuthoritiesService {
 		return authoritiesRepository.findById(id);
 	}
 
+	public List<Authorities> authoritiesFindByAccountsId(int id) {
+		return authoritiesRepository.findAllByAccountsId(id);
+	}
+
+	public List<String> authoritiesFindRolesByAccountsEmail(String email) {
+		return authoritiesRepository.findAllRoleByAccountEmail(email);
+	}
+
 	public void authoritiesDeleteById(int id) {
 		authoritiesRepository.deleteById(id);
 	}

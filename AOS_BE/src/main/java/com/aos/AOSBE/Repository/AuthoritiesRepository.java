@@ -16,4 +16,10 @@ public interface AuthoritiesRepository
 	@Query("SELECT a FROM Authorities a WHERE a.accounts.email = ?1")
 	List<Authorities> findAllByEmail(String email);
 
+	@Query("SELECT a FROM Authorities a WHERE a.accounts.id = ?1")
+	List<Authorities> findAllByAccountsId(int accountId);
+
+	@Query("SELECT a.roles.name FROM Authorities a WHERE a.accounts.email = ?1")
+	List<String> findAllRoleByAccountEmail(String email);
+
 }

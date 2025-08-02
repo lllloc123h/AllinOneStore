@@ -51,4 +51,6 @@ public class CartItems {
 	private Integer comboQty;
 	@JoinColumn(name="combo_group_id")
 	private UUID comboGroupId;
+	@JoinColumn(name="is_gift")
+	private Boolean isGift;
 }

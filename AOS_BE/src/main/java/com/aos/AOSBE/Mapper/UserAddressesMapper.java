@@ -13,16 +13,46 @@ public class UserAddressesMapper {
 	private AccountsService accountsService;
 
 	public UserAddressesDTOS mapper(UserAddresses entity) {
-		return new UserAddressesDTOS(entity.getId(), entity.getRecipientName(), entity.getPhone(), entity.getProvince(),
-				entity.getDistrict(), entity.getWard(), entity.getStreet(), entity.getLabel(), entity.isDefault(),
-				entity.getNote(), entity.getCreatedAt(), entity.getUpdatedAt(), entity.getAccounts().getEmail());
+	    return new UserAddressesDTOS(
+	        entity.getId(),
+	        entity.getRecipientName(),
+	        entity.getPhone(),
+	        entity.getProvince(),
+	        entity.getDistrict(),
+	        entity.getWard(),
+	        entity.getStreet(),
+	        entity.getLabel(),
+	        entity.isDefault(),
+	        entity.getNote(),
+	        entity.getCreatedAt(),
+	        entity.getUpdatedAt(),
+	        entity.getAccounts().getEmail(),
+	        entity.getGhnProvinceId(),
+	        entity.getGhnDistrictId(),
+	        entity.getGhnWardCode()
+	    );
 	}
 
-	public UserAddresses mapperToObject(UserAddressesDTOS entity) {
-		return new UserAddresses(entity.getId(), entity.getRecipientName(), entity.getPhone(), entity.getProvince(),
-				entity.getDistrict(), entity.getWard(), entity.getStreet(), entity.getLabel(), entity.isDefault(),
-				entity.getNote(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				accountsService.accountsFindByEmail(entity.getAccounts()).orElse(null));
+	public UserAddresses mapperToObject(UserAddressesDTOS dto) {
+		return new UserAddresses(
+			    dto.getId(),
+			    dto.getRecipientName(),
+			    dto.getPhone(),
+			    dto.getProvince(),
+			    dto.getDistrict(),
+			    dto.getWard(),
+			    dto.getStreet(),
+			    dto.getLabel(),
+			    dto.isDefault(),
+			    dto.getNote(),
+			    dto.getCreatedAt(),
+			    dto.getUpdatedAt(),
+			    accountsService.accountsFindByEmail(dto.getAccounts()).orElse(null),
+			    dto.getGhnProvinceId(), 
+			    dto.getGhnDistrictId(),
+			    dto.getGhnWardCode()
+			);
 	}
+
 
 }

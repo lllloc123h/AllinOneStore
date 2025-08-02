@@ -1,6 +1,8 @@
 package com.aos.AOSBE.Mapper;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Repository.ProductItemsRepository;
 import com.aos.AOSBE.Repository.VariantValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,18 +13,26 @@ import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.ProductItemsService;
 import com.aos.AOSBE.Service.PromotionsService;
 
+import java.util.List;
+
 @Component
 public class CartItemsMapper {
 	@Autowired
 	private AccountsService accountsService;
 	@Autowired
-	private ProductItemsService productItemsService;
+	private ProductItemsRepository productItemsRepository;
 	@Autowired
 	private PromotionsService promotionsService;
 	@Autowired
 	private HandleListSkuToFilter handleListSkuToFilter;
 
 	public CartItemsDTOS mapper(CartItems entity) {
+		if((entity.getPromotions()) == null){
+			List<Promotions> pro= promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems().getId());
+			if(!pro.isEmpty()){
+				entity.setPromotions(pro.get(0));
+			}
+		}
 		return new CartItemsDTOS(
 				entity.getId(),
 				entity.getQty(),
@@ -37,7 +47,9 @@ public class CartItemsMapper {
 				entity.getPromotions(),
 				entity.getComboGroup(),
 				entity.getComboQty(),
-				entity.getComboGroupId());
+				entity.getComboGroupId(),
+				entity.getIsGift(),
+				productItemsRepository.findById(entity.getProductItems().getId()).get().getBaseProducts().isCustom());
 	}
 
 	public CartItems mapperToObject(CartItemsDTOS entity) {
@@ -47,11 +59,12 @@ public class CartItemsMapper {
 				entity.getCreatedAt(),
 				entity.getUpdatedAt(),
 				accountsService.accountsFindByEmail(entity.getAccounts()).orElse(null),
-				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
+				productItemsRepository.findById(entity.getProductItems()).orElse(null),
 				entity.getPromotions(),
 				entity.getComboGroup(),
 				entity.getComboQty(),
-				entity.getComboGroupId());
+				entity.getComboGroupId(),
+				entity.getIsGift());
 	}
 
 }

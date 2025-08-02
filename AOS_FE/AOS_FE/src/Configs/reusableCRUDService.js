@@ -9,21 +9,12 @@ export default function createCrudService(resource) {
                     cleanFilter[key] = FilterObject[key];
                 }
             });
-
             const params = {
                 page: page,
                 size: size,
                 ...cleanFilter // Spread each key-value as query params
             };
-
             return api.get(`/admin/${resource}`, { params });
-            // let query = ''
-            // if (FilterObject != null) {
-            //     const keyQuery = Object.keys(FilterObject);
-            //     query = keyQuery.map(key => `${key}=${encodeURIComponent(FilterObject[key])}`).join('&');
-            //     console.log(query)
-            // }
-            // return api.get(`/admin/${resource}` + "?page=" + page + "&size=" + size);
         },
 
         getById(id) {
@@ -35,7 +26,8 @@ export default function createCrudService(resource) {
         },
 
         update(id, data) {
-            return api.put(`/admin/${resource}/${id}`, data);
+            console.log(`Updating ${resource} with ID ${id}`, { ...data });
+            return api.put(`/admin/${resource}/${id}`, { ...data });
         },
 
         delete(id) {

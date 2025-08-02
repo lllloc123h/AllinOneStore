@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,11 +43,14 @@ public class PromotionsService {
 		promotionsRepository.deleteById(id);
 	}
 
-	public List<Promotions> promotionsFindByIsActiveTrue(int productItemId) {
+	public List<Promotions> promotionsFindByIsActiveTrueByPromotionItemId(int productItemId) {
 		return promotionsRepository.findActivePromotionsByProductItemId(productItemId);
 	}
 	public Object[] promotionsFindFirstTypePromotionByProductItemId(int productItemId) {
 		return promotionsRepository.findFirstTypePromotionByProductItemId(productItemId);
+	}
+	public List<Promotions> findPromotionByProductItemAndDuration(int productItemId, LocalDateTime startAt, LocalDateTime endAt) {
+		return promotionsRepository.findPromotionsByDuration(productItemId, startAt, endAt);
 	}
 
 }

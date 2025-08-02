@@ -30,45 +30,49 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
+        // ✅ Nếu đường dẫn là public, bỏ qua xác thực JWT
+        String path = request.getRequestURI();
+        if (path.contains("/forgot-password")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
             try {
-//                nếu fail thì sẽ chạy xuống token kh hợp lệ
                 String username = jwtUtil.extractUsername(token);
                 System.err.println("đi qua extract token");
+
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailService.loadUserByUsername(username);
+
                     if (jwtUtil.isTokenValid(token, userDetails)) {
                         System.err.println("đi qua check token");
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
-//                    } else {
-//                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                        response.setContentType("text/plain; charset=UTF-8");
-//                        response.setCharacterEncoding("UTF-8");
-//                        response.getWriter().write("Token không hợp lệ 1");
-//                        return;
-//                    }
                 }
             } catch (ExpiredJwtException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("text/plain; charset=UTF-8");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("Token đã hết hạn");
-                e.getMessage();
+                e.printStackTrace();
                 return;
-            }catch (Exception e) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("text/plain; charset=UTF-8");
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("Token không hợp lệ hoặc lỗi: "+ e.getMessage());
+                response.getWriter().write("Token không hợp lệ hoặc lỗi: " + e.getMessage());
                 return;
             }
         }

@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aos.AOSBE.DTOS.PriceHistoriesDTOS;
-import com.aos.AOSBE.DTOS.ProductImagesDTOS;
-import com.aos.AOSBE.DTOS.ProductItemDetailDTO;
+import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
 import com.aos.AOSBE.DTOS.ProductItemsDTOS;
-import com.aos.AOSBE.DTOS.PromotionsDTOS;
 import com.aos.AOSBE.DTOS.filterAdvanceDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
 import com.aos.AOSBE.Mapper.ProductImagesMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import com.aos.AOSBE.Service.PriceHistoriesService;
 import com.aos.AOSBE.Service.ProductImagesService;
 import com.aos.AOSBE.Service.ProductItemsService;
@@ -43,6 +43,8 @@ public class ProductItemsAPI {
 	@Autowired
 	private ProductItemsService productItemsService;
 
+	@Autowired
+	private HandleListSkuToFilter handleListSkuToFilter;
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
 
@@ -63,6 +65,9 @@ public class ProductItemsAPI {
 
 	@Autowired
 	private PromotionsMapper promotionsMapper;
+
+	@Autowired
+	private PromotionProductsRepository promotionProductsRepository;
 
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
@@ -89,8 +94,7 @@ public class ProductItemsAPI {
 	public ResponseEntity<?> getProductItemsByBaseProductIdIdApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "1000") int size, @PathVariable int id) {
 		try {
-			List<ProductItems> productItems = productItemsService.productItemsFindByBaseProductId(page, size, id)
-					.getContent();
+			List<ProductItems> productItems = productItemsService.productItemsFindByBaseProductId(id);
 			List<ProductItemsDTOS> content = new ArrayList<>();
 			for (ProductItems item : productItems) {
 				content.add(productItemsMapper.mapper(item));
@@ -112,7 +116,6 @@ public class ProductItemsAPI {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
 		}
-
 	}
 
 	@PutMapping("/admin/ProductItems")
@@ -127,91 +130,48 @@ public class ProductItemsAPI {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/Product/{sku}")
-	public ResponseEntity<?> getAllProductItemsHaveSkuLikeApi(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @PathVariable String sku) {
+	// PromotionProductController.java
+	@GetMapping("/discounted-products")
+	public ResponseEntity<List<DiscountedProductDTOS>> getDiscountedProducts() {
+		LocalDateTime now = LocalDateTime.now();
+		List<Map<String, Object>> rawResults = promotionProductsRepository.findDiscountedProductsNative();
 
-		try {
-			List<ProductItemsDTOS> productItems = new ArrayList<ProductItemsDTOS>();
-			productItemsService.productItemsFindAllHaveSkuLike(sku).forEach(e -> {
-				productItems.add(productItemsMapper.mapper(e));
-			});
-			return ResponseEntity.ok(productItems);
-		} catch (Exception e) {
+		List<DiscountedProductDTOS> dtoList = rawResults.stream()
+				.map(map -> new DiscountedProductDTOS(((Number) map.get("productItemId")).longValue(),
+						(String) map.get("productName"), ((Number) map.get("originalPrice")).doubleValue(),
+						((Number) map.get("discountValue")).doubleValue(), (String) map.get("promotionName"),
+						((Number) map.get("discountedPrice")).doubleValue(), (String) map.get("imageUrl")))
+				.collect(Collectors.toList());
 
-			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
-		}
-
+		return ResponseEntity.ok(dtoList);
 	}
-
-//	@GetMapping("/Product/MultiplrFilter/{sku}")
-//	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
-//			@RequestParam(defaultValue = "9") int size, @PathVariable String sku,
-//			@RequestParam(required = false) String skuColorLikeReq,
-//			@RequestParam(required = false) String skuSizeLikeReq, @RequestParam(required = false) String minPriceReq,
-//			@RequestParam(required = false) String maxPriceReq, @RequestParam(required = false) Integer idProductItem) {
-//
-//		String skuColorLike = sku.split(",")[0];
-//		String skuSizeLike = sku.split(",")[1];
-//
-//		System.out.println(minPriceReq + maxPriceReq);
-//		try {
-//			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
-//			productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(page, size, skuColorLikeReq,
-//					skuSizeLikeReq, minPriceReq, maxPriceReq, idProductItem).getContent().forEach(e -> {
-//						filterAdvanceDTOS item = new filterAdvanceDTOS();
-//						item.setId((int) e[0]);
-//						item.setProductItemId((int) e[1]);
-//						item.setName((String) e[2]);
-//						item.setMaterial((String) e[3]);
-//						item.setCategoryId((int) e[4]);
-//						item.setMainImage((String) e[5]);
-//						item.setCustom((boolean) e[6]);
-//						item.setTurnBuy((int) e[7]);
-//						item.setSku((String) e[8]);
-//						item.setRating((int) e[9]);
-//						item.setActive((boolean) e[10]);
-//						item.setQty((int) e[11]);
-//						item.setPrice(((Number) e[12]).doubleValue());
-//						item.setSafetyStock(((int) e[13]));
-//						productItems.add(item);
-//					});
-//			return ResponseEntity.ok(productItems);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
-//		}
-//
-//	}
 
 	@GetMapping("/Product/MultiplrFilter")
 	public ResponseEntity<?> getAllProductItemsByMultipleSkuChoices(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam("skuColorLikeReq") String skuColorLikeReq,
 			@RequestParam("skuSizeLikeReq") String skuSizeLikeReq, @RequestParam("minPriceReq") String minPriceReq,
-			@RequestParam("maxPriceReq") String maxPriceReq, @RequestParam(required = false) Integer idProductItem) {
+			@RequestParam("maxPriceReq") String maxPriceReq, @RequestParam("categories") String categories,
+			@RequestParam("keyWord") String keyWord, @RequestParam(required = false) Integer idProductItem) {
 		try {
 			Page<Object[]> pageResult = productItemsService.productItemsFilterItemsByColorAndSizePriceMinAndPriceMax(
-					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq, idProductItem);
+					page, size, skuColorLikeReq, skuSizeLikeReq, minPriceReq, maxPriceReq, categories, keyWord,
+					idProductItem);
 			List<filterAdvanceDTOS> productItems = new ArrayList<filterAdvanceDTOS>();
 			pageResult.getContent().forEach(e -> {
 				filterAdvanceDTOS item = new filterAdvanceDTOS();
 				item.setId((int) e[0]);
-				item.setProductItemId((int) e[1]);
-				item.setName((String) e[2]);
-				item.setMaterial((String) e[3]);
-				item.setCategoryId((int) e[4]);
-				item.setMainImage((String) e[5]);
-				item.setCustom((boolean) e[6]);
-				item.setTurnBuy((int) e[7]);
-				item.setSku((String) e[8]);
-				item.setRating((int) e[9]);
-				item.setActive((boolean) e[10]);
-				item.setQty((int) e[11]);
-				item.setPrice(((Number) e[12]).doubleValue());
-				item.setSafetyStock(((int) e[13]));
+				item.setName((String) e[1]);
+				item.setMaterial((String) e[2]);
+				item.setCategoryId((int) e[3]);
+				item.setMainImage((String) e[4]);
+				item.setCustom((boolean) e[5]);
+				item.setTurnBuy((int) e[6]);
+				item.setRating((int) e[7]);
+				item.setActive((boolean) e[8]);
+				item.setQty((int) e[9]);
+				item.setListPrice((String) e[10]);
 				productItems.add(item);
 			});
-
 			Map<String, Object> response = new HashMap<>();
 			response.put("content", productItems);
 			response.put("totalPages", pageResult.getTotalPages());
@@ -220,33 +180,52 @@ public class ProductItemsAPI {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
 		}
-
 	}
 
 	@GetMapping("/ProductItems/detail/{id}")
 	public ResponseEntity<?> getProductItemDetail(@PathVariable int id) {
 		try {
-			ProductItems productItem = productItemsService.productItemsFindById(id)
-					.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
-			ProductItemsDTOS productItemDTO = productItemsMapper.mapper(productItem);
+			List<ProductItems> productItem = productItemsService.productItemsFindByBaseProductId(id);
 
-			List<ProductImagesDTOS> images = productImagesService.findByProductItemsId(id).stream()
-					.map(productImagesMapper::mapper).collect(Collectors.toList());
-
-			List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findByProductItemsId(id).stream()
-					.map(priceHistoriesMapper::mapper).collect(Collectors.toList());
-
-			List<PromotionsDTOS> promotions = promotionsService.promotionsFindByIsActiveTrue(id).stream()
-					.map(promotionsMapper::mapper).collect(Collectors.toList());
-
-			ProductItemDetailDTO detail = new ProductItemDetailDTO(productItemDTO, images, priceHistories, promotions);
-
-			return ResponseEntity.ok(detail);
+			List<ProductItemsDTOS> content = new ArrayList<>();
+			for (ProductItems item : productItem) {
+				content.add(productItemsMapper.mapperObjectForProductDetail(item));
+			}
+			Map<String, Object> response = new HashMap();
+			response.put("content", content);
+			return ResponseEntity.ok(response);
 
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Lỗi: " + e.getMessage()));
 		}
+	}
+
+	@GetMapping("/ProductItems/detail/test/{id}")
+	public ResponseEntity<?> getProductItemsById(@PathVariable int id) {
+		try {
+			return ResponseEntity.ok(productItemsService.getForeCastDataLast30Days(id));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Lỗi: " + e.getMessage()));
+		}
+	}
+
+	@GetMapping("/ProductItems/related/{id}")
+	public ResponseEntity<?> getRelatedProductItems(@PathVariable int id) {
+		List<ProductItemsDTOS> relatedItems = productItemsService.getRelatedProductItems(id);
+		return ResponseEntity.ok(relatedItems);
+	}
+
+	@GetMapping("/ProductItems/Discount")
+	public ResponseEntity<?> getDiscountProduct() {
+		try {
+			List<ProductItems> listDiscountProduct = productItemsService.findAllDiscountedProductIds();
+			return ResponseEntity.ok(listDiscountProduct);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "Đã có lỗi xảy ra"));
+		}
+
 	}
 
 }

@@ -31,13 +31,14 @@ public class Coupons {
     private String discountType;
 	
     @Column(name = "discount_value")
-    private double discountValue;
-	
+    private Double discountValue;
+
     @Column(name = "min_order_amount")
-    private double minOrderAmount;
-	
+    private Double minOrderAmount;
+
     @Column(name = "max_discount_amount")
-    private double maxDiscountAmount;
+    private Double maxDiscountAmount;
+
 	
     @Column(name = "qty")
     private int qty;

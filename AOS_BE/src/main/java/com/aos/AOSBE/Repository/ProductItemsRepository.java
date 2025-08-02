@@ -19,7 +19,7 @@ public interface ProductItemsRepository
 	List<ProductItems> findBySkuLike(String skuLike);
 
 	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1 ")
-	Page<ProductItems> findByBaseProductsId(Pageable pageable, int id);
+	List<ProductItems> findByBaseProductsId(int id);
 
 	// Add custom query methods here if needed
 	@Query("SELECT MIN(p.price),MAX(p.price) FROM ProductItems p WHERE p.baseProducts.id = ?1")
@@ -67,38 +67,111 @@ public interface ProductItemsRepository
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPriceJoined") String maxPriceJoined);
 
 	@Query(value = """
-				SELECT  bp.id,
-						pit.id,
+				SELECT
+				  		bp.id,
 						bp.name,
 				        bp.material,
 				        bp.category_id,
 				        bp.main_image_url,
 				        bp.is_custom,
-				        pit.turn_buy,
-				        pit.sku,
+				        bp.turn_buy,
 				        bp.rating,
 				        bp.is_active,
-				        pit.qty,
-				        pit.price,
-						pit.safety_stock
+						SUM(pit.qty) AS qty,
+						STRING_AGG(CAST(pit.price AS VARCHAR), ', ') AS list_price_raw
 				FROM base_products bp
 				JOIN product_items pit ON bp.id = pit.base_id
+				JOIN Categories cate ON bp.category_id=cate.id
 				WHERE
-				    (:isSkuLikeListEmpty = 1 OR EXISTS (
+				    (:isSkuLikeListEmpty = 1
+				    OR
+					EXISTS (
 				        SELECT 1 FROM STRING_SPLIT(:skuLikeList, ',') c
 				        WHERE pit.sku LIKE '%' + c.value + '%'
-				    ))
+				    )
+					)
+				AND
+					(:isKeyWordEmpty = 1
+				     OR
+				      bp.name like '%' + :keyWord + '%'
+				   	)
+				AND
+					(:isCategoriesEmpty = 1
+						OR
+					EXISTS (
+				        SELECT 1
+				        	FROM STRING_SPLIT(:categoriesList, '-') c
+				        	WHERE cate.name = c.value
+				    	)
+				    )
 				AND
 				    (:minPriceIsEmpty = 1 OR  pit.price >TRY_CAST(:minPrice  AS FLOAT))
 				AND
 				    (:maxPriceIsEmpty = 1 OR  pit.price <TRY_CAST(:maxPrice  AS FLOAT))
 				AND
 				    (:idProductItemIsEmpty = 1 OR  pit.id = :idProductItem)
+				AND
+					bp.is_active = 1
+				GROUP BY
+						bp.id,
+						bp.name,
+				        bp.material,
+				        bp.category_id,
+				        bp.main_image_url,
+				        bp.is_custom,
+				        bp.turn_buy,
+				        bp.rating,
+				        bp.is_active
+				Order by bp.id ASC
+
 			""", nativeQuery = true)
-	Page<Object[]> newFilterItems(Pageable pageable,
-//			@Param("colorsIsEmpty") int colorsIsEmpty, @Param("colorsJoined") String colorsJoined,
-			@Param("isSkuLikeListEmpty") int isSkuLikeListEmpty, @Param("skuLikeList") String sizesJoined,
-			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
-			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
-			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
+	Page<Object[]> newFilterItems(Pageable pageable, @Param("isSkuLikeListEmpty") int isSkuLikeListEmpty,
+			@Param("skuLikeList") String sizesJoined, @Param("minPriceIsEmpty") int minPriceIsEmpty,
+			@Param("minPrice") String minPriceJoined, @Param("maxPriceIsEmpty") int maxPriceIsEmpty,
+			@Param("maxPrice") String maxPriceJoined, @Param("isCategoriesEmpty") int isCategoriesEmpty,
+			@Param("categoriesList") String categoriesList, @Param("isKeyWordEmpty") int isKeyWordEmpty,
+			@Param("keyWord") String keyWord, @Param("idProductItemIsEmpty") int idProductItemIsEmpty,
+			@Param("idProductItem") int idProductItem);
+
+	@Query(value = """
+			    SELECT
+			        pi.id,
+			        bp.name,
+			        pi.price,
+			        promo.discount_type,
+			        promo.name,
+			        promo.start_at,
+			        promo.end_at,
+			        img.image_url
+			    FROM product_items pi
+			    JOIN base_products bp ON pi.base_id = bp.id
+			    JOIN promotion_products pp ON pi.id = pp.product_item_id
+			    JOIN promotions promo ON pp.promotion_id = promo.id
+			    LEFT JOIN product_images img ON img.product_item_id = pi.id
+			    WHERE promo.is_active = 1
+			      AND promo.type = 'DISCOUNT'
+			      AND CURRENT_TIMESTAMP BETWEEN promo.start_at AND promo.end_at
+			""", nativeQuery = true)
+	List<Object[]> getAllDiscountedProducts();
+
+	List<ProductItems> findTop6ByBaseProducts_Categories_IdAndIdNot(Long categoryId, Long id);
+
+	@Query("""
+			    SELECT pi FROM ProductItems pi
+			    WHERE pi.baseProducts.categories.id = ?1
+			      AND pi.id <> ?2
+			""")
+	Page<ProductItems> findRelatedItems(Long categoryId, Long productId, Pageable pageable);
+
+	@Query("SELECT p.productItems FROM PromotionProducts p")
+	List<ProductItems> findAllDiscountedProductIds();
+
+	@Query("""
+			SELECT pi FROM ProductItems pi
+			JOIN pi.baseProducts bp
+			WHERE bp.isActive = true
+			AND pi.qty > 0
+			ORDER BY bp.turnBuy DESC
+			""")
+	List<ProductItems> findBestSellersWithPrice(Pageable pageable);
 }

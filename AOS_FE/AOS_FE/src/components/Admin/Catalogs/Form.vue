@@ -4,28 +4,74 @@
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     <div class="article col-9">
-      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
-        <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? ' display:none;' : ''">
-          <label :for="id" class="form-label text-capitalize"></label>
-          <input :id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
-            type="number" class="form-control" :placeholder="`Enter id`" />
-        </div>
-        <div class="mb-3">
-          <label :for="name" class="form-label text-capitalize">name</label>
-          <input :id="name" v-model="formData.name" type="text" class="form-control" :placeholder="`Enter name`" />
-        </div>
-
-
-        <button type="submit" :disable="props.action == 'view'" class="btn btn-primary">
-          <span v-if="props.action === 'create'">Create</span>
-          <span v-else-if="props.action === 'create'">Create</span>
-          <span v-else>Update</span>
+      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()"
+      class="p-4 rounded shadow-sm bg-white aos-form">
+      <div class="mb-3" :style="(props.action === 'view' || props.action === 'create') ? 'display:none;' : ''">
+        <label :for="id" class="form-label text-capitalize fw-bold"></label>
+        <input :id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
+        type="number" class="form-control" :placeholder="`Enter id`" />
+      </div>
+      <div class="mb-3">
+        <label :for="name" class="form-label text-capitalize fw-bold">Name</label>
+        <input :id="name" v-model="formData.name" type="text" class="form-control" :placeholder="`Enter name`"
+        :readonly="props.action === 'view'" />
+      </div>
+      <div class="d-flex justify-content-end">
+        <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary px-4 py-2 aos-btn">
+        <span v-if="props.action === 'create'">Create</span>
+        <span v-else>Update</span>
         </button>
+      </div>
       </form>
     </div>
-  </div>
-</template>
-<style></style>
+    </div>
+  </template>
+
+  <style scoped>
+  .aos-form {
+    max-width: 800px;
+    margin: 2rem auto;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+  }
+
+  .aos-form:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  .form-label {
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .aos-btn {
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    font-weight: 500;
+  }
+
+  .aos-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .aos-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  </style>
 
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
