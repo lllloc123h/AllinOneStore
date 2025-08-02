@@ -2,6 +2,12 @@ package com.aos.AOSBE.Service;
 
 import com.aos.AOSBE.DTOS.GhnCreateOrderRequestDTO;
 import com.aos.AOSBE.DTOS.GhnDTO;
+import com.aos.AOSBE.Entity.OrderItems;
+import com.aos.AOSBE.Entity.Orders;
+import com.aos.AOSBE.Entity.ProductItems;
+
+import lombok.val;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -50,7 +56,101 @@ public class GhnService {
 
     private static final String GHN_CREATE_ORDER_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create";
 
-    public String createGhnOrderCode() {
+    public GhnCreateOrderRequestDTO buildGhnDTOFromOrder(Orders order) {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", ghnToken);
+        headers.set("ShopId", ghnShopId);
+
+        List<GhnCreateOrderRequestDTO.GhnItemDTO> itemDTOs = new ArrayList<>();
+        int totalWeight = 0;
+
+        for (OrderItems item : order.getOrderItems()) {
+            ProductItems productItem = item.getProductItems();
+            var baseProduct = productItem.getBaseProducts();
+
+            GhnCreateOrderRequestDTO.GhnItemDTO dtoItem = new GhnCreateOrderRequestDTO.GhnItemDTO();
+            dtoItem.setName(baseProduct.getName());
+            dtoItem.setCode("SKU-" + productItem.getId());
+            dtoItem.setQuantity(item.getQty());
+            dtoItem.setPrice((int) item.getSellingPrice()); // ép kiểu double -> int
+            dtoItem.setLength(12);
+            dtoItem.setWidth(12);
+            dtoItem.setHeight(12);
+            dtoItem.setWeight(1200);
+
+            // Gán category
+            GhnCreateOrderRequestDTO.GhnItemDTO.GhnCategory category = new GhnCreateOrderRequestDTO.GhnItemDTO.GhnCategory();
+            category.setLevel1(baseProduct.getCategories().getName());
+            dtoItem.setCategory(category);
+
+            totalWeight += dtoItem.getWeight() * dtoItem.getQuantity();
+            itemDTOs.add(dtoItem);
+        }
+
+        var account = order.getAccounts();
+        // var address = order.getAccounts().getUserAddresses();
+
+        GhnCreateOrderRequestDTO dto = new GhnCreateOrderRequestDTO();
+
+        // 1. Thông tin thanh toán & ghi chú
+        dto.setPayment_type_id(2); // người nhận trả
+        dto.setNote(order.getNote() != null ? order.getNote() : "Giao hàng nhanh");
+        dto.setRequired_note("KHONGCHOXEMHANG");
+
+        // 2. Thông tin trả hàng
+        dto.setReturn_phone("0332190158");
+        dto.setReturn_address("39 NTT");
+        dto.setReturn_district_id(1454);
+        dto.setReturn_ward_code("21204");
+
+        // 3. Mã đơn hàng khách (client)
+        dto.setClient_order_code(String.valueOf(order.getId()));
+
+        // 4. Người gửi
+        dto.setFrom_name("TinTest124");
+        dto.setFrom_phone("0987654321");
+        dto.setFrom_address("72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam");
+        dto.setFrom_ward_name("Phường 14");
+        dto.setFrom_district_name("Quận 10");
+        dto.setFrom_province_name("HCM");
+
+        // 5. Người nhận
+        dto.setTo_name(account.getFullname());
+        dto.setTo_phone(account.getPhone());
+        dto.setTo_address("72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam");
+        dto.setTo_ward_name("Phường 14");
+        dto.setTo_district_name("Quận 10");
+        dto.setTo_province_name("HCM");
+
+
+        // 6. Chi tiết đơn hàng
+        dto.setCod_amount((int) order.getFinalTotal());
+        dto.setContent("Theo New York Times"); // hoặc nội dung động tùy bạn
+        dto.setLength(12);
+        dto.setWidth(12);
+        dto.setHeight(12);
+        dto.setWeight(totalWeight);
+        dto.setCod_failed_amount(2000);
+        dto.setPick_station_id(1444);
+        dto.setDeliver_station_id(null);
+        dto.setInsurance_value((int) order.getFinalTotal());
+        dto.setService_type_id(2);
+        dto.setCoupon(null);
+
+        // 7. Thời gian lấy hàng
+        dto.setPickup_time(System.currentTimeMillis() / 1000); // unix timestamp
+        dto.setPick_shift(List.of(2));
+
+        // 8. Danh sách sản phẩm
+        dto.setItems(itemDTOs);
+
+        return dto;
+    }
+
+
+
+    public String createGhnOrderCodeFromOrder(Orders order) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -58,56 +158,7 @@ public class GhnService {
         headers.set("ShopId", ghnShopId);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        GhnCreateOrderRequestDTO dto = new GhnCreateOrderRequestDTO();
-        dto.setPayment_type_id(2);
-        dto.setNote("Tintest 123");
-        dto.setRequired_note("KHONGCHOXEMHANG");
-        dto.setReturn_phone("0332190158");
-        dto.setReturn_address("39 NTT");
-        dto.setReturn_district_id(1450);
-        dto.setReturn_ward_code("20308");
-        dto.setClient_order_code(UUID.randomUUID().toString());
-        dto.setFrom_name("TinTest124");
-        dto.setFrom_phone("0987654321");
-        dto.setFrom_address("72 Thành Thái");
-        dto.setFrom_ward_name("Phường 14");
-        dto.setFrom_district_name("Quận 10");
-        dto.setFrom_province_name("Hồ Chí Minh");
-        dto.setTo_name("TinTest124");
-        dto.setTo_phone("0987654321");
-        dto.setTo_address("72 Thành Thái");
-        dto.setTo_ward_name("Phường 14");
-        dto.setTo_district_name("Quận 10");
-        dto.setTo_province_name("Hồ Chí Minh");
-        dto.setCod_amount(200000);
-        dto.setContent("Theo New York Times");
-        dto.setLength(12);
-        dto.setWidth(12);
-        dto.setHeight(12);
-        dto.setWeight(1200);
-        dto.setCod_failed_amount(2000);
-        dto.setPick_station_id(1444);
-        dto.setInsurance_value(1000000);
-        dto.setService_type_id(2);
-        dto.setPickup_time(System.currentTimeMillis() / 1000);
-        dto.setPick_shift(List.of(2));
-
-        GhnCreateOrderRequestDTO.Item item = new GhnCreateOrderRequestDTO.Item();
-        item.setName("Áo Polo");
-        item.setCode("Polo123");
-        item.setQuantity(1);
-        item.setPrice(200000);
-        item.setLength(12);
-        item.setWidth(12);
-        item.setHeight(12);
-        item.setWeight(1200);
-
-        GhnCreateOrderRequestDTO.Category category = new GhnCreateOrderRequestDTO.Category();
-        category.setLevel1("Áo");
-        item.setCategory(category);
-
-        dto.setItems(List.of(item));
-
+        GhnCreateOrderRequestDTO dto = buildGhnDTOFromOrder(order);
         HttpEntity<GhnCreateOrderRequestDTO> request = new HttpEntity<>(dto, headers);
 
         ResponseEntity<Map> response = restTemplate.postForEntity(GHN_CREATE_ORDER_URL, request, Map.class);

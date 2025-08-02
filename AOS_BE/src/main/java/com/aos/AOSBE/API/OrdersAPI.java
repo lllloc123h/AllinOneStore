@@ -120,7 +120,7 @@ public class OrdersAPI {
 	public ResponseEntity<?> userAddNewOrders(@RequestBody OrdersDTOS entity) {
 		try {
 			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
-			String ghnOrderCode = ghnService.createGhnOrderCode();
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
 
 			// 👉 Gán mã GHN vào đơn hàng nếu cần
 			saved.setGhnOrderCode(ghnOrderCode); // Nếu bạn có field orderCode trong entity

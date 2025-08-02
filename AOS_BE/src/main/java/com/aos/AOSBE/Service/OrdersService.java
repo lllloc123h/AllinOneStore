@@ -130,7 +130,7 @@ public class OrdersService {
 					throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
 				}
 			}
-			// Lưu đơn hàng trước để có ID (vì OrderItems cần `orders`)
+			// Lưu đơn hàng trước để có ID (vì OrderItems cần orders)
 	        Orders savedOrder = ordersRepository.save(orders);
 
 	        // Kiểm tra và xử lý từng OrderItem
@@ -165,7 +165,7 @@ public class OrdersService {
 
 			try {
 				// Gọi GHN để tạo vận đơn và lấy order_code
-				String ghnOrderCode = ghnService.createGhnOrderCode();
+				String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(savedOrder);
 				savedOrder.setGhnOrderCode(ghnOrderCode);
 				ordersRepository.save(savedOrder); // Lưu lại order_code vào DB
 			} catch (Exception e) {
