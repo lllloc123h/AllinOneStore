@@ -569,7 +569,11 @@ function formatCell(key, value) {
     // Chỉ format thành ngày tháng nếu field name chứa date/time/at hoặc value có format ngày tháng rõ ràng
     return dayjs(value).format("DD/MM/YYYY HH:mm:ss");
   } else if (prices.includes(key)) {
-    return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
+    if(value != null){
+      con
+      return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
+    }
+    return '0'
   } else if (Array.isArray(value)) {
     return value.join(", ");
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {

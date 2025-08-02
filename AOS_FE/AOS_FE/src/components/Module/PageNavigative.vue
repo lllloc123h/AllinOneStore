@@ -24,21 +24,21 @@
           </button>
         </li>
         <!-- Page -1 -->
-        <li class="page-item" v-if="currentPage > 0" :style="{ color: 'white' }">
+        <!-- <li class="page-item" v-if="currentPage > 0" :style="{ color: 'white' }">
           <button class="page-link" @click.prevent="updateCurrentPage(currentPage - 1)">
             {{ currentPage - 1 }}
           </button>
-        </li>
+        </li> -->
         <!-- Current Page -->
         <li class="page-item active">
           <button class="page-link active" disabled>
-            {{ currentPage }}
+            {{ currentPage+1 }} 
           </button>
         </li>
         <!-- Page +1 -->
         <li class="page-item" v-if="currentPage + 1 < props.totalPage">
           <button class="page-link" @click.prevent="updateCurrentPage(currentPage + 1)">
-            {{ currentPage + 1 }}
+            {{ currentPage + 2 }}
           </button>
         </li>
         <!-- Next -->
