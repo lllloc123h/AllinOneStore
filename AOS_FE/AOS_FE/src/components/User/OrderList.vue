@@ -8,7 +8,7 @@
   </div>
 
   <!-- Main Container -->
-  <div class="main-container">
+  <div class="main-container my-5">
     <!-- Empty State -->
     <div v-if="orders.length === 0" class="empty-state">
       <div class="empty-icon">
@@ -181,6 +181,7 @@ onMounted(loadOrders);
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  min-height: 800px;
 }
 
 /* Empty State */
