@@ -10,14 +10,44 @@
         Orders
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <input type="datetime-local" v-model="start" />
-      <input type="datetime-local" v-model="end" />
-      <button @click="exportOrders(start, end)">Export Orders</button>
+      <div class="export-section d-flex align-items-center gap-2 mb-3">
+  <input
+    type="datetime-local"
+    v-model="start"
+    class="form-control export-start"
+    placeholder="Start date"
+  />
+  <input
+    type="datetime-local"
+    v-model="end"
+    class="form-control export-end"
+    placeholder="End date"
+  />
+  <button
+    class="btn btn-success export-btn"
+    @click="exportOrders(start, end)"
+  >
+    <i class="bi bi-file-earmark-excel"></i> Export Orders
+  </button>
+</div>
       <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
     </div>
   </div>
 </template>
 <style scoped>
+.export-section {
+  flex-wrap: wrap;
+}
+
+.export-start,
+.export-end {
+  max-width: 220px;
+}
+
+.export-btn {
+  white-space: nowrap;
+  font-weight: 600;
+}
   .table {
     width: 100%;
   }
