@@ -30,6 +30,8 @@ public class AosBeApplication {
 		System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
 		System.setProperty("QDRANT_KEY", dotenv.get("QDRANT_KEY"));
 		System.setProperty("QDRANT_HOST", dotenv.get("QDRANT_HOST"));
+		System.setProperty("GHN_TOKEN", dotenv.get("GHN_TOKEN"));
+		System.setProperty("GHN_SHOPID", dotenv.get("GHN_SHOPID"));
 		SpringApplication.run(AosBeApplication.class, args);
 	}
 

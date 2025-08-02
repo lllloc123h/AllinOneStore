@@ -24,6 +24,7 @@ public class ReviewsMapper {
 				    entity.getVideoUrl(),
 				    entity.getCreatedAt(),
 				    entity.getAccounts().getId(),
+					entity.getAccounts().getFullname(),
 				    entity.getProductItems().getId()
 			);
 	}
@@ -37,7 +38,7 @@ public class ReviewsMapper {
 					entity.getImageUrl3(),
 					entity.getVideoUrl(),
 					entity.getCreatedAt(),
-					accountsService.accountsFindById(entity.getAccounts()).orElse(null),
+					accountsService.accountsFindById(entity.getAccountId()).orElse(null),
 					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null)
 			);
 	}

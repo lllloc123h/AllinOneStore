@@ -6,21 +6,32 @@ import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
 import OrderStatus from '../../components/User/OrderStatus.vue'
 import ImageUpload from '../../components/Module/ImageUpload.vue'
+import uploadProducts from '../../components/Module/upload-products.vue'
 export default [
     {
         path: '',
         name: 'home',
         component: HomeView,
-    },  
+    },
     // {
     //     path: 'uploads',
     //     name: 'uploads',
     //     component: Upload,
     // },
-     {
+    {
         path: 'uploads',
         name: 'uploads',
         component: ImageUpload,
+    },
+    {
+        path: 'upload1',
+        name: 'upload1',
+        component: uploadProducts,
+    },
+     {
+        path: 'upload2',
+        name: 'upload2',
+        component: () => import('../../components/Module/upload-single-img-video.vue'),
     },
     {
         path: 'products',
@@ -71,17 +82,17 @@ export default [
         name: 'OrderStatus',
         component: OrderStatus
     },
-
     {
-        path: '/Customizer',
-        name: 'Customizer',
-        component: () => import('../../components/User/CustomizerView.vue')
+        path: '/Customizer/create/:id',
+        name: 'CustomizerCreate',
+        component: () => import('../../components/User/CustomizerView.vue'),
+        props: route => ({ productItemId: route.params.id, action: 'create' })
     },
-
     {
-        path: '/Crop',
-        name: 'CropCrop',
-        component: () => import('../../components/User/CropImage.vue')
+        path: '/Customizer/update/:id',
+        name: 'CustomizerUpdate',
+        component: () => import('../../components/User/CustomizerView.vue'),
+        props: route => ({ customId: route.params.id, action: 'update' })
     },
     {
         path: '/Checkoutpage',
@@ -107,6 +118,16 @@ export default [
         path: '/momo/return',
         name: 'momo-return',
         component: () => import('../../components/User/WalletInfor.vue')
-    }
-
+    },
+    {
+        path: '/user-orders',
+        name: 'user-orders',
+        component: () => import('../../components/User/UserOrders.vue')
+    },
+    {
+        path: '/order-list',
+        name: 'order-list',
+        component: ()=> import('../../components/User/OrderList.vue')
+    }, 
+    
 ]

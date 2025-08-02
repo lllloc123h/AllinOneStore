@@ -22,9 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.GhnDTO;
 import com.aos.AOSBE.DTOS.OrderItemsDTOS;
+import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.OrderItems;
+import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
+import com.aos.AOSBE.Service.BaseProductsService;
 import com.aos.AOSBE.Service.OrderItemsService;
+import com.aos.AOSBE.Service.ProductItemsService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -35,6 +39,10 @@ import lombok.extern.log4j.Log4j2;
 public class OrderItemsAPI {
 	@Autowired
 	private OrderItemsService orderItemsService;
+	@Autowired
+	private ProductItemsService productItemsService;
+	@Autowired
+	private BaseProductsService baseProductsService;
 
 	@Autowired
 	private OrderItemsMapper orderItemsMapper;
@@ -78,7 +86,17 @@ public class OrderItemsAPI {
 		try {
 			List<OrderItems> OrderToOrderItem = new ArrayList<>();
 			entity.forEach(element -> {
-				OrderToOrderItem.add(orderItemsMapper.mapperToObject(element));
+				OrderItems saved = orderItemsMapper.mapperToObject(element);
+				ProductItems updateTurnBuy = saved.getProductItems();
+				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + saved.getQty());
+				updateTurnBuy.setQty(updateTurnBuy.getQty() - saved.getQty());
+
+				BaseProducts updateTurnBuyForBP = saved.getProductItems().getBaseProducts();
+				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + saved.getQty());
+//				updateTurnBuyForBP.setQty(updateTurnBuyForBP.getQty() - saved.getQty());
+				productItemsService.productItemsSave(updateTurnBuy);
+				baseProductsService.baseProductsSave(updateTurnBuyForBP);
+				OrderToOrderItem.add(saved);
 			});
 			log.info(OrderToOrderItem);
 			orderItemsService.orderItemsSaveAll(OrderToOrderItem);

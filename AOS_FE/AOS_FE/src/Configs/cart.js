@@ -48,7 +48,17 @@ async function handleUpdateQuantityCartWhileLogin(itemCart, updateType) {
             id: itemCart.id,
             accounts: authService.getUserName(),
             productItems: itemCart.productItemId,
-            qty: itemCart.quantity
+            qty: itemCart.quantity,
+            promotions: itemCart.promotions || null,
+            comboGroup: itemCart.comboGroup,
+            comboQty: itemCart.comboQty,
+            comboGroupId: itemCart.comboGroupId,
+            name: itemCart.name,
+            mainImageUrl: itemCart.mainImageUrl,
+            price: itemCart.price,
+            sku: itemCart.sku,
+            createdAt: "",
+            updatedAt: "",
         }
         await api.put(
             '/addToCart?updateType=' + updateType, itemUpdate

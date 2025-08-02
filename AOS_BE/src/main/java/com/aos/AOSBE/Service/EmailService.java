@@ -64,7 +64,7 @@ public class EmailService {
 				            <!-- Replace with your dynamic code -->
 				          </p>
 				          <p style="font-size: 14px; color: #999">
-				            This code will expire in 10 minutes.
+				            This code will expire in 1 minutes.
 				          </p>
 				          <p style="margin-top: 40px; font-size: 12px; color: #bbb">
 				            If you did not request this code, please ignore this email.
@@ -136,7 +136,7 @@ public class EmailService {
 				            <!-- Replace with your dynamic code -->
 				          </p>
 				          <p style="font-size: 14px; color: #999">
-				            This code will expire in 10 minutes.
+				            This code will expire in 1 minutes.
 				          </p>
 				          <p style="margin-top: 40px; font-size: 12px; color: #bbb">
 				            If you did not request this code, please ignore this email.
@@ -160,4 +160,35 @@ public class EmailService {
 			e.printStackTrace();
 		}
 	}
+	public void sendForgotPasswordOtp(String toEmail, String otpCode) {
+	    String subject = "Reset Your Password - OTP Verification";
+
+	    String htmlContent =
+	        "<html>" +
+	        "<head><meta charset=\"UTF-8\"><title>Reset Password</title></head>" +
+	        "<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">" +
+	        "<table width=\"100%\" style=\"max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px #ccc;\">" +
+	        "<tr><td align=\"center\">" +
+	        "<h2 style=\"color:#333;\">Reset Your Password</h2>" +
+	        "<p style=\"color:#666;\">Use the code below to reset your password:</p>" +
+	        "<p style=\"font-size:32px; font-weight:bold; color:#2c3e50; letter-spacing:5px;\">" + otpCode + "</p>" +
+	        "<p style=\"font-size:14px; color:#999;\">This OTP will expire in 5 minutes.</p>" +
+	        "<p style=\"font-size:12px; color:#bbb; margin-top:40px;\">If you did not request this, please ignore this email.</p>" +
+	        "</td></tr>" +
+	        "</table>" +
+	        "</body>" +
+	        "</html>";
+
+	    try {
+	        MimeMessage message = mailSender.createMimeMessage();
+	        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+	        helper.setTo(toEmail);
+	        helper.setSubject(subject);
+	        helper.setText(htmlContent, true);
+	        mailSender.send(message);
+	    } catch (MessagingException e) {
+	        e.printStackTrace();
+	    }
+	}
+
 }

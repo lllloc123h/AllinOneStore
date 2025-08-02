@@ -1,11 +1,13 @@
 package com.aos.AOSBE.CommonFunctions;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class CommonFunctions {
+
+	private static final SecureRandom secureRandom = new SecureRandom();
+
 	public String generateVerificationCode() {
-		Random random = new Random();
-		int code = 100000 + random.nextInt(900000); // ensures 6 digits
+		int code = 100000 + secureRandom.nextInt(900000); // ensures 6 digits
 		return String.valueOf(code);
 	}
 }

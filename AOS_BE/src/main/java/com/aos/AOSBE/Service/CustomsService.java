@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,5 +40,9 @@ public class CustomsService {
 	@Transactional
 	public void customsDeleteById(int id) {
 		customsRepository.deleteById(id);
+	}
+
+	public List<Customs> findCustomsByEmail(String email) {
+		return customsRepository.findCustomByEmail(email);
 	}
 }

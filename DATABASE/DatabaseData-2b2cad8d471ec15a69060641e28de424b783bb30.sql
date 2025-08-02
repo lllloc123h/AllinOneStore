@@ -1,9 +1,10 @@
 ﻿use all_in_store;
-
-INSERT INTO
-  accounts (
+GO
+INSERT INTO accounts (
     email,
     password,
+    gender,
+    birthday,
     fullname,
     avatar_url,
     phone,
@@ -11,128 +12,170 @@ INSERT INTO
     user_rank,
     total_spent,
     total_order,
-    loyalty_point
-  )
+    loyalty_point,
+    created_at,
+    updated_at
+)
 VALUES
   (
     'nguyenvana@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1990-01-01',
     N'Nguyễn Văn A',
-    'avatar_a.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0901234567',
     1500000.00,
     N'Bạc',
     7500000.00,
     5,
-    200
+    200,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'tranvanb@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1991-02-02',
     N'Trần Văn B',
-    'avatar_b.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0902345678',
     2000000.00,
     N'Vàng',
     10000000.00,
     5,
-    300
+    300,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'lethic@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    0,
+    '1992-03-03',
     N'Lê Thị C',
-    'avatar_c.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0903456789',
     1200000.00,
     N'Đồng',
     6000000.00,
     5,
-    150
+    150,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'phamvand@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1993-04-04',
     N'Phạm Văn D',
-    'avatar_d.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0904567890',
     1800000.00,
     N'Bạc',
     9000000.00,
     5,
-    250
+    250,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'hoangthie@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    0,
+    '1994-05-05',
     N'Hoàng Thị E',
-    'avatar_e.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0905678901',
     2500000.00,
     N'Vàng',
     12500000.00,
     5,
-    400
+    400,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'doquangf@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1995-06-06',
     N'Đỗ Quang F',
-    'avatar_f.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0906789012',
     1000000.00,
     N'Đồng',
     5000000.00,
     5,
-    100
+    100,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'buitranh@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1996-07-07',
     N'Bùi Trần H',
-    'avatar_h.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0907890123',
     1300000.00,
     N'Bạc',
     6500000.00,
     5,
-    180
+    180,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'vothik@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    0,
+    '1997-08-08',
     N'Võ Thị K',
-    'avatar_k.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0908901234',
     1600000.00,
     N'Vàng',
     8000000.00,
     5,
-    280
+    280,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'dangvank@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1998-09-09',
     N'Đặng Văn K',
-    'avatar_k.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0909012345',
     1400000.00,
     N'Đồng',
     7000000.00,
     5,
-    160
+    160,
+    GETDATE(),
+    GETDATE()
   ),
   (
     'truongvant@example.com',
     '$2a$10$YDQtz.cHyKDlwqG1Rzky7.WdaHWbMWBUDXmRAqiMSqsRp7jcUCj9a',
+    1,
+    '1999-10-10',
     N'Trương Văn T',
-    'avatar_t.jpg',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752902314/hynx7jvtbmz8k7vfyomk.jpg',
     '0910123456',
     2200000.00,
     N'Bạc',
     11000000.00,
     5,
-    350
+    350,
+    GETDATE(),
+    GETDATE()
   );
 
 INSERT INTO
@@ -269,6 +312,7 @@ VALUES
     1,
     N'Giao hàng vào giờ ăn trưa'
   );
+  select * from catalogs
 
 INSERT INTO
   catalogs (name)
@@ -1728,439 +1772,6 @@ VALUES
 (N'Giao hàng tiêu chuẩn', N'Giao trong 2-5 ngày làm việc', 1, GETDATE(), GETDATE()),
 (N'Giao hàng nhanh', N'Giao trong 24h nội thành', 1, GETDATE(), GETDATE());
 GO
---delete from promotions
---INSERT INTO
---  promotions (
---    name,
---    description,
---    type,
---    discount_type,
---    discount_value,
---    combo_price,
---    usage_limit,
---    start_at,
---    end_at,
---    is_active
---  )
---VALUES
---  (
---    N'Giảm giá mùa hè',
---    N'Giảm giá 15% cho toàn bộ sản phẩm hè',
---    'DISCOUNT',
---    'PERCENT',
---    15.00,
---    NULL,
---    500,
---    GETDATE (),
---    DATEADD (month, 2, GETDATE ()),
---    1
---  ),
---  (
---    N'Combo áo đôi',
---    N'Mua áo polo nam và áo croptop nữ với giá ưu đãi',
---    'COMBO',
---    NULL,
---    NULL,
---    250000.00,
---    100,
---    GETDATE (),
---    DATEADD (month, 1, GETDATE ()),
---    1
---  ),
---  (
---    N'Khuyến mãi Flash Sale',
---    N'Giảm giá sốc 20% cho một số sản phẩm chọn lọc trong 24 giờ',
---    'DISCOUNT',
---    'PERCENT',
---    20.00,
---    NULL,
---    200,
---    GETDATE (),
---    DATEADD (day, 1, GETDATE ()),
---    1
---  ),
---  (
---    N'Mua 2 tặng 1',
---    N'Mua 2 quần short thể thao tặng 1 áo thun tay ngắn bé trai',
---    'COMBO',
---    NULL,
---    NULL,
---    NULL,
---    50,
---    GETDATE (),
---    DATEADD (month, 1, GETDATE ()),
---    1
---  ),
---  (
---    N'Ưu đãi thành viên mới',
---    N'Giảm 100k cho đơn hàng đầu tiên từ 500k',
---    'DISCOUNT',
---    'AMOUNT',
---    100000.00,
---    NULL,
---    1000,
---    GETDATE (),
---    DATEADD (year, 1, GETDATE ()),
---    1
---  );
-
---INSERT INTO Promotion_Products (id, promotion_id, product_item_id, require_qty, is_gift, cost_share)
---SELECT 1, p.id, pi.id, NULL, 0, NULL
---FROM promotions p, product_items pi
---WHERE p.name = N'Giảm giá mùa hè'
---  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---UNION ALL
---SELECT
---  2,
---  p.id,
---  pi.id,
---  NULL,
---  0,
---  NULL
---FROM
---  promotions p,
---  product_items pi
---WHERE
---  p.name = N'Giảm giá mùa hè'
---  AND pi.description = N'Váy đầm suông caro dáng dài, màu trắng, freesize.'
---UNION ALL
---SELECT
---  3,
---  p.id,
---  pi.id,
---  1,
---  0,
---  NULL
---FROM
---  promotions p,
---  product_items pi
---WHERE
---  p.name = N'Combo áo đôi'
---  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu đen, size L.'
---UNION ALL
---SELECT
---  4,
---  p.id,
---  pi.id,
---  1,
---  0,
---  NULL
---FROM
---  promotions p,
---  product_items pi
---WHERE
---  p.name = N'Combo áo đôi'
---  AND pi.description = N'Áo thun croptop nữ năng động, màu trắng, freesize.'
---UNION ALL
---SELECT
---  5,
---  p.id,
---  pi.id,
---  NULL,
---  0,
---  NULL
---FROM
---  promotions p,
---  product_items pi
---WHERE
---  p.name = N'Khuyến mãi Flash Sale'
---  AND pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
---UNION ALL
---SELECT
---  6,
---  p.id,
---  pi.id,
---  2,
---  0,
---  NULL
---FROM
---  promotions p,
---  product_items pi
---WHERE
---  p.name = N'Mua 2 tặng 1'
---  AND pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---UNION ALL
---SELECT
---  7,
---  p.id,
---  pi.id,
---  1,
---  1,
---  NULL
---FROM
---  promotions p,
---  product_items pi
---WHERE
---  p.name = N'Mua 2 tặng 1'
---  AND pi.description = N'Áo thun dài tay nam chất liệu mềm mại, màu xám, size M.';
-
---INSERT INTO
---  cost_histories (product_item_id, cost)
---SELECT
---  pi.id,
---  75000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  80000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  180000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  200000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  170000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
---UNION ALL
---SELECT
---  pi.id,
---  180000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.';
-
---INSERT INTO
---  price_histories (product_item_id, price)
---VALUES
---  -- Áo Polo Nam Trắng Size M
---  (
---    (
---      SELECT
---        id
---      FROM
---        product_items
---      WHERE
---        description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---    ),
---    149000.00
---  ), -- Giá bán cũ
---  (
---    (
---      SELECT
---        id
---      FROM
---        product_items
---      WHERE
---        description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---    ),
---    159000.00
---  ), -- Giá bán hiện tại
---  -- Áo Bomber Nam Đen Size M
---  (
---    (
---      SELECT
---        id
---      FROM
---        product_items
---      WHERE
---        description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
---    ),
---    350000.00
---  ), -- Giá bán cũ
---  (
---    (
---      SELECT
---        id
---      FROM
---        product_items
---      WHERE
---        description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
---    ),
---    399000.00
---  ), -- Giá bán hiện tại
---  -- Quần Kaki Nam Dáng Thẳng Xanh Đậm Size 30
---  (
---    (
---      SELECT
---        id
---      FROM
---        product_items
---      WHERE
---        description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
---    ),
---    329000.00
---  ), -- Giá bán cũ
---  (
---    (
---      SELECT
---        id
---      FROM
---        product_items
---      WHERE
---        description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
---    ),
---    349000.00
---  );
-
----- Giá bán hiện tại
----- select description from  product_items
---INSERT INTO
---  price_histories (product_item_id, price)
---SELECT
---  pi.id,
---  149000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  159000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo polo nam cotton pha cao cấp, màu trắng, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  350000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  399000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Áo khoác bomber nam chất liệu chống nước, màu đen, size M.'
---UNION ALL
---SELECT
---  pi.id,
---  329000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.'
---UNION ALL
---SELECT
---  pi.id,
---  349000.00
---FROM
---  product_items pi
---WHERE
---  pi.description = N'Quần kaki nam dáng thẳng, màu xanh đậm, size 30.';
-
---INSERT INTO
---  coupons (
---    code,
---    description,
---    discount_type,
---    discount_value,
---    min_order_amount,
---    max_discount_amount,
---    usage_limit,
---    usage_per_customer,
---    is_allow_voucher,
---    is_active,
---    customer_group,
---    start_at,
---    end_at
---  )
---VALUES
---  (
---    N'FREESHIP25K',
---    N'Miễn phí vận chuyển cho đơn hàng từ 250K',
---    'FREESHIP',
---    25000.00,
---    250000.00,
---    25000.00,
---    500,
---    1,
---    0,
---    1,
---    NULL,
---    GETDATE (),
---    DATEADD (month, 3, GETDATE ())
---  ),
---  (
---    N'GIAM100K',
---    N'Giảm 100K cho đơn hàng từ 500K',
---    'G-DISCOUNT',
---    100000.00,
---    500000.00,
---    100000.00,
---    300,
---    1,
---    0,
---    1,
---    NULL,
---    GETDATE (),
---    DATEADD (month, 2, GETDATE ())
---  ),
---  (
---    N'VIP50K',
---    N'Giảm 50K cho thành viên Bạc trở lên',
---    'G-DISCOUNT',
---    50000.00,
---    300000.00,
---    50000.00,
---    150,
---    1,
---    0,
---    1,
---    N'Bạc',
---    GETDATE (),
---    DATEADD (month, 1, GETDATE ())
---  ),
---  (
---    N'NEWUSER2025',
---    N'Ưu đãi 20% cho khách hàng mới, tối đa 50K',
---    'G-DISCOUNT',
---    0.20,
---    100000.00,
---    50000.00,
---    1000,
---    1,
---    0,
---    1,
---    N'Đồng',
---    GETDATE (),
---    DATEADD (year, 1, GETDATE ())
---  ),
---  (
---    N'SALE50',
---    N'Giảm 50% tối đa 200K cho toàn bộ đơn hàng',
---    'G-DISCOUNT',
---    0.50,
---    0.00,
---    200000.00,
---    50,
---    1,
---    0,
---    1,
---    NULL,
---    GETDATE (),
---    DATEADD (day, 7, GETDATE ())
---  );
 
 INSERT INTO
   variants (name)
@@ -2416,3 +2027,316 @@ VALUES
   );
 
 GO
+INSERT INTO promotions (
+    name, description, type, discount_value,
+    combo_price, qty, start_at, end_at,
+    is_active, created_at, updated_at
+)
+VALUES
+(N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 10.00, NULL, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 50000, NULL, 100, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 30000, NULL, 500, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 210000, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, 399000, 30, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 15.00, NULL, 100, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 20.00, NULL, 150, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 1 tặng 1 khăn cổ', N'Khuyến mãi phụ kiện kèm áo sơ mi', 'COMBO', NULL, 0, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 30.00, NULL, 50, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
+INSERT INTO promotions (
+	name,
+	description,
+	type,
+	discount_value,
+	combo_price,
+	qty,
+	start_at,
+	end_at,
+	is_active,
+	created_at,
+	updated_at
+)
+VALUES
+(N'Khuyến mãi hè', N'Giảm giá 20% toàn bộ sản phẩm trong mùa hè', 'DISCOUNT', 20.00, NULL, 100, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+
+(N'Mua 2 tặng 1', N'Khi mua 2 sản phẩm sẽ được tặng 1 sản phẩm cùng loại', 'COMBO', NULL, 0.00, 50, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+
+(N'Giảm 100k đơn từ 500k', N'Áp dụng cho đơn hàng từ 500,000 VNĐ trở lên', 'DISCOUNT', 100000, NULL, 200, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+
+(N'Combo Café Tháng 7', N'Combo 3 gói café chỉ 199,000 VNĐ', 'COMBO', NULL, 199000, 30, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE());
+
+INSERT INTO coupons (
+    code, description, discount_type, discount_value,
+    min_order_amount, max_discount_amount, qty,
+    usage_per_customer, is_allow_voucher, is_active,
+    customer_group, start_at, end_at, created_at, updated_at
+)
+VALUES
+('COUPON001', N'Mô tả coupon số 1', 'FREESHIP', 30000, 200000, 30000, 100, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 10, GETDATE()), GETDATE(), GETDATE()),
+('COUPON002', N'Mô tả coupon số 2', 'G-DISCOUNT', 31000, NULL, 31000, 101, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 11, GETDATE()), GETDATE(), GETDATE()),
+('COUPON003', N'Mô tả coupon số 3', 'G-DISCOUNT', 32000, 200000, 32000, 102, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 12, GETDATE()), GETDATE(), GETDATE()),
+('COUPON004', N'Mô tả coupon số 4', 'FREESHIP', 33000, NULL, 33000, 103, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 13, GETDATE()), GETDATE(), GETDATE()),
+('COUPON005', N'Mô tả coupon số 5', 'G-DISCOUNT', 34000, 200000, 34000, 104, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 14, GETDATE()), GETDATE(), GETDATE()),
+('COUPON006', N'Mô tả coupon số 6', 'G-DISCOUNT', 35000, NULL, 35000, 105, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 15, GETDATE()), GETDATE(), GETDATE()),
+('COUPON007', N'Mô tả coupon số 7', 'FREESHIP', 36000, 200000, 36000, 106, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 16, GETDATE()), GETDATE(), GETDATE()),
+('COUPON008', N'Mô tả coupon số 8', 'G-DISCOUNT', 37000, NULL, 37000, 107, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 17, GETDATE()), GETDATE(), GETDATE()),
+('COUPON009', N'Mô tả coupon số 9', 'G-DISCOUNT', 38000, 200000, 38000, 108, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 18, GETDATE()), GETDATE(), GETDATE()),
+('COUPON010', N'Mô tả coupon số 10', 'FREESHIP', 39000, NULL, 39000, 109, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 19, GETDATE()), GETDATE(), GETDATE()),
+('COUPON011', N'Mô tả coupon số 11', 'G-DISCOUNT', 40000, 200000, 40000, 110, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 20, GETDATE()), GETDATE(), GETDATE()),
+('COUPON012', N'Mô tả coupon số 12', 'G-DISCOUNT', 41000, NULL, 41000, 111, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 21, GETDATE()), GETDATE(), GETDATE()),
+('COUPON013', N'Mô tả coupon số 13', 'FREESHIP', 42000, 200000, 42000, 112, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 22, GETDATE()), GETDATE(), GETDATE()),
+('COUPON014', N'Mô tả coupon số 14', 'G-DISCOUNT', 43000, NULL, 43000, 113, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 23, GETDATE()), GETDATE(), GETDATE()),
+('COUPON015', N'Mô tả coupon số 15', 'G-DISCOUNT', 44000, 200000, 44000, 114, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 24, GETDATE()), GETDATE(), GETDATE()),
+('COUPON016', N'Mô tả coupon số 16', 'FREESHIP', 45000, NULL, 45000, 115, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 25, GETDATE()), GETDATE(), GETDATE()),
+('COUPON017', N'Mô tả coupon số 17', 'G-DISCOUNT', 46000, 200000, 46000, 116, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 26, GETDATE()), GETDATE(), GETDATE()),
+('COUPON018', N'Mô tả coupon số 18', 'G-DISCOUNT', 47000, NULL, 47000, 117, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 27, GETDATE()), GETDATE(), GETDATE()),
+('COUPON019', N'Mô tả coupon số 19', 'FREESHIP', 48000, 200000, 48000, 118, 1, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 28, GETDATE()), GETDATE(), GETDATE()),
+('COUPON020', N'Mô tả coupon số 20', 'G-DISCOUNT', 49000, NULL, 49000, 119, 2, 0, 1, N'ALL', GETDATE(), DATEADD(DAY, 29, GETDATE()), GETDATE(), GETDATE());
+GO
+
+
+INSERT INTO promotion_products (
+    promotion_id,
+    product_item_id,
+    require_qty,
+    is_gift,
+    created_at,
+    updated_at
+) VALUES
+(1, 1, 1, 0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
+(1, 2, 2, 0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
+(2, 3, 1, 1, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
+
+-- Thêm combo khuyến mãi
+INSERT INTO promotion_products (
+    promotion_id,
+    product_item_id,
+    require_qty,
+    is_gift,
+    created_at,
+    updated_at
+) VALUES
+(2, 1, 1, 0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
+(2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
+
+-- INSERT 30 orders
+select * from orders where account_id = 2;
+DECLARE @i INT = 1;
+WHILE @i <= 30
+BEGIN
+  INSERT INTO orders (
+    account_id,
+    payment_method_id,
+    shipping_method_id,
+    shipping_status,
+    estimated_shipping_fee,
+    actual_shipping_fee,
+    payment_status,
+    note,
+    point,
+    final_total,
+    order_infor,
+    order_code,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    (SELECT TOP 1 id FROM accounts ORDER BY NEWID()),
+    (SELECT TOP 1 id FROM payment_methods ORDER BY NEWID()),
+    (SELECT TOP 1 id FROM shipping_methods ORDER BY NEWID()),
+    N'Đang xử lý',
+    25000.00,
+    25000.00,
+    N'Đã thanh toán',
+    N'Giao trước 6 giờ tối',
+    10,
+    100000.00 + (@i * 1000),
+    N'Họ tên người nhận, địa chỉ đầy đủ, số điện thoại',
+    CONCAT('ORD', FORMAT(@i, '0000')),
+    GETDATE(),
+    GETDATE()
+  );
+
+  SET @i = @i + 1;
+END;
+-- test api Cancel orders
+INSERT INTO orders (
+    account_id,
+    payment_method_id,
+    shipping_method_id,
+    shipping_status,
+    estimated_shipping_fee,
+    actual_shipping_fee,
+    payment_status,
+    note,
+    point,
+    final_total,
+    order_infor,
+    order_code,
+    created_at,
+    updated_at
+)
+VALUES (
+    2,
+    (SELECT TOP 1 id FROM payment_methods ORDER BY NEWID()),
+    (SELECT TOP 1 id FROM shipping_methods ORDER BY NEWID()),
+    N'Đang xử lý',
+    0.00,
+    0.00,
+    N'Đã thanh toán',
+    N'Khách đã thanh toán trực tiếp',
+    0,
+    10000.00,
+    N'Nguyễn Văn A, 123 Đường ABC, Q.1, TP.HCM - 0123456789',
+    'ORD1001',
+    GETDATE(),
+    GETDATE()
+);
+-- INSERT order_items for each order
+DECLARE @order_id INT, @max_id INT, @pid INT, @j INT;
+
+SELECT @order_id = MIN(id), @max_id = MAX(id) FROM orders;
+
+WHILE @order_id <= @max_id
+BEGIN
+  SET @j = 1;
+
+  WHILE @j <= (1 + ABS(CHECKSUM(NEWID()) % 3)) -- mỗi đơn có 1-3 sản phẩm
+  BEGIN
+    SELECT TOP 1 @pid = id FROM product_items ORDER BY NEWID();
+
+    INSERT INTO order_items (
+      order_id,
+      product_item_id,
+      qty,
+      price_at_buy,
+	  cost_at_buy,
+      selling_price,
+      coupon_code,
+      created_at,
+      updated_at
+    )
+    VALUES (
+      @order_id,
+      @pid,
+      1 + ABS(CHECKSUM(NEWID()) % 5),  -- qty từ 1-5
+      (SELECT price FROM product_items WHERE id = @pid),
+      (SELECT cost FROM product_items WHERE id = @pid),
+      (SELECT price FROM product_items WHERE id = @pid),
+      NULL,
+      GETDATE(),
+      GETDATE()
+    );
+
+    SET @j = @j + 1;
+  END;
+
+  SET @order_id = @order_id + 1;
+END;
+DECLARE @i INT = 1;
+DECLARE @order_item_id INT;
+
+WHILE @i <= 10
+BEGIN
+  -- Lấy ngẫu nhiên 1 id từ order_items
+  SELECT TOP 1 @order_item_id = id FROM order_items ORDER BY NEWID();
+
+  INSERT INTO returns (
+    order_product_item_id,
+    qty,
+    reason,
+    image_url1,
+    image_url2,
+    image_url3,
+    video_url,
+    is_returned_money,
+    refund_amount,
+    return_type,
+    refund_type,
+    status,
+    processed_at,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    @order_item_id,
+    1 + ABS(CHECKSUM(NEWID()) % 3), -- qty từ 1–3
+    N'Sản phẩm bị lỗi, cần đổi trả',
+    'https://example.com/image1.jpg',
+    NULL,
+    NULL,
+    'https://example.com/video.mp4',
+    0,
+    50000.00,
+    'REFUND',
+    'WALLET',
+    'PENDING',
+    NULL,
+    GETDATE(),
+    GETDATE()
+  );
+
+  SET @i = @i + 1;
+END;
+
+DECLARE @i INT = 1;
+WHILE @i <= 20
+BEGIN
+    INSERT INTO reviews (
+        product_item_id,
+        account_id,
+        rating,
+        comment,
+        image_url1,
+        image_url2,
+        image_url3,
+        video_url,
+        created_at
+    )
+    SELECT TOP 1 
+        id AS product_item_id,
+        1 + ABS(CHECKSUM(NEWID()) % 10),  -- Giả sử có 10 tài khoản
+        1 + ABS(CHECKSUM(NEWID()) % 5),   -- Rating từ 1–5
+        N'Sản phẩm dùng rất tốt, sẽ mua lại!',
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg',
+        'https://example.com/image3.jpg',
+        'https://example.com/video.mp4',
+        DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 30), GETDATE())
+    FROM product_items where id =1 
+    ORDER BY NEWID();
+
+    SET @i = @i + 1;
+END;
+select * from cancels
+INSERT INTO cancels (order_id, reason, is_paid, status, created_at, updated_at)
+VALUES 
+(1, N'Khách thay đổi quyết định', 0, N'PENDING', GETDATE(), GETDATE()),
+(2, N'Không thể liên hệ với người nhận', 1, N'APPROVED', GETDATE(), GETDATE()),
+(3, N'Trùng đơn', 0, N'REJECTED', GETDATE(), GETDATE()),
+(4, N'Sản phẩm không đúng mô tả', 1, N'DONE', GETDATE(), GETDATE()),
+(5, N'Địa chỉ giao hàng không hợp lệ', 0, N'PENDING', GETDATE(), GETDATE()),
+(6, N'Khách đặt nhầm', 0, N'DONE', GETDATE(), GETDATE()),
+(7, N'Hệ thống báo lỗi đơn hàng', 1, N'APPROVED', GETDATE(), GETDATE()),
+(8, N'Khách hủy đơn khi chưa thanh toán', 0, N'REJECTED', GETDATE(), GETDATE()),
+(9, N'Giao hàng trễ so với cam kết', 1, N'APPROVED', GETDATE(), GETDATE()),
+(10, N'Không cần nữa', 0, N'PENDING', GETDATE(), GETDATE());
+select * from e_wallets
+INSERT INTO e_wallets (
+    id,
+    account_id,
+    balance,
+    wallet_type,
+    is_active,
+    code_activce,
+    created_at
+)
+VALUES 
+-- Ví thật
+('WALLET_REAL_001', 1, 100000000.00, 'REAL', 1, N'CODE123REAL', GETDATE()),
+
+-- Ví ảo
+('WALLET_VIRTUAL_002', 2, 50000.00, 'VIRTUAL', 1, N'CODE456VIRTUAL', GETDATE()),
+
+-- Ví bị khóa
+('WALLET_REAL_003', 3, 0, 'REAL', 0, N'LOCKED789', GETDATE());

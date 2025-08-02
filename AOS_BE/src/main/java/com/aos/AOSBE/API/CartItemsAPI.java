@@ -51,10 +51,6 @@ public class CartItemsAPI {
 
 	@GetMapping("/admin/CartItems/{id}")
 	public ResponseEntity<CartItems> getCartItemsByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
 		CartItems cartItems = (CartItems) cartItemsService.cartItemsFindById(id).orElse(new CartItems());
 		return ResponseEntity.ok(cartItems);
 	}

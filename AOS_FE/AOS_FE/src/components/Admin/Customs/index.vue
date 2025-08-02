@@ -1,16 +1,18 @@
 <template>
   <div class="container-fluid row">
     <div class="aside col-2">
-      <Dashboard :listDashBoard="listDashBoard"></Dashboard>
+      <Dashboard></Dashboard>
     </div>
-    
-    
     <div class="article col-10">
       <h1>
         Customs
       </h1>
       <FilterDropDown :FilterList="FilterList" v-model:modelValue="filters" />
-      <Table class="table" :TableName="props.TableName" :FilterList="filters"></Table>
+      <Table
+        class="table"
+        :TableName="props.TableName"
+        :FilterList="filters"
+      ></Table>
     </div>
   </div>
 </template>
@@ -20,70 +22,37 @@
   }
 </style>
 <script setup>
-import Table from "../../Module/Table.vue";
-import Dashboard from "../../Module/DashBoard.vue";
-import { useRouter } from 'vue-router'
-import { ref, reactive, watch } from 'vue'
-import FilterDropDown from "../../Module/FilterDropDown.vue";
-const router = useRouter()
-  const props = defineProps({
-    TableName: {
-      type: String,
-      required: true,
-    },
-  });
-  const listDashBoard = [
-    "Accounts",
-    "Authorities",
-    "BaseProducts",
-    "Cancels",
-    "CartItems",
-    "Catalogs",
-    "Categories",
-    "CostHistories",
-    "Coupons",
-    "News",
-    "OrderItems",
-    "Orders",
-    "PaymentMethods",
-    "PriceHistories",
-    "ProductImages",
-    "ProductItems",
-    "PromotionProduct",
-    "Promotions",
-    "PurchaseOrderItems",
-    "PurchaseOrders",
-    "Returns",
-    "Reviews",
-    "Roles",
-    "ShippingMethods",
-    "UserAddresses",
-    "VariantValues",
-    "Variants",
-  ];
- 
-  const FilterList = [
-          	{ name: 'accountIdFrom', type: 'number' },
-          	{ name: 'accountIdTo', type: 'number' },
-          	{ name: 'canvasJson', type: 'text' },
-          	{ name: 'imageUrl', type: 'text' },
-          	{ name: 'designName', type: 'text' },
-          	{ name: 'createdAtFrom', type: 'datetime-local' },
-          	{ name: 'createdAtTo', type: 'datetime-local' },
-          	{ name: 'updatedAtFrom', type: 'datetime-local' },
-          	{ name: 'updatedAtTo', type: 'datetime-local' },
- 
-]
+  import Table from "../../Module/Table.vue";
+  import Dashboard from "../../Module/DashBoard.vue";
+  import { useRouter } from 'vue-router'
+  import { ref, reactive, watch } from 'vue'
 
-const filters = ref({
-  			id: '',
-  			accountId: '',
-  			canvasJson: '',
-  			imageUrl: '',
-  			designName: '',
-  			createdAt: '',
-  			updatedAt: '',
-})
-  
-  
+  import FilterDropDown from "../../Module/FilterDropDown.vue";
+  const router = useRouter()
+    const props = defineProps({
+      TableName: {
+        type: String,
+        required: true,
+      },
+    });
+  const FilterList = [
+      { name: 'accountIdFrom', type: 'number'},
+      { name: 'accountIdTo', type: 'number'},
+      { name: 'canvasJson', type: 'text'},
+      { name: 'imageUrl', type: 'text'},
+      { name: 'designName', type: 'text'},
+      { name: 'createdAtFrom', type: 'datetime-local'},
+      { name: 'createdAtTo', type: 'datetime-local'},
+      { name: 'updatedAtFrom', type: 'datetime-local'},
+      { name: 'updatedAtTo', type: 'datetime-local'},
+  ]
+  const filters = ref({
+    id: '',
+    accountId: '',
+    canvasJson: '',
+    imageUrl: '',
+    designName: '',
+    createdAt: '',
+    updatedAt: '',
+  })
 </script>

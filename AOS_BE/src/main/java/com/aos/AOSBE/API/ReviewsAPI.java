@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.ReviewsDTOS;
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Reviews;
 import com.aos.AOSBE.Mapper.ReviewsMapper;
+import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.ReviewsService;
 
 @RestController
@@ -33,6 +38,9 @@ public class ReviewsAPI {
 
 	@Autowired
 	private ReviewsMapper reviewsMapper;
+
+	@Autowired
+	private AccountsService accountsService;
 
 	@GetMapping("/admin/Reviews")
 	public ResponseEntity<?> getAllReviewsApi(@RequestParam(defaultValue = "0") int page,
@@ -59,10 +67,55 @@ public class ReviewsAPI {
 	}
 
 	@PostMapping("/admin/Reviews")
-	public ResponseEntity<Reviews> addNewReviews(@RequestBody ReviewsDTOS entity) {
+	public ResponseEntity<?> addNewReviews(@RequestBody ReviewsDTOS entity) {
+		try {
+			// Lấy user từ SecurityContext
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
 
-		Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+			// Lấy account từ service
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			// Set lại accountId để mapper dùng được
+			entity.setAccountId(account.getId());
+
+			Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(saved);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi khi gửi đánh giá", "error", e.getMessage()));
+		}
+	}
+
+	@PostMapping("/user/Reviews")
+	public ResponseEntity<?> addNewReviewsUserRoles(@RequestBody ReviewsDTOS entity) {
+		try {
+			// Lấy user từ SecurityContext
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
+
+			// Lấy account từ service
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			// Set lại accountId để mapper dùng được
+			entity.setAccountId(account.getId());
+
+			Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(saved);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi khi gửi đánh giá", "error", e.getMessage()));
+		}
 	}
 
 	@PutMapping("/admin/Reviews/{id}")
@@ -86,6 +139,35 @@ public class ReviewsAPI {
 	public ResponseEntity<Void> deleteReviews(@PathVariable int id) {
 		reviewsService.reviewsDeleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/reviews/product/{productItemId}")
+	public ResponseEntity<?> getReviewsByProductItemId(@PathVariable Long productItemId,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+
+		Page<Reviews> pageResult = reviewsService.reviewsFindByProductItemId(productItemId, page, size);
+		List<ReviewsDTOS> reviewsDTOSList = pageResult.getContent().stream().map(reviewsMapper::mapper)
+				.collect(Collectors.toList());
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", reviewsDTOSList);
+		response.put("totalPages", pageResult.getTotalPages());
+		response.put("totalElements", pageResult.getTotalElements());
+		response.put("currentPage", pageResult.getNumber());
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/reviews/product/average-rating/{productItemId}")
+	public ResponseEntity<?> getAverageRating(@PathVariable Long productItemId) {
+		Double average = reviewsService.getAverageRatingByProductItemId(productItemId);
+		return ResponseEntity.ok(Map.of("averageRating", average));
+	}
+
+	@GetMapping("/reviews/product/count/{productItemId}")
+	public ResponseEntity<?> countReviews(@PathVariable Long productItemId) {
+		Long count = reviewsService.countReviewsByProductItemId(productItemId);
+		return ResponseEntity.ok(Map.of("total", count));
 	}
 
 }

@@ -20,10 +20,13 @@ const excludedPaths = [
   '/BaseProducts',
   '/VariantValues',
   '/openai/chat',
-  '/cart',
-  '/cart/addCombo',
   '/Promotions/',
-  '/Promotions'
+  '/Promotions',
+  '/shipping/fee', "/ProductItems/detail", "/UserProductEvents",
+  '/CatalogCategoriesFilter',
+  '/ProductItems/related',
+  '/reviews/product/count',
+  '/reviews/product/average-rating'
 ]
 
 // Automatically attach token to each request
@@ -31,9 +34,9 @@ api.interceptors.request.use(config => {
   const token = localStorage.getItem('jwtToken');
   // Kiểm tra nếu URL KHÔNG nằm trong danh sách ngoại lệ thì mới gắn token
   // Trong interceptor:
-const isExcluded = excludedPaths.some(path =>
-  path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path)
-);
+  const isExcluded = excludedPaths.some(path =>
+    path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path) && !config.url.includes("/admin")
+  );
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
   // neu url ngoai le 
   if (!isExcluded) {
@@ -54,6 +57,8 @@ api.interceptors.response.use(
   err => {
     if (err.response) {
       const status = err.response.status
+      console.error('Response error:', err.response.data);
+      console.log('Response error status:', status);
       // if (status === 401) {
       //   localStorage.removeItem('jwtToken')
       //   toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
@@ -64,56 +69,104 @@ api.interceptors.response.use(
       // } else 
       if (status === 403) {
         router.push('/403')
-      }else if(status === 401 && response.data.message.includes('Token đã hết hạn')) {
+      } else if (status === 401 && err.response.data.includes('Token đã hết hạn')) {
         localStorage.removeItem('jwtToken')
+        localStorage.removeItem('user');
+        cartSize.value = 0;
+        tokenRef.value = null;
+        this.removeUserHeader();
         router.push('/login')
-                setTimeout(()=>{
-          toast.error('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
-        },500)
+        setTimeout(() => {
+          alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
+        }, 500)
       }
     }
     return Promise.reject(err)
   }
 )
 const tokenRef = ref(localStorage.getItem('jwtToken'))
+const cartSize = ref(localStorage.getItem('cartSize') ? parseInt(localStorage.getItem('cartSize')) : 0);
+const userHeader = ref(JSON.parse(localStorage.getItem('user')) || null);
 const authService = {
-  login(email, password) {
+  async login(email, password) {
     // console.log({ email, password })
     return api.post('/Accounts/login', { email, password })
       .then(async (response) => {
-        localStorage.setItem('jwtToken', response.data.token);
+        const token = response.data.token;
+        const cartSizeValue = response.data.cartSize || 0;
+        // Set token và cart size trước
+        localStorage.setItem('jwtToken', token);
+        localStorage.setItem('cartSize', cartSizeValue);
+        console.log('cart sizeValue: ', cartSizeValue);
+        this.setTokenRef(token);
+        cartSize.value = cartSizeValue;
         console.log('authService redirect: ', localStorage.getItem('redirectTo'));
-        // tokenRef.value = '1';
-
+        // Sync cart
         await new Promise(resolve => setTimeout(resolve, 100));
         await syncLocalCartToServer();
-             setTimeout(() => {
+        // Check admin role
+        authService.isAdmin();
+        // Navigate
+        const redirectTo = localStorage.getItem('redirectTo') || '/';
+        localStorage.removeItem('redirectTo'); // Clear redirect after use
+        this.setUserHeader(await this.getProfile());
+        setTimeout(() => {
           toast.success('Đăng nhập thành công !');
-             },1000)
+        }, 500);
 
-        router.push(localStorage.getItem('redirectTo') || '/')
+        await router.push(redirectTo);
       })
       .catch(error => {
-              toast.warning('Đăng nhập thất bại !')
-        console.log('Đăng nhập thất bại ', error.response)})
+        toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
+        console.log('Đăng nhập thất bại ', error.response)
+      })
+  },
+  setTokenRef(token) {
+    tokenRef.value = token;
   }
   ,
-
+  getUserHeader() {
+    return userHeader.value;
+  },
+  setUserHeader(user) {
+    localStorage.setItem('user', JSON.stringify(user));
+    userHeader.value = user;
+  },
+  removeUserHeader() {
+    localStorage.removeItem('user');
+    userHeader.value = null;
+  }
+  ,
   isLogged() {
     return tokenRef.value != null;
   }
   ,
+  getCartSize() {
+    return cartSize.value;
+  },
+  updateCart(qty) {
+    cartSize.value += qty;
+    console.log('Cart size updated:', cartSize.value)
+    localStorage.setItem('cartSize', cartSize.value);
+  }
+  ,
+  setCart(qty) {
+    cartSize.value = qty;
+    console.log('Cart size set:', cartSize.value)
+    localStorage.setItem('cartSize', cartSize.value);
+  }
+  ,
   isAdmin() {
-    if (localStorage.getItem("jwtToken")) {
+    if (tokenRef.value) {
       try {
-        const roles = authService.parseJwt(tokenRef.value).roles
+        const roles = authService.parseJwt(tokenRef.value).roles;
         return Array.isArray(roles) && roles.includes('ADMIN');
-      } catch (error) {
-        console.error('Invalid payload:', error);
+      } catch (e) {
+        console.error('Invalid token:', e);
         return false;
       }
     }
-
+    return false;
   },
   getUserName() {
     if (localStorage.getItem("jwtToken")) {
@@ -127,10 +180,46 @@ const authService = {
         return false;
       }
     }
-  }
-  ,
+  },
+  getProfile() {
+    return api.get('/Accounts/me')
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Không thể lấy thông tin tài khoản:', err);
+        throw err;
+      });
+  },
+  updateProfile(dto) {
+    return api.put('/Accounts/me', dto)
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Lỗi cập nhật thông tin:', err);
+        throw err;
+      });
+  },
+  uploadAvatar(formData) {
+    return api.put("/Accounts/me/avatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    }).then(res => res.data)
+  },
+  changePassword(dto) {
+    return api.put('/Accounts/change-password', dto)
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Lỗi đổi mật khẩu:', err);
+        throw err;
+      });
+  },
+
   logout() {
     localStorage.removeItem('jwtToken');
+    this.removeUserHeader();
+    router.push('/');
+    setTimeout(() => {
+      toast.success('Đăng xuất thành công !');
+    }, 600);
+    cartSize.value = 0;
+    localStorage.removeItem('cartSize');
     tokenRef.value = null;
     console.log('User logged out');
   },
@@ -150,6 +239,34 @@ const authService = {
     }
   }
 };
+const homeService = {
+  getBestSellers(limit = 8) {
+    return api.get('/homepage/bestsellers', {
+      params: { limit }
+    })
+      .then(res => res.data)
+      .catch(err => {
+        console.error('Lỗi lấy sản phẩm bán chạy:', err);
+        throw err;
+      });
+  },
+
+  async getDiscountedProducts() {
+    return (await api.get('/discounted-products')).data
+  },
+  getProductsByCategory(categoryId, limit = 12) {
+    return api.get('/Product/ByCategory', {
+      params: { categoryId, limit }
+    }).data
+    // .then(res => res.data)
+    // .catch(err => {
+    //   console.error('Lỗi lấy sản phẩm theo danh mục:', err);
+    //   throw err;
+    // });
+  }
+
+};
+
 const cartService = {
   async getCart() {
     const cartList = ref([]);
@@ -183,7 +300,7 @@ const cartService = {
           price: product?.price || 0,
           quantity: item.qty,
           image: product?.image || 'no-image.png',
-          comboType : product?.comboType || 'normal',
+          comboType: product?.comboType || 'normal',
         };
       });
 
@@ -195,4 +312,4 @@ const cartService = {
 
 
 export default api;
-export { authService, cartService };
+export { authService, cartService, homeService };

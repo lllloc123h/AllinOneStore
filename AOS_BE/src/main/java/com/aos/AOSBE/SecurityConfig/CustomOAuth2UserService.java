@@ -1,9 +1,6 @@
 package com.aos.AOSBE.SecurityConfig;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +20,7 @@ import com.aos.AOSBE.Entity.Authorities;
 import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Repository.AuthoritiesRepository;
 import com.aos.AOSBE.Repository.RolesRepository;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -38,9 +36,32 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		// Lấy email từ Google
 		String email = oAuth2User.getAttribute("email");
-		System.out.println(email);
-		String picture = oAuth2User.getAttribute("picture");
-		String fullname = oAuth2User.getAttribute("name");
+		String picture= null;
+		String registrationId = userRequest.getClientRegistration().getRegistrationId(); // facebook, google
+		if ("facebook".equals(registrationId)) {
+			// Gọi Graph API để lấy ảnh rõ ràng
+			String accessToken = userRequest.getAccessToken().getTokenValue();
+			String uri = "https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token=" + accessToken;
+
+			try {
+				RestTemplate restTemplate = new RestTemplate();
+				Map<String, Object> fbUser = restTemplate.getForObject(uri, Map.class);
+
+				if (fbUser != null && fbUser.containsKey("picture")) {
+					Map<String, Object> pictureObj = (Map<String, Object>) fbUser.get("picture");
+					Map<String, Object> dataObj = (Map<String, Object>) pictureObj.get("data");
+					picture = (String) dataObj.get("url");
+					System.out.println("✅ Facebook avatar: " + picture);
+				} else {
+					System.out.println("⚠️ Không tìm thấy picture từ Facebook");
+				}
+			} catch (Exception e) {
+				System.out.println("❌ Lỗi gọi Facebook Graph API: " + e.getMessage());
+			}
+
+		} else {
+			picture = oAuth2User.getAttribute("picture"); // Google, etc.
+		}		String fullname = oAuth2User.getAttribute("name");
 		// Kiểm tra xem user có trong database không
 		Optional<Accounts> user = userRepository.findByEmail(email);
 
@@ -56,11 +77,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			auth.setAccounts(userRegister);
 			auth.setRoles(rolesRepository.findByName("USER").get());
 			authorityRepository.save(auth);
-		} else {
-			System.out.println("user ko null");
-			user.get().setFullname(fullname);
-			user.get().setAvatarUrl(picture);
-			userRepository.save(user.get());
 		}
 		// Lấy role từ database
 		List<Authorities> authorities = authorityRepository.findAllByEmail(email);

@@ -141,6 +141,7 @@ const submitOtp = () => {
     .post("/Accounts/verify-otp", { otp: code })
     .then((resp) => {
       toast.success(resp.data.message);
+      console.log("usser ", resp.data);
       emit("verified");
     })
     .catch((err) => {

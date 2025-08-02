@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,5 +51,8 @@ public class OrderItemsService {
 	@Transactional
 	public List<OrderItems> findByOrderId(int orderId) {
 		return orderItemsRepository.findByOrdersId(orderId);
+	}
+	public Long sumQuantityByProductId(Integer productItemId, LocalDateTime createdAt) {
+		return orderItemsRepository.sumQuantityByProductId(productItemId, createdAt);
 	}
 }

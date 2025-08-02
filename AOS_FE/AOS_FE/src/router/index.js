@@ -8,6 +8,7 @@ import adminLayout from '../Layouts/AdminLayout.vue'
 import UserLayout from '../Layouts/UserLayout.vue'
 import Oauth2 from '../components/Module/Oauth2Success.vue'
 import Unauthorized from '../components/Module/403View.vue'
+
 // Merge all routes
 const routes = [
   {

@@ -4,10 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.aos.AOSBE.DTOS.CreateComboDTO;
+import com.aos.AOSBE.DTOS.CustomsDTOS;
 import com.aos.AOSBE.DTOS.UpdateComboDTO;
 import com.aos.AOSBE.Entity.Accounts;
+import com.aos.AOSBE.Entity.Customs;
+import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Mapper.CustomsMapper;
+import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,8 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aos.AOSBE.DTOS.CartItemsDTOS;
 import com.aos.AOSBE.Entity.CartItems;
 import com.aos.AOSBE.Mapper.CartItemsMapper;
-import com.aos.AOSBE.Service.AccountsService;
-import com.aos.AOSBE.Service.CartItemsService;
 
 @RestController
 @RequestMapping("/api")
@@ -38,15 +42,23 @@ public class CartHandleAPI {
 	CartItemsMapper cartItemsMapper;
 	@Autowired
 	AccountsService accountsService;
+	@Autowired
+	PromotionProductsService promotionProductsService;
+	@Autowired
+	PromotionsService promotionsService;
+	@Autowired
+	private CustomsService customsService;
+	@Autowired
+	private CustomsMapper customsMapper;
 
 	@PostMapping("/addToCart")
 	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			CartItems cartItem = cartItemsMapper.mapperToObject(entity);
-			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(userEmail,
+			CartItems item = cartItemsService.cartFindByAccountEmailAndProductItemId(
+					userEmail,
 					cartItem.getProductItems().getId());
-
 			if (item != null && item.getComboGroupId() == null) {
 				item.setQty(item.getQty() + cartItem.getQty());
 				cartItemsService.cartItemsSave(item);
@@ -99,7 +111,7 @@ public class CartHandleAPI {
 	@GetMapping("/cart")
 	public ResponseEntity<?> cart() {
 		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-		List<CartItemsDTOS> cartListByAcount = cartItemsService.cartItemsFindAccounts("adminCUDE@gmail.com").stream().map(cartItemsMapper::mapper).toList();
+		List<CartItemsDTOS> cartListByAcount = cartItemsService.cartItemsFindAccounts(userEmail).stream().map(cartItemsMapper::mapper).toList();
 		return ResponseEntity.ok(cartListByAcount);
 	}
 
@@ -121,7 +133,8 @@ public class CartHandleAPI {
 	public ResponseEntity<?> addCombo(@RequestBody CreateComboDTO entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
+
 			cartItemsService.addCombo(entity, account);
 			return ResponseEntity.ok(Map.of("message", "Combo added successfully"));
 		} catch (Exception e) {
@@ -134,7 +147,7 @@ public class CartHandleAPI {
 	public ResponseEntity<?> updateComboQty(@RequestBody UpdateComboDTO entity) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
 			List<CartItems> listCartItems = cartItemsService.findCartItemsByAccountsAndComboGroupId(account, entity.getComboGroupId());
 			for (CartItems cartItems : listCartItems) {
 				int tempQty = cartItems.getQty() / cartItems.getComboQty();
@@ -158,9 +171,32 @@ public class CartHandleAPI {
 	public ResponseEntity<?> deleteCombo(@PathVariable("comboGroupId") UUID comboGroupId) {
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts account = accountsService.accountsFindByEmail("adminCUDE@gmail.com").orElse(null);
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
 	cartItemsService.deleteCombo(account, comboGroupId);
 			return ResponseEntity.ok(Map.of("message", "Combo deleted successfully"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+	@GetMapping("/customs/email")
+	public ResponseEntity<List<CustomsDTOS>> getCustomsByEmail() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		System.out.println(">> Email: " + email);
+		List<Customs> customsList = customsService.findCustomsByEmail(email);
+		List<CustomsDTOS> customsDTOSList = customsList.stream()
+				.map(customsMapper::mapper)
+				.collect(Collectors.toList());
+		System.out.println(">> Customs List: " + customsDTOSList);
+		return ResponseEntity.ok(customsDTOSList);
+	}
+	@PostMapping("/customs/save")
+	public ResponseEntity<?> addCustoms(@RequestBody CustomsDTOS entity) {
+		try {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
+			customsService.customsSave(customsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(Map.of("message", "Customs added successfully"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));

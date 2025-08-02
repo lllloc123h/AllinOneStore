@@ -1,5 +1,7 @@
 package com.aos.AOSBE.SecurityConfig;
 
+import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Service.CartItemsService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +18,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     @Autowired
     JwtUtil jwtTokenProvider;
-
+    @Autowired
+    CartItemsService cartItemsService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
@@ -25,8 +28,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // Sinh JWT token
         String token = jwtTokenProvider.generateToken(email);
-
-        // Gửi token về FE (qua redirect kèm query hoặc header/cookie tuỳ bạn)
-        response.sendRedirect("http://localhost:5173/oauth2/redirect?token=" + token);
+        response.sendRedirect("http://localhost:5173/oauth2/redirect?token=" + token+
+                "&cartSize=" + cartItemsService.cartItemsFindAccounts(email).stream().reduce(0, (a, b) -> a + b.getQty(), Integer::sum));
     }
 }

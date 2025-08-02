@@ -12,6 +12,5 @@ import java.util.List;
 public class ProductItemDetailDTO {
     private ProductItemsDTOS productItem;
     private List<ProductImagesDTOS> images;
-    private List<PriceHistoriesDTOS> priceHistories;
     private List<PromotionsDTOS> promotions;
 }
