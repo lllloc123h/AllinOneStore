@@ -54,26 +54,10 @@ public class OrdersAPI {
 		return ResponseEntity.ok(orders);
 	}
 	@PostMapping("/admin/Orders")
-<<<<<<< Updated upstream
 	public ResponseEntity<Orders> addNewOrders(@RequestBody OrdersDTOS entity) {
 	    
 	    Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));	    
 	    return ResponseEntity.ok(saved);
-=======
-	public ResponseEntity<?> userAddNewOrders(@RequestBody OrdersDTOS entity) {
-		try {
-			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
-			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
-
-			// 👉 Gán mã GHN vào đơn hàng nếu cần
-			saved.setGhnOrderCode(ghnOrderCode); // Nếu bạn có field orderCode trong entity
-			ordersService.ordersSave(saved);
-
-			return ResponseEntity.ok(saved);
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
-		}
->>>>>>> Stashed changes
 	}
 	@PutMapping("/admin/Orders/{id}")
 	public ResponseEntity<?> updateOrders( @PathVariable int id,@RequestBody OrdersDTOS entity) {
