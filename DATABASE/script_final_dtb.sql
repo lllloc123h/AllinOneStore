@@ -417,7 +417,6 @@ create table
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,
 		total AS (qty * selling_price) PERSISTED,
-		coupon_code nvarchar (50),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (order_id) references orders (id) ON DELETE CASCADE,

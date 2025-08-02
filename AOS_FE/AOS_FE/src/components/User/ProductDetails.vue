@@ -857,10 +857,6 @@ const fileInputRef = ref(null);
   transition: transform 0.3s ease;
 }
 
-.main-image:hover {
-  transform: scale(1.05);
-}
-
 .gallery-nav {
   position: absolute;
   top: 50%;

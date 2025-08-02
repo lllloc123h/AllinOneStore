@@ -111,9 +111,23 @@
                 </button>
                 <button
                   type="button"
+                  class="control-btn crop-btn"
+                  @click.prevent="cropExistingImage(index)"
+                  v-if="image.needsCrop && !image.uploading && !image.isUrl"
+                  title="Crop ảnh"
+                >
+                  <i class="bi bi-crop"></i>
+                </button>
+                <button
+                  type="button"
                   class="control-btn upload-btn"
                   @click.prevent="uploadSingleImage(index)"
-                  v-if="!image.uploading && !image.cloudinaryUrl && !image.isUrl"
+                  v-if="
+                    !image.uploading &&
+                    !image.cloudinaryUrl &&
+                    !image.isUrl &&
+                    image.isReadyToUpload
+                  "
                   title="Tải lên"
                 >
                   <i class="bi bi-cloud-upload"></i>
@@ -152,6 +166,9 @@
               </span>
               <span v-else-if="image.isUrl" class="upload-status url">
                 <i class="bi bi-link-45deg"></i> Từ URL
+              </span>
+              <span v-else-if="image.needsCrop" class="upload-status needs-crop">
+                <i class="bi bi-crop"></i> Cần crop
               </span>
               <span v-else class="upload-status pending">
                 <i class="bi bi-clock"></i> Chờ tải lên
@@ -222,12 +239,64 @@
         </div>
       </div>
     </div>
+
+    <!-- Crop Modal -->
+    <div v-if="cropModal.show" class="crop-modal" @click="closeCropModal">
+      <div class="crop-content" @click.stop>
+        <div class="crop-header">
+          <h4 class="crop-title">
+            <i class="bi bi-crop me-2"></i>
+            Crop ảnh theo tỷ lệ {{ props.aspectRatio }}
+          </h4>
+          <button type="button" class="close-btn" @click.prevent="closeCropModal">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="crop-body">
+          <div class="crop-container">
+            <img
+              ref="cropperRef"
+              :src="cropModal.originalUrl"
+              style="max-width: 100%; height: 400px"
+            />
+          </div>
+
+          <div class="crop-info">
+            <div class="info-item">
+              <i class="bi bi-info-circle me-2"></i>
+              <span
+                >Kéo và thả để di chuyển ảnh, kéo góc để thay đổi kích thước vùng
+                crop</span
+              >
+            </div>
+            <div class="info-item">
+              <i class="bi bi-aspect-ratio me-2"></i>
+              <span>Tỷ lệ được cố định theo yêu cầu: {{ props.aspectRatio }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="crop-footer">
+          <button type="button" class="btn btn-secondary" @click.prevent="skipCrop">
+            <i class="bi bi-x-lg me-2"></i>
+            Hủy
+          </button>
+          <button type="button" class="btn btn-primary" @click.prevent="applyCrop">
+            <i class="bi bi-check-lg me-2"></i>
+            Áp dụng Crop
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, nextTick, computed } from "vue";
 import uploadAPI from "../../Configs/upload-api";
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
 
 // Props & Emits
 const props = defineProps({
@@ -277,9 +346,22 @@ const previewModal = ref({
   image: null,
 });
 
+// Crop Modal Data
+const cropModal = ref({
+  show: false,
+  originalFile: null,
+  originalUrl: null,
+  replacingIndex: undefined,
+});
+
+const cropperRef = ref(null);
+const cropperInstance = ref(null);
+
 // Computed
 const hasUnuploadedImages = computed(() => {
-  return images.value.some((img) => !img.cloudinaryUrl && !img.isUrl && !img.uploading);
+  return images.value.some(
+    (img) => !img.cloudinaryUrl && !img.isUrl && !img.uploading && img.isReadyToUpload
+  );
 });
 
 // Tính toán padding-bottom dựa vào aspectRatio
@@ -287,6 +369,34 @@ const aspectRatioPadding = computed(() => {
   const [width, height] = props.aspectRatio.split(":").map(Number);
   return `${(height / width) * 100}%`;
 });
+
+// Tính toán aspect ratio number cho cropper
+const aspectRatioNumber = computed(() => {
+  const [width, height] = props.aspectRatio.split(":").map(Number);
+  return width / height;
+});
+
+// Check image aspect ratio
+const checkImageAspectRatio = (file) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const imageRatio = img.width / img.height;
+      const expectedRatio = aspectRatioNumber.value;
+      const tolerance = 0.1; // Cho phép sai số 10%
+
+      const isCorrectRatio = Math.abs(imageRatio - expectedRatio) <= tolerance;
+      resolve({
+        isCorrect: isCorrectRatio,
+        currentRatio: imageRatio,
+        expectedRatio: expectedRatio,
+        width: img.width,
+        height: img.height,
+      });
+    };
+    img.src = URL.createObjectURL(file);
+  });
+};
 
 // Methods
 const triggerFileInput = () => {
@@ -351,27 +461,43 @@ const addFiles = async (files) => {
     alert(`Chỉ có thể thêm ${remainingSlots} ảnh nữa`);
   }
 
-  // Thêm từng file vào danh sách KHÔNG upload ngay
+  // Kiểm tra aspect ratio cho từng file và thêm vào danh sách
   for (const file of filesToAdd) {
+    const aspectCheck = await checkImageAspectRatio(file);
+
     const imageObj = {
       id: Date.now() + Math.random(),
       file,
       name: file.name,
       size: file.size,
-      url: URL.createObjectURL(file), // URL tạm thời để preview
-      uploading: false, // Chưa upload
+      url: URL.createObjectURL(file),
+      uploading: false,
       cloudinaryUrl: null,
       publicId: null,
+      needsCrop: !aspectCheck.isCorrect, // Đánh dấu ảnh cần crop
+      isReadyToUpload: aspectCheck.isCorrect, // Chỉ ready khi đúng tỷ lệ
     };
 
     images.value.push(imageObj);
   }
+
+  updateParent();
 };
 
 // Upload functions
 const uploadSingleImage = async (index) => {
   const image = images.value[index];
-  if (!image || image.uploading || image.cloudinaryUrl || image.isUrl || !image.file) {
+  if (
+    !image ||
+    image.uploading ||
+    image.cloudinaryUrl ||
+    image.isUrl ||
+    !image.file ||
+    !image.isReadyToUpload
+  ) {
+    if (!image.isReadyToUpload) {
+      alert("Vui lòng crop ảnh trước khi upload!");
+    }
     return;
   }
 
@@ -407,9 +533,22 @@ const uploadSingleImage = async (index) => {
 const uploadAllImages = async () => {
   const unuploadedImages = images.value
     .map((img, index) => ({ img, index }))
-    .filter(({ img }) => !img.cloudinaryUrl && !img.isUrl && !img.uploading && img.file);
+    .filter(
+      ({ img }) =>
+        !img.cloudinaryUrl &&
+        !img.isUrl &&
+        !img.uploading &&
+        img.file &&
+        img.isReadyToUpload
+    );
 
   if (unuploadedImages.length === 0) {
+    const needsCropCount = images.value.filter(
+      (img) => img.needsCrop && !img.cloudinaryUrl && !img.isUrl
+    ).length;
+    if (needsCropCount > 0) {
+      alert(`Có ${needsCropCount} ảnh cần crop trước khi upload!`);
+    }
     return;
   }
 
@@ -585,6 +724,129 @@ const previewImage = (image) => {
 
 const closePreview = () => {
   previewModal.value.show = false;
+};
+
+// Crop Functions
+const showCropModal = (file, index) => {
+  cropModal.value = {
+    show: true,
+    originalFile: file,
+    originalUrl: URL.createObjectURL(file),
+    replacingIndex: index,
+  };
+
+  // Wait for modal to render then init cropper
+  nextTick(() => {
+    initCropper();
+  });
+};
+
+const closeCropModal = () => {
+  // Destroy cropper instance
+  if (cropperInstance.value) {
+    cropperInstance.value.destroy();
+    cropperInstance.value = null;
+  }
+
+  // Clean up URL
+  if (cropModal.value.originalUrl) {
+    URL.revokeObjectURL(cropModal.value.originalUrl);
+  }
+
+  cropModal.value = {
+    show: false,
+    originalFile: null,
+    originalUrl: null,
+    replacingIndex: undefined,
+  };
+};
+
+const initCropper = () => {
+  if (!cropperRef.value) return;
+
+  const image = cropperRef.value;
+  cropperInstance.value = new Cropper(image, {
+    aspectRatio: aspectRatioNumber.value,
+    viewMode: 1,
+    dragMode: "move",
+    autoCropArea: 0.8,
+    restore: false,
+    guides: true,
+    center: true,
+    highlight: false,
+    cropBoxMovable: true,
+    cropBoxResizable: true,
+    toggleDragModeOnDblclick: false,
+    responsive: true,
+    background: false,
+  });
+};
+
+const applyCrop = () => {
+  if (!cropperInstance.value) return;
+
+  const canvas = cropperInstance.value.getCroppedCanvas({
+    width: 800,
+    height: Math.round(800 / aspectRatioNumber.value),
+    imageSmoothingEnabled: true,
+    imageSmoothingQuality: "high",
+  });
+
+  canvas.toBlob(
+    (blob) => {
+      // Tạo file mới từ blob đã crop
+      const croppedFile = new File([blob], cropModal.value.originalFile.name, {
+        type: cropModal.value.originalFile.type,
+      });
+
+      // Thay thế ảnh đã crop
+      replaceImageAfterCrop(cropModal.value.replacingIndex, croppedFile);
+
+      // Đóng modal
+      closeCropModal();
+    },
+    cropModal.value.originalFile.type,
+    0.9
+  );
+};
+
+const skipCrop = () => {
+  // Chỉ đóng modal, không làm gì thêm
+  closeCropModal();
+};
+
+// Replace image after crop
+const replaceImageAfterCrop = (index, croppedFile) => {
+  const oldImage = images.value[index];
+
+  // Giải phóng URL cũ
+  if (oldImage.url && !oldImage.isUrl && !oldImage.cloudinaryUrl) {
+    URL.revokeObjectURL(oldImage.url);
+  }
+
+  // Thay thế bằng ảnh đã crop
+  images.value[index] = {
+    ...oldImage,
+    file: croppedFile,
+    name: croppedFile.name,
+    size: croppedFile.size,
+    url: URL.createObjectURL(croppedFile),
+    cloudinaryUrl: null, // Reset upload status
+    publicId: null,
+    uploading: false,
+    needsCrop: false, // Đã crop xong
+    isReadyToUpload: true, // Sẵn sàng upload
+  };
+
+  updateParent();
+};
+
+// Crop existing image
+const cropExistingImage = (index) => {
+  const image = images.value[index];
+  if (!image || !image.file) return;
+
+  showCropModal(image.file, index);
 };
 
 // Utilities
@@ -1000,6 +1262,16 @@ defineExpose({
   transform: scale(1.1);
 }
 
+.crop-btn {
+  background: rgba(245, 158, 11, 0.9);
+  color: white;
+}
+
+.crop-btn:hover {
+  background: #f59e0b;
+  transform: scale(1.1);
+}
+
 .drag-handle {
   position: absolute;
   top: 8px;
@@ -1097,6 +1369,11 @@ defineExpose({
 
 .upload-status.pending {
   color: #f59e0b;
+}
+
+.upload-status.needs-crop {
+  color: #ef4444;
+  font-weight: 600;
 }
 
 @keyframes pulse {
@@ -1346,6 +1623,180 @@ defineExpose({
 
   .upload-products-container {
     padding: 12px;
+  }
+}
+
+/* Crop Modal Styles */
+.crop-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.crop-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.crop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.crop-title {
+  margin: 0;
+  color: #333;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.crop-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.crop-container {
+  margin-bottom: 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.crop-info {
+  background: #e7f3ff;
+  border: 1px solid #b3d8ff;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.crop-info .info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  color: #0066cc;
+  font-size: 0.9em;
+}
+
+.crop-info .info-item:last-child {
+  margin-bottom: 0;
+}
+
+.crop-footer {
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: #f8f9fa;
+}
+
+.crop-footer .btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.crop-footer .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.crop-footer .btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.crop-footer .btn-secondary:hover {
+  background: #4b5563;
+}
+
+.crop-footer .btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.crop-footer .btn-primary:hover {
+  background: #2563eb;
+}
+
+/* Mobile Responsive for Crop Modal */
+@media (max-width: 768px) {
+  .crop-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .crop-header {
+    padding: 15px;
+  }
+
+  .crop-title {
+    font-size: 1.1em;
+  }
+
+  .crop-body {
+    padding: 15px;
+    max-height: 50vh;
+  }
+
+  .crop-container {
+    padding: 15px;
+  }
+
+  .crop-footer {
+    padding: 15px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .crop-footer .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

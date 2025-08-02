@@ -215,10 +215,6 @@
                   </button>
                 </div>
               </div>
-              <div class="products-count">
-                <i class="bi bi-info-circle me-2"></i>
-                Hiển thị {{ products.length }} trong số {{ data * pageSize }} sản phẩm
-              </div>
             </div>
 
             <!-- Products Grid -->
@@ -417,13 +413,14 @@ onMounted(() => {
       }
     })
     .catch((error) => console.log(error));
-  api
-    .get("/BaseProducts")
-    .then(async (resp) => {
-      data.value = resp.data.totalPages;
-      products.value = resp.data;
-    })
-    .catch((error) => console.log("Error loading base products:", error));
+  // api
+  //   .get("/BaseProducts")
+  //   .then(async (resp) => {
+  //     data.value = resp.data.totalPages;
+  //     products.value = resp.data;
+  //     console.log("Products loaded:", products.value);
+  //   })
+  //   .catch((error) => console.log("Error loading base products:", error));
   api
     .get("/CatalogCategoriesFilter")
     .then(async (resp) => {
@@ -474,7 +471,7 @@ const addToCart = () => {
     closeModal();
   } else {
     // alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
-    notification.success({
+    notification.error({
       message: "Danger",
       description: `Số lượng tồn không đủ`,
     });
@@ -906,15 +903,6 @@ watch(
   background: white;
 }
 
-/* Product Cards */
-.product-card-wrapper {
-  transition: transform 0.2s ease;
-}
-
-.product-card-wrapper:hover {
-  transform: translateY(-4px);
-}
-
 /* Empty State */
 .empty-state {
   padding: 4rem 2rem;
@@ -979,17 +967,6 @@ watch(
   border: 2px solid rgba(102, 126, 234, 0.1);
 }
 
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 .modal-header {
   padding: 2rem 2.5rem 1rem 2.5rem;
   border-bottom: 3px solid #f8f9fa;
@@ -1050,10 +1027,6 @@ watch(
   width: 100%;
   height: 350px;
   object-fit: cover;
-}
-
-.preview-image:hover img {
-  transform: scale(1.02);
 }
 
 .preview-details {
