@@ -23,7 +23,10 @@ const excludedPaths = [
   '/Promotions/',
   '/Promotions',
   '/shipping/fee', "/ProductItems/detail", "/UserProductEvents",
-  '/CatalogCategoriesFilter'
+  '/CatalogCategoriesFilter',
+  '/ProductItems/related',
+  '/reviews/product/count',
+  '/reviews/product/average-rating'
 ]
 
 // Automatically attach token to each request
@@ -122,14 +125,14 @@ const authService = {
     tokenRef.value = token;
   }
   ,
-  getUserHeader(){
+  getUserHeader() {
     return userHeader.value;
   },
   setUserHeader(user) {
     localStorage.setItem('user', JSON.stringify(user));
     userHeader.value = user;
   },
-  removeUserHeader(){
+  removeUserHeader() {
     localStorage.removeItem('user');
     userHeader.value = null;
   }

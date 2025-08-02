@@ -45,11 +45,11 @@ public class Security {
 						"/api/Accounts/verify-otp", "/api/VariantValues", "/api/CatalogCategoriesFilter",
 						"/api/Product/**", "/api/e-wallet/callback", "/api/openai/**", "/api/webhook/status",
 						"/api/Orders/detail/**", "/api/ProductItems/detail/**", "/api/Promotions/**",
-						"/api/reviews/product/**",
-						"api/discounted-products",
-						"/api/cart/**", "/api/shipping/**", "/api/UserProductEvents/**", "/api/ghn/**",
-						"/api/UserAddresses/**", "/forgot-password/**", "/api/forgot-password/**",
-						"/api/homepage/bestsellers/**", "/api/discounted-products/**"
+						"/api/reviews/product/**", "api/discounted-products", "/api/cart/**", "/api/shipping/**",
+						"/api/UserProductEvents/**", "/api/ghn/**", "/api/UserAddresses/**", "/forgot-password/**",
+						"/api/forgot-password/**", "/api/homepage/bestsellers/**", "/api/discounted-products/**",
+						"/api/ProductItems/related/**", "/api/reviews/product/count/**",
+						"/api/reviews/product/average-rating/**"
 
 				).permitAll().requestMatchers("/api/admin/**").hasAuthority("ADMIN").requestMatchers("/api/user/**")
 						.hasAnyAuthority("USER", "ADMIN").anyRequest().authenticated())

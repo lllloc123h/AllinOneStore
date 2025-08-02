@@ -19,7 +19,7 @@ public interface ProductItemsRepository
 	List<ProductItems> findBySkuLike(String skuLike);
 
 	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1 ")
-	Page<ProductItems> findByBaseProductsId(Pageable pageable, int id);
+	List<ProductItems> findByBaseProductsId(int id);
 
 	// Add custom query methods here if needed
 	@Query("SELECT MIN(p.price),MAX(p.price) FROM ProductItems p WHERE p.baseProducts.id = ?1")
@@ -66,19 +66,6 @@ public interface ProductItemsRepository
 			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPriceJoined") String minPriceJoined,
 			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPriceJoined") String maxPriceJoined);
 
-//    pit.sku,
-
-//	bp.id,
-//	 bp.name,
-//	 bp.material,
-//	bp.main_image_url,
-//	bp.category_id,
-//	bp.is_custom,
-//	bp.turn_buy,
-//	bp.rating,
-//	pit.description,
-//	bp.is_active,
-//	pit.safety_stock
 	@Query(value = """
 				SELECT
 				  		bp.id,
@@ -138,36 +125,13 @@ public interface ProductItemsRepository
 				Order by bp.id ASC
 
 			""", nativeQuery = true)
-	Page<Object[]> newFilterItems(Pageable pageable,
-//			@Param("colorsIsEmpty") int colorsIsEmpty, @Param("colorsJoined") String colorsJoined,
-			@Param("isSkuLikeListEmpty") int isSkuLikeListEmpty, @Param("skuLikeList") String sizesJoined,
-			@Param("minPriceIsEmpty") int minPriceIsEmpty, @Param("minPrice") String minPriceJoined,
-			@Param("maxPriceIsEmpty") int maxPriceIsEmpty, @Param("maxPrice") String maxPriceJoined,
-			@Param("isCategoriesEmpty") int isCategoriesEmpty, @Param("categoriesList") String categoriesList,
-			@Param("isKeyWordEmpty") int isKeyWordEmpty, @Param("keyWord") String keyWord,
-			@Param("idProductItemIsEmpty") int idProductItemIsEmpty, @Param("idProductItem") int idProductItem);
-
-//	@Query("""
-//			    SELECT new com.aos.AOSBE.DTOS.DiscountedProductDTOS(
-//			        pi.id,
-//			        bp.name,
-//			        pi.price,
-//			        promo.discountType,
-//			        promo.name,
-//			        promo.startAt,
-//			        promo.endAt,
-//			        img.imageUrl
-//			    )
-//			    FROM ProductItems pi
-//			    JOIN pi.baseProducts bp
-//			    JOIN PromotionProducts pp ON pi.id = pp.productItems.id
-//			    JOIN pp.promotions promo
-//			    LEFT JOIN ProductImages img ON img.productItems.id = pi.id
-//			    WHERE promo.isActive = true
-//			      AND promo.type = 'DISCOUNT'
-//			      AND CURRENT_TIMESTAMP BETWEEN promo.startAt AND promo.endAt
-//			""")
-//	List<DiscountedProductDTOS> getAllDiscountedProducts();
+	Page<Object[]> newFilterItems(Pageable pageable, @Param("isSkuLikeListEmpty") int isSkuLikeListEmpty,
+			@Param("skuLikeList") String sizesJoined, @Param("minPriceIsEmpty") int minPriceIsEmpty,
+			@Param("minPrice") String minPriceJoined, @Param("maxPriceIsEmpty") int maxPriceIsEmpty,
+			@Param("maxPrice") String maxPriceJoined, @Param("isCategoriesEmpty") int isCategoriesEmpty,
+			@Param("categoriesList") String categoriesList, @Param("isKeyWordEmpty") int isKeyWordEmpty,
+			@Param("keyWord") String keyWord, @Param("idProductItemIsEmpty") int idProductItemIsEmpty,
+			@Param("idProductItem") int idProductItem);
 
 	@Query(value = """
 			    SELECT

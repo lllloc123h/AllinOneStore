@@ -1,5 +1,5 @@
 <template>
-  <div class="product-detail-container" v-if="product">
+  <div class="product-detail-container" v-if="selectedProduct">
     <!-- Hero Section -->
     <div class="hero-section">
       <div class="container py-5">
@@ -11,7 +11,7 @@
           <i class="bi bi-chevron-right breadcrumb-separator"></i>
           <router-link to="/products" class="breadcrumb-link">Sản phẩm</router-link>
           <i class="bi bi-chevron-right breadcrumb-separator"></i>
-          <span class="breadcrumb-current">{{ product.name }}</span>
+          <span class="breadcrumb-current">{{ selectedProduct.baseProducts.name }}</span>
         </nav>
 
         <!-- Product Content -->
@@ -21,43 +21,27 @@
             <div class="product-gallery">
               <!-- Main Image -->
               <div class="main-image-container">
-                <img :src="currentImage" :alt="product.name" class="main-image" />
+                <img :src="currentImage" class="main-image" />
 
                 <!-- Navigation Arrows -->
-                <button
-                  class="gallery-nav gallery-nav-prev"
-                  @click="prevImage"
-                  v-if="images.length > 1"
-                >
+                <button class="gallery-nav gallery-nav-prev" @click="prevImage" v-if="images.length > 1">
                   <i class="bi bi-chevron-left"></i>
                 </button>
-                <button
-                  class="gallery-nav gallery-nav-next"
-                  @click="nextImage"
-                  v-if="images.length > 1"
-                >
+                <button class="gallery-nav gallery-nav-next" @click="nextImage" v-if="images.length > 1">
                   <i class="bi bi-chevron-right"></i>
                 </button>
 
                 <!-- Image Indicators -->
                 <div class="image-indicators" v-if="images.length > 1">
-                  <span
-                    v-for="(img, idx) in images"
-                    :key="idx"
-                    :class="['indicator', { active: currentImageIndex === idx }]"
-                    @click="selectImage(idx)"
-                  ></span>
+                  <span v-for="(img, idx) in images" :key="idx"
+                    :class="['indicator', { active: currentImageIndex === idx }]" @click="selectImage(idx)"></span>
                 </div>
               </div>
 
               <!-- Thumbnail Gallery -->
               <div class="thumbnail-gallery" v-if="images.length > 1">
-                <div
-                  v-for="(img, idx) in images"
-                  :key="idx"
-                  :class="['thumbnail-item', { active: currentImageIndex === idx }]"
-                  @click="selectImage(idx)"
-                >
+                <div v-for="(img, idx) in images" :key="idx"
+                  :class="['thumbnail-item', { active: currentImageIndex === idx }]" @click="selectImage(idx)">
                   <img :src="img.imageUrl" :alt="`Ảnh ${idx + 1}`" />
                 </div>
               </div>
@@ -69,17 +53,26 @@
             <div class="product-info">
               <!-- Product Title & Rating -->
               <div class="product-header">
-                <h1 class="product-title">{{ product.name }}</h1>
+                <h1 class="product-title">{{ selectedProduct.baseProducts.name }}</h1>
+
+                <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="variant-group">
+                  <h5 class="mb-2">Select {{ groupName }}</h5>
+                  <div class="variant-options">
+                    <label v-for="item in items" :key="item.id" class="variant-button"
+                      :class="{ active: selected[groupName]?.includes(item.signalSku) }">
+                      <input type="radio" :name="groupName" :value="item.signalSku" :disabled="item.isActive === false"
+                        v-model="selected[groupName]" class="d-none" />
+                      {{ item.description }}
+                    </label>
+                  </div>
+                </div>
 
                 <div class="rating-section">
                   <div class="stars">
-                    <i
-                      v-for="i in 5"
-                      :key="i"
-                      :class="['bi', i <= averageRating ? 'bi-star-fill' : 'bi-star']"
-                    ></i>
+                    <i v-for="i in 5" :key="i"
+                      :class="['bi', i <= selectedProduct.baseProducts.rating ? 'bi-star-fill' : 'bi-star']"></i>
                   </div>
-                  <span class="rating-text">{{ averageRating.toFixed(1) }}</span>
+                  <span class="rating-text">{{ selectedProduct.baseProducts.rating.toFixed(1) }}</span>
                   <span class="reviews-count">({{ totalReviews }} đánh giá)</span>
                 </div>
               </div>
@@ -98,7 +91,7 @@
                 </template>
                 <template v-else>
                   <div class="price-container">
-                    <span class="current-price">{{ formatPrice(currentPrice) }}</span>
+                    <span class="current-price">{{ formatPrice(selectedProduct.price) }}</span>
                   </div>
                 </template>
               </div>
@@ -121,22 +114,20 @@
               <div class="product-details">
                 <div class="detail-item">
                   <span class="label">Chất liệu:</span>
-                  <span class="value">{{ product.material }}</span>
+                  <span class="value">{{ selectedProduct.baseProducts.material }}</span>
                 </div>
                 <div class="detail-item">
                   <span class="label">Mã sản phẩm:</span>
-                  <span class="value">{{ product.sku }}</span>
+                  <span class="value">{{ selectedProduct.sku }}</span>
                 </div>
                 <div class="detail-item">
                   <span class="label">Tình trạng:</span>
-                  <span
-                    :class="[
-                      'value',
-                      'stock-status',
-                      product.qty > 0 ? 'in-stock' : 'out-of-stock',
-                    ]"
-                  >
-                    {{ product.qty > 0 ? `Còn ${product.qty} sản phẩm` : "Hết hàng" }}
+                  <span :class="[
+                    'value',
+                    'stock-status',
+                    selectedProduct.qty > 0 ? 'in-stock' : 'out-of-stock',
+                  ]">
+                    {{ selectedProduct.qty > 0 ? `Còn ${selectedProduct.qty} sản phẩm` : "Hết hàng" }}
                   </span>
                 </div>
               </div>
@@ -146,36 +137,19 @@
                 <div class="quantity-selector">
                   <label class="quantity-label">Số lượng:</label>
                   <div class="quantity-controls">
-                    <button
-                      @click="decreaseQty"
-                      class="qty-btn qty-btn-minus"
-                      :disabled="quantity <= 1"
-                    >
+                    <button @click="decreaseQty" class="qty-btn qty-btn-minus" :disabled="quantity <= 1">
                       <i class="bi bi-dash"></i>
                     </button>
-                    <input
-                      type="number"
-                      v-model="quantity"
-                      class="qty-input"
-                      min="1"
-                      :max="product.qty"
-                    />
-                    <button
-                      @click="increaseQty"
-                      class="qty-btn qty-btn-plus"
-                      :disabled="quantity >= product.qty"
-                    >
+                    <input type="number" v-model="quantity" class="qty-input" min="1" :max="selectedProduct.qty" />
+                    <button @click="increaseQty" class="qty-btn qty-btn-plus"
+                      :disabled="quantity >= selectedProduct.qty">
                       <i class="bi bi-plus"></i>
                     </button>
                   </div>
                 </div>
 
                 <div class="action-buttons">
-                  <button
-                    @click="addToCart"
-                    class="btn-add-cart"
-                    :disabled="product.qty <= 0"
-                  >
+                  <button @click="addToCart" class="btn-add-cart" :disabled="selectedProduct.qty <= 0">
                     <i class="bi bi-bag-plus me-2"></i>
                     Thêm vào giỏ hàng
                   </button>
@@ -214,19 +188,13 @@
         <div class="tabs-container">
           <ul class="modern-tabs">
             <li class="tab-item">
-              <button
-                :class="['tab-button', { active: activeTab === 'desc' }]"
-                @click="activeTab = 'desc'"
-              >
+              <button :class="['tab-button', { active: activeTab === 'desc' }]" @click="activeTab = 'desc'">
                 <i class="bi bi-info-circle me-2"></i>
                 Mô tả sản phẩm
               </button>
             </li>
             <li class="tab-item">
-              <button
-                :class="['tab-button', { active: activeTab === 'review' }]"
-                @click="activeTab = 'review'"
-              >
+              <button :class="['tab-button', { active: activeTab === 'review' }]" @click="activeTab = 'review'">
                 <i class="bi bi-chat-square-text me-2"></i>
                 Đánh giá ({{ totalReviews }})
               </button>
@@ -274,19 +242,19 @@
                       <h5 class="specs-title">Thông số kỹ thuật</h5>
                       <div class="spec-row">
                         <span class="spec-label">Chất liệu:</span>
-                        <span class="spec-value">{{ product.material }}</span>
+                        <span class="spec-value">{{ selectedProduct.baseProducts.material }}</span>
                       </div>
                       <div class="spec-row">
                         <span class="spec-label">Mã sản phẩm:</span>
-                        <span class="spec-value">{{ product.sku }}</span>
+                        <span class="spec-value">{{ selectedProduct.sku }}</span>
                       </div>
                       <div class="spec-row">
                         <span class="spec-label">Tồn kho:</span>
-                        <span class="spec-value">{{ product.qty }} sản phẩm</span>
+                        <span class="spec-value">{{ selectedProduct.qty }} sản phẩm</span>
                       </div>
                       <div class="spec-row">
                         <span class="spec-label">Lượt mua:</span>
-                        <span class="spec-value">{{ product.turnBuy }} lượt</span>
+                        <span class="spec-value">{{ selectedProduct.turnBuy }} lượt</span>
                       </div>
                     </div>
                   </div>
@@ -303,11 +271,7 @@
                     <div class="average-rating">
                       <span class="big-rating">{{ averageRating.toFixed(1) }}</span>
                       <div class="rating-stars">
-                        <i
-                          v-for="i in 5"
-                          :key="i"
-                          :class="['bi', i <= averageRating ? 'bi-star-fill' : 'bi-star']"
-                        ></i>
+                        <i v-for="i in 5" :key="i" :class="['bi', i <= averageRating ? 'bi-star-fill' : 'bi-star']"></i>
                       </div>
                       <p class="rating-count">{{ totalReviews }} đánh giá</p>
                     </div>
@@ -321,36 +285,21 @@
                     <div class="rating-input">
                       <label class="form-label">Đánh giá của bạn:</label>
                       <div class="star-rating">
-                        <i
-                          v-for="star in 5"
-                          :key="star"
-                          @click="newReview.rating = star"
-                          :class="[
-                            'bi',
-                            star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
-                          ]"
-                          class="star-button"
-                        ></i>
+                        <i v-for="star in 5" :key="star" @click="newReview.rating = star" :class="[
+                          'bi',
+                          star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
+                        ]" class="star-button"></i>
                       </div>
                     </div>
-
                     <div class="form-group">
                       <label class="form-label">Nội dung đánh giá:</label>
-                      <textarea
-                        class="form-textarea"
-                        rows="4"
-                        v-model="newReview.text"
-                        placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
-                        required
-                      ></textarea>
+                      <textarea class="form-textarea" rows="4" v-model="newReview.text"
+                        placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." required></textarea>
                     </div>
 
                     <div class="form-group">
                       <label class="form-label">Hình ảnh (tùy chọn):</label>
-                      <CloudinaryUploader
-                        :key="uploaderKey"
-                        @uploaded="handleImageUploaded"
-                      />
+                      <CloudinaryUploader :key="uploaderKey" @uploaded="handleImageUploaded" />
                     </div>
 
                     <button type="submit" class="submit-review-btn">
@@ -371,14 +320,10 @@
                         <div class="reviewer-details">
                           <h6 class="reviewer-name">{{ review.accountName }}</h6>
                           <div class="review-rating">
-                            <i
-                              v-for="i in 5"
-                              :key="i"
-                              :class="[
-                                'bi',
-                                i <= review.rating ? 'bi-star-fill' : 'bi-star',
-                              ]"
-                            ></i>
+                            <i v-for="i in 5" :key="i" :class="[
+                              'bi',
+                              i <= review.rating ? 'bi-star-fill' : 'bi-star',
+                            ]"></i>
                           </div>
                         </div>
                       </div>
@@ -390,59 +335,33 @@
                     <div class="review-content">
                       <p>{{ review.comment }}</p>
 
-                      <div
-                        class="review-images"
-                        v-if="review.imageUrl1 || review.imageUrl2 || review.imageUrl3"
-                      >
-                        <img
-                          v-if="review.imageUrl1"
-                          :src="review.imageUrl1"
-                          alt="Ảnh đánh giá 1"
-                          class="review-image"
-                        />
-                        <img
-                          v-if="review.imageUrl2"
-                          :src="review.imageUrl2"
-                          alt="Ảnh đánh giá 2"
-                          class="review-image"
-                        />
-                        <img
-                          v-if="review.imageUrl3"
-                          :src="review.imageUrl3"
-                          alt="Ảnh đánh giá 3"
-                          class="review-image"
-                        />
+                      <div class="review-images" v-if="review.imageUrl1 || review.imageUrl2 || review.imageUrl3">
+                        <img v-if="review.imageUrl1" :src="review.imageUrl1" alt="Ảnh đánh giá 1"
+                          class="review-image" />
+                        <img v-if="review.imageUrl2" :src="review.imageUrl2" alt="Ảnh đánh giá 2"
+                          class="review-image" />
+                        <img v-if="review.imageUrl3" :src="review.imageUrl3" alt="Ảnh đánh giá 3"
+                          class="review-image" />
                       </div>
                     </div>
                   </div>
 
                   <!-- Pagination -->
                   <div class="pagination-container" v-if="totalPages > 1">
-                    <button
-                      class="pagination-btn"
-                      @click="changePage(currentPage - 1)"
-                      :disabled="currentPage === 0"
-                    >
+                    <button class="pagination-btn" @click="changePage(currentPage - 1)" :disabled="currentPage === 0">
                       <i class="bi bi-chevron-left"></i>
                       Trước
                     </button>
 
                     <div class="page-numbers">
-                      <button
-                        v-for="page in totalPages"
-                        :key="page"
-                        @click="changePage(page - 1)"
-                        :class="['page-btn', { active: page - 1 === currentPage }]"
-                      >
+                      <button v-for="page in totalPages" :key="page" @click="changePage(page - 1)"
+                        :class="['page-btn', { active: page - 1 === currentPage }]">
                         {{ page }}
                       </button>
                     </div>
 
-                    <button
-                      class="pagination-btn"
-                      @click="changePage(currentPage + 1)"
-                      :disabled="currentPage === totalPages - 1"
-                    >
+                    <button class="pagination-btn" @click="changePage(currentPage + 1)"
+                      :disabled="currentPage === totalPages - 1">
                       Tiếp
                       <i class="bi bi-chevron-right"></i>
                     </button>
@@ -463,11 +382,7 @@
         </div>
 
         <div class="related-products-grid">
-          <div
-            class="product-card"
-            v-for="item in relatedItems.slice(0, 4)"
-            :key="item.id"
-          >
+          <div class="product-card" v-for="item in relatedItems.slice(0, 4)" :key="item.id">
             <div class="product-image-container">
               <img :src="item.imageUrl" :alt="item.name" class="product-image" />
               <div class="product-overlay">
@@ -523,6 +438,9 @@ const newReview = ref({ text: "", rating: 5 });
 
 const relatedItems = ref([]);
 
+const selected = ref([]);
+const listMapIfSelect = ref([]);
+const mapVarriants = ref({});
 const currentPage = ref(0);
 const pageSize = ref(5);
 const totalPages = ref(0);
@@ -536,23 +454,58 @@ const discountedPrice = computed(() => {
   }
   return currentPrice.value;
 });
-
+const SkuSizeList = ref();
+const SkuColorList = ref();
+const selectedProduct = ref();
 // Hàm load toàn bộ data sản phẩm
 const fetchProductData = async (id) => {
   try {
     const res = await api.get(`/ProductItems/detail/${id}`);
-    console.log("Product data:", res.data);
-    product.value = res.data.productItem;
-    images.value = res.data.images || [];
-    promotion.value = res.data.promotions?.[0] || null;
 
-    currentImage.value = images.value?.[0]?.imageUrl || product.value.imageUrl;
-    currentPrice.value = product.value.price || 0;
+    console.log("Product data:", res.data.content);
+    product.value = res.data.content;
 
-    // reviews.value = [
-    //   { name: "Huy", text: "Sản phẩm tốt" },
-    //   { name: "Ngọc", text: "Chất lượng ok, sẽ mua lần nữa" }
-    // ];
+    SkuColorList.value = new Set(product.value.map(e => {
+      return e.sku.split('-')[1]
+    }))
+    SkuSizeList.value = new Set(product.value.map(e => {
+      return e.sku.split('-')[2]
+    }))
+    listMapIfSelect.value = product.value.map(e => {
+      return e.sku.split('-')
+    })
+    console.log(listMapIfSelect.value)
+    const filteredMap = {};
+
+    for (const [groupName, items] of Object.entries(mapVarriants.value)) {
+      if (groupName === 'Màu sắc') {
+        let filteredItems = items.filter(item => SkuColorList.value.has(item.signalSku));
+        filteredItems.map(setIsActive => {
+          return { ...setIsActive, isActice: true }
+        })
+        if (filteredItems.length) filteredMap[groupName] = { ...filteredItems };
+      } else if (groupName === 'Kích thước') {
+        const filteredItems = items.filter(item => SkuSizeList.value.has(item.signalSku));
+        if (filteredItems.length) filteredMap[groupName] = { ...filteredItems };
+      }
+    }
+    // Update the mapVarriants
+    mapVarriants.value = filteredMap;
+    images.value = product.value.flatMap(p => p.images);
+    currentImage.value = images.value[0]
+    const defaultSelected = {};
+    for (const [groupName, items] of Object.entries(mapVarriants.value)) {
+      if (items.length > 0) {
+        defaultSelected[groupName] = items[0].signalSku;
+      }
+    }
+    selected.value = defaultSelected;
+    selectedProduct.value = product.value[0]
+    // .filter(pro => {
+    //   return pro.sku.includes(selected.value['Màu sắc'] + "-" + selected.value['Kích thước'])
+    // })
+    console.log(selectedProduct.value)
+    console.log(images.value)
   } catch (err) {
     console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
@@ -567,6 +520,15 @@ const fetchProductData = async (id) => {
 
 // Gọi khi component mount
 onMounted(async () => {
+  api
+    .get("/VariantValues")
+    .then((resp) => {
+      mapVarriants.value = resp.data;
+      for (const groupName in resp.data) {
+        selected.value[groupName] = [];
+      }
+    })
+    .catch((error) => console.log(error));
   await fetchProductData(productId.value);
   await fetchReviews(); // Gọi luôn khi đã có product
   await fetchAverageRating();
@@ -581,9 +543,47 @@ watch(
     fetchProductData(newId);
     fetchReviews();
     fetchAverageRating();
-  }
-);
+  },
 
+);
+const listColorBaseOnSelectedSize = ref()
+watch(() => selected.value["Kích thước"], () => {
+  selected.value['Màu sắc'] = []
+  const filteredMap = {};
+  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selected.value["Kích thước"] === (findColor[2])).map(color => {
+    return color[1]
+  })
+  for (const [groupName, items] of Object.entries(mapVarriants.value)) {
+    if (groupName === 'Màu sắc') {
+      const itemList = Array.isArray(items) ? items : Object.values(items);
+      const safeColorList = Array.isArray(listColorBaseOnSelectedSize.value) ? listColorBaseOnSelectedSize.value : [];
+      const filteredItems = itemList.map(item => ({
+        ...item,
+        isActive: safeColorList.includes(item.signalSku)
+      }));
+      filteredMap[groupName] = filteredItems;
+    } else if (groupName === 'Kích thước') {
+      const itemList = Array.isArray(items) ? items : Object.values(items);
+      const filteredItems = itemList.map(item => ({
+        ...item,
+        isActive: true
+      }));
+      filteredMap[groupName] = filteredItems;
+    }
+  }
+  mapVarriants.value = filteredMap;
+});
+watch(() => selected.value["Màu sắc"], () => {
+  const color = selected.value["Màu sắc"];
+  const size = selected.value["Kích thước"];
+
+  if (color && size && size.length !== 0) {
+    const targetSku = `${color}-${size}`;
+    selectedProduct.value = product.value.find(pro => pro.sku.includes(targetSku)) || product.value[0];
+  } else {
+    selectedProduct.value = product.value[0];
+  }
+});
 function increaseQty() {
   quantity.value++;
 }
@@ -596,7 +596,7 @@ async function submitReview() {
   if (!newReview.value.text) return;
 
   try {
-    await api.post("/admin/Reviews", {
+    await api.post("/user/Reviews", {
       productItems: product.value.id,
       rating: newReview.value.rating,
       comment: newReview.value.text,
@@ -697,7 +697,7 @@ function selectImage(idx) {
 
 const fetchReviews = async () => {
   try {
-    const res = await api.get(`/reviews/product/${product.value.id}`, {
+    const res = await api.get(`/reviews/product/${selectedProduct.value.id}`, {
       params: {
         page: currentPage.value,
         size: pageSize.value,
@@ -715,7 +715,7 @@ const averageRating = ref(0);
 
 const fetchAverageRating = async () => {
   try {
-    const res = await api.get(`/reviews/product/${productId.value}/average-rating`);
+    const res = await api.get(`/reviews/product/average-rating/${selectedProduct.value.id}`);
     averageRating.value = res.data.averageRating || 0;
   } catch (err) {
     console.error("Lỗi lấy điểm trung bình:", err);
@@ -726,7 +726,7 @@ const totalReviews = ref(0);
 
 const fetchTotalReviews = async () => {
   try {
-    const res = await api.get(`/reviews/product/${productId.value}/count`);
+    const res = await api.get(`/reviews/product/count/${productId.value}`);
     totalReviews.value = res.data.total || 0;
   } catch (err) {
     console.error("Lỗi lấy tổng số đánh giá:", err);
@@ -787,16 +787,17 @@ const fileInputRef = ref(null);
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>')
-    repeat;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>') repeat;
   animation: float 20s ease-in-out infinite;
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -833,6 +834,38 @@ const fileInputRef = ref(null);
   font-weight: 500;
 }
 
+.variant-group {
+  margin-bottom: 1.5rem;
+}
+
+.variant-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 10px;
+}
+
+.variant-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  padding: 10px 0;
+  border: 1px solid #ccc;
+  text-align: center;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  font-weight: 500;
+}
+
+.variant-button.active {
+  background-color: black;
+  color: white;
+  border-color: black;
+}
+
 /* ==================== PRODUCT GALLERY ==================== */
 .product-gallery {
   position: relative;
@@ -845,8 +878,15 @@ const fileInputRef = ref(null);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   background: white;
-  max-width: 500px; /* Giới hạn kích thước tối đa */
-  margin: 0 auto 20px auto; /* Căn giữa */
+  max-width: 500px;
+  /* Giới hạn kích thước tối đa */
+  margin: 0 auto 20px auto;
+  /* Căn giữa */
+}
+
+.selected-variant {
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
 }
 
 .main-image {
@@ -922,15 +962,51 @@ const fileInputRef = ref(null);
   gap: 12px;
   overflow-x: auto;
   padding: 10px 0;
-  justify-content: center; /* Căn giữa thumbnail */
-  max-width: 500px; /* Cùng kích thước với main image */
-  margin: 0 auto; /* Căn giữa */
+  justify-content: center;
+  /* Căn giữa thumbnail */
+  max-width: 500px;
+  /* Cùng kích thước với main image */
+  margin: 0 auto;
+  /* Căn giữa */
+}
+
+.filter-group h3 {
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 16px;
+  color: #2e2e2e;
+}
+
+.line {
+  width: 3px;
+  height: 20px;
+  background-color: #2e2e2e;
+  margin-right: 10px;
+}
+
+.filter-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+
+.filter-list li {
+  margin-bottom: 12px;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  outline: none;
 }
 
 .thumbnail-item {
   flex-shrink: 0;
   width: 90px;
-  height: 112px; /* Tỷ lệ 4:5 cho thumbnail */
+  height: 112px;
+  /* Tỷ lệ 4:5 cho thumbnail */
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
@@ -1288,6 +1364,7 @@ const fileInputRef = ref(null);
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1555,7 +1632,8 @@ const fileInputRef = ref(null);
 
 .review-image {
   width: 120px;
-  height: 150px; /* Tỷ lệ 4:5 */
+  height: 150px;
+  /* Tỷ lệ 4:5 */
   object-fit: cover;
   border-radius: 10px;
   cursor: pointer;
@@ -1767,8 +1845,21 @@ const fileInputRef = ref(null);
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .variant-options {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 10px;
+  }
+
+  .variant-button {
+    font-size: 14px;
+    padding: 8px 0;
   }
 }
 
@@ -1787,7 +1878,8 @@ const fileInputRef = ref(null);
   }
 
   .main-image {
-    aspect-ratio: 4/5; /* Giữ tỷ lệ trên mobile */
+    aspect-ratio: 4/5;
+    /* Giữ tỷ lệ trên mobile */
   }
 
   .section-title {
@@ -1825,7 +1917,8 @@ const fileInputRef = ref(null);
 
   .thumbnail-item {
     width: 70px;
-    height: 87px; /* Tỷ lệ 4:5 trên mobile */
+    height: 87px;
+    /* Tỷ lệ 4:5 trên mobile */
   }
 }
 
@@ -1839,12 +1932,14 @@ const fileInputRef = ref(null);
   }
 
   .main-image {
-    aspect-ratio: 4/5; /* Giữ tỷ lệ trên điện thoại */
+    aspect-ratio: 4/5;
+    /* Giữ tỷ lệ trên điện thoại */
   }
 
   .thumbnail-item {
     width: 60px;
-    height: 75px; /* Tỷ lệ 4:5 cho điện thoại */
+    height: 75px;
+    /* Tỷ lệ 4:5 cho điện thoại */
   }
 
   .quantity-controls {
@@ -1865,7 +1960,8 @@ const fileInputRef = ref(null);
 
   .review-image {
     width: 100px;
-    height: 125px; /* Tỷ lệ 4:5 cho điện thoại */
+    height: 125px;
+    /* Tỷ lệ 4:5 cho điện thoại */
   }
 }
 </style>
