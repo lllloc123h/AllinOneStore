@@ -1,11 +1,25 @@
 package com.aos.AOSBE.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.aos.AOSBE.DTOS.GeneralStatsDTO;
+import com.aos.AOSBE.DTOS.OrderExportDto;
 import com.aos.AOSBE.Repository.*;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -260,6 +274,64 @@ public class OrdersService {
 	@Transactional
 	public List<Orders> ordersFindByAccount(int accountId) {
 		return ordersRepository.findAllByAccountsId(accountId);
+	}
+	public List<OrderExportDto> getOrdersForExport(LocalDateTime startDate, LocalDateTime endDate) {
+		List<Object[]> listExportOrder =ordersRepository.getOrdersForExport(startDate, endDate);
+		
+		List<OrderExportDto> list = new ArrayList<>();
+		listExportOrder.forEach(e->{
+			OrderExportDto OED = new OrderExportDto();
+			OED.setOrderCode((String) e[0]);
+			OED.setCreatedAt(((Timestamp) e[1]).toLocalDateTime());
+			OED.setFullname((String) e[2]);
+			OED.setEmail((String) e[3]);
+			OED.setPhone((String) e[4]);
+			OED.setAddress((String) e[5]);
+			OED.setPaymentStatus((String) e[6]);
+			OED.setShippingStatus((String) e[7]);
+			OED.setShippedDate(e[8] != null ? ((Timestamp) e[8]).toLocalDateTime() : null);
+			OED.setFinalTotal((BigDecimal) e[9]);
+			list.add(OED);
+			});
+	    return list;
+	}
+//	 private String orderCode;
+//	    private LocalDate createdAt;
+//	    private String fullname;
+//	    private String email;
+//	    private String phone;
+//	    private String address;
+//	    private String paymentStatus;
+//	    private String shippingStatus;
+//	    private BigDecimal finalTotal;
+//	
+	public ByteArrayInputStream exportOrdersToExcel(List<OrderExportDto> orders) throws IOException {
+	    try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+	        Sheet sheet = workbook.createSheet("Orders");
+	        Row header = sheet.createRow(0);
+	        String[] headers = {"Mã đơn", "Ngày tạo", "Tên KH", "Email", "SĐT", "Địa chỉ", "TT thanh toán", "TT đơn hàng","Ngày Giao", "Tổng tiền"};
+	        for (int i = 0; i < headers.length; i++) {
+	            header.createCell(i).setCellValue(headers[i]);
+	        }
+
+	        int rowIdx = 1;
+	        for (OrderExportDto order : orders) {
+	            Row row = sheet.createRow(rowIdx++);
+	            row.createCell(0).setCellValue(order.getOrderCode());
+	            row.createCell(1).setCellValue(order.getCreatedAt().toString());
+	            row.createCell(2).setCellValue(order.getFullname());
+	            row.createCell(3).setCellValue(order.getEmail());
+	            row.createCell(4).setCellValue(order.getPhone());
+	            row.createCell(5).setCellValue(order.getAddress());
+	            row.createCell(6).setCellValue(order.getPaymentStatus());
+	            row.createCell(7).setCellValue(order.getShippingStatus());
+	            row.createCell(8).setCellValue(order.getShippedDate());
+	            row.createCell(9).setCellValue(order.getFinalTotal().doubleValue());
+	        }
+
+	        workbook.write(out);
+	        return new ByteArrayInputStream(out.toByteArray());
+	    }
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.aos.AOSBE.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.aos.AOSBE.DTOS.OrderExportDto;
 import com.aos.AOSBE.Entity.Orders;
 
 public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpecificationExecutor<Orders> {
@@ -20,10 +23,24 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 	@Query("SELECT o FROM Orders o WHERE o.accounts.id = ?1 AND o.paymentStatus = ?2 AND o.paymentMethods.id= ?3")
 	List<Orders> findAllByAccountAndKeyPaymentPending(int account, String Key, int paymentMethod);
 
-
-
-
-
+	@Query(value ="""
+		    			SELECT 
+		        o.order_code,
+		        o.created_at,
+		        a.fullname,
+		        a.email,
+		        a.phone,
+		        CONCAT(COALESCE(ua.province, ''), ', ', COALESCE(ua.district, ''), ', ', COALESCE(ua.ward, ''), ', ', COALESCE(ua.street, '')),
+		        o.payment_status,
+		        o.shipping_status,
+		        o.shipped_date,
+		        o.final_total
+		    FROM Orders o
+		    JOIN accounts a on a.id = o.account_id
+		    JOIN user_addresses ua on ua.account_id = a.id and ua.is_default =1
+			WHERE  o.created_at BETWEEN ?1 AND ?2;
+		""", nativeQuery = true)
+		List<Object[]> getOrdersForExport(@Param("start") LocalDateTime startDate, @Param("end") LocalDateTime endDate);
 
 	//doanh thu gộp chưa chiết trừ giảm giá, vận chuyển
 	@Query("SELECT SUM(o.finalTotal) FROM Orders o WHERE o.shippingStatus != 'cancel'")

@@ -57,7 +57,7 @@
       </a>
 
       <div class="quenMK mt-4">
-        <a @click.prevent="showForgotPassword = true">Quên mật khẩu</a>
+        <a class="btn btn-outline-secondary btn-sm" @click.prevent="showForgotPassword = true">Quên mật khẩu</a>
       </div>
 
       <div v-if="showForgotPassword" class="mt-4">
