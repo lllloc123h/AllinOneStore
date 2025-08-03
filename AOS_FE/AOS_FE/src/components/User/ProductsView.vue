@@ -29,12 +29,7 @@
             <div class="search-section">
               <div class="modern-searchBox">
                 <i class="bi bi-search search-icon"></i>
-                <input
-                  class="modern-searchInput"
-                  type="text"
-                  v-model="keyWord"
-                  placeholder="Tìm kiếm sản phẩm..."
-                />
+                <input class="modern-searchInput" type="text" v-model="keyWord" placeholder="Tìm kiếm sản phẩm..." />
                 <button class="search-clear" v-if="keyWord" @click="keyWord = ''">
                   <i class="bi bi-x"></i>
                 </button>
@@ -42,41 +37,20 @@
             </div>
 
             <div class="filter-section">
-              <div
-                v-for="(items, groupName, index) in dropDowncatalogCategory"
-                :key="groupName"
-                class="filter-group"
-              >
+              <div v-for="(items, groupName, index) in dropDowncatalogCategory" :key="groupName" class="filter-group">
                 <div class="modern-filter-card">
-                  <div
-                    class="filter-card-header"
-                    @click="toggleAccordion('category-' + index)"
-                  >
+                  <div class="filter-card-header" @click="toggleAccordion('category-' + index)">
                     <h4 class="filter-title">
                       <i class="bi bi-tags me-2"></i>
                       <span class="line"></span> {{ groupName }}
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('category-' + index) }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('category-' + index) }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('category-' + index) }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('category-' + index) }">
                     <div class="filter-options">
-                      <label
-                        v-for="item in items"
-                        :key="item.id"
-                        class="modern-filter-option"
-                      >
-                        <input
-                          type="checkbox"
-                          :name="groupName"
-                          :value="item.name"
-                          v-model="selectedCatalogCategory[groupName]"
-                        />
+                      <label v-for="item in items" :key="item.id" class="modern-filter-option">
+                        <input type="checkbox" :name="groupName" :value="item.name"
+                          v-model="selectedCatalogCategory[groupName]" />
                         <span class="checkmark"></span>
                         <span class="option-text">{{ item.name }}</span>
                       </label>
@@ -84,42 +58,21 @@
                   </div>
                 </div>
               </div>
-              <div
-                v-for="(items, groupName, index) in mapVarriants"
-                :key="groupName"
-                class="filter-group"
-              >
+              <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="filter-group">
                 <div class="modern-filter-card">
-                  <div
-                    class="filter-card-header"
-                    @click="toggleAccordion('variant-' + index)"
-                  >
+                  <div class="filter-card-header" @click="toggleAccordion('variant-' + index)">
                     <h4 class="filter-title">
                       <i class="bi bi-palette me-2" v-if="groupName.includes('Màu')"></i>
                       <i class="bi bi-rulers me-2" v-else></i>
                       <span class="line"></span> {{ groupName }}
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('variant-' + index) }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('variant-' + index) }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('variant-' + index) }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('variant-' + index) }">
                     <div class="filter-options">
-                      <label
-                        v-for="item in items"
-                        :key="item.id"
-                        class="modern-filter-option"
-                      >
-                        <input
-                          type="checkbox"
-                          :name="groupName"
-                          :value="item.signalSku"
-                          v-model="selected[groupName]"
-                        />
+                      <label v-for="item in items" :key="item.id" class="modern-filter-option">
+                        <input type="checkbox" :name="groupName" :value="item.signalSku"
+                          v-model="selected[groupName]" />
                         <span class="checkmark"></span>
                         <span class="option-text">{{ item.description }}</span>
                       </label>
@@ -135,53 +88,27 @@
                       <i class="bi bi-currency-dollar me-2"></i>
                       <span class="line"></span> Khoảng giá
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('price') }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('price') }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('price') }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('price') }">
                     <div class="price-options">
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value="100-200"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value="100-200" />
                         <span class="radio-mark"></span>
                         <span class="price-range">100k - 200k</span>
                       </label>
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value="200-500"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value="200-500" />
                         <span class="radio-mark"></span>
                         <span class="price-range">200k - 500k</span>
                       </label>
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value="500-700"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value="500-700" />
                         <span class="radio-mark"></span>
                         <span class="price-range">500k - 700k</span>
                       </label>
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value=">700"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value=">700" />
                         <span class="radio-mark"></span>
                         <span class="price-range">&gt; 700k</span>
                       </label>
@@ -204,30 +131,17 @@
                 </h2>
                 <div class="modern-searchBox-mobile d-lg-none">
                   <i class="bi bi-search search-icon"></i>
-                  <input
-                    class="modern-searchInput"
-                    type="text"
-                    v-model="keyWord"
-                    placeholder="Tìm kiếm sản phẩm..."
-                  />
+                  <input class="modern-searchInput" type="text" v-model="keyWord" placeholder="Tìm kiếm sản phẩm..." />
                   <button class="search-clear" v-if="keyWord" @click="keyWord = ''">
                     <i class="bi bi-x"></i>
                   </button>
                 </div>
               </div>
-              <div class="products-count">
-                <i class="bi bi-info-circle me-2"></i>
-                Hiển thị {{ products.length }} trong số {{ data * pageSize }} sản phẩm
-              </div>
             </div>
 
             <!-- Products Grid -->
             <div class="product-flatform row mt-4 g-4">
-              <div
-                v-for="product in products"
-                :key="product.id"
-                class="col-lg-4 col-md-6 col-sm-12"
-              >
+              <div v-for="product in products" :key="product.id" class="col-lg-4 col-md-6 col-sm-12">
                 <div class="product-card-wrapper">
                   <ProductCard :product="product" @view-detail="openModal" />
                 </div>
@@ -246,11 +160,7 @@
 
               <!-- Pagination -->
               <div class="col-12 pagination-wrapper">
-                <PageNavigative
-                  :totalPage="data"
-                  v-model:currentPage="pageIndex"
-                  v-model:currentSize="pageSize"
-                />
+                <PageNavigative :totalPage="data" v-model:currentPage="pageIndex" v-model:currentSize="pageSize" />
               </div>
             </div>
           </div>
@@ -264,71 +174,151 @@
         <div class="modal-header">
           <h3 class="modal-title">
             <i class="bi bi-eye me-2"></i>
-            {{ selectedProduct?.name }}
+            {{ selectedProductItem?.name }}
           </h3>
           <button class="modal-close" @click="closeModal">
             <i class="bi bi-x"></i>
           </button>
         </div>
 
-        <div class="modal-body">
-          <div class="product-preview">
-            <div class="preview-image">
-              <img :src="selectedProduct?.imageUrl" :alt="selectedProduct?.name" />
-            </div>
-            <div class="preview-details">
-              <div class="product-description">
-                <p>{{ selectedProduct?.description || "Chưa có mô tả sản phẩm" }}</p>
-              </div>
+        <div class="product-gallery">
+          <!-- Main Image -->
+          <div class="main-image-container">
+            <img :src="currentImage" class="main-image" />
 
-              <div class="product-specs">
-                <div class="spec-item">
-                  <span class="spec-label">
-                    <i class="bi bi-currency-dollar me-1"></i>
-                    Giá bán:
-                  </span>
-                  <span class="spec-value price"
-                    >{{ selectedProduct?.price || "---" }} VND</span
-                  >
-                </div>
-                <div class="spec-item">
-                  <span class="spec-label">
-                    <i class="bi bi-layers me-1"></i>
-                    Vật liệu:
-                  </span>
-                  <span class="spec-value">{{ selectedProduct?.material || "---" }}</span>
-                </div>
-                <div class="spec-item">
-                  <span class="spec-label">
-                    <i class="bi bi-tag me-1"></i>
-                    Biến thể:
-                  </span>
-                  <span class="spec-value">{{ selectedProduct?.sku || "---" }}</span>
-                </div>
-              </div>
+            <!-- Navigation Arrows -->
+            <button class="gallery-nav gallery-nav-prev" @click="prevImage" v-if="images.length > 1">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="gallery-nav gallery-nav-next" @click="nextImage" v-if="images.length > 1">
+              <i class="bi bi-chevron-right"></i>
+            </button>
 
-              <div class="quantity-section">
-                <label for="qtyInput" class="quantity-label">
-                  <i class="bi bi-plus-minus me-2"></i>
-                  Số lượng:
-                </label>
-                <div class="quantity-controls">
-                  <button class="qty-btn" @click="quantity = Math.max(1, quantity - 1)">
-                    <i class="bi bi-dash"></i>
-                  </button>
-                  <input
-                    v-model="quantity"
-                    type="number"
-                    id="qtyInput"
-                    min="1"
-                    class="quantity-input"
-                  />
-                  <button class="qty-btn" @click="quantity++">
-                    <i class="bi bi-plus"></i>
-                  </button>
-                </div>
-              </div>
+            <!-- Image Indicators -->
+            <div class="image-indicators" v-if="images.length > 1">
+              <span v-for="(img, idx) in images" :key="idx"
+                :class="['indicator', { active: currentImageIndex === idx }]" @click="selectImage(idx)"></span>
             </div>
+          </div>
+
+          <!-- Thumbnail Gallery -->
+          <div class="thumbnail-gallery" v-if="images.length > 1">
+            <div v-for="(img, idx) in images" :key="idx"
+              :class="['thumbnail-item', { active: currentImageIndex === idx }]" @click="selectImage(idx)">
+              <img :src="img.imageUrl" :alt="`Ảnh ${idx + 1}`" />
+            </div>
+          </div>
+        </div>
+
+        <div class="product-header">
+          <h1 class="product-title">{{ selectedProductItem.baseProducts.name }}</h1>
+
+          <div v-for="(items, groupName, index) in mapVarriantsOfListBaseProduct" :key="groupName"
+            class="variant-group">
+            <h5 class="mb-2">Select {{ groupName }}</h5>
+            <div class="variant-options">
+              <label v-for="item in items" :key="item.id" class="variant-button"
+                :class="{ active: selectedVariant[groupName]?.includes(item.signalSku) }">
+                <input type="radio" :name="groupName" :value="item.signalSku" :disabled="item.isActive === false"
+                  v-model="selectedVariant[groupName]" class="d-none" />
+                {{ item.description }}
+              </label>
+            </div>
+          </div>
+
+          <div class="rating-section">
+            <div class="stars">
+              <i v-for="i in 5" :key="i"
+                :class="['bi', i <= selectedProductItem.baseProducts.rating ? 'bi-star-fill' : 'bi-star']"></i>
+            </div>
+            <span class="rating-text">{{ selectedProductItem.baseProducts.rating.toFixed(1) }}</span>
+            <!-- <span class="reviews-count">({{ totalReviews }} đánh giá)</span> -->
+          </div>
+        </div>
+
+        <!-- Price Section -->
+        <div class="price-section">
+          <template v-if="discountedPrice !== currentPrice">
+            <div class="price-container">
+              <span class="current-price">{{ formatPrice(discountedPrice) }}</span>
+              <span class="original-price">{{ formatPrice(currentPrice) }}</span>
+            </div>
+            <div class="discount-badge">
+              <i class="bi bi-tag-fill me-1"></i>
+              Giảm {{ promotion.promotions.discountPercent }}%
+            </div>
+          </template>
+          <template v-else>
+            <div class="price-container">
+              <span class="current-price">{{ formatPrice(selectedProductItem.price) }}</span>
+            </div>
+          </template>
+        </div>
+
+        <!-- Promotion Banner -->
+        <!-- <div class="promotion-banner" v-if="promotion && promotion.promotions">
+          <div class="promotion-content">
+            <i class="bi bi-gift-fill promotion-icon"></i>
+            <div class="promotion-details">
+              <h6 class="promotion-title">{{ promotion.promotions.name }}</h6>
+              <p class="promotion-period">
+                Từ {{ formatDate(promotion.promotions.startDate) }} đến
+                {{ formatDate(promotion.promotions.endDate) }}
+              </p>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- Product Details -->
+        <div class="product-details">
+          <div class="detail-item">
+            <span class="label">Chất liệu:</span>
+            <span class="value">{{ selectedProductItem.baseProducts.material }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Mã sản phẩm:</span>
+            <span class="value">{{ selectedProductItem.sku }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Tình trạng:</span>
+            <span :class="[
+              'value',
+              'stock-status',
+              selectedProductItem.qty > 0 ? 'in-stock' : 'out-of-stock',
+            ]">
+              {{ selectedProductItem.qty > 0 ? `Còn ${selectedProductItem.qty} sản phẩm` : "Hết hàng" }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Quantity & Actions -->
+        <div class="action-section">
+          <div class="quantity-selector">
+            <label class="quantity-label">Số lượng:</label>
+            <div class="quantity-controls">
+              <button @click="decreaseQty" class="qty-btn qty-btn-minus"
+                :disabled="quantityForAddToCartPorductItem <= 1">
+                <i class="bi bi-dash"></i>
+              </button>
+              <input type="number" v-model="quantityForAddToCartPorductItem" class="qty-input" min="1"
+                :max="selectedProductItem.qty" />
+              <button @click="increaseQty" class="qty-btn qty-btn-plus"
+                :disabled="quantityForAddToCartPorductItem >= selectedProductItem.qty">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button @click="addToCart" class="btn-add-cart" :disabled="selectedProductItem.qty <= 0">
+              <i class="bi bi-bag-plus me-2"></i>
+              Thêm vào giỏ hàng
+            </button>
+
+            <button class="btn-buy-now">
+              <i class="bi bi-lightning-fill me-2"></i>
+              Mua ngay
+            </button>
           </div>
         </div>
 
@@ -347,8 +337,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { storage, ref as storageRef, getDownloadURL } from "../../Configs/firebase";
+import { ref, onMounted, watch, computed } from "vue";
 import axios from "axios";
 import api, { authService } from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
@@ -357,8 +346,12 @@ import { notification } from "ant-design-vue";
 import ProductCard from "../Module/ProductCard.vue";
 import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
 const mapVarriants = ref({});
+const mapVarriantsOfListBaseProduct = ref({});
+
+const quantityForAddToCartPorductItem = ref(1);
 const data = ref([]);
 const selected = ref([]);
+const selectedVariant = ref([]);
 const selectedCatalogCategory = ref({});
 const skuColorLike = ref("");
 const categoriesFilter = ref("");
@@ -373,12 +366,20 @@ const pageSize = ref(5);
 const totalPages = ref(0);
 const showModal = ref(false);
 const selectedProduct = ref(null);
+const selectedProductItem = ref(null);
 const quantity = ref(1);
 const dropDowncatalogCategory = ref([]);
 const timeSpent = ref(0);
 const keyWord = ref("");
+const currentPrice = ref(0);
+const SkuSizeList = ref();
+const SkuColorList = ref();
+const listMapIfSelect = ref([]);
 const expandedSections = ref(["category-0", "variant-0", "price"]); // Default expanded sections
-
+const currentImageIndex = ref(0);
+const currentImage = ref("");
+const images = ref([]);
+const productItemBaseOnId = ref(null);
 // Function to toggle accordion sections
 const toggleAccordion = (sectionId) => {
   const index = expandedSections.value.indexOf(sectionId);
@@ -393,13 +394,55 @@ const toggleAccordion = (sectionId) => {
 const isExpanded = (sectionId) => {
   return expandedSections.value.includes(sectionId);
 };
+function increaseQty() {
+  quantityForAddToCartPorductItem.value++;
+}
 
+const discountedPrice = computed(() => {
+  if (selectedProductItem.value?.promotions[0]?.discountValue) {
+    return Math.round(
+      currentPrice.value * (1 - selectedProductItem.value.promotions[0].discountValue / 100)
+    );
+  }
+  return currentPrice.value;
+});
+function decreaseQty() {
+  if (quantityForAddToCartPorductItem.value > 1) quantityForAddToCartPorductItem.value--;
+}
+const prevImage = () => {
+  if (images.value.length === 0) return;
+  currentImageIndex.value =
+    (currentImageIndex.value - 1 + images.value.length) % images.value.length;
+  currentImage.value = images.value[currentImageIndex.value].imageUrl;
+};
+
+const nextImage = () => {
+  if (images.value.length === 0) return;
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
+  currentImage.value = images.value[currentImageIndex.value].imageUrl;
+};
+function selectImage(idx) {
+  currentImageIndex.value = idx;
+  currentImage.value = images.value[idx].imageUrl;
+}
+
+function formatPrice(price) {
+  return price.toLocaleString("vi-VN") + "₫";
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("vi-VN");
+}
 let timer = null;
 const openModal = (product) => {
-  selectedProduct.value = product;
+  fetchProductData(product.id)
+
+  // selectedProductItem.value = product;
   showModal.value = true;
   itemCart.value.productItems = product.productItemId;
   itemCart.value.qty = quantity.value;
+
 };
 const closeModal = () => {
   showModal.value = false;
@@ -412,18 +455,21 @@ onMounted(() => {
     .get("/VariantValues")
     .then((resp) => {
       mapVarriants.value = resp.data;
+      mapVarriantsOfListBaseProduct.value = resp.data;
       for (const groupName in resp.data) {
         selected.value[groupName] = [];
+        selectedVariant.value[groupName] = [];
       }
     })
     .catch((error) => console.log(error));
-  api
-    .get("/BaseProducts")
-    .then(async (resp) => {
-      data.value = resp.data.totalPages;
-      products.value = resp.data;
-    })
-    .catch((error) => console.log("Error loading base products:", error));
+  // api
+  //   .get("/BaseProducts")
+  //   .then(async (resp) => {
+  //     data.value = resp.data.totalPages;
+  //     products.value = resp.data;
+  //     console.log("Products loaded:", products.value);
+  //   })
+  //   .catch((error) => console.log("Error loading base products:", error));
   api
     .get("/CatalogCategoriesFilter")
     .then(async (resp) => {
@@ -452,9 +498,9 @@ const itemCart = ref({
   updatedAt: "",
 });
 const addToCart = () => {
-  if (!selectedProduct.value || quantity.value <= 0) return;
-  if (quantity.value < selectedProduct.value.safetyStock) {
-    authService.updateCart(quantity.value);
+  if (!selectedProductItem.value || quantityForAddToCartPorductItem.value <= 0) return;
+  if (quantityForAddToCartPorductItem.value < selectedProductItem.value.safetyStock) {
+    authService.updateCart(quantityForAddToCartPorductItem.value);
     clearInterval(timer);
 
     let payLoad = {
@@ -462,25 +508,92 @@ const addToCart = () => {
       eventType: "ADDTOCART",
       positionInList: "",
       timeSpentSeconds: timeSpent.value,
-      productItemId: itemCart.value.productItems,
+      productItemId: selectedProductItem.value.id,
     };
     catchUserEvent(payLoad);
 
-    finalHandleCartProgress(itemCart.value);
-    notification.success({
-      message: "Success",
-      description: `Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`,
-    });
-    closeModal();
-  } else {
-    // alert(`Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`);
-    notification.success({
-      message: "Danger",
-      description: `Số lượng tồn không đủ`,
-    });
-    closeModal();
+    const itemUpdate = {
+      id: '',
+      accounts: authService.getUserName(),
+      productItems: selectedProductItem.value.id,
+      qty: quantity.value,
+      promotions: selectedProductItem.value.promotions[0],
+      comboGroup: "",
+      comboQty: "",
+      comboGroupId: "",
+      name: selectedProductItem.value.name,
+      mainImageUrl: selectedProductItem.value.baseProducts.mainImageUrl,
+      price: selectedProductItem.value.price,
+      sku: selectedProductItem.value.sku,
+      createdAt: "",
+      updatedAt: "",
+    }
+    console.log(itemUpdate)
+    authService.updateCart(quantityForAddToCartPorductItem.value);
+
+    if (quantityForAddToCartPorductItem.value <= selectedProductItem.value.qty) {
+      finalHandleCartProgress(itemUpdate);
+      notification.success({
+        message: "Thành công",
+        description: `Đã thêm ${quantityForAddToCartPorductItem.value} x ${selectedProductItem.value.name} vào giỏ hàng`,
+        duration: 4.5,
+      });
+
+    } else {
+      notification.error({
+        message: "Thất bại",
+        description: `Số lượng tồn kho chỉ còn ${selectedProductItem.value.qty} sản phẩm! ${quantityForAddToCartPorductItem.value}`,
+        duration: 4.5,
+      });
+    }
+  };
+};
+const fetchProductData = async (id) => {
+  try {
+    const res = await api.get(`/ProductItems/detail/${id}`);
+    console.log("Product data:", res.data.content);
+    productItemBaseOnId.value = res.data.content;
+    SkuColorList.value = new Set(productItemBaseOnId.value.map(e => {
+      return e.sku.split('-')[1]
+    }))
+    SkuSizeList.value = new Set(productItemBaseOnId.value.map(e => {
+      return e.sku.split('-')[2]
+    }))
+    listMapIfSelect.value = productItemBaseOnId.value.map(e => {
+      return e.sku.split('-')
+    })
+    const filteredMap = {};
+    for (const [groupName, items] of Object.entries(mapVarriantsOfListBaseProduct.value)) {
+      if (groupName === 'Màu sắc') {
+        let filteredItems = items.filter(item => SkuColorList.value.has(item.signalSku));
+        filteredItems.map(setIsActive => {
+          return { ...setIsActive, isActice: true }
+        })
+        if (filteredItems.length) filteredMap[groupName] = { ...filteredItems };
+      } else if (groupName === 'Kích thước') {
+        const filteredItems = items.filter(item => SkuSizeList.value.has(item.signalSku));
+        if (filteredItems.length) filteredMap[groupName] = { ...filteredItems };
+      }
+    }
+    // Update the mapVarriants
+    mapVarriantsOfListBaseProduct.value = filteredMap;
+    console.log(mapVarriantsOfListBaseProduct.value)
+    // const defaultSelected = {};
+    // for (const [groupName, items] of Object.entries(mapVarriantsOfListBaseProduct.value)) {
+    //   if (items.length > 0) {
+    //     defaultSelected[groupName] = items[0].signalSku;
+    //   }
+    // }
+    // selectedVariant.value = defaultSelected;
+    selectedProductItem.value = productItemBaseOnId.value[0]
+
+    images.value = productItemBaseOnId.value.flatMap(p => p.images);
+    currentImage.value = images.value[0]
+  } catch (err) {
+    console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
 };
+
 
 const fetchData = async () => {
   try {
@@ -529,11 +642,60 @@ watch(() => selectedCatalogCategory.value, fetchData, { deep: true });
 watch(() => keyWord.value, fetchData);
 watch(() => selectedPrice.value, fetchData);
 watch(() => pageIndex.value, fetchData);
+const listColorBaseOnSelectedSize = ref()
+watch(() => selectedVariant.value["Kích thước"], () => {
+  selectedVariant.value['Màu sắc'] = []
+  const filteredMap = {};
+  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selectedVariant.value["Kích thước"] === (findColor[2])).map(color => {
+    return color[1]
+  })
+  for (const [groupName, items] of Object.entries(mapVarriantsOfListBaseProduct.value)) {
+    if (groupName === 'Màu sắc') {
+      const itemList = Array.isArray(items) ? items : Object.values(items);
+      const safeColorList = Array.isArray(listColorBaseOnSelectedSize.value) ? listColorBaseOnSelectedSize.value : [];
+      const filteredItems = itemList.map(item => ({
+        ...item,
+        isActive: safeColorList.includes(item.signalSku)
+      }));
+      filteredMap[groupName] = filteredItems;
+    } else if (groupName === 'Kích thước') {
+      const itemList = Array.isArray(items) ? items : Object.values(items);
+      const filteredItems = itemList.map(item => ({
+        ...item,
+        isActive: true
+      }));
+      filteredMap[groupName] = filteredItems;
+    }
+  }
+  mapVarriantsOfListBaseProduct.value = filteredMap;
+});
+watch(() => selectedVariant.value["Màu sắc"], () => {
+  const color = selectedVariant.value["Màu sắc"];
+  const size = selectedVariant.value["Kích thước"];
+
+  if (color && size && size.length !== 0) {
+    const targetSku = `${color}-${size}`;
+    selectedProductItem.value = productItemBaseOnId.value.find(pro => pro.sku.includes(targetSku)) || productItemBaseOnId.value[0];
+  } else {
+    const itemList = Array.isArray(productItemBaseOnId.value)
+      ? productItemBaseOnId.value
+      : [productItemBaseOnId.value];
+    selectedProductItem.value = itemList[0];
+  }
+});
 watch(() => pageSize.value, fetchData);
 watch(
   () => quantity.value,
   () => (itemCart.value.qty = quantity.value)
 );
+
+watch(images, (newImages) => {
+  if (newImages.length > 0) {
+    currentImage.value = newImages[0].imageUrl;
+    currentImageIndex.value = 0;
+  }
+});
+
 </script>
 <style scoped>
 /* Page Header */
@@ -588,6 +750,272 @@ watch(
   border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
+.variant-group {
+  margin-bottom: 1.5rem;
+}
+
+.variant-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 10px;
+}
+
+.variant-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  padding: 10px 0;
+  border: 1px solid #ccc;
+  text-align: center;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  font-weight: 500;
+}
+
+.variant-button.active {
+  background-color: black;
+  color: white;
+  border-color: black;
+}
+
+.product-details {
+  margin-bottom: 30px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.value {
+  color: #1f2937;
+}
+
+.stock-status.in-stock {
+  color: #059669;
+  font-weight: 600;
+}
+
+.stock-status.out-of-stock {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.price-section {
+  margin-bottom: 30px;
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.current-price {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+.original-price {
+  font-size: 1.5rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ==================== PROMOTION BANNER ==================== */
+.promotion-banner {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px solid #f59e0b;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.promotion-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.promotion-icon {
+  font-size: 24px;
+  color: #d97706;
+}
+
+.promotion-title {
+  color: #92400e;
+  font-weight: 600;
+  margin: 0;
+}
+
+.promotion-period {
+  color: #a16207;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ==================== ACTION SECTION ==================== */
+.action-section {
+  margin-bottom: 30px;
+}
+
+.quantity-selector {
+  margin-bottom: 20px;
+}
+
+.quantity-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.qty-btn {
+  width: 45px;
+  height: 45px;
+  border: none;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  color: #374151;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.qty-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.qty-input {
+  width: 60px;
+  height: 45px;
+  border: none;
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+  background: transparent;
+  outline: none;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn-add-cart,
+.btn-buy-now {
+  padding: 18px 30px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-add-cart {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-add-cart:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-add-cart:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-buy-now {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #92400e;
+}
+
+.btn-buy-now:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+}
+
+/* ==================== SHIPPING INFO ==================== */
+.shipping-info {
+  background: #f8fafc;
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.shipping-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.shipping-item:last-child {
+  margin-bottom: 0;
+}
+
+.shipping-item i {
+  color: #667eea;
+  font-size: 16px;
+  width: 20px;
+}
+
 .filter-header h3 {
   color: #2c3e50;
   font-size: 1.4rem;
@@ -602,6 +1030,161 @@ watch(
 /* Search Section */
 .search-section {
   margin-bottom: 2rem;
+}
+
+/* ==================== PRODUCT GALLERY ==================== */
+.product-gallery {
+  position: relative;
+}
+
+.main-image-container {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  background: white;
+  max-width: 500px;
+  /* Giới hạn kích thước tối đa */
+  margin: 0 auto 20px auto;
+  /* Căn giữa */
+}
+
+.selected-variant {
+  background-color: #f0f8ff;
+  border-left: 4px solid #007bff;
+}
+
+.main-image {
+  width: 100%;
+  aspect-ratio: 4/5;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.gallery-nav:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-nav-prev {
+  left: 20px;
+}
+
+.gallery-nav-next {
+  right: 20px;
+}
+
+.image-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+.thumbnail-gallery {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 10px 0;
+  justify-content: center;
+  /* Căn giữa thumbnail */
+  max-width: 500px;
+  /* Cùng kích thước với main image */
+  margin: 0 auto;
+  /* Căn giữa */
+}
+
+.filter-group h3 {
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 16px;
+  color: #2e2e2e;
+}
+
+.line {
+  width: 3px;
+  height: 20px;
+  background-color: #2e2e2e;
+  margin-right: 10px;
+}
+
+.filter-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+
+.filter-list li {
+  margin-bottom: 12px;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.thumbnail-item {
+  flex-shrink: 0;
+  width: 90px;
+  height: 112px;
+  /* Tỷ lệ 4:5 cho thumbnail */
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.thumbnail-item.active {
+  border-color: #667eea;
+  transform: scale(1.05);
+}
+
+.thumbnail-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .modern-searchBox {
@@ -771,13 +1354,13 @@ watch(
   background: white;
 }
 
-.modern-filter-option input[type="checkbox"]:checked + .checkmark {
+.modern-filter-option input[type="checkbox"]:checked+.checkmark {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: #667eea;
   transform: scale(1.1);
 }
 
-.modern-filter-option input[type="checkbox"]:checked + .checkmark::after {
+.modern-filter-option input[type="checkbox"]:checked+.checkmark::after {
   content: "✓";
   color: white;
   font-size: 0.9rem;
@@ -831,12 +1414,12 @@ watch(
   background: white;
 }
 
-.modern-price-option input[type="radio"]:checked + .radio-mark {
+.modern-price-option input[type="radio"]:checked+.radio-mark {
   border-color: #667eea;
   transform: scale(1.1);
 }
 
-.modern-price-option input[type="radio"]:checked + .radio-mark::after {
+.modern-price-option input[type="radio"]:checked+.radio-mark::after {
   content: "";
   width: 12px;
   height: 12px;
@@ -906,15 +1489,6 @@ watch(
   background: white;
 }
 
-/* Product Cards */
-.product-card-wrapper {
-  transition: transform 0.2s ease;
-}
-
-.product-card-wrapper:hover {
-  transform: translateY(-4px);
-}
-
 /* Empty State */
 .empty-state {
   padding: 4rem 2rem;
@@ -965,6 +1539,7 @@ watch(
   z-index: 1000;
   padding: 1rem;
   backdrop-filter: blur(5px);
+
 }
 
 .modern-modal {
@@ -977,6 +1552,53 @@ watch(
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.4s ease;
   border: 2px solid rgba(102, 126, 234, 0.1);
+  margin: 1rem 1rem 1rem 1rem;
+}
+
+.product-info {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 5;
+}
+
+.product-header {
+  margin-bottom: 30px;
+}
+
+.product-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.stars {
+  display: flex;
+  gap: 3px;
+  color: #fbbf24;
+  font-size: 18px;
+}
+
+.rating-text {
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 16px;
+}
+
+.reviews-count {
+  color: #6b7280;
+  font-size: 14px;
 }
 
 @keyframes modalSlideIn {
@@ -984,6 +1606,7 @@ watch(
     opacity: 0;
     transform: translateY(-50px) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1050,10 +1673,6 @@ watch(
   width: 100%;
   height: 350px;
   object-fit: cover;
-}
-
-.preview-image:hover img {
-  transform: scale(1.02);
 }
 
 .preview-details {

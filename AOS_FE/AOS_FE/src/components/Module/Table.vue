@@ -33,28 +33,15 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <button
-                  type="button"
-                  @click="goToView(item.id)"
-                  class="btn btn-info btn-sm action-btn"
-                  title="Xem chi tiết"
-                >
+                <button type="button" @click="goToView(item.id)" class="btn btn-info btn-sm action-btn"
+                  title="Xem chi tiết">
                   <i class="bi bi-eye"></i>
                 </button>
-                <button
-                  type="button"
-                  @click="goToEdit(item.id)"
-                  class="btn btn-warning btn-sm action-btn"
-                  title="Chỉnh sửa"
-                >
+                <button type="button" @click="goToEdit(item.id)" class="btn btn-warning btn-sm action-btn"
+                  title="Chỉnh sửa">
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                  type="button"
-                  @click="deleteById(item.id)"
-                  class="btn btn-danger btn-sm action-btn"
-                  title="Xóa"
-                >
+                <button type="button" @click="deleteById(item.id)" class="btn btn-danger btn-sm action-btn" title="Xóa">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -64,16 +51,12 @@
       </table>
     </div>
     <div v-if="!data.length && !loading && !error" class="text-muted"></div>
-    <PageNavigative
-      :totalPage="totalPage"
-      v-model:currentPage="currentPage"
-      v-model:currentSize="currentSize"
-    >
+    <PageNavigative :totalPage="totalPage" v-model:currentPage="currentPage" v-model:currentSize="currentSize">
     </PageNavigative>
   </div>
 </template>
 <style scoped>
-.pageselect > select#pageSize {
+.pageselect>select#pageSize {
   width: 50px;
 }
 
@@ -399,6 +382,11 @@ const prices = [
   "cost",
   "discountValue",
   "comboPrice",
+  "estimatedShippingFee",
+  "actualShippingFee",
+  "finalTotal",
+  "minOrderAmount",
+  "maxDiscountAmount",
 ];
 function formatCell(key, value) {
   if (key.toLowerCase() === "password") return;
@@ -569,11 +557,10 @@ function formatCell(key, value) {
     // Chỉ format thành ngày tháng nếu field name chứa date/time/at hoặc value có format ngày tháng rõ ràng
     return dayjs(value).format("DD/MM/YYYY HH:mm:ss");
   } else if (prices.includes(key)) {
-    if(value != null){
-      con
+    if (value != null) {
       return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
     }
-    return '0'
+    return "0";
   } else if (Array.isArray(value)) {
     return value.join(", ");
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
@@ -657,11 +644,10 @@ function formatCell(key, value) {
     return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;
   } else if (typeof value === "boolean") {
     return ` <span  class="boolean-indicator">
-        ${
-          value
-            ? `<i class="bi bi-check-circle-fill text-success fs-5"></i>`
-            : `<i class="bi bi-x-circle-fill text-danger fs-5"></i>`
-        }
+        ${value
+        ? `<i class="bi bi-check-circle-fill text-success fs-5"></i>`
+        : `<i class="bi bi-x-circle-fill text-danger fs-5"></i>`
+      }
                
               </span>`;
   } else if (value === null || value === undefined) {
