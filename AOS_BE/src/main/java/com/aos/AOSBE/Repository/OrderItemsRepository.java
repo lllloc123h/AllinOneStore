@@ -13,6 +13,7 @@ import com.aos.AOSBE.Entity.OrderItems;
 @Repository
 public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer>, JpaSpecificationExecutor<OrderItems> {
 	// Add custom query methods here if needed
+	@Query("SELECT o FROM OrderItems o WHERE o.orders.id = ?1 ")
 	List<OrderItems> findByOrdersId(int orderId);
 
 	@Query("SELECT sum(orderItems.qty) FROM OrderItems orderItems WHERE orderItems.productItems.id = ?1 AND orderItems.createdAt <= ?2")

@@ -25,6 +25,8 @@ public class GhnService {
 
     @Autowired
     private GhnShippingService ghnShippingService;
+    @Autowired
+    private OrderItemsService orderItemsService;
 
 
     private final String ghnToken = System.getProperty("GHN_TOKEN");
@@ -69,8 +71,8 @@ public class GhnService {
 
         List<GhnCreateOrderRequestDTO.GhnItemDTO> itemDTOs = new ArrayList<>();
         int totalWeight = 0;
-
-        for (OrderItems item : order.getOrderItems()) {
+        List<OrderItems> listOrderItemToCreateGHN = orderItemsService.findByOrderId(order.getId());
+        for (OrderItems item : listOrderItemToCreateGHN) {
             ProductItems productItem = item.getProductItems();
             var baseProduct = productItem.getBaseProducts();
 
