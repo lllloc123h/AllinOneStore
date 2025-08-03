@@ -85,12 +85,13 @@ public class CouponsAPI {
 
 	@PutMapping("/admin/Coupons/{id}")
 	public ResponseEntity<?> updateCoupons(@PathVariable int id, @RequestBody CouponsDTOS entity) {
+		System.out.println("Update Coupons with ID: " + entity);
 		try {
 			Coupons isExist = couponsService.couponsFindById(id).orElse(null);
 			if (isExist != null) {
 				Coupons update = couponsMapper.mapperToObject(entity);
 				couponsService.couponsSave(update);
-				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+				return ResponseEntity.ok(Map.of("measage", "Update successfuly", "update", update));
 			} else {
 				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
 			}

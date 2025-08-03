@@ -399,6 +399,11 @@ const prices = [
   "cost",
   "discountValue",
   "comboPrice",
+  "estimatedShippingFee",
+  "actualShippingFee",
+  "finalTotal",
+  "minOrderAmount",
+  "maxDiscountAmount",
 ];
 function formatCell(key, value) {
   if (key.toLowerCase() === "password") return;
@@ -569,11 +574,10 @@ function formatCell(key, value) {
     // Chỉ format thành ngày tháng nếu field name chứa date/time/at hoặc value có format ngày tháng rõ ràng
     return dayjs(value).format("DD/MM/YYYY HH:mm:ss");
   } else if (prices.includes(key)) {
-    if(value != null){
-      con
+    if (value != null) {
       return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
     }
-    return '0'
+    return "0";
   } else if (Array.isArray(value)) {
     return value.join(", ");
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
