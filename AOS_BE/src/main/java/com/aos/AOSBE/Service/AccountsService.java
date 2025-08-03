@@ -141,6 +141,7 @@ public class AccountsService {
 		Accounts account = accountsRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 		account.setFullname(dto.getFullname());
+		account.setAvatarUrl(dto.getAvatarUrl());
 		account.setPhone(dto.getPhone());
 		account.setBirthday(dto.getBirthday());
 		account.setGender(dto.isGender());

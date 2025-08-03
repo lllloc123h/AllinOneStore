@@ -141,16 +141,21 @@
             />
           </div>
           <div class="col-md-4">
-            <label for="userRank" class="form-label text-capitalize fw-semibold"
-              >User Rank</label
+            <label for="averageOrderValue" class="form-label text-capitalize fw-semibold"
+              >User rank</label
             >
-            <input
-              id="userRank"
+            <select
+              :id="customerGroup"
               v-model="formData.userRank"
               type="text"
-              class="form-control custom-input"
-              placeholder="Enter user rank"
-            />
+              class="form-control"
+              :placeholder="`Enter customerGroup`"
+            >
+              <option value="Bạc">Bạc</option>
+              <option value="Vàng">Vàng</option>
+              <option value="Bạch Kim">Bạch Kim</option>
+              <option value="Kim Cương">Kim Cương</option>
+            </select>
           </div>
         </div>
 
@@ -243,8 +248,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { dropDown } from "../../../Configs/DropDownList.js";
 import api from "../../../Configs/api.js";
-import uploadProducts from "../../Module/upload-products.vue";
-import uploadProduct2 from "../../Module/upload-products.vue";
+import uploadProducts from "../../Module/upload-images.vue";
 import { notification } from "ant-design-vue";
 const uploadRef = ref(null);
 const props = defineProps({

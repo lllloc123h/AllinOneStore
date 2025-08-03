@@ -263,6 +263,7 @@ public class AccountsAPI {
 
 	@PutMapping("/Accounts/me")
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
+		System.out.println("du lieu tu update avatar: " + dto);
 		try {
 			Accounts acc= accountsService.updateProfile(dto);
 			return ResponseEntity.ok(acc);
