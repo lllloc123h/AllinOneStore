@@ -97,7 +97,7 @@
               </div>
 
               <!-- Promotion Banner -->
-              <div class="promotion-banner" v-if="promotion && promotion.promotions">
+              <!-- <div class="promotion-banner" v-if="promotion && promotion.promotions">
                 <div class="promotion-content">
                   <i class="bi bi-gift-fill promotion-icon"></i>
                   <div class="promotion-details">
@@ -108,7 +108,7 @@
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <!-- Product Details -->
               <div class="product-details">
@@ -447,6 +447,7 @@ const totalPages = ref(0);
 const uploaderKey = ref(Date.now());
 
 const discountedPrice = computed(() => {
+
   if (selectedProduct.value?.promotions[0]?.discountValue) {
     return Math.round(
       currentPrice.value * (1 - selectedProduct.value.promotions[0].discountValue / 100)
@@ -632,11 +633,6 @@ function formatDate(dateStr) {
 const addToCart = () => {
   if (!product.value || quantity.value <= 0) return;
 
-  const newCartItem = {
-    productItems: selectedProduct.value.id,
-    qty: quantity.value,
-    promotions: promotion.value?.promotions?.id || null,
-  };
   const itemUpdate = {
     id: '',
     accounts: authService.getUserName(),
