@@ -1,5 +1,9 @@
 package com.aos.AOSBE.API;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +11,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +36,7 @@ import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.GeneralStatsDTO;
 import com.aos.AOSBE.DTOS.MessageDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
+import com.aos.AOSBE.DTOS.OrderExportDto;
 import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
@@ -320,5 +331,30 @@ public class OrdersAPI {
 			return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống"));
 		}
 	}
+	
+	@GetMapping("/orders/export")
+	public ResponseEntity<?> exportExcel(
+	        @RequestParam("start")  LocalDateTime startDate,
+	        @RequestParam("end")  LocalDateTime endDate) throws IOException {
 
+	    // 1. Lấy danh sách đơn hàng cần export
+	    List<OrderExportDto> orders = ordersService.getOrdersForExport(startDate, endDate);
+
+	    // 2. Xuất ra file Excel dưới dạng InputStream
+	    ByteArrayInputStream excelStream = ordersService.exportOrdersToExcel(orders);
+	    InputStreamResource resource = new InputStreamResource(excelStream);
+
+	    // 3. Tạo header trả về
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentDisposition(ContentDisposition.builder("attachment")
+	            .filename("orders.xlsx")
+	            .build());
+	    headers.setContentType(MediaType.parseMediaType(
+	            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	    // 4. Trả ResponseEntity chứa file Excel
+	    return ResponseEntity.ok()
+	            .headers(headers)
+	            .body(resource)
+	            ;
+	}
 }

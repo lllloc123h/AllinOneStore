@@ -84,10 +84,8 @@ public class ProductItemsService {
 		return productItemsRepository.findAll(spec, pageable);
 	}
 
-	public Page<ProductItems> productItemsFindByBaseProductId(int page, int size, int id) {
-		Pageable pageable = PageRequest.of(page, size);
-		// Specification<ProductItems> spec = specBuilder.buildFilter(filters);
-		return productItemsRepository.findByBaseProductsId(pageable, id);
+	public List<ProductItems> productItemsFindByBaseProductId(int id) {
+		return productItemsRepository.findByBaseProductsId(id);
 	}
 
 	public List<ProductItems> productItemsFindAllHaveSkuLike(String skuLike) {

@@ -1,6 +1,5 @@
 package com.aos.AOSBE.API;
 
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,17 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-
-
-import org.springframework.util.StringUtils;
 
 import com.aos.AOSBE.DTOS.ReviewsDTOS;
 import com.aos.AOSBE.Entity.Accounts;
@@ -101,7 +92,31 @@ public class ReviewsAPI {
 		}
 	}
 
+	@PostMapping("/user/Reviews")
+	public ResponseEntity<?> addNewReviewsUserRoles(@RequestBody ReviewsDTOS entity) {
+		try {
+			// Lấy user từ SecurityContext
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
 
+			// Lấy account từ service
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			// Set lại accountId để mapper dùng được
+			entity.setAccountId(account.getId());
+
+			Reviews saved = reviewsService.reviewsSave(reviewsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(saved);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi khi gửi đánh giá", "error", e.getMessage()));
+		}
+	}
 
 	@PutMapping("/admin/Reviews/{id}")
 	public ResponseEntity<?> updateReviews(@PathVariable int id, @RequestBody ReviewsDTOS entity) {
@@ -125,15 +140,13 @@ public class ReviewsAPI {
 		reviewsService.reviewsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+
 	@GetMapping("/reviews/product/{productItemId}")
-	public ResponseEntity<?> getReviewsByProductItemId(
-			@PathVariable Long productItemId,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
-		
+	public ResponseEntity<?> getReviewsByProductItemId(@PathVariable Long productItemId,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+
 		Page<Reviews> pageResult = reviewsService.reviewsFindByProductItemId(productItemId, page, size);
-		List<ReviewsDTOS> reviewsDTOSList = pageResult.getContent().stream()
-				.map(reviewsMapper::mapper)
+		List<ReviewsDTOS> reviewsDTOSList = pageResult.getContent().stream().map(reviewsMapper::mapper)
 				.collect(Collectors.toList());
 
 		Map<String, Object> response = new HashMap<>();
@@ -143,14 +156,15 @@ public class ReviewsAPI {
 		response.put("currentPage", pageResult.getNumber());
 
 		return ResponseEntity.ok(response);
-	}	
-	@GetMapping("/reviews/product/{productItemId}/average-rating")
+	}
+
+	@GetMapping("/reviews/product/average-rating/{productItemId}")
 	public ResponseEntity<?> getAverageRating(@PathVariable Long productItemId) {
 		Double average = reviewsService.getAverageRatingByProductItemId(productItemId);
 		return ResponseEntity.ok(Map.of("averageRating", average));
 	}
-	
-	@GetMapping("/reviews/product/{productItemId}/count")
+
+	@GetMapping("/reviews/product/count/{productItemId}")
 	public ResponseEntity<?> countReviews(@PathVariable Long productItemId) {
 		Long count = reviewsService.countReviewsByProductItemId(productItemId);
 		return ResponseEntity.ok(Map.of("total", count));
