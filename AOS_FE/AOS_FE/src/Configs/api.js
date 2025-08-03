@@ -27,7 +27,8 @@ const excludedPaths = [
   '/ProductItems/related',
   '/reviews/product/count',
   '/reviews/product/average-rating',
-  '/reviews/product/'
+  '/reviews/product/',
+  '/discounted-products'
 ]
 
 // Automatically attach token to each request
