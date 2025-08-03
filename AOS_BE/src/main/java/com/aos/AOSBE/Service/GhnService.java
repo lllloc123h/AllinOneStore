@@ -8,6 +8,7 @@ import com.aos.AOSBE.Entity.ProductItems;
 
 import lombok.val;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ import java.util.UUID;
 
 @Service
 public class GhnService {
+
+    @Autowired
+    private GhnShippingService ghnShippingService;
+
 
     private final String ghnToken = System.getProperty("GHN_TOKEN");
     private final String ghnShopId = System.getProperty("GHN_SHOPID");
@@ -108,13 +113,14 @@ public class GhnService {
         dto.setClient_order_code(String.valueOf(order.getId()));
 
         // 4. Người gửi
-        dto.setFrom_name("TinTest124");
-        dto.setFrom_phone("0987654321");
-        dto.setFrom_address("72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam");
-        dto.setFrom_ward_name("Phường 14");
-        dto.setFrom_district_name("Quận 10");
-        dto.setFrom_province_name("HCM");
+        Map<String, Object> shop = ghnShippingService.getShopAddressFromGHN();
 
+        dto.setFrom_name((String) shop.get("name"));
+        dto.setFrom_phone((String) shop.get("phone"));
+        dto.setFrom_address((String) shop.get("address"));
+        dto.setFrom_ward_name((String) shop.get("ward_name"));
+        dto.setFrom_district_name((String) shop.get("district_name"));
+        dto.setFrom_province_name((String) shop.get("province_name"));
         // 5. Người nhận
 
         // dto.setTo_name(account.getFullname());
