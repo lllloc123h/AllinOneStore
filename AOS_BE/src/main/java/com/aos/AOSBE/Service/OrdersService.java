@@ -334,4 +334,10 @@ public class OrdersService {
 	    }
 	}
 
+	@Transactional
+	public List<Orders> getOrdersWithoutGhnCode() {
+		return ordersRepository.findByGhnOrderCodeIsNull();
+	}
+
+
 }

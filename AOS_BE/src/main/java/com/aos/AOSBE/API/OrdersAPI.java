@@ -357,4 +357,37 @@ public class OrdersAPI {
 	            .body(resource)
 	            ;
 	}
+	
+	@PostMapping("/admin/Orders/test-ghn/{orderId}")
+	public ResponseEntity<?> testGhnOrderCreation(@PathVariable int orderId) {
+		try {
+			Optional<Orders> optionalOrder = ordersService.ordersFindById(orderId);
+			if (optionalOrder.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy đơn hàng"));
+			}
+
+			Orders order = optionalOrder.get();
+
+			// Lấy OrderItems từ order
+			List<OrderItems> items = order.getOrderItems();
+			if (items == null || items.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Đơn hàng không có sản phẩm nào"));
+			}
+
+			// Gửi đơn sang GHN
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order);
+
+			order.setGhnOrderCode(ghnOrderCode);
+			ordersService.ordersSave(order);
+
+			return ResponseEntity.ok(Map.of("message", "Tạo đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
+		} catch (Exception e) {
+			e.printStackTrace(); // In stack trace vào console log
+			return ResponseEntity.badRequest().body(Map.of(
+				"message", "Lỗi tạo đơn GHN",
+				"error", e.getMessage() != null ? e.getMessage() : "Không rõ lỗi"
+			));
+		}
+	}
+
 }

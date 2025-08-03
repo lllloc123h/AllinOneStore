@@ -116,12 +116,41 @@ public class GhnService {
         dto.setFrom_province_name("HCM");
 
         // 5. Người nhận
-        dto.setTo_name(account.getFullname());
-        dto.setTo_phone(account.getPhone());
-        dto.setTo_address("72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam");
-        dto.setTo_ward_name("Phường 14");
-        dto.setTo_district_name("Quận 10");
-        dto.setTo_province_name("HCM");
+        String orderInfor = order.getOrderInfor(); // giả sử có getter
+
+        if (orderInfor != null && orderInfor.contains(" - ")) {
+            String[] parts = orderInfor.split(" - ", 3);
+            if (parts.length == 3) {
+                String receiverName = parts[0].trim();
+                String receiverPhone = parts[1].trim();
+                String fullAddress = parts[2].trim();
+
+                dto.setTo_name(receiverName);
+                dto.setTo_phone(receiverPhone);
+                dto.setTo_address(fullAddress);
+
+                // Tách thêm các phần nhỏ từ địa chỉ nếu cần
+                String[] addressParts = fullAddress.split(",");
+                for (int i = 0; i < addressParts.length; i++) {
+                    addressParts[i] = addressParts[i].trim();
+                }
+
+                for (String part : addressParts) {
+                    if (part.startsWith("Phường")) {
+                        dto.setTo_ward_name(part);
+                    } else if (part.startsWith("Quận") || part.startsWith("Huyện") || part.startsWith("Thành phố")) {
+                        dto.setTo_district_name(part);
+                    } else if (part.equals("Hà Nội") || part.equals("TP.HCM") || part.equals("Đà Nẵng") || part.endsWith("Tỉnh") || part.endsWith("Thành phố")) {
+                        dto.setTo_province_name(part);
+                    }
+                }
+
+                // Nếu thiếu ward/district/province thì fallback
+                if (dto.getTo_ward_name() == null) dto.setTo_ward_name("Phường mặc định");
+                if (dto.getTo_district_name() == null) dto.setTo_district_name("Quận mặc định");
+                if (dto.getTo_province_name() == null) dto.setTo_province_name("TP.HCM");
+            }
+        }
 
 
         // 6. Chi tiết đơn hàng
@@ -130,7 +159,7 @@ public class GhnService {
         dto.setLength(12);
         dto.setWidth(12);
         dto.setHeight(12);
-        dto.setWeight(totalWeight);
+        dto.setWeight(500);
         dto.setCod_failed_amount(2000);
         dto.setPick_station_id(1444);
         dto.setDeliver_station_id(null);
