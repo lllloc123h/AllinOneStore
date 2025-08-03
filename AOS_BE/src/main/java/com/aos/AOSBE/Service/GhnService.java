@@ -116,6 +116,14 @@ public class GhnService {
         dto.setFrom_province_name("HCM");
 
         // 5. Người nhận
+
+        // dto.setTo_name(account.getFullname());
+        // dto.setTo_phone(account.getPhone());
+        // dto.setTo_address("72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam");
+        // dto.setTo_ward_name("Phường 14");
+        // dto.setTo_district_name("Quận 10");
+        // dto.setTo_province_name("HCM");
+
         String orderInfor = order.getOrderInfor(); // giả sử có getter
 
         if (orderInfor != null && orderInfor.contains(" - ")) {
