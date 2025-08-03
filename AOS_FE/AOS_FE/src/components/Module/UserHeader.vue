@@ -7,15 +7,9 @@
           <span class="brand-text">ALL IN ONE</span>
         </div>
       </RouterLink>
-      <button
-        class="navbar-toggler modern-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler modern-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
         <span class="toggler-icon"></span>
         <span class="toggler-icon"></span>
         <span class="toggler-icon"></span>
@@ -23,29 +17,17 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <RouterLink
-              class="nav-link modern-nav-link"
-              aria-current="page"
-              to="/products"
-            >
+            <RouterLink class="nav-link modern-nav-link" aria-current="page" to="/products">
               <i class="bi bi-grid-fill me-2"></i>Sản phẩm
             </RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink
-              class="nav-link modern-nav-link"
-              aria-current="page"
-              to="/Customizer"
-            >
+            <RouterLink class="nav-link modern-nav-link" aria-current="page" to="/Customizer">
               <i class="bi bi-palette-fill me-2"></i>Customizer
             </RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink
-              class="nav-link modern-nav-link"
-              aria-current="page"
-              to="/order-list"
-            >
+            <RouterLink class="nav-link modern-nav-link" aria-current="page" to="/order-list">
               <i class="bi bi-list-check me-2"></i>Đơn hàng của bạn
             </RouterLink>
           </li>
@@ -53,15 +35,10 @@
         <ul class="navbar-nav ms-auto align-items-center">
           <!-- Cart Icon -->
           <li class="nav-item me-3">
-            <RouterLink
-              class="nav-link position-relative modern-icon-link"
-              aria-current="page"
-              to="/cart"
-            >
+            <RouterLink class="nav-link position-relative modern-icon-link" aria-current="page" to="/cart">
               <i class="bi bi-bag-heart-fill fs-5"></i>
               <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gradient-danger modern-badge"
-              >
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gradient-danger modern-badge">
                 {{ cartSize }}
               </span>
             </RouterLink>
@@ -69,32 +46,20 @@
 
           <!-- Notification Icon -->
           <li class="nav-item dropdown me-3">
-            <a
-              class="nav-link dropdown-toggle modern-icon-link position-relative"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
+            <a class="nav-link dropdown-toggle modern-icon-link position-relative" href="#" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-bell-fill fs-5"></i>
               <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gradient-primary modern-badge"
-              >
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gradient-primary modern-badge">
                 {{ messageCount }}
               </span>
             </a>
-            <ul
-              class="dropdown-menu dropdown-menu-end modern-dropdown notification-dropdown"
-            >
+            <ul class="dropdown-menu dropdown-menu-end modern-dropdown notification-dropdown">
               <li class="dropdown-header">
                 <i class="bi bi-bell me-2"></i>Notifications
               </li>
               <hr class="dropdown-divider" />
-              <li
-                v-for="item in messages"
-                :key="item.id"
-                class="dropdown-item modern-notification-item"
-              >
+              <li v-for="item in messages" :key="item.id" class="dropdown-item modern-notification-item">
                 <span v-html="formatCell(item)"></span>
               </li>
               <hr class="dropdown-divider" v-if="messages.length" />
@@ -106,13 +71,8 @@
 
           <!-- User Profile -->
           <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle modern-user-link"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
+            <a class="nav-link dropdown-toggle modern-user-link" href="#" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
               <div class="user-profile-container" v-if="!isLogged">
                 <div class="user-avatar-placeholder">
                   <i class="bi bi-person-fill"></i>
@@ -121,31 +81,20 @@
               </div>
               <div class="user-profile-container" v-else>
                 <div class="user-avatar">
-                  <img
-                    v-if="
-                      user?.avatarUrl &&
-                      user.avatarUrl !== 'null' &&
-                      user.avatarUrl !== ''
-                    "
-                    :src="user.avatarUrl"
-                    :alt="user?.fullname"
-                    :crossorigin="
-                      user.avatarUrl.includes('googleusercontent.com')
-                        ? 'anonymous'
-                        : undefined
-                    "
-                    :referrerpolicy="
-                      user.avatarUrl.includes('googleusercontent.com')
+                  <img v-if="
+                    user?.avatarUrl &&
+                    user.avatarUrl !== 'null' &&
+                    user.avatarUrl !== ''
+                  " :src="user.avatarUrl" :alt="user?.fullname" :crossorigin="user.avatarUrl.includes('googleusercontent.com')
+                    ? 'anonymous'
+                    : undefined
+                    " :referrerpolicy="user.avatarUrl.includes('googleusercontent.com')
                         ? 'no-referrer'
                         : undefined
-                    "
-                    @error="handleAvatarError"
-                  />
-                  <img
-                    v-else
+                        " @error="handleAvatarError" />
+                  <img v-else
                     src="https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg"
-                    :alt="user?.fullname"
-                  />
+                    :alt="user?.fullname" />
                 </div>
                 <div class="user-info d-none d-md-block">
                   <span class="user-name">{{ user?.fullname || "User" }}</span>
@@ -156,31 +105,20 @@
               <li class="dropdown-header user-dropdown-header" v-if="isLogged">
                 <div class="user-profile-header">
                   <div class="user-avatar-large">
-                    <img
-                      v-if="
-                        user?.avatarUrl &&
-                        user.avatarUrl !== 'null' &&
-                        user.avatarUrl !== ''
-                      "
-                      :src="user.avatarUrl"
-                      :alt="user?.fullname"
-                      :crossorigin="
-                        user.avatarUrl.includes('googleusercontent.com')
-                          ? 'anonymous'
-                          : undefined
-                      "
-                      :referrerpolicy="
-                        user.avatarUrl.includes('googleusercontent.com')
+                    <img v-if="
+                      user?.avatarUrl &&
+                      user.avatarUrl !== 'null' &&
+                      user.avatarUrl !== ''
+                    " :src="user.avatarUrl" :alt="user?.fullname" :crossorigin="user.avatarUrl.includes('googleusercontent.com')
+                      ? 'anonymous'
+                      : undefined
+                      " :referrerpolicy="user.avatarUrl.includes('googleusercontent.com')
                           ? 'no-referrer'
                           : undefined
-                      "
-                      @error="handleAvatarError"
-                    />
-                    <img
-                      v-else
+                          " @error="handleAvatarError" />
+                    <img v-else
                       src="https://res.cloudinary.com/da2v8uqir/image/upload/v1754018153/baib6i5rkev8n2gpmswv.jpg"
-                      :alt="user?.fullname"
-                    />
+                      :alt="user?.fullname" />
                   </div>
                   <div class="user-info-header">
                     <div class="user-fullname">{{ user?.fullname || "User" }}</div>
@@ -190,10 +128,7 @@
               </li>
               <hr class="dropdown-divider" v-if="isLogged" />
               <li v-if="isAdmin">
-                <RouterLink
-                  class="dropdown-item modern-dropdown-item"
-                  to="/admin/Accounts"
-                >
+                <RouterLink class="dropdown-item modern-dropdown-item" to="/admin/Accounts">
                   <i class="bi bi-shield-check me-2"></i>Trang quản trị
                 </RouterLink>
               </li>
@@ -204,10 +139,7 @@
               </li>
               <hr class="dropdown-divider" />
               <li v-if="isLogged">
-                <button
-                  class="dropdown-item modern-dropdown-item text-danger"
-                  @click="logout"
-                >
+                <button class="dropdown-item modern-dropdown-item text-danger" @click="logout">
                   <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
                 </button>
               </li>
@@ -274,14 +206,14 @@ function formatCell(item) {
 async function getNotification() {
   try {
     const response = await api.get(`/user/Message`);
-    console.log(response.data);
     messages.value = response.data.content;
     messageCount.value = response.data.totalElements;
   } catch (error) {
     console.error("Error fetching notifications:", error);
   }
 }
-onMounted(getNotification);
+onMounted(
+  getNotification);
 
 const handleAvatarError = (event) => {
   event.target.style.display = "none";
@@ -313,6 +245,7 @@ const handleAvatarError = (event) => {
   border-radius: 8px;
   padding: 5px;
 }
+
 .modern-brand:hover {
   color: #667eea !important;
   background: rgba(102, 126, 234, 0.1);
@@ -423,10 +356,12 @@ const handleAvatarError = (event) => {
 }
 
 @keyframes pulse-badge {
+
   0%,
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -907,6 +842,7 @@ section .section-title {
   font-size: 15px;
   padding: 24px 46px 24px 26px;
 }
+
 /* Footer */
 #footer {
   padding: 60px 0;

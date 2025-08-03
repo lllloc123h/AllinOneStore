@@ -447,9 +447,9 @@ const totalPages = ref(0);
 const uploaderKey = ref(Date.now());
 
 const discountedPrice = computed(() => {
-  if (promotion.value?.promotions?.discountPercent) {
+  if (selectedProduct.value?.promotions[0]?.discountValue) {
     return Math.round(
-      currentPrice.value * (1 - promotion.value.promotions.discountPercent / 100)
+      currentPrice.value * (1 - selectedProduct.value.promotions[0].discountValue / 100)
     );
   }
   return currentPrice.value;
@@ -461,10 +461,8 @@ const selectedProduct = ref();
 const fetchProductData = async (id) => {
   try {
     const res = await api.get(`/ProductItems/detail/${id}`);
-
     console.log("Product data:", res.data.content);
     product.value = res.data.content;
-
     SkuColorList.value = new Set(product.value.map(e => {
       return e.sku.split('-')[1]
     }))
@@ -474,9 +472,7 @@ const fetchProductData = async (id) => {
     listMapIfSelect.value = product.value.map(e => {
       return e.sku.split('-')
     })
-    console.log(listMapIfSelect.value)
     const filteredMap = {};
-
     for (const [groupName, items] of Object.entries(mapVarriants.value)) {
       if (groupName === 'Màu sắc') {
         let filteredItems = items.filter(item => SkuColorList.value.has(item.signalSku));
@@ -501,11 +497,6 @@ const fetchProductData = async (id) => {
     }
     selected.value = defaultSelected;
     selectedProduct.value = product.value[0]
-    // .filter(pro => {
-    //   return pro.sku.includes(selected.value['Màu sắc'] + "-" + selected.value['Kích thước'])
-    // })
-    console.log(selectedProduct.value)
-    console.log(images.value)
   } catch (err) {
     console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
@@ -581,7 +572,10 @@ watch(() => selected.value["Màu sắc"], () => {
     const targetSku = `${color}-${size}`;
     selectedProduct.value = product.value.find(pro => pro.sku.includes(targetSku)) || product.value[0];
   } else {
-    selectedProduct.value = product.value[0];
+    const itemList = Array.isArray(product.value)
+      ? product.value
+      : [product.value];
+    selectedProduct.value = itemList[0];
   }
 });
 function increaseQty() {
@@ -634,38 +628,46 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("vi-VN");
 }
 
-const itemCart = ref({
-  id: "",
-  accounts: "",
-  productItems: "",
-  promotions: "",
-  comboGroup: "",
-  qty: "",
-  createdAt: "",
-  updatedAt: "",
-});
 
 const addToCart = () => {
   if (!product.value || quantity.value <= 0) return;
 
   const newCartItem = {
-    productItems: product.value.id,
+    productItems: selectedProduct.value.id,
     qty: quantity.value,
     promotions: promotion.value?.promotions?.id || null,
   };
+  const itemUpdate = {
+    id: '',
+    accounts: authService.getUserName(),
+    productItems: selectedProduct.value.id,
+    qty: quantity.value,
+    promotions: selectedProduct.value.promotions[0],
+    comboGroup: "",
+    comboQty: "",
+    comboGroupId: "",
+    name: selectedProduct.value.name,
+    mainImageUrl: selectedProduct.value.baseProducts.mainImageUrl,
+    price: selectedProduct.value.price,
+    sku: selectedProduct.value.sku,
+    createdAt: "",
+    updatedAt: "",
+  }
+  console.log(itemUpdate)
   authService.updateCart(quantity.value);
 
-  if (quantity.value <= product.value.qty) {
-    finalHandleCartProgress(newCartItem);
+  if (quantity.value <= selectedProduct.value.qty) {
+    finalHandleCartProgress(itemUpdate);
     notification.success({
       message: "Thành công",
-      description: `Đã thêm ${quantity.value} x ${product.value.name} vào giỏ hàng`,
+      description: `Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`,
       duration: 4.5,
     });
+
   } else {
     notification.error({
       message: "Thất bại",
-      description: `Số lượng tồn kho chỉ còn ${product.value.qty} sản phẩm!`,
+      description: `Số lượng tồn kho chỉ còn ${selectedProduct.value.qty} sản phẩm! ${quantity.value}`,
       duration: 4.5,
     });
   }
@@ -690,6 +692,7 @@ const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
   currentImage.value = images.value[currentImageIndex.value].imageUrl;
 };
+
 function selectImage(idx) {
   currentImageIndex.value = idx;
   currentImage.value = images.value[idx].imageUrl;
@@ -703,7 +706,6 @@ const fetchReviews = async () => {
         size: pageSize.value,
       },
     });
-
     reviews.value = res.data.content || [];
     totalPages.value = res.data.totalPages || 0;
   } catch (err) {
