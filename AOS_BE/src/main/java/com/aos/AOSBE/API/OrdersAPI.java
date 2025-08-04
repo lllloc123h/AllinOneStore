@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -334,8 +335,20 @@ public class OrdersAPI {
 	
 	@GetMapping("/orders/export")
 	public ResponseEntity<?> exportExcel(
-	        @RequestParam("start")  LocalDateTime startDate,
-	        @RequestParam("end")  LocalDateTime endDate) throws IOException {
+	    @RequestParam(value = "start", required = false)
+	    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+
+	    @RequestParam(value = "end", required = false)
+	    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+	) throws IOException {
+
+	    // Gán giá trị mặc định nếu không có dữ liệu từ FE
+	    if (startDate == null) {
+	        startDate = LocalDateTime.now().minusDays(7); // mặc định là 7 ngày trước
+	    }
+	    if (endDate == null) {
+	        endDate = LocalDateTime.now(); // mặc định là thời điểm hiện tại
+	    }
 
 	    // 1. Lấy danh sách đơn hàng cần export
 	    List<OrderExportDto> orders = ordersService.getOrdersForExport(startDate, endDate);
@@ -347,14 +360,14 @@ public class OrdersAPI {
 	    // 3. Tạo header trả về
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setContentDisposition(ContentDisposition.builder("attachment")
-	            .filename("orders.xlsx")
-	            .build());
+	        .filename("orders.xlsx")
+	        .build());
 	    headers.setContentType(MediaType.parseMediaType(
-	            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+
 	    // 4. Trả ResponseEntity chứa file Excel
 	    return ResponseEntity.ok()
-	            .headers(headers)
-	            .body(resource)
-	            ;
+	        .headers(headers)
+	        .body(resource);
 	}
 }
