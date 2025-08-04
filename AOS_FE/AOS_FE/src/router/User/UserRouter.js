@@ -6,7 +6,7 @@ import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
 import OrderStatus from '../../components/User/OrderStatus.vue'
 import ImageUpload from '../../components/Module/ImageUpload.vue'
-import uploadProducts from '../../components/Module/upload-products.vue'
+import uploadProducts from '../../components/Module/upload-images.vue'
 export default [
     {
         path: '',
