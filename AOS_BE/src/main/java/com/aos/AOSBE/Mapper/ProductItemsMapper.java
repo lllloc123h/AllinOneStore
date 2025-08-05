@@ -56,6 +56,13 @@ public class ProductItemsMapper {
 				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null));
 	}
 
+	public ProductItems mapperToObjectUpdateMethod(ProductItemsDTOS entity) {
+		return new ProductItems(entity.getProductItemsId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
+				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
+				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
+				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null));
+	}
+
 	public ProductItemsDTOS mapperObjectForProductDetail(ProductItems entity) {
 		List<ProductImages> productImages = productImagesRepository.findByProductItemsId(entity.getId());
 		List<ProductImagesDTOS> content = new ArrayList<>();

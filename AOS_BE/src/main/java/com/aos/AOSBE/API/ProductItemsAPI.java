@@ -110,18 +110,24 @@ public class ProductItemsAPI {
 	@PostMapping("/admin/ProductItems")
 	public ResponseEntity<?> addNewProductItems(@RequestBody ProductItemsDTOS entity) {
 		try {
-
-			ProductItems saved = productItemsService.productItemsSave(productItemsMapper.mapperToObject(entity));
+			ProductItems mapped = productItemsMapper.mapperToObject(entity);
+			mapped.setId(null);
+			ProductItems saved = productItemsService.productItemsSave(mapped);
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
 		}
 	}
 
-	@PutMapping("/admin/ProductItems")
-	public ResponseEntity<ProductItems> updateProductItems(@RequestBody ProductItems entity) {
-		ProductItems updated = productItemsService.productItemsSave(entity);
-		return ResponseEntity.ok(updated);
+	@PutMapping("/admin/ProductItems/{id}")
+	public ResponseEntity<?> updateProductItems(@PathVariable int id, @RequestBody ProductItemsDTOS entity) {
+		try {
+			ProductItems mapped = productItemsMapper.mapperToObjectUpdateMethod(entity);
+			ProductItems updated = productItemsService.productItemsSave(mapped);
+			return ResponseEntity.ok(updated);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
 	}
 
 	@DeleteMapping("/admin/ProductItems/{id}")

@@ -462,14 +462,6 @@ onMounted(() => {
       }
     })
     .catch((error) => console.log(error));
-  // api
-  //   .get("/BaseProducts")
-  //   .then(async (resp) => {
-  //     data.value = resp.data.totalPages;
-  //     products.value = resp.data;
-  //     console.log("Products loaded:", products.value);
-  //   })
-  //   .catch((error) => console.log("Error loading base products:", error));
   api
     .get("/CatalogCategoriesFilter")
     .then(async (resp) => {
@@ -577,14 +569,6 @@ const fetchProductData = async (id) => {
     }
     // Update the mapVarriants
     mapVarriantsOfListBaseProduct.value = filteredMap;
-    console.log(mapVarriantsOfListBaseProduct.value)
-    // const defaultSelected = {};
-    // for (const [groupName, items] of Object.entries(mapVarriantsOfListBaseProduct.value)) {
-    //   if (items.length > 0) {
-    //     defaultSelected[groupName] = items[0].signalSku;
-    //   }
-    // }
-    // selectedVariant.value = defaultSelected;
     selectedProductItem.value = productItemBaseOnId.value[0]
 
     images.value = productItemBaseOnId.value.flatMap(p => p.images);

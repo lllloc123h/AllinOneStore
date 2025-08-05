@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductItemsDTOS {
 	private int id;
+	private int productItemsId;
 	private double cost;
 	private double price;
 	private int turnBuy;
