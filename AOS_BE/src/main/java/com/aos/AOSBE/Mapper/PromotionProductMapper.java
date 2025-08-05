@@ -15,17 +15,17 @@ public class PromotionProductMapper {
 	@Autowired
 	private PromotionsService promotionsService;
 
-	public PromotionProductDTOS mapper(PromotionProducts entity) {
-		return new PromotionProductDTOS(entity.getId(), entity.getRequireQty(), entity.isGift(),
-				entity.getCreatedAt(), entity.getUpdatedAt(), entity.getProductItems().getId(),
-				entity.getPromotions().getId());
-	}
-
-	public PromotionProducts mapperToObject(PromotionProductDTOS entity) {
-		return new PromotionProducts(entity.getId(), entity.getRequireQty(), entity.isGift(),
-				entity.getCreatedAt(), entity.getUpdatedAt(),
-				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
-				promotionsService.promotionsFindById(entity.getPromotions()).orElse(null));
-	}
+//	public PromotionProductDTOS mapper(PromotionProducts entity) {
+//		return new PromotionProductDTOS(entity.getId(), entity.getRequireQty(), entity.isGift(),
+//				entity.getCreatedAt(), entity.getUpdatedAt(), entity.getProductItems().getId(),
+//				entity.getPromotions().getId());
+//	}
+//
+//	public PromotionProducts mapperToObject(PromotionProductDTOS entity) {
+//		return new PromotionProducts(entity.getId(), entity.getRequireQty(), entity.isGift(),
+//				entity.getCreatedAt(), entity.getUpdatedAt(),
+//				productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
+//				promotionsService.promotionsFindById(entity.getPromotions()).orElse(null));
+//	}
 
 }

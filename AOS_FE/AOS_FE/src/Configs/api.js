@@ -4,6 +4,7 @@ import router from '../router' // ✅ đúng, vì bạn đã export router ở r
 import axios, { Axios } from 'axios';
 import { toast } from 'vue3-toastify';
 import { syncLocalCartToServer } from './cart';
+import { notification } from 'ant-design-vue';
 // ${import.meta.env.VITE_PAKE_DOMAIN}
 const api = axios.create({
   baseURL: `http://localhost:8080/api`,
@@ -113,13 +114,19 @@ const authService = {
         localStorage.removeItem('redirectTo'); // Clear redirect after use
         this.setUserHeader(await this.getProfile());
         setTimeout(() => {
-          toast.success('Đăng nhập thành công !');
+          notification.success({
+            message: "Đăng nhập thành công",
+            description: "Chào mừng bạn quay trở lại!",
+          });
         }, 500);
 
         await router.push(redirectTo);
       })
       .catch(error => {
-        toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
+        notification.warning({
+          message: "Đăng nhập thất bại",
+          description: error.response.data.message || 'Đăng nhập thất bại',
+        });
         console.log('Đăng nhập thất bại ', error.response)
       })
   },
@@ -218,7 +225,10 @@ const authService = {
     this.removeUserHeader();
     router.push('/');
     setTimeout(() => {
-      toast.success('Đăng xuất thành công !');
+notification.success({
+      message: "Đăng xuất thành công",
+      description: "Bạn đã đăng xuất thành công.",
+    });
     }, 600);
     cartSize.value = 0;
     localStorage.removeItem('cartSize');

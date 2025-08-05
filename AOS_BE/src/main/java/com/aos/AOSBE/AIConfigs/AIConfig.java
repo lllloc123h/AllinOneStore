@@ -7,9 +7,13 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.template.st.StTemplateRenderer;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
+import org.springframework.aop.Advisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +30,15 @@ class AIConfig {
 	ChatMemory memory() {
 		return MessageWindowChatMemory.builder().chatMemoryRepository(jdbcChatMemoryRepository).maxMessages(15).build();
 	}
+//	Advisor retrievalAugmentationAdvisor = RetrievalAugmentationAdvisor.builder()
+//			.queryTransformers(RewriteQueryTransformer.builder()
+//					.chatClientBuilder(chatClientBuilder.build().mutate())
+//					.build())
+//			.documentRetriever(VectorStoreDocumentRetriever.builder()
+//					.similarityThreshold(0.50)
+//					.vectorStore(vectorStore)
+//					.build())
+//			.build();
 
 	@Bean
 	PromptTemplate customPromptTemplate() {
@@ -122,7 +135,15 @@ class AIConfig {
 				.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory()).build(),
 						QuestionAnswerAdvisor.builder(vectorStore)
 								.searchRequest(SearchRequest.builder().similarityThreshold(0.5).topK(5).build())
-								.promptTemplate(customPromptTemplate()).build())
+								.promptTemplate(customPromptTemplate()).build()
+				,
+						RetrievalAugmentationAdvisor.builder()
+								.queryTransformers(RewriteQueryTransformer.builder()
+										.chatClientBuilder(builder.build().mutate()).build())
+								.documentRetriever(VectorStoreDocumentRetriever.builder()
+										.similarityThreshold(0.50).topK(5)
+										.vectorStore(vectorStore).build())
+								.build())
 //                .defaultUser("Xin chào, mình cần tư vấn sản phẩm")
 				.build();
 	}

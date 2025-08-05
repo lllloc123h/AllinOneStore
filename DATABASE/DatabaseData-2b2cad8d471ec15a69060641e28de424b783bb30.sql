@@ -2100,12 +2100,13 @@ INSERT INTO promotion_products (
     product_item_id,
     require_qty,
     is_gift,
+	gift_option,
     created_at,
     updated_at
 ) VALUES
-(1, 1, 1, 0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
-(1, 2, 2, 0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
-(2, 3, 1, 1, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
+(1, 1, 1, 0,0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
+(1, 2, 2, 0,0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
+(2, 3, 1, 1,0, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
 
 -- Thêm combo khuyến mãi
 INSERT INTO promotion_products (
@@ -2113,11 +2114,12 @@ INSERT INTO promotion_products (
     product_item_id,
     require_qty,
     is_gift,
+	gift_option,
     created_at,
     updated_at
 ) VALUES
-(2, 1, 1, 0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
-(2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
+(2, 1, 1, 0,0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
+(2, 2, 1, 0,0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
 
 -- INSERT 30 orders
 select * from orders where account_id = 2;
@@ -2212,7 +2214,6 @@ BEGIN
       price_at_buy,
 	  cost_at_buy,
       selling_price,
-      coupon_code,
       created_at,
       updated_at
     )
@@ -2223,7 +2224,6 @@ BEGIN
       (SELECT price FROM product_items WHERE id = @pid),
       (SELECT cost FROM product_items WHERE id = @pid),
       (SELECT price FROM product_items WHERE id = @pid),
-      NULL,
       GETDATE(),
       GETDATE()
     );
