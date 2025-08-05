@@ -319,7 +319,7 @@ async function handleLogin() {
   isLoading.value = true;
   try {
     await authService.login(formData.email, formData.password);
-    await syncLocalCartToServer();
+    // await syncLocalCartToServer();
   } catch (error) {
   } finally {
     isLoading.value = false;

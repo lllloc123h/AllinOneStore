@@ -738,12 +738,8 @@ const addToCart = () => {
     authService.updateCart(quantityForAddToCartPorductItem.value);
 
     if (quantityForAddToCartPorductItem.value <= selectedProductItem.value.qty) {
+      console.log("Adding to cart:", itemUpdate);
       finalHandleCartProgress(itemUpdate);
-      notification.success({
-        message: "Thành công",
-        description: `Đã thêm ${quantityForAddToCartPorductItem.value} x ${selectedProductItem.value.name} vào giỏ hàng`,
-        duration: 4.5,
-      });
     } else {
       notification.error({
         message: "Thất bại",
