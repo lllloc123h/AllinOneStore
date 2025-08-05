@@ -347,7 +347,55 @@
                   >
                 </div>
               </div>
-
+              <!-- Product Details -->
+              <div class="product-details">
+                <div class="detail-card">
+                  <h6 class="detail-title">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Thông tin sản phẩm
+                  </h6>
+                  <div class="detail-list">
+                    <div class="detail-item">
+                      <span class="label">
+                        <i class="bi bi-tag me-2"></i>
+                        Chất liệu:
+                      </span>
+                      <span class="value">{{
+                        selectedProductItem?.baseProducts?.material || "Cotton"
+                      }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="label">
+                        <i class="bi bi-upc me-2"></i>
+                        Mã sản phẩm:
+                      </span>
+                      <span class="value">{{ selectedProductItem?.sku || "N/A" }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="label">
+                        <i class="bi bi-box-seam me-2"></i>
+                        Tình trạng:
+                      </span>
+                      <span
+                        :class="[
+                          'value',
+                          'stock-status',
+                          (selectedProductItem?.qty || 0) > 0
+                            ? 'in-stock'
+                            : 'out-of-stock',
+                        ]"
+                      >
+                        <i class="bi bi-circle-fill me-1"></i>
+                        {{
+                          (selectedProductItem?.qty || 0) > 0
+                            ? `Còn ${selectedProductItem.qty} sản phẩm`
+                            : "Hết hàng"
+                        }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <!-- Variant Selection -->
               <div
                 class="variant-selection"
@@ -408,57 +456,6 @@
                   </template>
                 </div>
               </div>
-
-              <!-- Product Details -->
-              <div class="product-details">
-                <div class="detail-card">
-                  <h6 class="detail-title">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Thông tin sản phẩm
-                  </h6>
-                  <div class="detail-list">
-                    <div class="detail-item">
-                      <span class="label">
-                        <i class="bi bi-tag me-2"></i>
-                        Chất liệu:
-                      </span>
-                      <span class="value">{{
-                        selectedProductItem?.baseProducts?.material || "Cotton"
-                      }}</span>
-                    </div>
-                    <div class="detail-item">
-                      <span class="label">
-                        <i class="bi bi-upc me-2"></i>
-                        Mã sản phẩm:
-                      </span>
-                      <span class="value">{{ selectedProductItem?.sku || "N/A" }}</span>
-                    </div>
-                    <div class="detail-item">
-                      <span class="label">
-                        <i class="bi bi-box-seam me-2"></i>
-                        Tình trạng:
-                      </span>
-                      <span
-                        :class="[
-                          'value',
-                          'stock-status',
-                          (selectedProductItem?.qty || 0) > 0
-                            ? 'in-stock'
-                            : 'out-of-stock',
-                        ]"
-                      >
-                        <i class="bi bi-circle-fill me-1"></i>
-                        {{
-                          (selectedProductItem?.qty || 0) > 0
-                            ? `Còn ${selectedProductItem.qty} sản phẩm`
-                            : "Hết hàng"
-                        }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <!-- Quantity & Actions -->
               <div class="action-section">
                 <div class="quantity-selector">

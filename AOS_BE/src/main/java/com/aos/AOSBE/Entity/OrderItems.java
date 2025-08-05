@@ -39,10 +39,7 @@ public class OrderItems {
 	
     @Column(name = "total", insertable = false, updatable = false)
     private double total;
-	
-    @Column(name = "coupon_code")
-    private String couponCode;
-    
+
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;

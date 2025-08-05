@@ -25,24 +25,24 @@
           />
         </div>
         <div class="mb-3">
-          <label for="name" class="form-label text-capitalize">name</label>
+          <label for="name" class="form-label text-capitalize">Tên khuyến mãi</label>
           <input
             id="name"
             v-model="formData.name"
             type="text"
             class="form-control"
-            placeholder="`Enter name`"
+            placeholder="Nhập tên khuyến mãi"
           />
         </div>
 
         <div class="mb-3">
-          <label for="description" class="form-label text-capitalize">description</label>
+          <label for="description" class="form-label text-capitalize">Mô tả</label>
           <input
             id="description"
             v-model="formData.description"
             type="text"
             class="form-control"
-            placeholder="`Enter description`"
+            placeholder="Nhập mô tả"
           />
         </div>
 
@@ -57,9 +57,9 @@
             :placeholder="`Enter discountType`" />
         </div> -->
         <div class="mb-3">
-          <label for="type" class="form-label text-capitalize">Type</label>
+          <label for="type" class="form-label text-capitalize">Loại khuyến mãi</label>
           <select id="type" v-model="formData.type" class="form-select">
-            <option disabled value="">Select type</option>
+            <option disabled value="">Chọn loại khuyến mãi</option>
             <option
               v-for="item in dropdownTypePromotions"
               :key="item.id"
@@ -72,7 +72,7 @@
 
         <div class="mb-3">
           <label for="discountValue" class="form-label text-capitalize"
-            >discountValue</label
+            >Giá trị giảm giá</label
           >
           <input
             id="discountValue"
@@ -80,52 +80,54 @@
             type="number"
             :disabled="formData.type === 'COMBO'"
             class="form-control"
-            placeholder="`Enter discountValue`"
+            placeholder="Nhập giá trị giảm giá"
           />
         </div>
 
         <div class="mb-3">
-          <label for="comboPrice" class="form-label text-capitalize">comboPrice</label>
+          <label for="comboPrice" class="form-label text-capitalize">Giá combo</label>
           <input
             id="comboPrice"
             v-model="formData.comboPrice"
             type="number"
             :disabled="formData.type === 'DISCOUNT'"
             class="form-control"
-            placeholder="`Enter comboPrice`"
+            placeholder="Nhập giá combo"
           />
         </div>
 
         <div class="mb-3">
-          <label for="usageLimit" class="form-label text-capitalize">usageLimit</label>
+          <label for="usageLimit" class="form-label text-capitalize"
+            >Số lượng sử dụng</label
+          >
           <input
             id="usageLimit"
             v-model="formData.qty"
             type="number"
             class="form-control"
-            placeholder="`Enter usageLimit`"
+            placeholder="Nhập số lượng sử dụng"
           />
         </div>
 
         <div class="mb-3">
-          <label for="startAt" class="form-label text-capitalize">startAt</label>
+          <label for="startAt" class="form-label text-capitalize">Ngày bắt đầu</label>
           <input
             id="startAt"
             v-model="formData.startAt"
             type="datetime-local"
             class="form-control"
-            placeholder="`Enter startAt`"
+            placeholder="Chọn ngày bắt đầu"
           />
         </div>
 
         <div class="mb-3">
-          <label for="endAt" class="form-label text-capitalize">endAt</label>
+          <label for="endAt" class="form-label text-capitalize">Ngày kết thúc</label>
           <input
             id="endAt"
             v-model="formData.endAt"
             type="datetime-local"
             class="form-control"
-            placeholder="`Enter endAt`"
+            placeholder="Chọn ngày kết thúc"
           />
         </div>
 
@@ -138,7 +140,7 @@
             :value="true"
             v-model="formData.active"
           />
-          <label class="form-check-label" for="isActiveTrue">Active</label>
+          <label class="form-check-label" for="isActiveTrue">Hoạt động</label>
 
           <input
             class="form-check-input"
@@ -147,11 +149,11 @@
             :value="false"
             v-model="formData.active"
           />
-          <label class="form-check-label" for="isActiveFalse">Inactive</label>
+          <label class="form-check-label" for="isActiveFalse">Không hoạt động</label>
         </div>
         <!-- Base Product Selection -->
         <div class="mb-3">
-          <label class="form-label text-capitalize">Select Base Product</label>
+          <label class="form-label text-capitalize">Chọn sản phẩm gốc</label>
           <div class="dropdown">
             <button
               class="btn btn-outline-secondary dropdown-toggle w-100"
@@ -168,7 +170,7 @@
                 />
                 {{ selectedProduct.name }} ({{ selectedProduct.material }})
               </span>
-              <span v-else>Select a product</span>
+              <span v-else>Chọn một sản phẩm</span>
             </button>
             <ul
               class="dropdown-menu"
@@ -200,29 +202,29 @@
 
         <!-- Base Product Information Display -->
         <div v-if="selectedProduct" class="card mt-3 shadow-sm p-3 rounded-4">
-          <h5 class="mb-3">Selected Base Product Information</h5>
+          <h5 class="mb-3">Thông tin sản phẩm gốc đã chọn</h5>
           <div class="row">
             <div class="col-md-6 mb-2">
-              <strong>Name:</strong> {{ selectedProduct.name }}
+              <strong>Tên:</strong> {{ selectedProduct.name }}
             </div>
             <div class="col-md-6 mb-2">
-              <strong>Material:</strong> {{ selectedProduct.material }}
+              <strong>Chất liệu:</strong> {{ selectedProduct.material }}
             </div>
             <div class="col-md-6 mb-2">
-              <strong>Quantity:</strong> {{ selectedProduct.qty }}
+              <strong>Số lượng:</strong> {{ selectedProduct.qty }}
             </div>
             <div class="col-md-6 mb-2">
-              <strong>Category:</strong>
+              <strong>Danh mục:</strong>
               {{
                 categoriesDropDownList.find((c) => c.id === selectedProduct.categoryId)
-                  ?.name || "Unknown"
+                  ?.name || "Không xác định"
               }}
             </div>
           </div>
 
           <!-- Required Quantity Input -->
           <div class="mt-3" v-if="formData.type !== 'DISCOUNT'">
-            <label class="form-label">Required Quantity for this Base Product:</label>
+            <label class="form-label">Số lượng yêu cầu cho sản phẩm gốc này:</label>
             <input
               type="number"
               class="form-control"
@@ -231,17 +233,17 @@
                 updateBaseProductRequiredQuantity(selectedProduct.id, $event.target.value)
               "
               min="1"
-              placeholder="Enter required quantity"
+              placeholder="Nhập số lượng yêu cầu"
             />
             <small class="form-text text-muted">
-              Minimum quantity required to apply this promotion for this base product
+              Số lượng tối thiểu cần thiết để áp dụng khuyến mãi này cho sản phẩm gốc này
             </small>
           </div>
         </div>
 
         <!-- Product Items List -->
         <div v-if="selectedProduct && productItemsList.length > 0" class="mt-4">
-          <h5 class="mb-3">Product Items for {{ selectedProduct.name }}:</h5>
+          <h5 class="mb-3">Các mặt hàng của {{ selectedProduct.name }}:</h5>
           <div class="row">
             <div v-for="item in productItemsList" :key="item.id" class="col-md-6 mb-3">
               <div
@@ -265,9 +267,11 @@
                       <p class="card-text mb-1">
                         <small>SKU: {{ item.sku }}</small
                         ><br />
-                        <small>Cost: {{ item.cost?.toLocaleString() }} VND</small> <br />
-                        <small>Price: {{ item.price?.toLocaleString() }} VND</small><br />
-                        <small>Quantity: {{ item.qty }}</small>
+                        <small>Giá vốn: {{ item.cost?.toLocaleString() }} VND</small>
+                        <br />
+                        <small>Giá bán: {{ item.price?.toLocaleString() }} VND</small
+                        ><br />
+                        <small>Số lượng: {{ item.qty }}</small>
                       </p>
 
                       <!-- Gift Toggle -->
@@ -286,7 +290,7 @@
                         <label class="form-check-label" :for="'gift-' + item.id">
                           <small class="text-success">
                             <i class="bi bi-gift me-1"></i>
-                            Mark as Gift
+                            Đánh dấu là quà tặng
                           </small>
                         </label>
                       </div>
@@ -315,7 +319,7 @@
           <div class="selected-items-panel">
             <h5 class="mb-3">
               <i class="bi bi-cart me-2"></i>
-              Selected Items for Promotion ({{ selectedItemsFromAllBases.length }})
+              Các mặt hàng đã chọn cho khuyến mãi ({{ selectedItemsFromAllBases.length }})
             </h5>
             <div class="selected-items-container">
               <div
@@ -331,13 +335,13 @@
                 <div class="chip-content">
                   <span class="chip-name">{{ item.name }}</span>
                   <small class="chip-sku">{{ item.sku }}</small>
-                  <small class="chip-base">Base: {{ item.baseProduct?.name }}</small>
+                  <small class="chip-base">Gốc: {{ item.baseProduct?.name }}</small>
                   <small
                     v-if="item.isGift && formData.type !== 'DISCOUNT'"
                     class="chip-gift"
                   >
                     <i class="bi bi-gift me-1"></i>
-                    Gift Item
+                    Quà tặng
                   </small>
                 </div>
                 <button
@@ -356,12 +360,12 @@
                 @click="clearAllSelections"
               >
                 <i class="bi bi-trash me-1"></i>
-                Clear All
+                Xóa tất cả
               </button>
               <div class="text-white">
                 <small>
                   <i class="bi bi-info-circle me-1"></i>
-                  Items from {{ getUniqueBaseProductCount() }} base product(s)
+                  Mặt hàng từ {{ getUniqueBaseProductCount() }} sản phẩm gốc
                 </small>
               </div>
             </div>
@@ -374,7 +378,7 @@
             <div class="card-header bg-primary text-white">
               <h6 class="mb-0">
                 <i class="bi bi-bar-chart me-2"></i>
-                Selection Summary
+                Tóm tắt lựa chọn
               </h6>
             </div>
             <div class="card-body">
@@ -393,12 +397,12 @@
                     <div class="summary-content">
                       <h6 class="summary-title">{{ group.baseProduct.name }}</h6>
                       <p class="summary-count">
-                        {{ group.items.length }} item(s) selected
+                        {{ group.items.length }} mặt hàng đã chọn
                       </p>
                       <p class="summary-required-qty" v-if="formData.type !== 'DISCOUNT'">
                         <small class="text-primary">
                           <i class="bi bi-123 me-1"></i>
-                          Required Qty:
+                          Số lượng yêu cầu:
                           {{ getBaseProductRequiredQuantity(group.baseProduct.id) || 1 }}
                         </small>
                       </p>
@@ -408,7 +412,7 @@
                       >
                         <small class="text-success">
                           <i class="bi bi-gift me-1"></i>
-                          {{ group.giftCount }} gift item(s)
+                          {{ group.giftCount }} quà tặng
                         </small>
                       </p>
                       <button
@@ -416,7 +420,7 @@
                         class="btn btn-sm btn-outline-primary"
                         @click="selectBaseProduct(group.baseProduct)"
                       >
-                        View Items
+                        Xem mặt hàng
                       </button>
                     </div>
                   </div>
@@ -432,7 +436,7 @@
             <div class="card-header bg-info text-white">
               <h6 class="mb-0">
                 <i class="bi bi-info-circle me-2"></i>
-                Promotion Requirements Overview
+                Tổng quan yêu cầu khuyến mãi
               </h6>
             </div>
             <div class="card-body">
@@ -440,7 +444,7 @@
                 <div class="col-md-6">
                   <h6 class="text-primary">
                     <i class="bi bi-layers me-2"></i>
-                    Base Products Requirements
+                    Yêu cầu sản phẩm gốc
                   </h6>
                   <ul class="list-unstyled">
                     <li
@@ -452,12 +456,12 @@
                       <br />
                       <small class="text-muted">
                         <span v-if="formData.type !== 'DISCOUNT'">
-                          Min Quantity:
+                          Số lượng tối thiểu:
                           {{ getBaseProductRequiredQuantity(group.baseProduct.id) }} |
                         </span>
-                        Items: {{ group.items.length
+                        Mặt hàng: {{ group.items.length
                         }}<span v-if="formData.type !== 'DISCOUNT'">
-                          | Gifts: {{ group.giftCount }}</span
+                          | Quà tặng: {{ group.giftCount }}</span
                         >
                       </small>
                     </li>
@@ -466,7 +470,7 @@
                 <div class="col-md-6" v-if="formData.type !== 'DISCOUNT'">
                   <h6 class="text-success">
                     <i class="bi bi-gift me-2"></i>
-                    Gift Items Summary
+                    Tóm tắt quà tặng
                   </h6>
                   <div v-if="getGiftItems().length > 0">
                     <ul class="list-unstyled">
@@ -483,7 +487,7 @@
                     </ul>
                   </div>
                   <div v-else>
-                    <small class="text-muted">No gift items selected</small>
+                    <small class="text-muted">Không có quà tặng nào được chọn</small>
                   </div>
                 </div>
               </div>
@@ -492,9 +496,9 @@
         </div>
 
         <button type="submit" :disable="props.action === 'view'" class="btn btn-primary">
-          <span v-if="props.action === 'create'">Create</span>
-          <span v-else-if="props.action === 'create'">Create</span>
-          <span v-else>Update</span>
+          <span v-if="props.action === 'create'">Tạo mới</span>
+          <span v-else-if="props.action === 'create'">Tạo mới</span>
+          <span v-else>Cập nhật</span>
         </button>
       </form>
     </div>

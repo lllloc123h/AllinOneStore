@@ -470,34 +470,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- Promotion Info Cards -->
-                <div class="row mt-3">
-                  <div class="col-md-6">
-                    <div class="promotion-card combo-card">
-                      <div class="promotion-icon">
-                        <i class="bi bi-gift"></i>
-                      </div>
-                      <div class="promotion-info">
-                        <h6>COMBO SALE</h6>
-                        <p>T4 - T7: Mua 2 tặng 1</p>
-                        <span class="badge bg-warning">Đang diễn ra</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="promotion-card discount-card">
-                      <div class="promotion-icon">
-                        <i class="bi bi-percent"></i>
-                      </div>
-                      <div class="promotion-info">
-                        <h6>DISCOUNT 30%</h6>
-                        <p>T9 - T11: Giảm giá toàn bộ</p>
-                        <span class="badge bg-danger">Sắp diễn ra</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <!-- Detailed Events Section -->
                 <div
                   v-if="

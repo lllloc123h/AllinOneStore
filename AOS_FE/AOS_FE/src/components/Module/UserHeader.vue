@@ -290,12 +290,16 @@ function formatCell(item) {
   }
 }
 async function getNotification() {
-  try {
-    const response = await api.get(`/user/Message`);
-    messages.value = response.data.content;
-    messageCount.value = response.data.totalElements;
-  } catch (error) {
-    console.error("Error fetching notifications:", error);
+  if (authService.isLogged() == true) {
+    try {
+      const response = await api.get(`/user/Message`);
+      messages.value = response.data.content;
+      messageCount.value = response.data.totalElements;
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  } else {
+    return;
   }
 }
 onMounted(getNotification);
