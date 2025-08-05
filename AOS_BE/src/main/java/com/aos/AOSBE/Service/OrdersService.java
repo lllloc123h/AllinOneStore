@@ -130,47 +130,47 @@ public class OrdersService {
 					throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
 				}
 			}
-			// Lưu đơn hàng trước để có ID (vì OrderItems cần `orders`)
+			// Lưu đơn hàng trước để có ID (vì OrderItems cần orders)
 	        Orders savedOrder = ordersRepository.save(orders);
 
-	        // Kiểm tra và xử lý từng OrderItem
-	        if (orders.getOrderItems() != null && !orders.getOrderItems().isEmpty()) {
-	            for (OrderItems item : orders.getOrderItems()) {
-	                // Gắn đơn hàng cho từng item
-	                item.setOrders(savedOrder);
-
-	                // Lấy productItem để cập nhật tồn kho
-	                ProductItems productItem = item.getProductItems();
-
-	                if (productItem == null) {
-	                    throw new IllegalArgumentException("Không tìm thấy sản phẩm cho đơn hàng.");
-	                }
-
-	                int orderedQty = item.getQty();
-	                int currentStock = productItem.getQty();
-
-	                if (orderedQty > currentStock) {
-	                    throw new IllegalStateException("Sản phẩm " + productItem.getId() + " không đủ tồn kho.");
-	                }
-
-	                productItem.setQty(currentStock - orderedQty);
-
-	                // Lưu lại cập nhật tồn kho
-	                productItemsRepository.save(productItem);
-	            }
-
-	            // Lưu tất cả order items
-	            orderItemsRepository.saveAll(orders.getOrderItems());
-	        }
-
-			try {
-				// Gọi GHN để tạo vận đơn và lấy order_code
-				String ghnOrderCode = ghnService.createGhnOrderCode();
-				savedOrder.setGhnOrderCode(ghnOrderCode);
-				ordersRepository.save(savedOrder); // Lưu lại order_code vào DB
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//	        // Kiểm tra và xử lý từng OrderItem
+//	        if (orders.getOrderItems() != null && !orders.getOrderItems().isEmpty()) {
+//	            for (OrderItems item : orders.getOrderItems()) {
+//	                // Gắn đơn hàng cho từng item
+//	                item.setOrders(savedOrder);
+//
+//	                // Lấy productItem để cập nhật tồn kho
+//	                ProductItems productItem = item.getProductItems();
+//
+//	                if (productItem == null) {
+//	                    throw new IllegalArgumentException("Không tìm thấy sản phẩm cho đơn hàng.");
+//	                }
+//
+//	                int orderedQty = item.getQty();
+//	                int currentStock = productItem.getQty();
+//
+//	                if (orderedQty > currentStock) {
+//	                    throw new IllegalStateException("Sản phẩm " + productItem.getId() + " không đủ tồn kho.");
+//	                }
+//
+//	                productItem.setQty(currentStock - orderedQty);
+//
+//	                // Lưu lại cập nhật tồn kho
+//	                productItemsRepository.save(productItem);
+//	            }
+//
+//	            // Lưu tất cả order items
+//	            orderItemsRepository.saveAll(orders.getOrderItems());
+//	        }
+//
+//			try {
+//				// Gọi GHN để tạo vận đơn và lấy order_code
+//				String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(savedOrder);
+//				savedOrder.setGhnOrderCode(ghnOrderCode);
+//				ordersRepository.save(savedOrder); // Lưu lại order_code vào DB
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 
 
 	        return savedOrder;
@@ -333,5 +333,11 @@ public class OrdersService {
 	        return new ByteArrayInputStream(out.toByteArray());
 	    }
 	}
+
+	@Transactional
+	public List<Orders> getOrdersWithoutGhnCode() {
+		return ordersRepository.findByGhnOrderCodeIsNull();
+	}
+
 
 }

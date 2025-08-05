@@ -121,17 +121,30 @@ public class OrdersAPI {
 	public ResponseEntity<?> userAddNewOrders(@RequestBody OrdersDTOS entity) {
 		try {
 			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
-			String ghnOrderCode = ghnService.createGhnOrderCode();
 
-			// 👉 Gán mã GHN vào đơn hàng nếu cần
-			saved.setGhnOrderCode(ghnOrderCode); // Nếu bạn có field orderCode trong entity
+			List<OrderItems> items = entity.getProducts().stream().map(productDTO -> {
+				OrderItems item = orderItemsMapper.mapperToObject(productDTO);
+				item.setOrders(saved);
+				return item;
+			}).collect(Collectors.toList());
+			orderItemsService.orderItemsSaveAll(items);
+
+			// Gắn lại items vào đơn để gửi GHN
+			saved.setOrderItems(items);
+
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
+			System.out.println("Số lượng sản phẩm gửi GHN: " + saved.getOrderItems().size());
+			saved.setGhnOrderCode(ghnOrderCode);
 			ordersService.ordersSave(saved);
 
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra", "error", e.getMessage()));
 		}
 	}
+
+
 
 	@PutMapping("/admin/Orders/{id}")
 	public ResponseEntity<?> updateOrders(@PathVariable int id, @RequestBody OrdersDTOS entity) {
@@ -182,9 +195,14 @@ public class OrdersAPI {
 				orderItem.setOrders(saved);
 				return orderItem;
 			}).collect(Collectors.toList());
-
-			// Lưu các item
+				
 			orderItemsService.orderItemsSaveAll(orderItems);
+
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
+//			System.out.println("Số lượng sản phẩm gửi GHN: " + saved.getOrderItems().size());
+			saved.setGhnOrderCode(ghnOrderCode);
+			ordersService.ordersSave(saved);
+
 
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
@@ -370,4 +388,37 @@ public class OrdersAPI {
 	        .headers(headers)
 	        .body(resource);
 	}
+	
+	@PostMapping("/admin/Orders/test-ghn/{orderId}")
+	public ResponseEntity<?> testGhnOrderCreation(@PathVariable int orderId) {
+		try {
+			Optional<Orders> optionalOrder = ordersService.ordersFindById(orderId);
+			if (optionalOrder.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy đơn hàng"));
+			}
+
+			Orders order = optionalOrder.get();
+
+			// Lấy OrderItems từ order
+			List<OrderItems> items = order.getOrderItems();
+			if (items == null || items.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Đơn hàng không có sản phẩm nào"));
+			}
+
+			// Gửi đơn sang GHN
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order);
+
+			order.setGhnOrderCode(ghnOrderCode);
+			ordersService.ordersSave(order);
+
+			return ResponseEntity.ok(Map.of("message", "Tạo đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
+		} catch (Exception e) {
+			e.printStackTrace(); // In stack trace vào console log
+			return ResponseEntity.badRequest().body(Map.of(
+				"message", "Lỗi tạo đơn GHN",
+				"error", e.getMessage() != null ? e.getMessage() : "Không rõ lỗi"
+			));
+		}
+	}
+
 }

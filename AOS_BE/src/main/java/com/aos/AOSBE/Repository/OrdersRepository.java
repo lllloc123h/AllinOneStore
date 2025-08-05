@@ -91,4 +91,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 
 	List<Orders> findAllByAccountsId(int accountId);
 
+	List<Orders> findByGhnOrderCodeIsNull();
+
 }
