@@ -110,8 +110,9 @@ public class ProductItemsAPI {
 	@PostMapping("/admin/ProductItems")
 	public ResponseEntity<?> addNewProductItems(@RequestBody ProductItemsDTOS entity) {
 		try {
-
-			ProductItems saved = productItemsService.productItemsSave(productItemsMapper.mapperToObject(entity));
+			ProductItems mapped = productItemsMapper.mapperToObject(entity);
+			mapped.setId(null);
+			ProductItems saved = productItemsService.productItemsSave(mapped);
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));

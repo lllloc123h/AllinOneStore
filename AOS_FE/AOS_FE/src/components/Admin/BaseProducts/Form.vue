@@ -186,7 +186,11 @@
               index == 0 ? '- ' : '' }}</span>
           </div>
         </div>
-
+        <div class="d-flex flex-column gap-2">
+          <button class="btn btn-sm btn-outline-primary" @click="saveProductItems()">
+            Lưu biến thể
+          </button>
+        </div>
         <div class="variant-preview mt-4">
           <h5 class="mb-3">Danh sách biến thể đã thêm:</h5>
           <div v-if="list.length === 0" class="text-muted">
@@ -266,6 +270,7 @@ const selected = ref([]);
 const variantPrevieBeforeSaveBaseProduct = ref({});
 const combinations = ref({});
 
+const listProductItemsToSave = ref({});
 const expandedSections = ref(["category-0", "productItems-0", "variant-0", "price"]);
 const showModalToUpdateProductItems = ref(false)
 import { notification } from "ant-design-vue";
@@ -378,6 +383,54 @@ async function addToListVariantPreview() {
   combinations.value = generateVariantCombinations(variantPrevieBeforeSaveBaseProduct.value);
 
 }
+async function saveProductItems() {
+  listProductItemsToSave.value = combinations.value.map((item) => {
+    return ({
+      id: null,
+      baseId: props.id,
+      cost: 0,
+      price: 0,
+      turnBuy: 0,
+      description: "",
+      sku: item[1].signalSku + "-" + item[0].signalSku,
+      safetyStock: 0,
+      qty: 0,
+      sellStart: "",
+      sellEnd: "",
+      createdAt: "",
+      updatedAt: "",
+      imgPreview: "",
+      fileNameImgOfVariant: "",
+      images: [],
+      promotions: [],
+      isGift: false,
+      baseProducts: {},
+      imageUrl: "",
+      material: "",
+      name: "",
+      productItemsId: ""
+    })
+  }
+  )
+  try {
+    for (const productItems of listProductItemsToSave.value) {
+      const isContainSku = list.value.filter((condition) => {
+        return condition.sku.includes(productItems.sku);
+      });
+      console.log(productItems);
+      console.log(isContainSku);
+      if (isContainSku.length > 0) continue;
+      const response = await api.post(`/admin/ProductItems`, productItems);
+      console.log("Insert successful:", response.data);
+    }
+
+  } catch (error) {
+    console.error("Insert failed:", error);
+  }
+  console.log(listProductItemsToSave.value)
+
+}
+
 
 function generateVariantCombinations(groupedVariants) {
   const groupNames = Object.keys(groupedVariants);
@@ -398,7 +451,7 @@ function generateVariantCombinations(groupedVariants) {
       currentCombo.pop();
     }
   }
-
+  console.log(result)
   backtrack(0, []);
   return result;
 }
@@ -456,6 +509,7 @@ async function getProductItems(id) {
   if (!props.TableName) return;
   try {
     const response = await api.get("/admin/ProductItems/ByBaseProductId/" + id);
+    console.log(response.data.content)
     if (response.data.content && response.data.content.length > 0) {
       list.value = response.data.content.map((item) => {
         return {
