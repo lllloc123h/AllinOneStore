@@ -10,83 +10,100 @@
   <!-- Main Container -->
   <div class="main-container my-5">
     <!-- Empty State -->
-    <div v-if="orders.length === 0" class="empty-state">
+    <div v-if="filteredOrders.length === 0" class="empty-state">
       <div class="empty-icon">
         <i class="bi bi-bag-x"></i>
       </div>
-      <h3>Chưa có đơn hàng nào</h3>
-      <p>Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm ngay!</p>
+      <h3>Không có đơn hàng</h3>
+      <p>Không có đơn hàng ở trạng thái "{{ selectedTab }}"</p>
       <button class="btn-shop-now" @click="$router.push('/products')">
         <i class="bi bi-bag-plus me-2"></i>Mua sắm ngay
       </button>
     </div>
 
+        <!-- Order Tabs -->
+    <div class="order-tabs mb-4" v-if="orders.length > 0">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        :class="['tab-button', { active: selectedTab === tab }]"
+        @click="selectedTab = tab"
+      >
+        {{ tab }}
+      </button>
+    </div>
+
     <!-- Orders List -->
-    <div v-else class="orders-list">
-      <div v-for="(order, index) in orders" :key="index" class="order-card">
-        <!-- Order Header -->
-        <div class="order-header">
-          <div class="order-info">
-            <h3 class="order-code">
-              <i class="bi bi-receipt me-2"></i>{{ order.maVanDon }}
-            </h3>
-            <div class="order-meta">
-              <span class="order-date">
-                <i class="bi bi-calendar3 me-1"></i>{{ formatDate(order.ngayDat) }}
-              </span>
-              <span class="order-status" :class="getStatusClass(order.trangThai)">
-                <i class="bi bi-circle-fill me-1"></i>{{ order.trangThai }}
-              </span>
-            </div>
-          </div>
-          <div class="order-total">
-            <span class="total-label">Tổng tiền</span>
-            <span class="total-amount">{{ formatMoney(order.tongTien) }}</span>
-          </div>
-        </div>
-
-        <!-- Products Section -->
-        <div class="products-section">
-          <h4 class="section-title">
-            <i class="bi bi-box me-2"></i>Sản phẩm ({{ order.sanPham.length }})
-          </h4>
-          <div class="products-grid">
-            <div v-for="(sp, i) in order.sanPham" :key="i" class="product-item">
-              <div class="product-image">
-                <img :src="sp.anh" :alt="sp.ten" />
-              </div>
-              <div class="product-info">
-                <h5 class="product-name">{{ sp.ten }}</h5>
-                <div class="product-details">
-                  <span class="quantity">SL: {{ sp.soLuong }}</span>
-                  <span class="price">{{ formatMoney(sp.gia) }}</span>
-                </div>
-                <div class="product-total">
-                  Thành tiền: <strong>{{ formatMoney(sp.gia * sp.soLuong) }}</strong>
-                </div>
+      <div class="orders-list" v-if="orders.length > 0 && filteredOrders.length > 0">
+        <div class="order-card" v-for="order in filteredOrders" :key="order.id">
+          <!-- Order Header -->
+          <div class="order-header">
+            <div class="order-info">
+              <h3 class="order-code">
+                <i class="bi bi-receipt me-2"></i>{{ order.maVanDon }}
+              </h3>
+              <div class="order-meta">
+                <span class="order-date">
+                  <i class="bi bi-calendar3 me-1"></i>{{ formatDate(order.ngayDat) }}
+                </span>
+                <span class="order-status" :class="getStatusClass(order.trangThai)">
+                  <i class="bi bi-circle-fill me-1"></i>{{ order.trangThai }}
+                </span>
               </div>
             </div>
+            <div class="order-total">
+              <span class="total-label">Tổng tiền</span>
+              <span class="total-amount">{{ formatMoney(order.tongTien) }}</span>
+            </div>
           </div>
-        </div>
 
-        <!-- Order Actions -->
-        <div class="order-actions">
-          <button class="btn-detail" @click="goToOrder(order.id)">
-            <i class="bi bi-eye me-2"></i>Xem chi tiết
-          </button>
-          <button class="btn-reorder" @click="reorder(order)">
-            <i class="bi bi-arrow-repeat me-2"></i>Đặt lại
-          </button>
+          <!-- Products Section -->
+          <div class="products-section">
+            <h4 class="section-title">
+              <i class="bi bi-box me-2"></i>Sản phẩm ({{ order.sanPham.length }})
+            </h4>
+            <div class="products-grid">
+              <div
+                v-for="(sp, i) in order.sanPham"
+                :key="i"
+                class="product-item"
+              >
+                <div class="product-image">
+                  <img :src="sp.anh" :alt="sp.ten" />
+                </div>
+                <div class="product-info">
+                  <h5 class="product-name">{{ sp.ten }}</h5>
+                  <div class="product-details">
+                    <span class="quantity">SL: {{ sp.soLuong }}</span>
+                    <span class="price">{{ formatMoney(sp.gia) }}</span>
+                  </div>
+                  <div class="product-total">
+                    Thành tiền: <strong>{{ formatMoney(sp.gia * sp.soLuong) }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Actions -->
+          <div class="order-actions">
+            <button class="btn-detail" @click="goToOrder(order.id)">
+              <i class="bi bi-eye me-2"></i>Xem chi tiết
+            </button>
+            <button class="btn-reorder" @click="reorder(order)">
+              <i class="bi bi-arrow-repeat me-2"></i>Đặt lại
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+
 import { useRouter } from "vue-router";
 import api from "../../Configs/api";
+import { ref, onMounted, computed } from "vue";
 
 const orders = ref([]);
 const router = useRouter();
@@ -145,6 +162,29 @@ const formatDate = (d) => new Date(d).toLocaleDateString("vi-VN");
 const formatMoney = (v) => Number(v).toLocaleString("vi-VN") + "đ";
 
 onMounted(loadOrders);
+
+const selectedTab = ref("Chờ xác nhận");
+
+const tabs = [
+  "Chờ xác nhận",
+  "Chờ lấy hàng",
+  "Chờ giao hàng",
+  "Đã nhận hàng",
+  "Đã hủy",
+];
+
+const filteredOrders = computed(() => {
+  const tabMap = {
+    "Chờ xác nhận": "Chờ xác nhận",
+    "Chờ lấy hàng": "ready_to_pick",
+    "Chờ giao hàng": "picking",
+    "Đã nhận hàng": "Đã giao",
+    "Đã hủy": "Đã hủy",
+  };
+  const status = tabMap[selectedTab.value];
+  return orders.value.filter((o) => o.trangThai === status);
+});
+
 </script>
 
 <style scoped>
@@ -530,4 +570,32 @@ onMounted(loadOrders);
     justify-content: center;
   }
 }
+
+.order-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.tab-button {
+  background: #f1f1f1;
+  border: none;
+  border-radius: 20px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.tab-button:hover {
+  background: #e0e0e0;
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
 </style>
