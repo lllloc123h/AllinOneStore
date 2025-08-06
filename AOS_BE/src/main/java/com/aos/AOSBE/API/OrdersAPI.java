@@ -198,10 +198,10 @@ public class OrdersAPI {
 				
 			orderItemsService.orderItemsSaveAll(orderItems);
 
-			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
+// 			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
 //			System.out.println("Số lượng sản phẩm gửi GHN: " + saved.getOrderItems().size());
-			saved.setGhnOrderCode(ghnOrderCode);
-			ordersService.ordersSave(saved);
+// 			saved.setGhnOrderCode(ghnOrderCode);
+// 			ordersService.ordersSave(saved);
 
 
 			return ResponseEntity.ok(saved);
@@ -389,8 +389,8 @@ public class OrdersAPI {
 	        .body(resource);
 	}
 	
-	@PostMapping("/admin/Orders/test-ghn/{orderId}")
-	public ResponseEntity<?> testGhnOrderCreation(@PathVariable int orderId) {
+	@PostMapping("/admin/Orders/approve/{orderId}")
+	public ResponseEntity<?> approveAndSendToGhn(@PathVariable int orderId) {
 		try {
 			Optional<Orders> optionalOrder = ordersService.ordersFindById(orderId);
 			if (optionalOrder.isEmpty()) {
@@ -399,23 +399,29 @@ public class OrdersAPI {
 
 			Orders order = optionalOrder.get();
 
-			// Lấy OrderItems từ order
-			List<OrderItems> items = order.getOrderItems();
-			if (items == null || items.isEmpty()) {
+			if (order.getOrderItems() == null || order.getOrderItems().isEmpty()) {
 				return ResponseEntity.badRequest().body(Map.of("message", "Đơn hàng không có sản phẩm nào"));
 			}
 
-			// Gửi đơn sang GHN
-			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order);
+			if (order.getGhnOrderCode() != null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Đơn hàng đã được gửi GHN"));
+			}
 
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order);
 			order.setGhnOrderCode(ghnOrderCode);
+			order.setShippingStatus("Chờ lấy hàng");
+			// order.setIsApproved(true); // nếu có field này
+
 			ordersService.ordersSave(order);
 
-			return ResponseEntity.ok(Map.of("message", "Tạo đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
+			return ResponseEntity.ok(Map.of(
+				"message", "Đã duyệt và gửi đơn GHN thành công",
+				"ghnOrderCode", ghnOrderCode
+			));
 		} catch (Exception e) {
-			e.printStackTrace(); // In stack trace vào console log
+			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of(
-				"message", "Lỗi tạo đơn GHN",
+				"message", "Lỗi khi gửi đơn GHN",
 				"error", e.getMessage() != null ? e.getMessage() : "Không rõ lỗi"
 			));
 		}

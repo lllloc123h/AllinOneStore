@@ -55,7 +55,7 @@
               class="info-value status-badge"
               :class="getStatusClass(order.trangThai)"
             >
-              {{ order.trangThai }}
+              {{ getStatusText(order.trangThai) }}
             </span>
           </div>
         </div>
@@ -346,9 +346,9 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../Configs/api";
+import { computed } from 'vue';
 
 const order = ref(null);
-const statusIndex = ref(0);
 
 const steps = [
   { label: "Chờ xác nhận", icon: "bi bi-hourglass-split" },
@@ -359,19 +359,59 @@ const steps = [
 
 // GHN trả về nhiều trạng thái, cần map để khớp UI
 const statusMap = {
-  ready_to_pick: 1,
-  picking: 1,
-  picked: 2,
-  delivering: 2,
-  delivered: 3,
-  cancel: 0,
-  return: 0,
-  exception: 0,
+  // GHN Status → UI (Tiếng Việt)
+
+  // Chờ xác nhận (nội bộ, chưa gửi GHN)
+  "Chờ xác nhận": "Chờ xác nhận",
+
+  // Chờ lấy hàng
+  ready_to_pick: "Chờ lấy hàng",
+  picking: "Chờ lấy hàng",
+  money_collect_picking: "Chờ lấy hàng",
+
+  // Chờ giao hàng
+  picked: "Chờ giao hàng",
+  storing: "Chờ giao hàng",
+  sorting: "Chờ giao hàng",
+  transporting: "Chờ giao hàng",
+  delivering: "Chờ giao hàng",
+  money_collect_delivering: "Chờ giao hàng",
+
+  // Đã nhận hàng
+  delivered: "Đã nhận hàng",
+
+  // Đã hủy (gộp các trường hợp trả, lỗi, hủy, thất bại)
+  cancel: "Đã hủy",
+  return: "Đã hủy",
+  returning: "Đã hủy",
+  returned: "Đã hủy",
+  return_sorting: "Đã hủy",
+  return_transporting: "Đã hủy",
+  lost: "Đã hủy",
+  damage: "Đã hủy",
+  delivery_fail: "Đã hủy",
+  exception: "Đã hủy",
+
+};
+
+function getStatusText(status) {
+  return statusMap[status] || "Không xác định";
+}
+
+const statusToIndex = {
   "Chờ xác nhận": 0,
   "Chờ lấy hàng": 1,
   "Chờ giao hàng": 2,
   "Đã nhận hàng": 3,
+  "Đã hủy": 4,
 };
+
+// Dùng trạng thái hiện tại để xác định bước hiện tại
+const statusIndex = computed(() => {
+  const rawStatus = order.value?.trangThai;
+  const viStatus = statusMap[rawStatus] || "Không xác định";
+  return statusToIndex[viStatus] ?? -1;
+});
 
 const route = useRoute();
 const maDon = route.params.id;
