@@ -102,50 +102,45 @@
                                 </div>
 
                                 <!-- Coupon Section -->
-                                <div class="coupon-section">
-                                    <div class="section-label">
-                                        <i class="bi bi-percent me-2"></i>
-                                        Mã giảm giá
-                                    </div>
+                                <div class="coupon-section card p-4 mb-4 shadow-sm rounded-4">
+                                    <h5 class="mb-3"><i class="bi bi-percent me-2"></i> Chọn Mã Ưu Đãi</h5>
 
-                                    <div class="coupon-input-group">
-                                        <div class="input-wrapper">
-                                            <i class="bi bi-tag input-icon"></i>
-                                            <input v-model="couponCodeInput" type="text" class="coupon-input"
-                                                placeholder="Nhập mã giảm giá..." />
-                                            <button class="apply-coupon-btn" @click="applyCoupon">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                Áp dụng
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <button @click="openFreeshipModal" class="btn btn-outline-primary w-100">
+                                                🚚 Chọn mã miễn phí vận chuyển
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button @click="openDiscountModal" class="btn btn-outline-success w-100">
+                                                💸 Chọn mã giảm giá đơn hàng
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div v-if="couponError" class="coupon-message error">
-                                        <i class="bi bi-exclamation-circle me-2"></i>
-                                        {{ couponError }}
-                                    </div>
-                                    <div v-else-if="isCouponApplicable" class="coupon-message success">
-                                        <i class="bi bi-check-circle me-2"></i>
-                                        Đã áp dụng mã: {{ selectedCoupon.code }} -
-                                        <span v-if="selectedCoupon.discountType === 'FREESHIP'">
-                                            Miễn phí vận chuyển lên đến {{ selectedCoupon.discountValue.toLocaleString()
-                                            }}₫
-                                        </span>
-                                        <span v-else-if="selectedCoupon.discountType === 'PERCENT'">
-                                            Giảm {{ selectedCoupon.discountValue }}%, tối đa {{
-                                                selectedCoupon.maxDiscountAmount?.toLocaleString?.() || 0 }}₫
-                                        </span>
-                                        <span v-else>
-                                            Giảm {{ selectedCoupon.discountValue.toLocaleString() }}₫
-                                        </span>
-                                    </div>
-                                    <div v-else-if="selectedCoupon" class="coupon-message warning">
-                                        <i class="bi bi-info-circle me-2"></i>
-                                        Đơn hàng chưa đủ {{ selectedCoupon.minOrderAmount?.toLocaleString?.() || 0 }}₫
-                                        để
-                                        áp dụng mã
+                                    <div v-if="selectedFreeshipCoupon || selectedDiscountCoupon"
+                                        class="alert alert-success mt-2" style="font-size: 0.95rem">
+                                        <div v-if="selectedFreeshipCoupon">
+                                            🚚 Đã áp dụng mã freeship: <strong>{{ selectedFreeshipCoupon.code
+                                            }}</strong><br />
+                                            Miễn phí vận chuyển lên đến <strong>{{
+                                                formatCurrency(selectedFreeshipCoupon.discountValue) }}</strong>
+                                        </div>
+                                        <div v-if="selectedDiscountCoupon">
+                                            💸 Đã áp dụng mã giảm giá: <strong>{{ selectedDiscountCoupon.code
+                                            }}</strong><br />
+                                            Giảm <strong>{{ formatCurrency(selectedDiscountCoupon.discountValue)
+                                            }}</strong>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <CouponModal v-if="showFreeshipModal" title="Chọn mã freeship"
+                                    :coupons="freeshipCoupons" @close="closeModals" @select="selectCouponFromModal" />
+
+                                <CouponModal v-if="showDiscountModal" title="Chọn mã giảm giá"
+                                    :coupons="discountCoupons" @close="closeModals" @select="selectCouponFromModal" />
+
 
                                 <button class="next-step-btn" @click="currentTab = 1">
                                     <span>Tiếp tục</span>
@@ -423,8 +418,13 @@
                                         <span class="price-label">Phí vận chuyển:</span>
                                         <span class="price-value">{{ shippingFee.toLocaleString() }}₫</span>
                                     </div>
-                                    <div class="price-row discount">
-                                        <span class="price-label">Giảm giá:</span>
+                                    <div class="price-row discount" v-if="freeshipDiscount > 0">
+                                        <span class="price-label">Giảm phí vận chuyển:</span>
+                                        <span class="price-value">-{{ freeshipDiscount.toLocaleString() }}₫</span>
+                                    </div>
+
+                                    <div class="price-row discount" v-if="discountAmount > 0">
+                                        <span class="price-label">Giảm giá đơn hàng:</span>
                                         <span class="price-value">-{{ discountAmount.toLocaleString() }}₫</span>
                                     </div>
                                 </div>
@@ -493,6 +493,7 @@ import api, { authService } from "../../Configs/api";
 import { onBeforeRouteLeave } from "vue-router";
 import { dropDown } from "../../Configs/DropDownList";
 import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
+import CouponModal from "../Module/CouponModal.vue";
 const dropdownShippingMethods = ref([]);
 const shippingMethod = ref(null);
 const router = useRouter();
@@ -507,6 +508,62 @@ const dropdownPaymentMethods = ref([]);
 const couponCodeInput = ref("");
 const couponError = ref("");
 const timeSpent = ref(0);
+const selectedFreeshipCoupon = ref(null);
+const selectedDiscountCoupon = ref(null);
+const showFreeshipModal = ref(false);
+const showDiscountModal = ref(false);
+
+const freeshipCoupons = ref([]);
+const discountCoupons = ref([]);
+
+const openFreeshipModal = async () => {
+    showFreeshipModal.value = true
+    await fetchCoupons()
+}
+
+const openDiscountModal = async () => {
+    showDiscountModal.value = true
+    await fetchCoupons()
+}
+
+const closeModals = () => {
+    showFreeshipModal.value = false
+    showDiscountModal.value = false
+}
+
+const fetchCoupons = async () => {
+    try {
+        const normalTotal = groupedProducts.value.normalItems.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0
+        );
+
+
+        const res = await api.get("/Coupons/available", {
+            params: {
+                hasCombo: Object.keys(groupedProducts.value.comboGroups).length > 0,
+                hasPromotionItems: groupedProducts.value.discountItems.length > 0,
+                normalTotal: normalTotal,
+                totalPrice: totalPrice.value
+            }
+        });
+
+        console.log("✅ Đã lấy mã giảm giá:", res.data)
+        freeshipCoupons.value = res.data.freeshipCoupons
+        discountCoupons.value = res.data.discountCoupons
+    } catch (err) {
+        console.error("Lỗi khi lấy mã giảm giá:", err)
+    }
+}
+
+function formatCurrency(value) {
+    if (!value && value !== 0) return '0đ';
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(value);
+}
+
 let timer = null;
 
 // Steps configuration
@@ -566,37 +623,34 @@ const totalPrice = computed(() => {
 });
 
 const discountAmount = computed(() => {
-    const coupon = selectedCoupon.value;
-    const minOrder = coupon?.minOrderAmount ?? 0;
-    if (!coupon || totalPrice.value < minOrder) return 0;
-
-    if (coupon.discountType === 'FREESHIP') {
-        // 🔧 Giảm tối đa = phí vận chuyển
-        return Math.min(coupon.discountValue ?? 0, shippingFee.value);
-    }
+    const coupon = selectedDiscountCoupon.value
+    const minOrder = coupon?.minOrderAmount ?? 0
+    if (!coupon || totalPrice.value < minOrder) return 0
 
     if (coupon.discountType === "PERCENT") {
         const normalPrice = groupedProducts.value.normalItems.reduce(
             (sum, item) => sum + item.price * item.quantity,
             0
-        );
-        const discount = ((coupon.discountValue ?? 0) / 100) * normalPrice;
+        )
+        const discount = ((coupon.discountValue ?? 0) / 100) * normalPrice
         return coupon.maxDiscountAmount != null
             ? Math.min(discount, coupon.maxDiscountAmount)
-            : discount;
+            : discount
     }
-    return coupon.discountValue ?? 0;
-});
 
-const isCouponApplicable = computed(() => {
-    const coupon = selectedCoupon.value;
-    if (!coupon) return false;
-    return totalPrice.value >= (coupon.minOrderAmount ?? 0);
-});
+    return coupon.discountValue ?? 0
+})
 
-const finalPrice = computed(
-    () => totalPrice.value - discountAmount.value + shippingFee.value
-);
+const freeshipDiscount = computed(() => {
+    const coupon = selectedFreeshipCoupon.value
+    const minOrder = coupon?.minOrderAmount ?? 0
+    if (!coupon || totalPrice.value < minOrder) return 0
+    return Math.min(coupon.discountValue ?? 0, shippingFee.value)
+})
+
+const finalPrice = computed(() =>
+    totalPrice.value - discountAmount.value + shippingFee.value - freeshipDiscount.value
+)
 
 const fullAddress = computed(() => {
     const addr = defaultAddressData.value;
@@ -619,36 +673,23 @@ const formattedLeadtime = computed(() => {
         day: "numeric"
     });
 });
-async function applyCoupon() {
-    couponError.value = "";
-    selectedCoupon.value = null;
-    if (!couponCodeInput.value) {
-        couponError.value = "Vui lòng nhập mã giảm giá.";
-        return;
+
+const selectCouponFromModal = (coupon) => {
+    if (coupon.discountType === "FREESHIP") {
+        selectedFreeshipCoupon.value = coupon
+    } else {
+        selectedDiscountCoupon.value = coupon
     }
-    // ✅ Tính lại combo hợp lệ & sản phẩm khuyến mãi
-    const hasCombo = Object.keys(groupedProducts.value.comboGroups).length > 0;
-    const hasPromotionItems = groupedProducts.value.discountItems.length > 0;
-    try {
-        const { data } = await api.get("/Coupons/validate", {
-            params: {
-                code: couponCodeInput.value,
-                hasCombo,
-                hasPromotionItems
-            },
-        });
-        selectedCoupon.value = data;
-        localStorage.setItem("selectedCoupon", JSON.stringify(data));
-    } catch (err) {
-        couponError.value = err.response?.data || "Mã giảm giá không hợp lệ.";
-        console.error(err);
-    }
+    couponCodeInput.value = coupon.code
+    couponError.value = ""
+    closeModals()
 }
+
 function buildOrderPayload() {
     return {
         address: defaultAddressData.value.id,
-        discountCouponCode: selectedCoupon.value?.code || null,
-        freeshipCouponCode: selectedCoupon.value?.discountType === "FREESHIP" ? selectedCoupon.value.code : null,
+        discountCouponCode: selectedDiscountCoupon.value?.code || null,
+        freeshipCouponCode: selectedFreeshipCoupon.value?.code || null,
         paymentMethodId: paymentMethod.value.id,
         shippingMethodId: shippingMethod.value.id,
         estimatedShippingFee: shippingFee.value,
@@ -888,6 +929,10 @@ watch(
     },
     { deep: true }
 );
+watch(() => selectedProducts.value, () => {
+    fetchCoupons();
+}, { deep: true });
+
 </script>
 
 <style scoped>
@@ -1729,6 +1774,29 @@ watch(
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {
