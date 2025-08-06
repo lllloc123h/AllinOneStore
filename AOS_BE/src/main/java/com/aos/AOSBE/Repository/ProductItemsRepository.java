@@ -113,7 +113,7 @@ public interface ProductItemsRepository
 				AND
 					bp.is_active = 1
 				AND
-					bp.qty > 0
+					qty > 0
 				GROUP BY
 						bp.id,
 						bp.name,
