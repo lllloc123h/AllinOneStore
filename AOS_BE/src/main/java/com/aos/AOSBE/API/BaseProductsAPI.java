@@ -136,10 +136,13 @@ public class BaseProductsAPI {
 		return ResponseEntity.ok(updated);
 	}
 
-	@DeleteMapping("/BaseProducts/{id}")
-	public ResponseEntity<Void> deleteBaseProducts(@PathVariable int id) {
-		baseProductsService.baseProductsDeleteById(id);
-		return ResponseEntity.noContent().build();
+	@DeleteMapping("/admin/BaseProducts/{id}")
+	public ResponseEntity<?> deleteBaseProducts(@PathVariable int id) {
+		try {
+			baseProductsService.baseProductsDeleteById(id);
+			return ResponseEntity.ok().build();
+		}catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
 	}
-
 }

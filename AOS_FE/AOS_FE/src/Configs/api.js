@@ -93,9 +93,9 @@ api.interceptors.response.use(
         localStorage.removeItem('user');
         // cartSize.value = 0;
         // tokenRef.value = null;
-        this.updateCart(0);
-        this.setTokenRef(null);
-        this.removeUserHeader();
+        authService.updateCart(0);
+        authService.setTokenRef(null);
+        authService.removeUserHeader();
         router.push('/login')
         setTimeout(() => {
           alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
