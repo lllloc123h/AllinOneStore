@@ -181,7 +181,7 @@ public class CouponsAPI {
 		        long usageCount;
 
 		        if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
-		        	usageCount = ordersRepository.countFreeshipCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+		            usageCount = ordersRepository.countFreeshipCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
 		        } else {
 		            usageCount = ordersRepository.countCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
 		        }
@@ -191,21 +191,24 @@ public class CouponsAPI {
 		        }
 		    }
 
-
+		    // G-DISCOUNT không áp dụng cho sản phẩm có voucher
 		    if ("G-DISCOUNT".equalsIgnoreCase(coupon.getDiscountType())) {
-		        boolean hasNormalItems = normalTotal > 0;
+		        if (!coupon.isAllowVoucher()) {
+		            // Chỉ áp dụng nếu có sản phẩm bình thường
+		            boolean hasNormalItems = normalTotal > 0;
+		            if (!hasNormalItems)
+		                return false;
 
-		        if (!hasNormalItems)
-		            return false;
-
-		        if (coupon.getMinOrderAmount() != null &&
-		            normalTotal < coupon.getMinOrderAmount().doubleValue())
-		            return false;
+		            // Kiểm tra giá trị tối thiểu của sản phẩm bình thường
+		            if (coupon.getMinOrderAmount() != null &&
+		                normalTotal < coupon.getMinOrderAmount())
+		                return false;
+		        }
 		    }
 
 		    if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
 		        if (coupon.getMinOrderAmount() != null &&
-		            totalPrice < coupon.getMinOrderAmount().doubleValue())
+		            totalPrice < coupon.getMinOrderAmount())
 		            return false;
 		    }
 

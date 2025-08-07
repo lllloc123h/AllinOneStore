@@ -122,15 +122,15 @@
                                         class="alert alert-success mt-2" style="font-size: 0.95rem">
                                         <div v-if="selectedFreeshipCoupon">
                                             🚚 Đã áp dụng mã freeship: <strong>{{ selectedFreeshipCoupon.code
-                                            }}</strong><br />
+                                                }}</strong><br />
                                             Miễn phí vận chuyển lên đến <strong>{{
                                                 formatCurrency(selectedFreeshipCoupon.discountValue) }}</strong>
                                         </div>
                                         <div v-if="selectedDiscountCoupon">
                                             💸 Đã áp dụng mã giảm giá: <strong>{{ selectedDiscountCoupon.code
-                                            }}</strong><br />
+                                                }}</strong><br />
                                             Giảm <strong>{{ formatCurrency(selectedDiscountCoupon.discountValue)
-                                            }}</strong>
+                                                }}</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -222,13 +222,13 @@
                                                 <span class="info-label">Người nhận:</span>
                                                 <span class="info-value">{{
                                                     defaultAddressData?.recipientName || "—"
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-label">Số điện thoại:</span>
                                                 <span class="info-value">{{
                                                     defaultAddressData?.phone || "—"
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-label">Địa chỉ:</span>
@@ -238,7 +238,7 @@
                                                 <span class="info-label">Giảm giá:</span>
                                                 <span class="info-value">{{
                                                     selectedCoupon?.code || "Không áp dụng"
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-label">Thanh toán:</span>
@@ -282,7 +282,7 @@
                                                 ✅ Giá combo:
                                                 <strong class="text-success">{{ (group.comboPrice *
                                                     group.comboQty).toLocaleString()
-                                                    }}₫</strong>
+                                                }}₫</strong>
                                             </div>
                                         </div>
 
@@ -305,7 +305,7 @@
                                                 </ul>
                                                 <div class="ps-3">
                                                     💰 Giá gốc: <s>{{ (item.price * item.quantity).toLocaleString()
-                                                        }}₫</s><br />
+                                                    }}₫</s><br />
                                                     🏷️ Tiết kiệm:
                                                     <span class="fw-semibold text-success">
                                                         {{ (item.promotions.discountValue *
@@ -339,7 +339,7 @@
                                                     ✅ Thành tiền:
                                                     <strong class="text-success">{{ (item.price *
                                                         item.quantity).toLocaleString()
-                                                        }}₫</strong>
+                                                    }}₫</strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -395,7 +395,7 @@
                                             <span>{{ item.name }} x{{ item.quantity }}</span>
                                             <span>{{ ((item.price - item.promotions.discountValue) *
                                                 item.quantity).toLocaleString()
-                                                }}₫</span>
+                                            }}₫</span>
                                         </div>
                                     </div>
 
@@ -901,19 +901,20 @@ const groupedProducts = computed(() => {
 
     // Filter comboGroups: loại nhóm chưa đủ số lượng
     for (const [groupId, group] of Object.entries(comboGroups)) {
-        const requiredQty = group.comboQty || group.items.length;
-        if (group.items.length < requiredQty) {
-            // Combo chưa đủ => đưa từng item vào normalItems
+        const totalComboItemQty = group.items.reduce((sum, item) => sum + item.quantity, 0);
+        const requiredQty = group.comboQty ?? totalComboItemQty;
+
+        if (totalComboItemQty < requiredQty) {
             group.items.forEach((item) => normalItems.push(item));
             delete comboGroups[groupId];
         } else {
-            // Combo đủ => tính giá gốc
             group.originalTotal = group.items.reduce(
                 (sum, item) => sum + item.price * item.quantity,
                 0
             );
         }
     }
+
 
     return {
         comboGroups,
