@@ -92,6 +92,7 @@ create table
 		total_spent decimal(18, 2) default 0,
 		total_order int default 0,
 		loyalty_point int default 0,
+		is_active bit default 1,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
@@ -188,6 +189,7 @@ create table
 		sku varchar(100),
 		safety_stock int default 0,
 		qty int default 0,
+		is_active bit default 1,
 		sell_start datetime default getdate (),
 		sell_end datetime default getdate (),
 		created_at datetime default getdate (),
@@ -635,25 +637,26 @@ VALUES
 
 
 
---	create TRIGGER trgg_auto_insert_history_cost_and_price
---    ON product_items
---    FOR INSERT, UPDATE
---    AS
---    BEGIN
---        SET NOCOUNT ON;
+create TRIGGER trgg_auto_insert_history_cost_and_price
+  ON product_items
+ FOR INSERT, UPDATE
+ AS
+    BEGIN
+        SET NOCOUNT ON;
 
---        -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
---        IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
---        BEGIN
---            INSERT INTO cost_histories(product_item_id, cost)
---            SELECT id, cost FROM inserted;
+       -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
+       IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
+        BEGIN
+           INSERT INTO cost_histories(product_item_id, cost)
+            SELECT id, cost FROM inserted;
 
---            INSERT INTO price_histories(product_item_id, price)
---            SELECT id, price FROM inserted;
+            INSERT INTO price_histories(product_item_id, price)
+            SELECT id, price FROM inserted;
 
---            PRINT N'Đã thêm lịch sử thay đổi giá';
---        END
---    END
+            PRINT N'Đã thêm lịch sử thay đổi giá';
+      END
+   END
+
 --UPDATE orders
 --SET order_code = 'L3BXXN'
 --WHERE id = 2;

@@ -28,7 +28,7 @@ public class PromotionProducts {
     @Column(name = "is_gift")
     private boolean isGift;
     @Column(name = "gift_option")
-    private boolean giftOption; // true: gift, false: discount
+    private String giftOption; // true: gift, false: discount
 
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)

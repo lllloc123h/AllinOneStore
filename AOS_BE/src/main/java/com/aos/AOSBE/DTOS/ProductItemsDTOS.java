@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.aos.AOSBE.Entity.BaseProducts;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ public class ProductItemsDTOS {
 	private Boolean isGift;
 	private List<PromotionsDTOS> promotions;
 	private List<ProductImagesDTOS> images;
+	private boolean isActive;
 
 	public ProductItemsDTOS(int id, double price, String description, String sku, int qty, Boolean isGift) {
 		this.id = id;

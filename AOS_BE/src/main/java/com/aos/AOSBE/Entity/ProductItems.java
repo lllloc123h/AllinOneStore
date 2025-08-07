@@ -57,4 +57,6 @@ public class ProductItems {
     @ManyToOne
     @JoinColumn(name = "base_id")
     private BaseProducts baseProducts;
+    @Column(name = "is_active")
+    private boolean isActive;
 }

@@ -145,4 +145,14 @@ public class BaseProductsAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
 		}
 	}
+	@GetMapping("admin/BaseProducts/search")
+	public ResponseEntity<?> searchBaseProducts(@RequestParam(defaultValue = "") String search,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
+		Page<BaseProducts> baseProducts = baseProductsService.findAllByNameContainingIgnoreCase(search, page, size);
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", baseProducts.getContent().stream().map(baseProductsMapper::mapper).collect(Collectors.toList()));
+		response.put("totalPages", baseProducts.getTotalPages());
+		return ResponseEntity.ok(baseProducts);
+	}
 }

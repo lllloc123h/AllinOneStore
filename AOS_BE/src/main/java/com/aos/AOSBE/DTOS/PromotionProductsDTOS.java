@@ -12,7 +12,7 @@ public class PromotionProductsDTOS {
     private int id;
     private int requireQty;
     private boolean isGift;
-    private boolean giftOption;
+    private String giftOption;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private ProductItemsDTOS productItem;

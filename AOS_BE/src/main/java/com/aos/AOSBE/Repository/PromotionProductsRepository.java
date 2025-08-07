@@ -17,6 +17,9 @@ import com.aos.AOSBE.Entity.PromotionProducts;
 public interface PromotionProductsRepository
 		extends JpaRepository<PromotionProducts, Integer>, JpaSpecificationExecutor<PromotionProducts> {
 	List<PromotionProducts> findByProductItems_Id(int productItemId);
+	@Query("SELECT pp FROM PromotionProducts pp WHERE pp.productItems.id = ?1 AND pp.promotions.isActive = true"
+			+ " AND pp.promotions.startAt <= CURRENT_TIMESTAMP AND pp.promotions.endAt >= CURRENT_TIMESTAMP")
+	List<PromotionProducts> findActivePromotionProductsByProductItemsId(int productItemId);
 
 	@Query("SELECT pp FROM PromotionProducts pp WHERE pp.promotions.id = ?1 ")
 	List<PromotionProducts> findPromotionProductsByPromotionId(int promotionId);
@@ -51,4 +54,8 @@ public interface PromotionProductsRepository
 		      AND pp.is_gift = 0
 		""", nativeQuery = true)
 		List<Map<String, Object>> findDiscountedProductsNative();
+@Query("SELECT pp FROM PromotionProducts pp WHERE pp.promotions.isActive = true " +
+		"AND pp.promotions.startAt <= CURRENT_TIMESTAMP AND pp.promotions.endAt >= CURRENT_TIMESTAMP " )
+	List<PromotionProducts> findActivePromotionProducts();
+
 }

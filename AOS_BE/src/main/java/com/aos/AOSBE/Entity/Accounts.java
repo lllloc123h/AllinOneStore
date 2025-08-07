@@ -63,4 +63,6 @@ public class Accounts {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Column(name = "is_active")
+    private boolean isActive;
 }

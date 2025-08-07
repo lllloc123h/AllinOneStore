@@ -151,346 +151,388 @@
           />
           <label class="form-check-label" for="isActiveFalse">Không hoạt động</label>
         </div>
-        <!-- Base Product Selection -->
+
+        <!-- Base Product Search -->
         <div class="mb-3">
-          <label class="form-label text-capitalize">Chọn sản phẩm gốc</label>
-          <div class="dropdown">
-            <button
-              class="btn btn-outline-secondary dropdown-toggle w-100"
-              type="button"
-              data-bs-toggle="dropdown"
-            >
-              <span v-if="selectedProduct">
-                <img
-                  :src="selectedProduct.mainImage"
-                  alt=""
-                  width="30"
-                  height="30"
-                  class="me-2"
-                />
-                {{ selectedProduct.name }} ({{ selectedProduct.material }})
-              </span>
-              <span v-else>Chọn một sản phẩm</span>
+          <label class="form-label">Tìm kiếm sản phẩm gốc</label>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                class="form-control"
+                v-model="searchQuery"
+                @keyup.enter="performSearch"
+                placeholder="Nhập tên sản phẩm để tìm kiếm..."
+              />
+              <button
+                type="button"
+                class="btn-search"
+                @click="performSearch"
+                :disabled="isSearching || searchQuery.trim().length < 2"
+              >
+                <i v-if="!isSearching" class="bi bi-search"></i>
+                <div v-else class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Đang tìm kiếm...</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Results - Now displayed as separate component below -->
+        <div v-if="searchResults.length > 0" class="search-results-section">
+          <div class="results-header">
+            <span>Kết quả tìm kiếm ({{ searchResults.length }})</span>
+            <button type="button" class="btn-close-search" @click="clearSearch">
+              <i class="bi bi-x"></i>
             </button>
-            <ul
-              class="dropdown-menu"
-              style="width: 100%; max-height: 300px; overflow-y: auto"
+          </div>
+          <div class="results-list">
+            <div
+              v-for="product in searchResults"
+              :key="product.id"
+              class="result-item"
+              :class="{ 'already-selected': isProductAlreadySelected(product.id) }"
+              @click="selectBaseProduct(product)"
             >
-              <li
-                v-for="product in dropDownListBaseProduct"
-                :key="product.id"
-                @click="selectBaseProduct(product)"
-                class="dropdown-item d-flex align-items-center"
-                style="cursor: pointer"
-              >
-                <img
-                  :src="product.mainImage"
-                  alt=""
-                  width="40"
-                  height="40"
-                  class="me-2"
-                />
-                <div>
-                  <strong>{{ product.name }}</strong
-                  ><br />
-                  <small class="text-muted">{{ product.material }}</small>
+              <img :src="product.mainImageUrl" alt="Product" class="result-image" />
+              <div class="result-content">
+                <h6 class="result-name">{{ product.name }}</h6>
+                <small class="result-material">{{ product.material }}</small>
+                <small class="result-category">{{
+                  product.categories?.name || "Chưa phân loại"
+                }}</small>
+                <div class="result-stats">
+                  <small class="result-rating">⭐ {{ product.rating }}/5</small>
+                  <small class="result-turnbuy">🔥 {{ product.turnBuy }} lượt mua</small>
                 </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Base Product Information Display -->
-        <div v-if="selectedProduct" class="card mt-3 shadow-sm p-3 rounded-4">
-          <h5 class="mb-3">Thông tin sản phẩm gốc đã chọn</h5>
-          <div class="row">
-            <div class="col-md-6 mb-2">
-              <strong>Tên:</strong> {{ selectedProduct.name }}
-            </div>
-            <div class="col-md-6 mb-2">
-              <strong>Chất liệu:</strong> {{ selectedProduct.material }}
-            </div>
-            <div class="col-md-6 mb-2">
-              <strong>Số lượng:</strong> {{ selectedProduct.qty }}
-            </div>
-            <div class="col-md-6 mb-2">
-              <strong>Danh mục:</strong>
-              {{
-                categoriesDropDownList.find((c) => c.id === selectedProduct.categoryId)
-                  ?.name || "Không xác định"
-              }}
-            </div>
-          </div>
-
-          <!-- Required Quantity Input -->
-          <div class="mt-3" v-if="formData.type !== 'DISCOUNT'">
-            <label class="form-label">Số lượng yêu cầu cho sản phẩm gốc này:</label>
-            <input
-              type="number"
-              class="form-control"
-              :value="getBaseProductRequiredQuantity(selectedProduct.id)"
-              @input="
-                updateBaseProductRequiredQuantity(selectedProduct.id, $event.target.value)
-              "
-              min="1"
-              placeholder="Nhập số lượng yêu cầu"
-            />
-            <small class="form-text text-muted">
-              Số lượng tối thiểu cần thiết để áp dụng khuyến mãi này cho sản phẩm gốc này
-            </small>
-          </div>
-        </div>
-
-        <!-- Product Items List -->
-        <div v-if="selectedProduct && productItemsList.length > 0" class="mt-4">
-          <h5 class="mb-3">Các mặt hàng của {{ selectedProduct.name }}:</h5>
-          <div class="row">
-            <div v-for="item in productItemsList" :key="item.id" class="col-md-6 mb-3">
-              <div
-                class="card shadow-sm product-item-card"
-                :class="{ 'selected-item': isItemSelected(item.id) }"
-                @click="toggleItemSelection(item)"
-                style="cursor: pointer"
-              >
-                <div class="card-body">
-                  <div class="d-flex align-items-center">
-                    <img
-                      :src="item.imageUrl || selectedProduct.mainImagePreviewImg"
-                      alt="Product Item"
-                      class="me-3 rounded"
-                      style="width: 60px; height: 60px; object-fit: cover"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="card-title mb-1">
-                        {{ item.baseProducts?.name || selectedProduct.name }}
-                      </h6>
-                      <p class="card-text mb-1">
-                        <small>SKU: {{ item.sku }}</small
-                        ><br />
-                        <small>Giá vốn: {{ item.cost?.toLocaleString() }} VND</small>
-                        <br />
-                        <small>Giá bán: {{ item.price?.toLocaleString() }} VND</small
-                        ><br />
-                        <small>Số lượng: {{ item.qty }}</small>
-                      </p>
-
-                      <!-- Gift Toggle -->
-                      <div
-                        class="form-check form-switch mt-2"
-                        v-if="isItemSelected(item.id) && formData.type !== 'DISCOUNT'"
-                      >
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          :id="'gift-' + item.id"
-                          :checked="isItemGift(item.id)"
-                          @change="toggleItemGift(item.id, $event.target.checked)"
-                          @click.stop
-                        />
-                        <label class="form-check-label" :for="'gift-' + item.id">
-                          <small class="text-success">
-                            <i class="bi bi-gift me-1"></i>
-                            Đánh dấu là quà tặng
-                          </small>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="selection-indicator">
-                      <i
-                        v-if="isItemSelected(item.id)"
-                        class="bi bi-check-circle-fill text-success"
-                        style="font-size: 1.5rem"
-                      ></i>
-                      <i
-                        v-else
-                        class="bi bi-circle text-muted"
-                        style="font-size: 1.5rem"
-                      ></i>
-                    </div>
-                  </div>
-                </div>
+              </div>
+              <div v-if="isProductAlreadySelected(product.id)" class="selected-indicator">
+                <i class="bi bi-check-circle-fill"></i>
+                <small>Đã chọn</small>
               </div>
             </div>
           </div>
+
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="pagination-container">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              :disabled="currentPage === 0 || isSearching"
+              @click="loadPreviousPage"
+            >
+              <span v-if="!isSearching">Trước</span>
+              <div v-else class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Đang tải...</span>
+              </div>
+            </button>
+            <span class="page-info">
+              {{ currentPage + 1 }} / {{ totalPages }}
+              <small v-if="searchResults.length > 0" class="text-muted">
+                ({{ searchResults.length }} sản phẩm)
+              </small>
+            </span>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              :disabled="currentPage >= totalPages - 1 || isSearching"
+              @click="loadNextPage"
+            >
+              <span v-if="!isSearching">Sau</span>
+              <div v-else class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Đang tải...</span>
+              </div>
+            </button>
+          </div>
         </div>
 
-        <!-- Selected Items Display Panel - Show all selected items from all bases -->
-        <div v-if="selectedItemsFromAllBases.length > 0" class="mt-4">
-          <div class="selected-items-panel">
-            <h5 class="mb-3">
-              <i class="bi bi-cart me-2"></i>
-              Các mặt hàng đã chọn cho khuyến mãi ({{ selectedItemsFromAllBases.length }})
-            </h5>
-            <div class="selected-items-container">
-              <div
-                v-for="item in selectedItemsFromAllBases"
-                :key="item.id"
-                class="selected-item-chip"
-              >
-                <img
-                  :src="item.imageUrl || item.baseProduct?.mainImagePreviewImg"
-                  alt="Selected Item"
-                  class="chip-image"
-                />
-                <div class="chip-content">
-                  <span class="chip-name">{{ item.name }}</span>
-                  <small class="chip-sku">{{ item.sku }}</small>
-                  <small class="chip-base">Gốc: {{ item.baseProduct?.name }}</small>
-                  <small
-                    v-if="item.isGift && formData.type !== 'DISCOUNT'"
-                    class="chip-gift"
+        <!-- Selected Base Products Display -->
+        <div v-if="selectedBaseProducts.length > 0" class="mb-3">
+          <label class="form-label">Sản phẩm gốc đã chọn</label>
+          <div class="selected-products">
+            <div
+              v-for="product in selectedBaseProducts"
+              :key="product.id"
+              class="selected-product-item"
+            >
+              <img
+                :src="product.mainImageUrl"
+                alt="Selected Product"
+                class="selected-image"
+              />
+              <div class="selected-content">
+                <h6 class="selected-name">{{ product.name }}</h6>
+                <div class="selected-details">
+                  <small class="selected-material"
+                    >Chất liệu: {{ product.material }}</small
                   >
-                    <i class="bi bi-gift me-1"></i>
-                    Quà tặng
+                  <small class="selected-category"
+                    >Danh mục: {{ product.categories?.name || "Chưa phân loại" }}</small
+                  >
+                </div>
+                <div class="selected-stats">
+                  <small class="selected-rating">⭐ {{ product.rating }}/5</small>
+                  <small class="selected-turnbuy"
+                    >🔥 {{ product.turnBuy }} lượt mua</small
+                  >
+                </div>
+                <div class="selected-product-status">
+                  <span
+                    class="product-status-badge"
+                    :class="{ active: product.active, inactive: !product.active }"
+                  >
+                    {{ product.active ? "Hoạt động" : "Không hoạt động" }}
+                  </span>
+                  <small class="selected-product-id">ID: {{ product.id }}</small>
+                </div>
+                <div class="variant-info">
+                  <small class="text-info">
+                    {{ getSelectedVariantsCount(product.id) }} biến thể đã chọn
                   </small>
                 </div>
+              </div>
+              <div class="product-actions">
                 <button
                   type="button"
-                  class="btn-remove"
-                  @click="removeItemFromAllSelections(item.id, item.baseProduct.id)"
+                  class="btn-select-variants"
+                  @click="openVariantsSelection(product)"
+                  :disabled="isLoadingVariants"
+                >
+                  <i class="bi bi-list-ul"></i>
+                  <span>Chọn biến thể</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn-remove-product"
+                  @click="removeBaseProduct(product.id)"
                 >
                   <i class="bi bi-x"></i>
                 </button>
               </div>
             </div>
-            <div class="mt-3 d-flex justify-content-between">
-              <button
-                type="button"
-                class="btn btn-outline-danger btn-sm"
-                @click="clearAllSelections"
-              >
-                <i class="bi bi-trash me-1"></i>
-                Xóa tất cả
-              </button>
-              <div class="text-white">
-                <small>
-                  <i class="bi bi-info-circle me-1"></i>
-                  Mặt hàng từ {{ getUniqueBaseProductCount() }} sản phẩm gốc
-                </small>
+          </div>
+        </div>
+
+        <!-- Selected Product Variants with Options -->
+        <div v-if="selectedProductVariants.length > 0" class="mb-3">
+          <label class="form-label">Biến thể sản phẩm và tùy chọn</label>
+          <div class="selected-variants">
+            <div
+              v-for="variant in selectedProductVariants"
+              :key="variant.idProductItem || variant.id"
+              class="variant-option-card"
+            >
+              <div class="variant-info-section">
+                <img
+                  v-if="variant.imageUrl"
+                  :src="variant.imageUrl"
+                  alt="Variant"
+                  class="variant-option-image"
+                />
+                <div class="variant-info-content">
+                  <h6 class="variant-option-name">{{ variant.name || variant.sku }}</h6>
+                  <small class="variant-option-sku">SKU: {{ variant.sku }}</small>
+                  <small class="variant-option-price">{{
+                    formatPrice(variant.price)
+                  }}</small>
+                </div>
+              </div>
+
+              <div class="variant-options-section">
+                <div class="option-row">
+                  <label class="option-label">Số lượng yêu cầu:</label>
+                  <input
+                    type="number"
+                    class="form-control option-input"
+                    v-model="
+                      variantOptions[variant.idProductItem || variant.id].require_qty
+                    "
+                    min="1"
+                    placeholder="Nhập số lượng"
+                  />
+                </div>
+
+                <div class="option-row">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      :id="'isGift_' + (variant.idProductItem || variant.id)"
+                      v-model="
+                        variantOptions[variant.idProductItem || variant.id].is_gift
+                      "
+                    />
+                    <label
+                      class="form-check-label"
+                      :for="'isGift_' + (variant.idProductItem || variant.id)"
+                    >
+                      Là quà tặng
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="variant-actions">
+                <button
+                  type="button"
+                  class="btn-remove-variant"
+                  @click="removeVariant(variant.idProductItem)"
+                >
+                  <i class="bi bi-x"></i>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Summary of selected base products -->
-        <div v-if="selectedItemsFromAllBases.length > 0" class="mt-4">
-          <div class="card border-primary">
-            <div class="card-header bg-primary text-white">
-              <h6 class="mb-0">
-                <i class="bi bi-bar-chart me-2"></i>
-                Tóm tắt lựa chọn
-              </h6>
+        <!-- Global Gift Option Selection - Show when there are 2 or more gifts -->
+        <div v-if="getTotalGiftsCount() >= 2" class="mb-3">
+          <label class="form-label">Tùy chọn quà tặng chung</label>
+          <div class="gift-option-container">
+            <select v-model="globalGiftOption" class="form-select">
+              <option value="">Chọn tùy chọn quà tặng</option>
+              <option
+                v-for="option in getAvailableGiftOptions()"
+                :key="option.value"
+                :value="option.value"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+            <small class="form-text text-muted">
+              Tùy chọn này áp dụng cho tất cả {{ getTotalGiftsCount() }} quà tặng đã chọn
+            </small>
+          </div>
+        </div>
+
+        <!-- Variants Selection Modal -->
+        <div
+          v-if="showVariantsModal"
+          class="modal-backdrop"
+          @click="showVariantsModal = false"
+        >
+          <div class="variants-modal" @click.stop>
+            <div class="modal-header">
+              <h5 class="modal-title">
+                Chọn biến thể cho: {{ currentBaseProduct?.name }}
+              </h5>
+              <button
+                type="button"
+                class="btn-close-modal"
+                @click="showVariantsModal = false"
+              >
+                <i class="bi bi-x"></i>
+              </button>
             </div>
-            <div class="card-body">
-              <div class="row">
+
+            <div class="modal-body">
+              <div v-if="isLoadingVariants" class="loading-container">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Đang tải biến thể...</span>
+                </div>
+                <p>Đang tải danh sách biến thể...</p>
+              </div>
+
+              <div
+                v-else-if="
+                  currentBaseProduct &&
+                  availableVariants[currentBaseProduct.id] &&
+                  availableVariants[currentBaseProduct.id].length > 0
+                "
+                class="variants-list"
+              >
                 <div
-                  v-for="(group, baseProductId) in getGroupedSelections()"
-                  :key="baseProductId"
-                  class="col-md-4 mb-3"
+                  v-for="variant in availableVariants[currentBaseProduct.id]"
+                  :key="variant.id"
+                  class="variant-item"
+                  :class="{
+                    selected: isVariantSelectedForCurrentProduct(variant.idProductItem),
+                  }"
                 >
-                  <div class="summary-card">
-                    <img
-                      :src="group.baseProduct.mainImage"
-                      alt="Base Product"
-                      class="summary-image"
+                  <div class="variant-checkbox">
+                    <input
+                      type="checkbox"
+                      :checked="isVariantSelectedForCurrentProduct(variant.idProductItem)"
+                      @click.stop
+                      @change="toggleProductVariant(variant)"
                     />
-                    <div class="summary-content">
-                      <h6 class="summary-title">{{ group.baseProduct.name }}</h6>
-                      <p class="summary-count">
-                        {{ group.items.length }} mặt hàng đã chọn
-                      </p>
-                      <p class="summary-required-qty" v-if="formData.type !== 'DISCOUNT'">
-                        <small class="text-primary">
-                          <i class="bi bi-123 me-1"></i>
-                          Số lượng yêu cầu:
-                          {{ getBaseProductRequiredQuantity(group.baseProduct.id) || 1 }}
-                        </small>
-                      </p>
-                      <p
-                        class="summary-gifts"
-                        v-if="group.giftCount > 0 && formData.type !== 'DISCOUNT'"
+                  </div>
+                  <img
+                    v-if="variant.imageUrl"
+                    :src="variant.imageUrl"
+                    alt="Variant"
+                    class="variant-image"
+                  />
+                  <div class="variant-content">
+                    <h6 class="variant-name">{{ variant.name || variant.sku }}</h6>
+                    <div class="variant-details">
+                      <small class="variant-sku">SKU: {{ variant.sku }}</small>
+
+                      <small class="variant-price">{{
+                        formatPrice(variant.price)
+                      }}</small>
+                      <small class="variant-cost"
+                        >Cost: {{ formatPrice(variant.cost) }}</small
                       >
-                        <small class="text-success">
-                          <i class="bi bi-gift me-1"></i>
-                          {{ group.giftCount }} quà tặng
-                        </small>
-                      </p>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        @click="selectBaseProduct(group.baseProduct)"
+                    </div>
+                    <div class="variant-stock-info">
+                      <small class="variant-qty">Tồn kho: {{ variant.qty }}</small>
+                      <small class="variant-safety"
+                        >An toàn: {{ variant.safetyStock }}</small
                       >
-                        Xem mặt hàng
-                      </button>
+                      <small class="variant-rating">⭐ {{ variant.rating }}/5</small>
+                      <small class="variant-turnbuy"
+                        >🔥 {{ variant.turnBuy }} lượt mua</small
+                      >
+                      <small class="variant-combo-info">
+                        Đang ở trong {{ variant.inCombo || 0 }} khuyến mãi còn hoạt
+                        động</small
+                      >
+                    </div>
+                    <div class="variant-status">
+                      <span
+                        class="status-badge"
+                        :class="{ active: variant.active, inactive: !variant.active }"
+                      >
+                        {{ variant.active ? "Hoạt động" : "Không hoạt động" }}
+                      </span>
+                      <small class="variant-id">ID: {{ variant.idProductItem }}</small>
+                    </div>
+                    <div class="variant-attributes">
+                      <span
+                        v-for="(value, key) in variant.attributes"
+                        :key="key"
+                        class="attribute-tag"
+                      >
+                        {{ key }}: {{ value }}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Promotion Requirements Overview -->
-        <div v-if="selectedItemsFromAllBases.length > 0" class="mt-4">
-          <div class="card border-info">
-            <div class="card-header bg-info text-white">
-              <h6 class="mb-0">
-                <i class="bi bi-info-circle me-2"></i>
-                Tổng quan yêu cầu khuyến mãi
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <h6 class="text-primary">
-                    <i class="bi bi-layers me-2"></i>
-                    Yêu cầu sản phẩm gốc
-                  </h6>
-                  <ul class="list-unstyled">
-                    <li
-                      v-for="(group, baseProductId) in getGroupedSelections()"
-                      :key="baseProductId"
-                      class="mb-2"
-                    >
-                      <strong>{{ group.baseProduct.name }}</strong>
-                      <br />
-                      <small class="text-muted">
-                        <span v-if="formData.type !== 'DISCOUNT'">
-                          Số lượng tối thiểu:
-                          {{ getBaseProductRequiredQuantity(group.baseProduct.id) }} |
-                        </span>
-                        Mặt hàng: {{ group.items.length
-                        }}<span v-if="formData.type !== 'DISCOUNT'">
-                          | Quà tặng: {{ group.giftCount }}</span
-                        >
-                      </small>
-                    </li>
-                  </ul>
-                </div>
-                <div class="col-md-6" v-if="formData.type !== 'DISCOUNT'">
-                  <h6 class="text-success">
-                    <i class="bi bi-gift me-2"></i>
-                    Tóm tắt quà tặng
-                  </h6>
-                  <div v-if="getGiftItems().length > 0">
-                    <ul class="list-unstyled">
-                      <li
-                        v-for="giftItem in getGiftItems()"
-                        :key="giftItem.id"
-                        class="mb-1"
-                      >
-                        <small>
-                          <i class="bi bi-gift me-1 text-success"></i>
-                          {{ giftItem.name }} ({{ giftItem.sku }})
-                        </small>
-                      </li>
-                    </ul>
-                  </div>
-                  <div v-else>
-                    <small class="text-muted">Không có quà tặng nào được chọn</small>
-                  </div>
-                </div>
+              <div v-else class="no-variants">
+                <p>Không có biến thể nào cho sản phẩm này.</p>
               </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="showVariantsModal = false"
+              >
+                Đóng
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="showVariantsModal = false"
+              >
+                Hoàn thành ({{ getSelectedVariantsCount(currentBaseProduct?.id) }} đã
+                chọn)
+              </button>
             </div>
           </div>
         </div>
@@ -504,230 +546,6 @@
     </div>
   </div>
 </template>
-<style scoped>
-.dropdown {
-  margin-bottom: 1rem;
-}
-
-.dropdown-toggle {
-  width: 100%;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dropdown-toggle span {
-  display: flex;
-  align-items: center;
-}
-
-.dropdown-menu {
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-item {
-  padding: 0.5rem 1rem;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-}
-
-.dropdown-item img {
-  border-radius: 6px;
-  object-fit: cover;
-}
-
-.card {
-  border-radius: 12px;
-  border: 1px solid #dee2e6;
-}
-
-.form-control {
-  border-radius: 0.75rem;
-  border: 1px solid #dee2e6;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-control:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* Product Item Selection Styles */
-.product-item-card {
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
-
-.product-item-card:hover {
-  border-color: #0d6efd;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.product-item-card.selected-item {
-  border-color: #198754;
-  background-color: #f8f9fa;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
-}
-
-.selection-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-}
-
-/* Selected Items Panel Styles */
-.selected-items-panel {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 1.5rem;
-  color: white;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.selected-items-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.selected-item-chip {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 25px;
-  padding: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.selected-item-chip:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.chip-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-}
-
-.chip-content {
-  display: flex;
-  flex-direction: column;
-  margin-right: 0.75rem;
-}
-
-.chip-name {
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
-}
-
-.chip-sku {
-  font-size: 0.75rem;
-  opacity: 0.8;
-}
-
-.chip-base {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  font-style: italic;
-}
-
-.chip-gift {
-  font-size: 0.7rem;
-  color: #28a745;
-  font-weight: 600;
-}
-
-.btn-remove {
-  background: rgba(220, 53, 69, 0.8);
-  border: none;
-  color: white;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-remove:hover {
-  background: rgba(220, 53, 69, 1);
-  transform: scale(1.1);
-}
-
-.btn-remove i {
-  font-size: 0.75rem;
-}
-
-/* Summary Cards Styles */
-.summary-card {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  background: #f8f9fa;
-  transition: all 0.3s ease;
-}
-
-.summary-card:hover {
-  background: #e9ecef;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.summary-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  object-fit: cover;
-  margin-right: 1rem;
-}
-
-.summary-content {
-  flex-grow: 1;
-}
-
-.summary-title {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.summary-count {
-  margin-bottom: 0.5rem;
-  font-size: 0.8rem;
-  color: #6c757d;
-}
-
-.summary-required-qty {
-  margin-bottom: 0.5rem;
-}
-
-.summary-gifts {
-  margin-bottom: 0.5rem;
-}
-</style>
 
 <script setup>
 import { reactive, ref, onMounted, watch } from "vue";
@@ -739,13 +557,12 @@ import {
 import Dashboard from "../../Module/DashBoard.vue";
 import createCrudService from "../../../Configs/reusableCRUDService.js";
 import { useRouter } from "vue-router";
-import { dropDown } from "../../../Configs/DropDownList.js";
 import api from "../../../Configs/api.js";
 
 const router = useRouter();
-import axios from "axios";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { notification } from "ant-design-vue";
 const props = defineProps({
   TableName: {
     type: String,
@@ -777,22 +594,23 @@ const formData = reactive({
   updatedAt: "",
 });
 
-// Base Product Selection Variables
-const selectedProduct = ref(null);
-const dropDownListBaseProduct = ref([]);
-const productItemsList = ref([]);
-const selectedProductItems = ref([]);
-const categoriesDropDownList = ref([]);
-const categoriesService = createCrudService("Categories");
+// Search functionality variables
+const searchQuery = ref("");
+const searchResults = ref([]);
+const selectedBaseProducts = ref([]);
+const currentPage = ref(0);
+const totalPages = ref(0);
+const isSearching = ref(false);
 
-// Store selected items from all base products
-const allSelectedItems = ref(new Map()); // Map<baseProductId, Set<itemId>>
-const selectedItemsFromAllBases = ref([]); // Array of all selected items with base product info
-
-// Store required quantities for base products
-const baseProductRequiredQuantities = ref(new Map()); // Map<baseProductId, number>
-// Store gift status for items
-const itemGiftStatus = ref(new Map()); // Map<itemId, boolean>
+// Product variants functionality
+const selectedProductVariants = ref([]); // Array of selected product items with options
+const availableVariants = ref({}); // Object to store variants for each base product
+const isLoadingVariants = ref(false);
+const showVariantsModal = ref(false);
+const currentBaseProduct = ref(null);
+const variantOptions = ref({}); // Store options for each selected variant {variantId: {require_qty, is_gift}}
+const globalGiftOption = ref("all"); // Global gift option for all gifts
+const searchDebounceTimeout = ref(null);
 
 const listDashBoard = [
   "Accounts",
@@ -829,151 +647,512 @@ const dropdownTypePromotions = [
 ];
 
 async function submitUpdateForm() {
-  // Validation: Check if all items are gifts (only for COMBO type)
-  if (formData.type !== "DISCOUNT" && selectedItemsFromAllBases.value.length > 0) {
-    const allItemsAreGifts = selectedItemsFromAllBases.value.every((item) =>
-      isItemGift(item.id)
-    );
-    if (allItemsAreGifts) {
-      alert(
-        "Không thể cập nhật khuyến mãi khi tất cả sản phẩm đều là quà tặng. Vui lòng chọn ít nhất một sản phẩm không phải là quà tặng."
-      );
-      return;
-    }
-  }
-
   try {
     formData.createdAt = formatDateTimeLocal(formData.createdAt);
     formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
-    console.log(formData);
-    const response = await formTableService.update(props.id, formData);
 
-    // Update promotion products
-    await updatePromotionProducts(props.id);
+    // Prepare variant data with options
+    const checkSelectedProductVariants = selectedProductVariants.value.map((v) => {
+      const uniqueKey = v.idProductItem;
+      const isGift = variantOptions.value[uniqueKey]?.is_gift || false;
+      return {
+        id: v.id,
+        requireQty: variantOptions.value[uniqueKey]?.require_qty || 1,
+        gift: isGift,
+        giftOption: isGift ? globalGiftOption.value : "", // Nếu không phải quà tặng thì giftOption = ''
+        productItem: { id: v.idProductItem }, // Use actual variant ID
+        promotionId: props.id, // Use newly created promotion ID
+        createdAt: null,
+        updatedAt: null,
+      };
+    });
+    const checkResponse = await api.post(
+      "/admin/combos/checkcombo",
+      checkSelectedProductVariants
+    );
+    console.log("Check combo response:", checkResponse.data);
 
-    console.log("Update successful:", response.data);
-    router.push(`/Admin/${props.TableName}`);
+    if (checkResponse.data === true) {
+      notification.error({
+        message: "Thông báo",
+        description: "Các sản phẩm đã tồn tại ở trong một combo khác.",
+        duration: 3,
+      });
+      return;
+    } else {
+      const response = await formTableService.update(props.id, formData);
+      console.log("checkSelectedProductVariants:", checkSelectedProductVariants);
+
+      // Update promotion ID for variants
+      checkSelectedProductVariants.forEach((variant) => {
+        api
+          .put("/admin/PromotionProducts", variant)
+          .then((res) => {
+            console.log("Promotion product created:", res.data);
+            router.push(`/Admin/${props.TableName}`);
+          })
+          .catch((err) => {
+            console.error("Error creating promotion product:", err);
+            notification.error({
+              message: "Lỗi",
+              description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
+              duration: 3,
+            });
+          });
+      });
+      console.log("Update successful:", response.data);
+      router.push(`/Admin/${props.TableName}`);
+    }
   } catch (error) {
     console.error("Update failed:", error);
   }
 }
 
 async function submitForm() {
-  // Validation: Check if all items are gifts (only for COMBO type)
-  if (formData.type !== "DISCOUNT" && selectedItemsFromAllBases.value.length > 0) {
-    const allItemsAreGifts = selectedItemsFromAllBases.value.every((item) =>
-      isItemGift(item.id)
-    );
-    if (allItemsAreGifts) {
-      alert(
-        "Không thể tạo khuyến mãi khi tất cả sản phẩm đều là quà tặng. Vui lòng chọn ít nhất một sản phẩm không phải là quà tặng."
-      );
-      return;
-    }
-  }
-
   formData.startAt = toISOStringWithTimezone(formData.startAt);
   formData.endAt = toISOStringWithTimezone(formData.endAt);
+  // Prepare variant data with options
+  const checkSelectedProductVariants = selectedProductVariants.value.map((v) => {
+    const uniqueKey = v.idProductItem || v.id;
+    const isGift = variantOptions.value[uniqueKey]?.is_gift || false;
+    return {
+      id: 0,
+      requireQty: variantOptions.value[uniqueKey]?.require_qty || 1,
+      gift: isGift,
+      giftOption: isGift ? globalGiftOption.value : "", // Nếu không phải quà tặng thì giftOption = ''
+      productItem: { id: v.idProductItem }, // Use actual variant ID
+      promotionId: 0, // Use newly created promotion ID
+      createdAt: null,
+      updatedAt: null,
+    };
+  });
+  console.log("Selected product variants with options:", checkSelectedProductVariants);
+
   try {
-    const response = await formTableService.create(formData);
+    // Check if combo already exists
+    const checkResponse = await api.post(
+      "/admin/combos/checkcombo",
+      checkSelectedProductVariants
+    );
+    console.log("Check combo response:", checkResponse.data);
+
+    if (checkResponse.data === true) {
+      notification.error({
+        message: "Thông báo",
+        description: "Các sản phẩm đã tồn tại ở trong một combo khác.",
+        duration: 3,
+      });
+      return;
+    }
+
+    // Create promotion
+    const createResponse = await formTableService.create(formData);
+    console.log("Create successful:", createResponse.data);
+
+    // Update promotion ID for variants
+    checkSelectedProductVariants.forEach((variant) => {
+      variant.promotionId = createResponse.data.id;
+      api
+        .post("/admin/PromotionProducts", variant)
+        .then((res) => {
+          console.log("Promotion product created:", res.data);
+          router.push(`/Admin/${props.TableName}`);
+        })
+        .catch((err) => {
+          console.error("Error creating promotion product:", err);
+          notification.error({
+            message: "Lỗi",
+            description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
+            duration: 3,
+          });
+        });
+    });
     // Create promotion products
-    if (selectedItemsFromAllBases.value.length > 0) {
-      await createPromotionProducts(response.data.id);
-    }
-    console.log("Create successful:", response.data);
-    router.push(`/Admin/${props.TableName}`);
   } catch (error) {
-    console.error("Create failed:", error);
+    console.error("Error in submitForm:", error);
+    notification.error({
+      message: "Lỗi",
+      description: "Đã xảy ra lỗi khi tạo khuyến mãi.",
+      duration: 3,
+    });
   }
+  // try {
+  //   const response = await formTableService.create(formData);
+  //   console.log("Create successful:", response.data);
+  //   router.push(`/Admin/${props.TableName}`);
+  //   // Add selected base products and variants to form data
+  //   formData.selectedBaseProductIds = selectedBaseProducts.value.map((p) => p.id);
+
+  //   // Add global gift option
+  //   formData.globalGiftOption = globalGiftOption.value;
+  //   console.log("Form data with variants and options:", formData);
+  //   console.log("Selected base products:", selectedBaseProducts.value);
+  //   console.log("Selected variants with options:", formData.selectedProductVariants);
+  // } catch (error) {
+  //   console.error("Create failed:", error);
+  // }
 }
 
-// Create promotion products
-async function createPromotionProducts(promotionId) {
+async function performSearch() {
+  if (searchQuery.value.trim().length < 2) {
+    searchResults.value = [];
+    totalPages.value = 0;
+    currentPage.value = 0;
+    return;
+  }
+
   try {
-    const promotionProductPromises = selectedItemsFromAllBases.value.map((item) => {
-      // For DISCOUNT type, don't use required quantity, just use 1
-      const requiredQuantity =
-        formData.type === "DISCOUNT"
-          ? null
-          : getBaseProductRequiredQuantity(item.baseProduct.id);
-      const isGift = formData.type === "DISCOUNT" ? false : isItemGift(item.id);
-      console.log(
-        "Creating promotion product for item:",
-        item,
-        "with required quantity:",
-        requiredQuantity,
-        "and isGift:",
-        isGift
-      );
-      return api.post("/admin/PromotionProducts", {
-        promotionId: promotionId,
-        productItem: { id: item.id },
-        requireQty: requiredQuantity,
-        gift: isGift,
-      });
+    isSearching.value = true;
+    currentPage.value = 0; // Reset to first page when searching
+
+    const response = await api.get("/admin/BaseProducts/search", {
+      params: {
+        search: searchQuery.value.trim(),
+        page: currentPage.value,
+        size: 10,
+      },
     });
 
-    await Promise.all(promotionProductPromises);
-    console.log("Promotion products created successfully");
+    console.log("Initial search response:", response.data);
+
+    // The API returns a Page object with content array
+    if (response.data && response.data.content) {
+      searchResults.value = response.data.content;
+      totalPages.value = response.data.totalPages || 1;
+    } else {
+      searchResults.value = [];
+      totalPages.value = 0;
+    }
+
+    console.log("Initial search results:", searchResults.value.length, "items");
+    console.log("Total pages available:", totalPages.value);
   } catch (error) {
-    console.error("Create promotion products failed:", error);
+    console.error("Initial search failed:", error);
+    searchResults.value = [];
+    totalPages.value = 0;
+    currentPage.value = 0;
+  } finally {
+    isSearching.value = false;
   }
 }
-async function editPromotionProducts(promotionId) {
+
+function selectBaseProduct(product) {
+  // Check if product is already selected
+  const isAlreadySelected = selectedBaseProducts.value.some((p) => p.id === product.id);
+
+  if (!isAlreadySelected) {
+    selectedBaseProducts.value.push(product);
+    // Load variants for this base product
+    loadProductVariants(product.id);
+  }
+
+  // Don't clear search - keep results visible for multiple selections
+  // clearSearch();
+}
+
+// Load product variants for a base product
+async function loadProductVariants(baseId) {
   try {
-    const promotionProductPromises = selectedItemsFromAllBases.value.map((item) => {
-      // For DISCOUNT type, don't use required quantity, just use 1
-      const requiredQuantity =
-        formData.type === "DISCOUNT"
-          ? null
-          : getBaseProductRequiredQuantity(item.baseProduct.id);
-      const isGift = formData.type === "DISCOUNT" ? false : isItemGift(item.id);
-      console.log(
-        "Creating promotion product for item:",
-        item,
-        "with required quantity:",
-        requiredQuantity,
-        "and isGift:",
-        isGift
-      );
-      console.log("update ", {
-        id: getPromotionProductIdFromGrouped(item.baseProduct.id, item.id),
-        promotionId: promotionId,
-        productItem: { id: item.id },
-        requireQty: requiredQuantity,
-        gift: isGift,
-      });
-      return api.put("/admin/PromotionProducts", {
-        id: getPromotionProductIdFromGrouped(item.baseProduct.id, item.id),
-        promotionId: promotionId,
-        productItem: { id: item.id },
-        requireQty: requiredQuantity,
-        gift: isGift,
-      });
+    isLoadingVariants.value = true;
+
+    const response = await api.get("/admin/products/productitems", {
+      params: {
+        baseId: baseId,
+      },
     });
 
-    await Promise.all(promotionProductPromises);
-    console.log("Promotion products updated successfully");
+    console.log("Product variants response:", response.data);
+
+    if (response.data && Array.isArray(response.data)) {
+      // Store variants for this base product and ensure baseProductId is set
+      const variantsWithBaseId = response.data.map((variant) => ({
+        ...variant,
+        baseProductId: baseId, // Ensure baseProductId is available
+      }));
+
+      availableVariants.value[baseId] = variantsWithBaseId;
+    } else {
+      availableVariants.value[baseId] = [];
+    }
+
+    console.log(
+      "Loaded variants for base product",
+      baseId,
+      ":",
+      availableVariants.value[baseId].length,
+      "variants"
+    );
   } catch (error) {
-    console.error("Updated promotion products failed:", error);
+    console.error("Failed to load product variants:", error);
+    availableVariants.value[baseId] = [];
+  } finally {
+    isLoadingVariants.value = false;
   }
 }
 
-// Update promotion products
-async function updatePromotionProducts(promotionId) {
-  try {
-    // Then create new ones
-    if (selectedItemsFromAllBases.value.length > 0) {
-      await editPromotionProducts(promotionId);
+// Open variants selection modal
+function openVariantsSelection(baseProduct) {
+  currentBaseProduct.value = baseProduct;
+  showVariantsModal.value = true;
+}
+
+// Select/deselect a product variant
+function toggleProductVariant(variant) {
+  console.log(
+    "Toggling variant:",
+    variant.name || variant.sku,
+    "ID:",
+    variant.idProductItem
+  );
+  console.log("Current base product:", currentBaseProduct.value?.id);
+  console.log("Variant baseProductId:", variant.baseProductId);
+
+  const baseProductId = currentBaseProduct.value?.id || variant.baseProductId;
+  const uniqueVariantKey = variant.idProductItem;
+
+  // Find existing variant by both ID and baseProductId to avoid conflicts
+  const existingIndex = selectedProductVariants.value.findIndex(
+    (v) => v.idProductItem === variant.idProductItem && v.baseProductId === baseProductId
+  );
+
+  if (existingIndex > -1) {
+    // Remove if already selected
+    console.log("Removing variant from selection");
+    selectedProductVariants.value.splice(existingIndex, 1);
+    // Remove variant options using unique key
+    delete variantOptions.value[uniqueVariantKey];
+  } else {
+    // Add if not selected - ensure baseProductId is set
+    console.log("Adding variant to selection");
+    const variantWithBaseId = {
+      ...variant,
+      baseProductId: baseProductId,
+      idProductItem: uniqueVariantKey, // Add unique key for reference
+    };
+
+    selectedProductVariants.value.push(variantWithBaseId);
+    // Initialize variant options with unique key
+    variantOptions.value[uniqueVariantKey] = {
+      require_qty: 1,
+      is_gift: false,
+    };
+  }
+
+  console.log(
+    "Current selected variants after toggle:",
+    selectedProductVariants.value.length
+  );
+  console.log(
+    "Selected variant details:",
+    selectedProductVariants.value.map((v) => ({
+      id: v.id,
+      sku: v.sku,
+      baseProductId: v.baseProductId,
+      idProductItem: v.idProductItem,
+      name: v.name,
+    }))
+  );
+
+  // Gift options simplified to just true/false, no need for additional logic
+}
+
+// Remove a specific variant
+function removeVariant(variantId) {
+  // Find the variant to get its unique key
+  const variantToRemove = selectedProductVariants.value.find(
+    (v) => v.idProductItem === variantId
+  );
+
+  selectedProductVariants.value = selectedProductVariants.value.filter(
+    (v) => v.idProductItem !== variantId
+  );
+
+  // Remove variant options using unique key if available
+  if (variantToRemove && variantToRemove.idProductItem) {
+    delete variantOptions.value[variantToRemove.idProductItem];
+  } else {
+    // Fallback to old method for backward compatibility
+    delete variantOptions.value[variantId];
+  }
+
+  // Check and reset gift options if total gifts < 2
+  checkAndResetGiftOptions();
+}
+
+// Check and reset gift options when total gifts < 2
+function checkAndResetGiftOptions() {
+  const totalGifts = getTotalGiftsCount();
+
+  if (totalGifts < 2) {
+    // Reset global gift option when less than 2 gifts
+    globalGiftOption.value = "all";
+  } else {
+    // Check if current global gift option is still valid for the new gift count
+    const validOptions = getAvailableGiftOptions().map((opt) => opt.value);
+    if (globalGiftOption.value && !validOptions.includes(globalGiftOption.value)) {
+      globalGiftOption.value = "all";
     }
-  } catch (error) {
-    console.error("Update promotion products failed:", error);
   }
 }
+
+// Check if a variant is selected
+function isVariantSelected(variantId) {
+  return selectedProductVariants.value.some((v) => v.idProductItem === variantId);
+}
+
+// Check if a variant is selected for the current base product in modal
+function isVariantSelectedForCurrentProduct(variantId) {
+  if (!currentBaseProduct.value) return false;
+
+  return selectedProductVariants.value.some(
+    (v) =>
+      v.idProductItem === variantId && v.baseProductId === currentBaseProduct.value.id
+  );
+}
+
+// Get count of selected variants for a base product
+function getSelectedVariantsCount(baseProductId) {
+  if (!baseProductId) return 0;
+
+  const count = selectedProductVariants.value.filter(
+    (v) => v.baseProductId === baseProductId
+  ).length;
+  console.log(`Variants count for base product ${baseProductId}:`, count);
+
+  return count;
+}
+
+// Format price for display
+function formatPrice(price) {
+  if (!price) return "0 ₫";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+}
+
+// Count total gifts selected
+function getTotalGiftsCount() {
+  return Object.values(variantOptions.value).filter((option) => option?.is_gift === true)
+    .length;
+}
+
+// Get available gift options based on current number of gifts
+function getAvailableGiftOptions() {
+  const totalGifts = getTotalGiftsCount();
+  const options = [];
+
+  if (totalGifts >= 2) {
+    // Generate options based on number of gifts available
+    for (let i = 1; i < totalGifts; i++) {
+      // Add "i trong totalGifts" options (chỉ tạo khi i < totalGifts)
+      options.push({
+        value: `${i}_trong_${totalGifts}`,
+        label: `${i} trong ${totalGifts} quà`,
+      });
+    }
+
+    // Add "Tất cả" option for selecting all gifts
+    options.push({
+      value: "all",
+      label: "Tất cả quà",
+    });
+  }
+
+  return options;
+}
+
+// Check if product is already selected
+function isProductAlreadySelected(productId) {
+  return selectedBaseProducts.value.some((p) => p.id === productId);
+}
+
+// Remove all variants of a base product when base product is removed
+function removeBaseProduct(productId) {
+  selectedBaseProducts.value = selectedBaseProducts.value.filter(
+    (p) => p.id !== productId
+  );
+
+  // Remove all variants of this base product and their options
+  const variantsToRemove = selectedProductVariants.value.filter(
+    (v) => v.baseProductId === productId
+  );
+
+  variantsToRemove.forEach((variant) => {
+    delete variantOptions.value[variant.idProductItem];
+  });
+
+  selectedProductVariants.value = selectedProductVariants.value.filter(
+    (v) => v.baseProductId !== productId
+  );
+
+  // Remove cached variants
+  delete availableVariants.value[productId];
+}
+
+function clearSearch() {
+  searchQuery.value = "";
+  searchResults.value = [];
+  currentPage.value = 0;
+  totalPages.value = 0;
+}
+
+async function loadPreviousPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--;
+    await searchWithCurrentPage();
+  }
+}
+
+async function loadNextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++;
+    await searchWithCurrentPage();
+  }
+}
+
+async function searchWithCurrentPage() {
+  if (searchQuery.value.trim().length < 2) {
+    searchResults.value = [];
+    return;
+  }
+
+  try {
+    isSearching.value = true;
+
+    const response = await api.get("/admin/BaseProducts/search", {
+      params: {
+        search: searchQuery.value.trim(),
+        page: currentPage.value,
+        size: 10,
+      },
+    });
+
+    console.log("Pagination search response:", JSON.stringify(response.data, null, 2));
+
+    // The API returns a Page object with content array
+    if (response.data && response.data.content) {
+      searchResults.value = response.data.content;
+      totalPages.value = response.data.totalPages || 1;
+    } else {
+      searchResults.value = [];
+      totalPages.value = 0;
+    }
+
+    console.log("Pagination results:", searchResults.value.length, "items");
+    console.log("Current page:", currentPage.value + 1, "of", totalPages.value);
+  } catch (error) {
+    console.error("Pagination search failed:", error);
+    searchResults.value = [];
+    totalPages.value = 0;
+  } finally {
+    isSearching.value = false;
+  }
+}
+
 const fetchData = async () => {
   if (!props.TableName) return;
   try {
-    // Load promotion products if editing
     if (
       !props.action ||
       props.action === "view" ||
@@ -988,326 +1167,41 @@ const fetchData = async () => {
       response.data.createdAt = formatDate(response.data.createdAt);
       response.data.updatedAt = formatDate(response.data.updatedAt);
       Object.assign(formData, response.data);
+      api
+        .get(`/admin/promotionproducts?promotionId=${props.id}`)
+        .then((response) => {
+          selectedProductVariants.value = response.data.map((item) => ({
+            id: item.id,
+            idProductItem: item.productItem.id,
+            baseProductId: item.productItem.baseProductId,
+            name: item.productItem.name,
+            sku: item.productItem.sku,
+            price: item.productItem.price,
+            imageUrl: item.productItem.imageUrl,
+          }));
+          console.log("Promotion products response:", selectedProductVariants.value);
 
-      // Load promotion products after setting form data
-      await loadPromotionProducts(props.id);
+          variantOptions.value = response.data.reduce((acc, item) => {
+            acc[item.productItem.id] = {
+              require_qty: item.requireQty || 1,
+              is_gift: item.gift || false,
+            };
+            return acc;
+          }, {});
+          console.log("Variant options initialized:", variantOptions.value);
+        })
+        .catch((error) => {
+          console.error("Failed to load promotion products:", error);
+        });
     }
   } catch (err) {
     console.error("Get failed:", err);
   }
 };
-var groupedByBase = new Map();
-function getPromotionProductIdFromGrouped(baseId, productItemId) {
-  return groupedByBase.get(baseId)?.find((item) => item.id === productItemId)
-    ?.promotionProductId;
-}
-
-// Load promotion products for editing
-async function loadPromotionProducts(promotionId) {
-  try {
-    const response = await api.get(`/admin/promotionproducts?promotionId=${promotionId}`);
-    // Handle direct array response (not wrapped in content)
-    const promotionProducts = Array.isArray(response.data)
-      ? response.data
-      : response.data.content || [];
-
-    if (promotionProducts.length > 0) {
-      console.log("First promotion product:", promotionProducts[0]);
-
-      // Group by base product
-
-      for (const promotionProduct of promotionProducts) {
-        // Use productItem instead of productItems based on the actual response structure
-        const productItem = promotionProduct.productItem;
-        const baseProductId = productItem.baseId;
-
-        if (!groupedByBase.has(baseProductId)) {
-          groupedByBase.set(baseProductId, []);
-        }
-        groupedByBase.get(baseProductId).push({
-          ...productItem,
-          promotionProductId: promotionProduct.id,
-          requireQty: promotionProduct.requireQty,
-          gift: promotionProduct.gift,
-        });
-      }
-
-      console.log("Grouped by base:", groupedByBase);
-
-      // Load items for each base product
-      for (const [baseProductId, items] of groupedByBase) {
-        const baseProduct = dropDownListBaseProduct.value.find(
-          (p) => p.id === baseProductId
-        );
-
-        console.log("Processing base product:", baseProduct);
-
-        if (baseProduct) {
-          // Create set for this base
-          const selectedForThisBase = new Set(items.map((item) => item.id));
-          allSelectedItems.value.set(baseProductId, selectedForThisBase);
-
-          // Add to selectedItemsFromAllBases
-          for (const item of items) {
-            // Set gift status
-            itemGiftStatus.value.set(item.id, item.gift || false);
-
-            selectedItemsFromAllBases.value.push({
-              ...item,
-              baseProduct: baseProduct,
-              isGift: item.gift || false,
-            });
-          }
-
-          // Set required quantity for this base product (use the first item's requireQty)
-          if (items.length > 0 && items[0].requireQty) {
-            baseProductRequiredQuantities.value.set(baseProductId, items[0].requireQty);
-          }
-        }
-      }
-
-      // If there are items loaded, select the first base product by default
-      if (selectedItemsFromAllBases.value.length > 0) {
-        const firstBaseProduct = selectedItemsFromAllBases.value[0].baseProduct;
-        console.log("Auto-selecting first base product:", firstBaseProduct);
-        await selectBaseProduct(firstBaseProduct);
-      }
-    }
-  } catch (error) {
-    console.error("Load promotion products failed:", error);
-  }
-}
-
-// Base Product Selection Functions
-async function selectBaseProduct(product) {
-  selectedProduct.value = product;
-  // Don't clear selectedProductItems anymore, just load the items for this base
-  await getProductItems(product.id);
-
-  // Update selectedProductItems based on what's already selected for this base
-  const selectedForThisBase = allSelectedItems.value.get(product.id) || new Set();
-  selectedProductItems.value = Array.from(selectedForThisBase);
-}
-
-async function getProductItems(baseProductId) {
-  try {
-    const response = await api.get(
-      "/admin/ProductItems/ByBaseProductId/" + baseProductId
-    );
-    console.log("=== PRODUCT ITEMS RESPONSE ===");
-    console.log("BaseProductId:", baseProductId);
-    console.log("Response data:", response.data);
-    console.log("==============================");
-
-    // Handle both content wrapper and direct array response
-    const items = response.data.content || response.data || [];
-
-    if (items.length > 0) {
-      console.log("First product item:", items[0]);
-
-      productItemsList.value = items.map((item) => {
-        return {
-          ...item,
-          name: item.baseProducts?.name || selectedProduct.value?.name,
-        };
-      });
-    } else {
-      productItemsList.value = [];
-    }
-  } catch (error) {
-    console.error("Get product items failed:", error);
-    productItemsList.value = [];
-  }
-}
-
-// Product Item Selection Functions
-function toggleItemSelection(item) {
-  const baseProductId = selectedProduct.value.id;
-  const itemId = item.id;
-
-  // Get or create set for this base product
-  if (!allSelectedItems.value.has(baseProductId)) {
-    allSelectedItems.value.set(baseProductId, new Set());
-  }
-
-  const selectedForThisBase = allSelectedItems.value.get(baseProductId);
-
-  if (selectedForThisBase.has(itemId)) {
-    // Remove from this base
-    selectedForThisBase.delete(itemId);
-    // Remove from current view
-    const index = selectedProductItems.value.indexOf(itemId);
-    if (index > -1) {
-      selectedProductItems.value.splice(index, 1);
-    }
-    // Remove from all selections
-    removeFromAllSelections(itemId);
-  } else {
-    // Add to this base
-    selectedForThisBase.add(itemId);
-    // Add to current view
-    selectedProductItems.value.push(itemId);
-    // Add to all selections
-    addToAllSelections(item, selectedProduct.value);
-  }
-}
-
-function addToAllSelections(item, baseProduct) {
-  const existingIndex = selectedItemsFromAllBases.value.findIndex(
-    (i) => i.id === item.id
-  );
-  if (existingIndex === -1) {
-    selectedItemsFromAllBases.value.push({
-      ...item,
-      baseProduct: baseProduct,
-      isGift: isItemGift(item.id),
-    });
-  }
-}
-
-function removeFromAllSelections(itemId) {
-  const index = selectedItemsFromAllBases.value.findIndex((i) => i.id === itemId);
-  if (index > -1) {
-    selectedItemsFromAllBases.value.splice(index, 1);
-  }
-  // Remove gift status
-  itemGiftStatus.value.delete(itemId);
-}
-
-function removeItemFromAllSelections(itemId, baseProductId) {
-  // Remove from specific base
-  const selectedForThisBase = allSelectedItems.value.get(baseProductId);
-  if (selectedForThisBase) {
-    selectedForThisBase.delete(itemId);
-  }
-
-  // Remove from current view if it's the current base
-  if (selectedProduct.value && selectedProduct.value.id === baseProductId) {
-    const index = selectedProductItems.value.indexOf(itemId);
-    if (index > -1) {
-      selectedProductItems.value.splice(index, 1);
-    }
-  }
-
-  // Remove from all selections
-  removeFromAllSelections(itemId);
-}
-
-function clearAllSelections() {
-  allSelectedItems.value.clear();
-  selectedProductItems.value = [];
-  selectedItemsFromAllBases.value = [];
-  baseProductRequiredQuantities.value.clear();
-  itemGiftStatus.value.clear();
-}
-
-function isItemSelected(itemId) {
-  return selectedProductItems.value.includes(itemId);
-}
-
-function getUniqueBaseProductCount() {
-  const baseProductIds = new Set();
-  selectedItemsFromAllBases.value.forEach((item) => {
-    baseProductIds.add(item.baseProduct.id);
-  });
-  return baseProductIds.size;
-}
-
-function getGroupedSelections() {
-  const grouped = {};
-  selectedItemsFromAllBases.value.forEach((item) => {
-    const baseProductId = item.baseProduct.id;
-    if (!grouped[baseProductId]) {
-      grouped[baseProductId] = {
-        baseProduct: item.baseProduct,
-        items: [],
-        giftCount: 0,
-      };
-    }
-    grouped[baseProductId].items.push(item);
-    if (item.isGift) {
-      grouped[baseProductId].giftCount++;
-    }
-  });
-  return grouped;
-}
-
-// Required Quantity Functions
-function getBaseProductRequiredQuantity(baseProductId) {
-  return baseProductRequiredQuantities.value.get(baseProductId) || 1;
-}
-
-function updateBaseProductRequiredQuantity(baseProductId, quantity) {
-  baseProductRequiredQuantities.value.set(baseProductId, parseInt(quantity) || 1);
-}
-
-// Gift Status Functions
-function isItemGift(itemId) {
-  return itemGiftStatus.value.get(itemId) || false;
-}
-
-function toggleItemGift(itemId, isGift) {
-  // Validation: Prevent all items from being gifts
-  if (isGift && formData.type !== "DISCOUNT") {
-    const nonGiftItems = selectedItemsFromAllBases.value.filter(
-      (item) => item.id !== itemId && !isItemGift(item.id)
-    );
-
-    if (nonGiftItems.length === 0) {
-      alert(
-        "Không thể đặt tất cả sản phẩm làm quà tặng. Phải có ít nhất một sản phẩm không phải là quà tặng."
-      );
-      return;
-    }
-  }
-
-  itemGiftStatus.value.set(itemId, isGift);
-
-  // Update the item in selectedItemsFromAllBases
-  const item = selectedItemsFromAllBases.value.find((i) => i.id === itemId);
-  if (item) {
-    item.isGift = isGift;
-  }
-}
-
-function getItemById(itemId) {
-  return productItemsList.value.find((item) => item.id === itemId);
-}
-
-function getGiftItems() {
-  return selectedItemsFromAllBases.value.filter((item) => item.isGift);
-}
 
 onMounted(async () => {
   try {
-    // Load base products dropdown first
-    dropDownListBaseProduct.value = await dropDown("BaseProducts");
-    console.log("=== BASE PRODUCTS DROPDOWN ===");
-    console.log("Base products loaded:", dropDownListBaseProduct.value);
-    if (dropDownListBaseProduct.value?.length > 0) {
-      console.log("First base product:", dropDownListBaseProduct.value[0]);
-    }
-    console.log("==============================");
-
-    // Load categories dropdown
-    const responseCategories = await categoriesService.getAll(0, 1000);
-    console.log("=== CATEGORIES RESPONSE ===");
-    console.log("Categories response:", responseCategories.data);
-    console.log("===========================");
-
-    // Handle different response structures
-    const categoriesData =
-      responseCategories.data?.content || responseCategories.data || [];
-    categoriesDropDownList.value = categoriesData.map((category) => {
-      return {
-        id: category.id,
-        name: category.name,
-      };
-    });
-
-    console.log("Categories loaded:", categoriesDropDownList.value?.length, "items");
-
-    // Then fetch promotion data (this will also load promotion products)
+    // Then fetch promotion data
     await fetchData();
   } catch (error) {
     console.error("Error loading data:", error);
@@ -1325,4 +1219,890 @@ watch(
     }
   }
 );
+
+// Watch for changes in gift options to reset gift_option when needed
+watch(
+  () => variantOptions.value,
+  () => {
+    checkAndResetGiftOptions();
+  },
+  { deep: true }
+);
+
+// Watch for changes in search query to clear results when user starts typing new search
+watch(
+  () => searchQuery.value,
+  (newValue, oldValue) => {
+    // Clear previous timeout
+    if (searchDebounceTimeout.value) {
+      clearTimeout(searchDebounceTimeout.value);
+    }
+
+    // Only clear results if user is typing and there are existing results
+    if (newValue !== oldValue && searchResults.value.length > 0) {
+      // Debounce the clearing to avoid clearing too quickly while user is typing
+      searchDebounceTimeout.value = setTimeout(() => {
+        // Only clear if the search query has changed and is different from when results were loaded
+        const currentSearchTerm = searchQuery.value.trim();
+        const hasResults = searchResults.value.length > 0;
+
+        // Clear results only if user is typing a completely different search
+        if (hasResults && currentSearchTerm.length > 0) {
+          searchResults.value = [];
+          currentPage.value = 0;
+          totalPages.value = 0;
+        }
+      }, 500); // 500ms delay before clearing
+    }
+  }
+);
 </script>
+<style scoped>
+.card {
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+}
+
+.form-control {
+  border-radius: 0.75rem;
+  border: 1px solid #dee2e6;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Search Container Styles */
+.search-container {
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input-wrapper input {
+  padding-right: 50px;
+}
+
+.btn-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0d6efd;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.btn-search:hover:not(:disabled) {
+  background: #0b5ed7;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.btn-search:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-search i {
+  font-size: 0.9rem;
+}
+
+.search-loading {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+/* Search Results Section - Separate component below search input */
+.search-results-section {
+  margin-top: 1rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.search-results-section .results-header {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-bottom: 1px solid #bbdefb;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+}
+
+.search-results-section .results-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.search-results-section .result-item {
+  padding: 1.25rem 1.5rem;
+}
+
+.search-results-section .pagination-container {
+  background: #e3f2fd;
+  border-top: 1px solid #bbdefb;
+  padding: 1rem 1.25rem;
+}
+
+/* Original dropdown search results */
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow: hidden;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 600;
+}
+
+.btn-close-search {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close-search:hover {
+  color: #dc3545;
+}
+
+.results-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.result-item:hover {
+  background-color: #f8f9fa;
+}
+
+.result-item.already-selected {
+  background-color: #e8f5e8;
+  border-left: 4px solid #28a745;
+}
+
+.result-item.already-selected:hover {
+  background-color: #d4edda;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.selected-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 1rem;
+  color: #28a745;
+}
+
+.selected-indicator i {
+  font-size: 1.2rem;
+}
+
+.selected-indicator small {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.result-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.result-content {
+  flex-grow: 1;
+}
+
+.result-name {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.result-material {
+  display: block;
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-bottom: 0.1rem;
+}
+
+.result-category {
+  display: block;
+  color: #0d6efd;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.result-stats {
+  margin-top: 0.25rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.result-rating,
+.result-turnbuy {
+  font-size: 0.7rem;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Selected Products Styles */
+.selected-products {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.selected-product-item {
+  display: flex;
+  align-items: center;
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 8px;
+  padding: 0.75rem;
+  min-width: 100%;
+}
+
+/* Selected Variants with Options Styles */
+.selected-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.variant-option-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.variant-info-section {
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.variant-option-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+.variant-info-content {
+  flex: 1;
+}
+
+.variant-option-name {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.variant-option-sku {
+  display: block;
+  color: #6c757d;
+  font-size: 0.75rem;
+  margin-bottom: 0.1rem;
+}
+
+.variant-option-price {
+  display: block;
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.variant-options-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.option-label {
+  min-width: 140px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #495057;
+  margin: 0;
+}
+
+.option-input {
+  flex: 1;
+  max-width: 200px;
+  font-size: 0.85rem;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-check-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #495057;
+  margin: 0;
+}
+
+.variant-actions {
+  display: flex;
+  align-items: flex-start;
+}
+
+.btn-remove-variant {
+  background: #dc3545;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-variant:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+.btn-remove-variant i {
+  font-size: 0.8rem;
+}
+
+.gift-notice {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 140px; /* Align with option inputs */
+}
+
+.gift-notice i {
+  font-size: 0.7rem;
+}
+
+.gift-option-container {
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.gift-option-container .form-select {
+  margin-bottom: 0.5rem;
+}
+
+.gift-option-container .form-text {
+  margin: 0;
+  font-style: italic;
+}
+
+.selected-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+.selected-content {
+  flex-grow: 1;
+}
+
+.selected-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.selected-details {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.selected-material {
+  color: #6c757d;
+  font-size: 0.75rem;
+  display: block;
+}
+
+.selected-category {
+  color: #0d6efd;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: block;
+}
+
+.selected-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.selected-rating {
+  color: #ffc107;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.selected-turnbuy {
+  color: #e83e8c;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.selected-views {
+  color: #6f42c1;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.selected-product-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.product-status-badge {
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.product-status-badge.active {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #a3cfbb;
+}
+
+.product-status-badge.inactive {
+  background: #f8d7da;
+  color: #58151c;
+  border: 1px solid #f1aeb5;
+}
+
+.selected-product-id {
+  color: #6c757d;
+  font-size: 0.65rem;
+  font-style: italic;
+}
+
+.variant-info {
+  margin-top: 0.25rem;
+}
+
+.product-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-select-variants {
+  background: #28a745;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.75rem;
+}
+
+.btn-select-variants:hover:not(:disabled) {
+  background: #218838;
+  transform: scale(1.02);
+}
+
+.btn-select-variants:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-select-variants i {
+  font-size: 0.8rem;
+}
+
+.btn-remove-product {
+  background: #dc3545;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-product:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+.btn-remove-product i {
+  font-size: 0.8rem;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.variants-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.btn-close-modal:hover {
+  background: #f8f9fa;
+  color: #dc3545;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  max-height: 60vh;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 1rem;
+  color: #6c757d;
+}
+
+.variants-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.variant-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.variant-item:hover {
+  border-color: #0d6efd;
+  background: #f8f9fa;
+}
+
+.variant-item.selected {
+  border-color: #0d6efd;
+  background: #e7f3ff;
+}
+
+.variant-checkbox {
+  margin-right: 1rem;
+}
+
+.variant-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.variant-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.variant-content {
+  flex: 1;
+}
+
+.variant-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.variant-details {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.variant-sku {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.variant-combo-info {
+  color: #6f42c1;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #f8f4ff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid #e0cffc;
+}
+
+.variant-price {
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.variant-cost {
+  color: #fd7e14;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.variant-stock-info {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.variant-qty {
+  color: #0d6efd;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.variant-safety {
+  color: #dc3545;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.variant-rating {
+  color: #ffc107;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.variant-turnbuy {
+  color: #e83e8c;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.variant-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.status-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #a3cfbb;
+}
+
+.status-badge.inactive {
+  background: #f8d7da;
+  color: #58151c;
+  border: 1px solid #f1aeb5;
+}
+
+.variant-id {
+  color: #6c757d;
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.variant-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.attribute-tag {
+  background: #e9ecef;
+  color: #495057;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.no-variants {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #dee2e6;
+  background: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+</style>

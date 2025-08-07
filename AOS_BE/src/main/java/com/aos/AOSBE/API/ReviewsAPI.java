@@ -159,7 +159,7 @@ public class ReviewsAPI {
 	}
 
 	@GetMapping("/reviews/product/average-rating/{productItemId}")
-	public ResponseEntity<?> getAverageRating(@PathVariable Long productItemId) {
+	public ResponseEntity<?> getAverageRating(@PathVariable int productItemId) {
 		Double average = reviewsService.getAverageRatingByProductItemId(productItemId);
 		return ResponseEntity.ok(Map.of("averageRating", average));
 	}
