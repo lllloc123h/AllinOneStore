@@ -177,9 +177,20 @@ public class CouponsAPI {
 		    if (userLevel < couponLevel)
 		        return false;
 
-		    long usageCount = ordersRepository.countCouponUsage((long) user.getId(), coupon.getCode());
-		    if (coupon.getUsagePerCustomer() > 0 && usageCount >= coupon.getUsagePerCustomer())
-		        return false;
+		    if (coupon.getUsagePerCustomer() != null && coupon.getUsagePerCustomer() > 0) {
+		        long usageCount;
+
+		        if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
+		        	usageCount = ordersRepository.countFreeshipCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+		        } else {
+		            usageCount = ordersRepository.countCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+		        }
+
+		        if (usageCount >= coupon.getUsagePerCustomer()) {
+		            return false;
+		        }
+		    }
+
 
 		    if ("G-DISCOUNT".equalsIgnoreCase(coupon.getDiscountType())) {
 		        boolean hasNormalItems = normalTotal > 0;

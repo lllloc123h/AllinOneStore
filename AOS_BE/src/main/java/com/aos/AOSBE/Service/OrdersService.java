@@ -113,23 +113,61 @@ public class OrdersService {
 				orders.setShippingStatus("Chờ xác nhận");
 			}
 
-			// Kiểm tra mã giảm giá
-			String couponCode = orders.getDiscountCouponCode();
-			if (couponCode != null && !couponCode.trim().isEmpty()) {
-				Optional<Coupons> optionalCoupon = couponsRepository.findByCode(couponCode);
-				if (optionalCoupon.isEmpty()) {
-					throw new IllegalArgumentException("Mã giảm giá không tồn tại.");
-				}
-				Coupons coupon = optionalCoupon.get();
-				if (!coupon.isActive()) {
-					throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
-				}
+			// Xử lý mã giảm giá (G-DISCOUNT)
+			String discountCode = orders.getDiscountCouponCode();
+			if (discountCode != null && !discountCode.trim().isEmpty()) {
+			    Coupons coupon = couponsRepository.findByCode(discountCode)
+			        .orElseThrow(() -> new IllegalArgumentException("Mã giảm giá không tồn tại."));
 
-				long usageCount = ordersRepository.countCouponUsage((long) orders.getAccounts().getId(), couponCode);
-				if (usageCount >= coupon.getUsagePerCustomer()) {
-					throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
-				}
+			    if (!coupon.isActive()) {
+			        throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
+			    }
+
+			    long usageCount = ordersRepository.countCouponUsage(
+			        (long) orders.getAccounts().getId(), discountCode);
+
+			    Integer usageLimit = coupon.getUsagePerCustomer();
+			    if (usageLimit != null && usageCount >= usageLimit) {
+			        throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
+			    }
+
+			    if (coupon.getQty() <= 0) {
+			        throw new IllegalArgumentException("Mã giảm giá đã hết lượt sử dụng.");
+			    }
+
+			    coupon.setQty(coupon.getQty() - 1);
+			    coupon.setUpdatedAt(LocalDateTime.now());
+			    couponsRepository.save(coupon);
 			}
+
+			// Xử lý mã freeship
+			String freeshipCode = orders.getFreeshipCouponCode();
+			if (freeshipCode != null && !freeshipCode.trim().isEmpty()) {
+			    Coupons coupon = couponsRepository.findByCode(freeshipCode)
+			        .orElseThrow(() -> new IllegalArgumentException("Mã freeship không tồn tại."));
+
+			    if (!coupon.isActive()) {
+			        throw new IllegalArgumentException("Mã freeship không còn hiệu lực.");
+			    }
+
+			    long usageCount = ordersRepository.countFreeshipCouponUsage(
+			        (long) orders.getAccounts().getId(), freeshipCode);
+
+			    Integer usageLimit = coupon.getUsagePerCustomer();
+			    if (usageLimit != null && usageCount >= usageLimit) {
+			        throw new IllegalStateException("Bạn đã sử dụng mã freeship đủ số lần cho phép.");
+			    }
+
+			    if (coupon.getQty() <= 0) {
+			        throw new IllegalArgumentException("Mã giảm giá đã hết lượt sử dụng.");
+			    }
+
+			    coupon.setQty(coupon.getQty() - 1);
+			    coupon.setUpdatedAt(LocalDateTime.now());
+			    couponsRepository.save(coupon);
+			}
+
+
 			// Lưu đơn hàng trước để có ID (vì OrderItems cần orders)
 	        Orders savedOrder = ordersRepository.save(orders);
 
