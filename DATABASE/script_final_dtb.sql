@@ -1,4 +1,4 @@
-﻿--create database all_in_store;
+﻿ --create database all_in_store;
 --drop database all_in_store
 use all_in_store
 go
@@ -192,6 +192,7 @@ create table
 		sell_end datetime default getdate (),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
+		is_active bit default 1,
 		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
 GO
@@ -244,6 +245,7 @@ create table
 		image_url varchar(255) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
+		is_default bit default 0,
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO

@@ -41,26 +41,29 @@ public class ProductItemsMapper {
 		if (productImages.size() != 0) {
 			imgURL = productImages.get(0).getImageUrl();
 		}
+		List<ProductImagesDTOS> productImagesDTOS = productImagesRepository.findByProductItemsId(entity.getId())
+				.stream().map(productImagesMapper::mapper).collect(Collectors.toList());
 		return new ProductItemsDTOS(entity.getId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
 				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
 				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
 				entity.getBaseProducts().getId(), entity.getBaseProducts().getName(),
 				entity.getBaseProducts().getMaterial(), imgURL,
-				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null));
+				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null),
+				productImagesDTOS, entity.isActive());
 	}
 
 	public ProductItems mapperToObject(ProductItemsDTOS entity) {
 		return new ProductItems(entity.getId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
 				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
 				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null));
+				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null), entity.isActive());
 	}
 
 	public ProductItems mapperToObjectUpdateMethod(ProductItemsDTOS entity) {
 		return new ProductItems(entity.getProductItemsId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
 				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
 				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null));
+				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null), entity.isActive());
 	}
 
 	public ProductItemsDTOS mapperObjectForProductDetail(ProductItems entity) {

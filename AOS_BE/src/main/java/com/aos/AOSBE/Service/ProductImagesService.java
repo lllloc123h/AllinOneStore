@@ -44,5 +44,22 @@ public class ProductImagesService {
 
 	public List<ProductImages> findByProductItemsId(int productItemId) {
 		return productImagesRepository.findByProductItemsId(productItemId);
+
+	}
+
+	public ProductImages productImagesSetDefaultAddress(int id, ProductImages selectedProductImages) {
+		int idProductItems = selectedProductImages.getProductItems().getId();
+
+		// 1. Tắt hết các địa chỉ mặc định của user này
+		List<ProductImages> addresses = productImagesRepository.findByProductItemsId(idProductItems);
+		for (ProductImages addr : addresses) {
+			addr.setDefault(addr.getId() == id);
+		}
+		productImagesRepository.saveAll(addresses);
+		return selectedProductImages;
+	}
+
+	public List<ProductImages> checkContainDefaultImagesByProductItemId(int productItemId) {
+		return productImagesRepository.checkContainDefaultImagesByProductItemId(productItemId);
 	}
 }

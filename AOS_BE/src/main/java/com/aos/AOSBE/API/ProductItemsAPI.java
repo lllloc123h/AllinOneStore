@@ -192,7 +192,7 @@ public class ProductItemsAPI {
 	public ResponseEntity<?> getProductItemDetail(@PathVariable int id) {
 		try {
 
-			List<ProductItems> productItem = productItemsService.productItemsFindByBaseProductId(id);
+			List<ProductItems> productItem = productItemsService.productItemsFindByBaseProductIdTheActiveTrue(id);
 
 			List<ProductItemsDTOS> content = new ArrayList<>();
 			for (ProductItems item : productItem) {

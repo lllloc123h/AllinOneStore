@@ -88,6 +88,10 @@ public class ProductItemsService {
 		return productItemsRepository.findByBaseProductsId(id);
 	}
 
+	public List<ProductItems> productItemsFindByBaseProductIdTheActiveTrue(int id) {
+		return productItemsRepository.findByBaseProductsIdWithTheActiveTrue(id);
+	}
+
 	public List<ProductItems> productItemsFindAllHaveSkuLike(String skuLike) {
 		String skuLikeSplit[] = skuLike.split("-");
 		System.out.println(skuLikeSplit);
