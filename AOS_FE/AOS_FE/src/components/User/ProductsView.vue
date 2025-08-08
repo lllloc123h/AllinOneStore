@@ -218,7 +218,7 @@
             <h5 class="mb-2">Select {{ groupName }}</h5>
             <div class="variant-options">
               <label v-for="item in items" :key="item.id" class="variant-button"
-                :class="{ active: selectedVariant[groupName]?.includes(item.signalSku) }">
+                :class="{ active: selectedVariant[groupName] === item.signalSku }">
                 <input type="radio" :name="groupName" :value="item.signalSku" :disabled="item.isActive === false"
                   v-model="selectedVariant[groupName]" class="d-none" />
                 {{ item.description }}
@@ -546,10 +546,10 @@ const fetchProductData = async (id) => {
     console.log("Product data:", res.data.content);
     productItemBaseOnId.value = res.data.content;
     SkuColorList.value = new Set(productItemBaseOnId.value.map(e => {
-      return e.sku.split('-')[1]
+      return e.sku.split('-')[e.sku.split('-').length - 2]
     }))
     SkuSizeList.value = new Set(productItemBaseOnId.value.map(e => {
-      return e.sku.split('-')[2]
+      return e.sku.split('-')[e.sku.split('-').length - 1]
     }))
     listMapIfSelect.value = productItemBaseOnId.value.map(e => {
       return e.sku.split('-')
@@ -630,8 +630,8 @@ const listColorBaseOnSelectedSize = ref()
 watch(() => selectedVariant.value["Kích thước"], () => {
   selectedVariant.value['Màu sắc'] = []
   const filteredMap = {};
-  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selectedVariant.value["Kích thước"] === (findColor[2])).map(color => {
-    return color[1]
+  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selectedVariant.value["Kích thước"] === (findColor[findColor.length - 1])).map(color => {
+    return color[color.length - 2]
   })
   for (const [groupName, items] of Object.entries(mapVarriantsOfListBaseProduct.value)) {
     if (groupName === 'Màu sắc') {
