@@ -29,7 +29,7 @@ public class AccountsDTOS {
 
 	public AccountsDTOS(int id, String email, boolean gender, LocalDateTime birthday, String fullname, String avatarUrl,
 			String phone, double averageOrderValue, String userRank, double totalSpent, int totalOrder,
-			int loyaltyPoint, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			int loyaltyPoint, LocalDateTime createdAt, LocalDateTime updatedAt, boolean isActive) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -45,6 +45,7 @@ public class AccountsDTOS {
 		this.loyaltyPoint = loyaltyPoint;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.isActive = isActive;
 	}
 
 }

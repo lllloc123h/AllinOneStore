@@ -108,6 +108,8 @@ public class AccountsService {
 		accounts.setPassword(new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword()));
 		accounts.setPhone(registerRequestDTO.getPhone());
 		accounts.setFullname(registerRequestDTO.getFullname());
+		accounts.setActive(true);
+		accounts.setGender(registerRequestDTO.getGender());
 		Authorities authority = new Authorities();
 		accounts = accountsRepository.save(accounts);
 		authority.setAccounts(accounts);

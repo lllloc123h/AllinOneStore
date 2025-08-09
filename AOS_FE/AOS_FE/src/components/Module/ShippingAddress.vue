@@ -189,8 +189,12 @@
                     required
                   >
                     <option value="" disabled>Chọn Tỉnh/Thành phố</option>
-                    <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
-                      {{ prov.name }}
+                    <option
+                      v-for="prov in provinces"
+                      :key="prov.ProvinceID"
+                      :value="prov.ProvinceID"
+                    >
+                      {{ prov.ProvinceName }}
                     </option>
                   </select>
                 </div>
@@ -204,8 +208,12 @@
                     required
                   >
                     <option value="" disabled>Chọn Quận/Huyện</option>
-                    <option v-for="dist in districts" :key="dist.code" :value="dist.code">
-                      {{ dist.name }}
+                    <option
+                      v-for="dist in districts"
+                      :key="dist.DistrictID"
+                      :value="dist.DistrictID"
+                    >
+                      {{ dist.DistrictName }}
                     </option>
                   </select>
                 </div>
@@ -221,8 +229,12 @@
                     required
                   >
                     <option value="" disabled>Chọn Phường/Xã</option>
-                    <option v-for="ward in wards" :key="ward.code" :value="ward.code">
-                      {{ ward.name }}
+                    <option
+                      v-for="ward in wards"
+                      :key="ward.WardCode"
+                      :value="ward.WardCode"
+                    >
+                      {{ ward.WardName }}
                     </option>
                   </select>
                 </div>
@@ -302,9 +314,9 @@ export default {
   data() {
     return {
       showModal: false,
-      name: "",
-      phone: "",
-      detailAddress: "",
+      name: "Trần Hữu Lộc",
+      phone: "0969214372",
+      detailAddress: "123 Đường ABC",
       provinces: [],
       districts: [],
       wards: [],
@@ -368,21 +380,43 @@ export default {
       this.note = "";
     },
     async loadProvinces() {
-      const res = await fetch("https://provinces.open-api.vn/api/p/");
+      const res = await fetch(
+        "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province",
+        {
+          headers: {
+            Token: "cc2fea72-5000-11f0-9b81-222185cb68c8",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       this.provinces = await res.json();
+      this.provinces = this.provinces.data;
     },
     async loadDistricts() {
       this.selectedDistrict = "";
       this.selectedWard = "";
       this.districts = [];
       this.wards = [];
+      console.log("province_id ", this.selectedProvince);
 
       if (this.selectedProvince) {
         const res = await fetch(
-          `https://provinces.open-api.vn/api/p/${this.selectedProvince}?depth=2`
+          "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district",
+          {
+            method: "POST",
+            headers: {
+              Token: "cc2fea72-5000-11f0-9b81-222185cb68c8",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              province_id: this.selectedProvince,
+            }),
+          }
         );
+
         const data = await res.json();
-        this.districts = data.districts;
+        this.districts = data.data;
       }
     },
     async loadWards() {
@@ -390,10 +424,21 @@ export default {
       this.wards = [];
       if (this.selectedDistrict) {
         const res = await fetch(
-          `https://provinces.open-api.vn/api/d/${this.selectedDistrict}?depth=2`
+          "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id",
+          {
+            method: "POST",
+            headers: {
+              Token: "cc2fea72-5000-11f0-9b81-222185cb68c8",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              district_id: this.selectedDistrict,
+            }),
+          }
         );
+        console.log("select ward ", this.selectedDistrict);
         const data = await res.json();
-        this.wards = data.wards;
+        this.wards = data.data;
       }
     },
     async fetchData() {
@@ -431,22 +476,26 @@ export default {
     },
     async addAddress() {
       try {
-        const provinceObj = this.provinces.find((p) => p.code === this.selectedProvince);
-        const districtObj = this.districts.find((d) => d.code === this.selectedDistrict);
-        const wardObj = this.wards.find((w) => w.code === this.selectedWard);
+        const provinceObj = this.provinces.find(
+          (p) => p.ProvinceID === this.selectedProvince
+        );
+        const districtObj = this.districts.find(
+          (d) => d.DistrictID === this.selectedDistrict
+        );
+        const wardObj = this.wards.find((w) => w.WardCode === this.selectedWard);
 
         const formData = {
           recipientName: this.name,
           phone: this.phone,
-          province: provinceObj?.name || "",
-          district: districtObj?.name || "",
-          ward: wardObj?.name || "",
+          province: provinceObj?.ProvinceName || "",
+          district: districtObj?.DistrictName || "",
+          ward: wardObj?.WardName || "",
           street: this.detailAddress,
           label: this.label,
           isDefault: false,
           note: this.note,
-          districtId: districtObj?.code || null,
-          wardCode: wardObj?.code || null,
+          districtId: districtObj?.DistrictID || null,
+          wardCode: wardObj?.WardCode || null,
           accounts: "",
         };
 
@@ -464,7 +513,6 @@ export default {
           });
           return;
         }
-
         await api.post(`/UserAddresses`, formData);
 
         this.resetForm();

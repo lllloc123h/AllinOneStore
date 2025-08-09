@@ -147,7 +147,6 @@ public class AccountsAPI {
 	@PostMapping("/Accounts/login")
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
 		try {
-
 			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
@@ -161,7 +160,15 @@ public class AccountsAPI {
 							(a, b) -> a + b.getQty(), Integer::sum)));
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", "Sai thông tin đăng nhập"));
+			String response = "";
+			if (e.getMessage().equals("User is disabled")) {
+				response = "Tài khoản của bạn đã bị khóa, vui lòng liên hệ quản trị viên để biết thêm chi tiết.";
+			} else if (e.getMessage().equals("Bad credentials")) {
+				response = "Sai thông tin đăng nhập, vui lòng kiểm tra lại email và mật khẩu của bạn.";
+			} else {
+				response = "Đã có lỗi xảy ra trong quá trình đăng nhập, vui lòng thử lại sau.";
+			}
+			return ResponseEntity.badRequest().body(Map.of("message", response));
 		}
 	}
 
