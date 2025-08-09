@@ -63,4 +63,8 @@ public class ReviewsService {
 	public Long countReviewsByProductItemId(Long productItemId) {
     return reviewsRepository.countByProductItemId(productItemId);
 	}
+	@Transactional
+	public boolean hasReviewed(Long accountId, Long productItemId, Long orderId) {
+		return reviewsRepository.existsByAccountAndProductAndOrder(accountId, productItemId, orderId);
+	}
 }

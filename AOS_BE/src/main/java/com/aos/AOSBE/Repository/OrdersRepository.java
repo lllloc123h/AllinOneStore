@@ -93,5 +93,16 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 	@Query("SELECT COUNT(o) FROM Orders o WHERE o.accounts.id = :accountId AND o.freeshipCouponCode = :code")
 	long countFreeshipCouponUsage(@Param("accountId") Long accountId, @Param("code") String code);
 
+	@Query("SELECT COUNT(o) > 0 FROM Orders o " +
+		"JOIN o.orderItems oi " +
+		"WHERE o.accounts.id = :accountId " +
+		"AND oi.productItems.id = :productItemId " +
+		"AND UPPER(o.shippingStatus) = UPPER(:status)")
+	boolean existsByAccountIdAndProductItemIdAndShippingStatusIgnoreCase(
+		@Param("accountId") Long accountId,
+		@Param("productItemId") Long productItemId,
+		@Param("status") String status
+	);
+
 
 }

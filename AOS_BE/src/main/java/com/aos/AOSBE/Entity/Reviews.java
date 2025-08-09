@@ -48,4 +48,7 @@ public class Reviews {
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Orders orders;
 }

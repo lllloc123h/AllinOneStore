@@ -377,5 +377,15 @@ public class OrdersService {
 		return ordersRepository.findByGhnOrderCodeIsNull();
 	}
 
+	@Transactional
+	public boolean hasUserReceivedProduct(Long accountId, Long productItemId) {
+		System.out.println("Kiểm tra đánh giá:");
+		System.out.println("Account ID: " + accountId);
+		System.out.println("ProductItem ID: " + productItemId);
+		return ordersRepository.existsByAccountIdAndProductItemIdAndShippingStatusIgnoreCase(
+			accountId, productItemId, "DELIVERED"
+		);
+	}
+
 
 }

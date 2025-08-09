@@ -80,6 +80,59 @@
                   <div class="product-total">
                     Thành tiền: <strong>{{ formatMoney(sp.gia * sp.soLuong) }}</strong>
                   </div>
+                  <!-- Nút đánh giá -->
+                  <button
+                    v-if="!sp.daDanhGia"
+                    class="btn btn-outline-primary mt-2"
+                    @click="toggleReviewForm(order.id, sp.productItemId, sp)"
+                  >
+                    Đánh giá
+                  </button>
+                  <span v-else class="text-success mt-2 d-block">Đã đánh giá</span>
+                  <!-- Form đánh giá -->
+                  <transition name="tab-panel">
+                    <div v-if="activeReviewKey === `${order.id}_${sp.productItemId}`" class="review-form-card">
+                      <h5 class="form-title">Viết đánh giá của bạn</h5>
+                      <form @submit.prevent="submitReview(sp, order.id)" class="review-form">
+                        <div class="rating-input">
+                          <label class="form-label">Đánh giá của bạn:</label>
+                          <div class="star-rating">
+                            <i
+                              v-for="star in 5"
+                              :key="star"
+                              @click="newReview.rating = star"
+                              :class="[
+                                'bi',
+                                star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
+                                'star-button'
+                              ]"
+                            ></i>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">Nội dung đánh giá:</label>
+                          <textarea
+                            class="form-textarea"
+                            rows="4"
+                            v-model="newReview.text"
+                            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+                            required
+                          ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">Hình ảnh (tùy chọn):</label>
+                          <CloudinaryUploader :key="uploaderKey" @uploaded="handleImageUploaded" />
+                        </div>
+
+                        <button type="submit" class="submit-review-btn">
+                          <i class="bi bi-send me-2"></i>
+                          Gửi đánh giá
+                        </button>
+                      </form>
+                    </div>
+                  </transition>
                 </div>
               </div>
             </div>
@@ -104,6 +157,8 @@
 import { useRouter } from "vue-router";
 import api from "../../Configs/api";
 import { ref, onMounted, computed } from "vue";
+import { notification } from "ant-design-vue";
+import CloudinaryUploader from "../Module/Cloudinary.vue";
 
 const orders = ref([]);
 const router = useRouter();
@@ -111,26 +166,54 @@ const router = useRouter();
 // Gọi API lấy danh sách đơn hàng người dùng
 const loadOrders = async () => {
   try {
-    const res = await api.get("/user/Orders"); // res chứ không phải response
+    const res = await api.get("/user/Orders");
     console.log("Orders response:", res.data);
 
-    // Nếu backend trả về dạng phân trang (Page), dùng res.data.content
     const data = Array.isArray(res.data) ? res.data : res.data.content || [];
 
-    orders.value = data.map((order) => ({
-      id: order.id,
-      maDon: order.orderCode,
-      ngayDat: order.createdAt,
-      trangThai: translateStatus(order.shippingStatus),
-      maVanDon: order.orderCode || "Đang cập nhật",
-      tongTien: order.finalTotal,
-      sanPham: (order.products || []).map((i) => ({
-        anh: i.main_image_url || "no-image.png",
-        ten: i.name,
-        soLuong: i.quantity,
-        gia: i.price,
-      })),
-    }));
+    const result = [];
+
+    for (const order of data) {
+      const sanPham = [];
+
+      for (const i of order.products || []) {
+        const sp = {
+          productItemId: i.productItemId,
+          orderId: order.id,
+          anh: i.main_image_url || "no-image.png",
+          ten: i.name,
+          soLuong: i.quantity,
+          gia: i.price,
+          daDanhGia: false // mặc định
+        };
+
+        try {
+          const reviewRes = await api.get("/user/reviews/check", {
+            params: {
+              productItemId: sp.productItemId,
+              orderId: sp.orderId
+            }
+          });
+          sp.daDanhGia = reviewRes.data.hasReviewed;
+        } catch (err) {
+          console.warn("Không thể kiểm tra đánh giá:", err);
+        }
+
+        sanPham.push(sp);
+      }
+
+      result.push({
+        id: order.id,
+        maDon: order.orderCode,
+        ngayDat: order.createdAt,
+        trangThai: translateStatus(order.shippingStatus),
+        maVanDon: order.orderCode || "Đang cập nhật",
+        tongTien: order.finalTotal,
+        sanPham: sanPham
+      });
+    }
+
+    orders.value = result;
   } catch (err) {
     console.error("Lỗi khi tải đơn hàng:", err);
   }
@@ -177,7 +260,7 @@ const filteredOrders = computed(() => {
     "Chờ xác nhận": "Chờ xác nhận",
     "Chờ lấy hàng": "Chờ lấy hàng",
     "Chờ giao hàng": "Chờ giao hàng",
-    "Đã nhận hàng": "Đã giao",
+    "Đã nhận hàng": "Đã nhận hàng",
     "Đã hủy": "Đã hủy",
   };
   const status = tabMap[selectedTab.value];
@@ -217,6 +300,65 @@ const translateStatus = (status) => {
   return map[status] || status;
 };
 
+const activeReviewKey = ref(null);
+const reviewImageUrl = ref('');
+
+const newReview = ref({
+  rating: 0,
+  text: '',
+  imageUrl: ''
+});
+
+const toggleReviewForm = (orderId, productItemId, sp) => {
+  if (sp.daDanhGia) return;
+
+  const key = `${orderId}_${productItemId}`;
+  activeReviewKey.value = activeReviewKey.value === key ? null : key;
+
+  newReview.value = {
+    rating: 5,
+    text: '',
+    imageUrl: ''
+  };
+};
+
+async function submitReview(sp, orderId) {
+  if (!newReview.value.text) return;
+
+  try {
+    await api.post("/user/Reviews", {
+      productItems: sp.productItemId,
+      orderId: orderId,
+      rating: newReview.value.rating,
+      comment: newReview.value.text,
+      imageUrl1: reviewImageUrl.value || null,
+    });
+
+    notification.success({
+      message: "Gửi đánh giá thành công",
+      description: "Cảm ơn bạn đã đánh giá sản phẩm!",
+      duration: 2.5,
+    });
+
+    sp.daDanhGia = true;
+    activeReviewKey.value = null;
+
+    newReview.value.text = "";
+    newReview.value.rating = 5;
+    reviewImageUrl.value = "";
+    uploaderKey.value = Date.now();
+    activeReviewIndex.value = null;
+
+    await fetchReviews();
+  } catch (err) {
+    notification.error({
+      message: "Lỗi gửi đánh giá",
+      description: "Vui lòng thử lại sau!",
+      duration: 4.5,
+    });
+    console.error(err);
+  }
+}
 
 </script>
 
@@ -631,4 +773,100 @@ const translateStatus = (status) => {
   color: white;
 }
 
+/* Hiệu ứng dropdown */
+.tab-panel {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card form đánh giá */
+.review-form-card {
+  background: #f8fafc;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 40px;
+}
+
+/* Tiêu đề form */
+.form-title {
+  color: #1a202c;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* Input đánh giá sao */
+.rating-input {
+  margin-bottom: 20px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.star-button {
+  font-size: 24px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.star-button.bi-star-fill {
+  color: #fbbf24;
+}
+
+.star-button:hover {
+  transform: scale(1.1);
+}
+
+/* Nhóm input */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Nút gửi đánh giá */
+.submit-review-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.submit-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
 </style>

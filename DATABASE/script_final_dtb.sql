@@ -318,6 +318,7 @@ create table
 		image_url2 nvarchar (255),
 		image_url3 nvarchar (255),
 		video_url varchar(255),
+		order_id int,
 		created_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
 		foreign key (account_id) references accounts (id) ON DELETE CASCADE

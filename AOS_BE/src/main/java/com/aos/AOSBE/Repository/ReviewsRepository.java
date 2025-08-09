@@ -29,4 +29,8 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer>, JpaS
     Double findAverageRatingByProductItemId(@Param("productItemId") Long productItemId);
     @Query("SELECT COUNT(r) FROM Reviews r WHERE r.productItems.id = :productItemId")
     Long countByProductItemId(@Param("productItemId") Long productItemId);
+    @Query("SELECT COUNT(r) > 0 FROM Reviews r WHERE r.accounts.id = :accountId AND r.productItems.id = :productItemId AND r.orders.id = :orderId")
+    boolean existsByAccountAndProductAndOrder(@Param("accountId") Long accountId,
+                                            @Param("productItemId") Long productItemId,
+                                            @Param("orderId") Long orderId);
 }

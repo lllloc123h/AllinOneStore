@@ -12,8 +12,11 @@ public class ReviewsMapper {
 	private AccountsService accountsService;
 	@Autowired
 	private ProductItemsService productItemsService;
+	@Autowired
+	private OrdersService ordersService;
 	
 	public ReviewsDTOS mapper(Reviews entity) {
+		Integer orderId = entity.getOrders() != null ? entity.getOrders().getId() : null;
 		return new ReviewsDTOS(
 				    entity.getId(),
 				    entity.getRating(),
@@ -25,7 +28,8 @@ public class ReviewsMapper {
 				    entity.getCreatedAt(),
 				    entity.getAccounts().getId(),
 					entity.getAccounts().getFullname(),
-				    entity.getProductItems().getId()
+				    entity.getProductItems().getId(),
+					orderId
 			);
 	}
 	public Reviews mapperToObject(ReviewsDTOS entity) {
@@ -39,7 +43,8 @@ public class ReviewsMapper {
 					entity.getVideoUrl(),
 					entity.getCreatedAt(),
 					accountsService.accountsFindById(entity.getAccountId()).orElse(null),
-					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null)
+					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null),
+					ordersService.ordersFindById(entity.getOrderId()).orElse(null)
 			);
 	}
 	
