@@ -20,6 +20,9 @@ public interface ProductItemsRepository
 
 	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1")
 	List<ProductItems> findByBaseProductsId(int id);
+	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1 " )
+	List<ProductItems> findByBaseProductsIdAndIsActive(int id, boolean isActive);
+
 
 	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1   AND a.isActive = true")
 	List<ProductItems> findByBaseProductsIdWithTheActiveTrue(int id);

@@ -87,6 +87,9 @@ public class ProductItemsService {
 	public List<ProductItems> productItemsFindByBaseProductId(int id) {
 		return productItemsRepository.findByBaseProductsId(id);
 	}
+	public List<ProductItems> productItemsByActiveIsTrue(int id) {
+		return productItemsRepository.findByBaseProductsId(id);
+	}
 
 	public List<ProductItems> productItemsFindByBaseProductIdTheActiveTrue(int id) {
 		return productItemsRepository.findByBaseProductsIdWithTheActiveTrue(id);

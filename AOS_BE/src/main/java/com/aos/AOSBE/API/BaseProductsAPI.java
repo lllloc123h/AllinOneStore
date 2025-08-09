@@ -136,10 +136,23 @@ public class BaseProductsAPI {
 		return ResponseEntity.ok(updated);
 	}
 
-	@DeleteMapping("/BaseProducts/{id}")
-	public ResponseEntity<Void> deleteBaseProducts(@PathVariable int id) {
-		baseProductsService.baseProductsDeleteById(id);
-		return ResponseEntity.noContent().build();
+	@DeleteMapping("/admin/BaseProducts/{id}")
+	public ResponseEntity<?> deleteBaseProducts(@PathVariable int id) {
+		try {
+			baseProductsService.baseProductsDeleteById(id);
+			return ResponseEntity.ok().build();
+		}catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
 	}
+	@GetMapping("admin/BaseProducts/search")
+	public ResponseEntity<?> searchBaseProducts(@RequestParam(defaultValue = "") String search,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
+		Page<BaseProducts> baseProducts = baseProductsService.findAllByNameContainingIgnoreCase(search, page, size);
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", baseProducts.getContent().stream().map(baseProductsMapper::mapper).collect(Collectors.toList()));
+		response.put("totalPages", baseProducts.getTotalPages());
+		return ResponseEntity.ok(baseProducts);
+	}
 }

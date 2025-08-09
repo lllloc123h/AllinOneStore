@@ -54,7 +54,7 @@ public class ReviewsService {
 	}
 
 	@Transactional
-	public Double getAverageRatingByProductItemId(Long productItemId) {
+	public Double getAverageRatingByProductItemId(Integer productItemId) {
     Double avg = reviewsRepository.findAverageRatingByProductItemId(productItemId);
     return avg != null ? Math.round(avg * 10.0) / 10.0 : 0.0;
 	}

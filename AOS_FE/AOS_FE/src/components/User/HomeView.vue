@@ -88,212 +88,158 @@
     </div>
     <!--end carouselcarousel -->
 
-    <div style="" class="container-fluid px-5">
+    <div class="container-fluid px-5">
       <!-- px-5 la container -->
+
       <!--start giảm giá -->
-      <div class="row mt-4 g-4">
-        <h3>Sản phẩm đang giảm giá</h3>
+      <div class="row mt-5 g-4">
+        <div class="col text-center">
+          <h3 class="section-title">🔥 Sản phẩm đang giảm giá</h3>
+          <p class="section-subtitle">Những ưu đãi không thể bỏ lỡ</p>
+        </div>
+      </div>
+
+      <!-- Grid sản phẩm giảm giá -->
+      <div class="row mt-4 g-4" v-if="discountedProducts.length > 0">
         <div
-          class="col-3"
-          v-for="product in discountedProducts"
+          v-for="product in discountedProducts.slice(0, 4)"
           :key="product.productItemId"
+          class="col-lg-3 col-md-6 col-sm-6"
         >
-          <div
-            class="card position-relative overflow-hidden rounded-4"
-            style="border: 0px"
-          >
-            <!-- Label Khuyến mãi -->
-            <div
-              class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10"
-            >
-              Khuyến mãi
-            </div>
-
-            <!-- Hình ảnh -->
-            <img
-              class="card-img rounded-4 custom-shadow"
-              style="height: 450px; object-fit: cover"
-              :src="product.imageUrl"
-              :alt="product.productName"
-            />
-
-            <!-- Nội dung -->
-            <div class="card-body">
-              <!-- Đánh giá giả lập -->
-              <div class="card-title">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-half text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <span>(3.5 reviews)</span>
+          <div class="product-card" @click="goToDetail(product.productItemId)">
+            <div class="product-image-container">
+              <img
+                :src="`http://localhost:8080/api/files/${product.image}`"
+                :alt="product.name"
+                class="product-image"
+                @error="handleImageError"
+              />
+              <div class="discount-badge" v-if="product.discountPercentage">
+                -{{ product.discountPercentage }}%
               </div>
-
-              <!-- Giá -->
-              <h5 class="card-text">
-                <del>{{ product.originalPrice.toLocaleString() }} VND</del>
-                {{ product.discountedPrice.toLocaleString() }} VND
-              </h5>
-
-              <!-- Tên sản phẩm -->
-              <p class="card-text">{{ product.productName }}</p>
-
-              <!-- Hành động -->
-              <div class="d-flex justify-content-end">
-                <div class="main-section rounded-4">
-                  <button class="first-button">Đang giảm</button>
-                  <router-link
-                    :to="`/product/${product.productItemId}`"
-                    class="second-button"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="#f04e31"
-                      stroke-width="2"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path
-                        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
-                      ></path>
-                    </svg>
-                    {{ product.discountValue.toLocaleString() }} VND tiết kiệm
-                  </router-link>
+              <div class="product-overlay">
+                <button class="quick-view-btn">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="product-info">
+              <h6 class="product-name">{{ product.name }}</h6>
+              <div class="price-section">
+                <span class="original-price" v-if="product.originalPrice">
+                  {{ formatPrice(product.originalPrice) }}
+                </span>
+                <span class="current-price">{{ formatPrice(product.price) }}</span>
+              </div>
+              <div class="rating-section">
+                <div class="stars">
+                  <i class="bi bi-star-fill" v-for="n in 5" :key="n"></i>
                 </div>
+                <span class="rating-text">(4.8)</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Placeholder khi chưa có dữ liệu -->
+      <div class="row mt-4 g-4" v-else>
+        <div class="col-12 text-center">
+          <div class="placeholder-section">
+            <i class="bi bi-percent display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">Chưa có sản phẩm giảm giá</h5>
+            <p class="text-muted">Các ưu đãi hấp dẫn sẽ sớm được cập nhật</p>
+          </div>
+        </div>
+      </div>
       <!--end giảm giá -->
       <!--start danh mục nổi bật -->
       <div class="row mt-5 g-4">
         <div class="col text-center">
-          <h1>Các danh mục nổi bật</h1>
+          <h3 class="section-title">✨ Các danh mục nổi bật</h3>
+          <p class="section-subtitle">Khám phá bộ sưu tập thời trang đa dạng</p>
         </div>
       </div>
       <!--end danh mục nổi bật -->
+
       <!--start phân loại -->
-      <div class="row mt-5 g-4">
-        <div class="col-4">
-          <div
-            style="border: 0px"
-            class="card position-relative overflow-hidden rounded-4"
-          >
-            <!-- Bo góc ảnh luôn -->
+      <div class="row mt-4 g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="category-card large-card">
             <img
-              class="card-img rounded-4 custom-shadow"
-              style="height: 700px; object-fit: cover"
-              src="../../assets/imgs/Vàng nhạt và Xanh ngọc lam Nghệ thuật sắp chữ In đậm Tiệm cà phê Biểu trưng Cà phê.png"
-              alt="Card image"
+              class="category-image"
+              src="../../assets/imgs/banner_2.jpg"
+              alt="Thời trang nam"
             />
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="row">
-            <div class="col">
-              <div
-                style="border: 0px"
-                class="card position-relative overflow-hidden rounded-4 group"
-              >
-                <!-- Ảnh -->
-                <img
-                  class="card-img rounded-4 custom-shadow"
-                  style="height: 338px; object-fit: cover"
-                  src="../../assets/imgs/banner1.png"
-                  alt="Card image"
-                />
-
-                <!-- Overlay hiển thị khi hover -->
-                <div
-                  class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-                  style="
-                    background-color: rgba(0, 0, 0, 0.4);
-                    opacity: 0;
-                    transition: 0.3s;
-                  "
-                  onmouseover="this.style.opacity='1'"
-                  onmouseout="this.style.opacity='0'"
-                >
-                  <!-- Router link -->
-                  <a
-                    href="/products"
-                    class="btn btn-light rounded-pill px-4 py-2 text-dark"
-                  >
-                    Xem các danh mục
-                  </a>
-                </div>
+            <div class="category-overlay">
+              <div class="category-content">
+                <h4 class="category-title">Thời Trang Nam</h4>
+                <p class="category-desc">Phong cách lịch lãm, sang trọng</p>
+                <router-link to="/products" class="category-btn">
+                  Khám phá ngay <i class="bi bi-arrow-right ms-2"></i>
+                </router-link>
               </div>
             </div>
           </div>
-          <div class="row mt-4">
-            <div class="col">
-              <div
-                style="border: 0px"
-                class="card position-relative overflow-hidden rounded-4 group"
-              >
-                <!-- Ảnh -->
-                <img
-                  class="card-img rounded-4 custom-shadow"
-                  style="height: 338px; object-fit: cover"
-                  src="../../assets/imgs/banner2.png"
-                  alt="Card image"
-                />
+        </div>
 
-                <!-- Overlay hiển thị khi hover -->
-                <div
-                  class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-                  style="
-                    background-color: rgba(0, 0, 0, 0.4);
-                    opacity: 0;
-                    transition: 0.3s;
-                  "
-                  onmouseover="this.style.opacity='1'"
-                  onmouseout="this.style.opacity='0'"
-                >
-                  <!-- Router link -->
-                  <a
-                    href="/products"
-                    class="btn btn-light rounded-pill px-4 py-2 text-dark"
-                  >
-                    Xem các danh mục
-                  </a>
+        <div class="col-lg-4 col-md-6">
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="category-card">
+                <img
+                  class="category-image"
+                  src="../../assets/imgs/banner_1.jpg"
+                  alt="Thời trang nữ"
+                />
+                <div class="category-overlay">
+                  <div class="category-content">
+                    <h5 class="category-title">Thời Trang Nữ</h5>
+                    <p class="category-desc">Duyên dáng, quyến rũ</p>
+                    <router-link to="/products" class="category-btn">
+                      Xem ngay <i class="bi bi-arrow-right ms-1"></i>
+                    </router-link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="category-card">
+                <img
+                  class="category-image"
+                  src="../../assets/imgs/HUSSIO FASHION.jpg"
+                  alt="Phụ kiện"
+                />
+                <div class="category-overlay">
+                  <div class="category-content">
+                    <h5 class="category-title">Phụ Kiện</h5>
+                    <p class="category-desc">Hoàn thiện phong cách</p>
+                    <router-link to="/products" class="category-btn">
+                      Xem ngay <i class="bi bi-arrow-right ms-1"></i>
+                    </router-link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-4">
-          <div
-            style="border: 0px"
-            class="card position-relative overflow-hidden rounded-4 group"
-          >
-            <!-- Ảnh -->
-            <img
-              class="card-img rounded-4 custom-shadow"
-              style="height: 700px; object-fit: cover"
-              src="../../assets/imgs/banner5.jpg"
-              alt="Card image"
-            />
 
-            <!-- Overlay hiển thị khi hover -->
-            <div
-              class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-              style="background-color: rgba(0, 0, 0, 0.4); opacity: 0; transition: 0.3s"
-              onmouseover="this.style.opacity='1'"
-              onmouseout="this.style.opacity='0'"
-            >
-              <!-- Router link -->
-              <a href="/products" class="btn btn-light rounded-pill px-4 py-2 text-dark">
-                Xem các danh mục
-              </a>
+        <div class="col-lg-4 col-md-12">
+          <div class="category-card large-card">
+            <img
+              class="category-image"
+              src="../../assets/imgs/Realistic Summer Sale Concept Design _ Premium Vector.jpg"
+              alt="Sale Off"
+            />
+            <div class="category-overlay sale-overlay">
+              <div class="category-content">
+                <div class="sale-badge">SALE UP TO 70%</div>
+                <h4 class="category-title text-white">Mega Sale</h4>
+                <p class="category-desc text-white">Giảm giá cực sốc - Số lượng có hạn</p>
+                <router-link to="/products" class="category-btn sale-btn">
+                  Mua ngay <i class="bi bi-lightning-fill ms-2"></i>
+                </router-link>
+              </div>
             </div>
           </div>
         </div>
@@ -301,13 +247,14 @@
       <!--end phân loại -->
 
       <!-- Header sản phẩm bán chạy -->
-      <div class="hstack mt-5 align-items-center">
-        <div>
-          <h3>Sản phẩm bán chạy</h3>
-        </div>
-        <div class="ms-auto">
-          <p class="mb-0">
-            <button id="next">
+      <div class="section-header mt-5 mb-4">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="section-title">⭐ Sản phẩm bán chạy</h3>
+            <p class="section-subtitle">Được yêu thích nhất bởi khách hàng</p>
+          </div>
+          <div class="col-auto">
+            <button class="view-more-btn" @click="router.push('/products')">
               <span>Xem thêm</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -316,94 +263,75 @@
                 height="34"
                 width="34"
               >
-                <circle stroke-width="3" stroke="black" r="35.5" cy="37" cx="37"></circle>
+                <circle
+                  stroke-width="3"
+                  stroke="currentColor"
+                  r="35.5"
+                  cy="37"
+                  cx="37"
+                ></circle>
                 <path
-                  fill="black"
+                  fill="currentColor"
                   d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z"
                 />
               </svg>
             </button>
-          </p>
+          </div>
         </div>
       </div>
 
       <!-- Sản phẩm bán chạy -->
-      <div class="row mt-4 g-4">
+      <div class="row g-4" v-if="bestSellers.length > 0">
         <div
-          class="col-3"
-          v-for="product in discountedProducts"
+          v-for="product in bestSellers.slice(0, 8)"
           :key="product.productItemId"
+          class="col-lg-3 col-md-6 col-sm-6"
         >
-          <div
-            class="card position-relative overflow-hidden rounded-4"
-            style="border: 0px"
-          >
-            <!-- Label Khuyến mãi -->
-            <div
-              class="position-absolute top-0 start-0 bg-warning text-dark px-3 py-1 m-3 shadow-sm"
-              style="border-radius: 12px; font-size: 0.85rem; z-index: 10"
-            >
-              Khuyến mãi
-            </div>
-
-            <!-- Hình ảnh -->
-            <img
-              class="card-img rounded-4 custom-shadow"
-              style="height: 450px; object-fit: cover"
-              :src="product.imageUrl"
-              :alt="product.productName"
-            />
-
-            <!-- Nội dung -->
-            <div class="card-body">
-              <!-- Đánh giá ảo tạm tính nếu backend chưa có -->
-              <div class="card-title">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <i class="bi bi-star text-warning"></i>
-                <span>(3.0 reviews)</span>
+          <div class="product-card bestseller" @click="goToDetail(product.productItemId)">
+            <div class="product-image-container">
+              <img
+                :src="`http://localhost:8080/api/files/${product.image}`"
+                :alt="product.name"
+                class="product-image"
+                @error="handleImageError"
+              />
+              <div class="bestseller-badge">
+                <i class="bi bi-fire"></i>
+                Hot
               </div>
-
-              <!-- Giá -->
-              <h5 class="card-text">
-                <del>{{ product.originalPrice.toLocaleString() }} VND</del>
-                {{ product.discountedPrice.toLocaleString() }} VND
-              </h5>
-
-              <!-- Tên sản phẩm -->
-              <p class="card-text">{{ product.productName }}</p>
-
-              <!-- Hành động -->
-              <div class="d-flex justify-content-end">
-                <div class="main-section rounded-4">
-                  <button class="first-button">Đang giảm</button>
-                  <router-link
-                    :to="`/product/${product.productItemId}`"
-                    class="second-button"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      stroke="#f04e31"
-                      stroke-width="2"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <circle cx="9" cy="21" r="1"></circle>
-                      <circle cx="20" cy="21" r="1"></circle>
-                      <path
-                        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
-                      ></path>
-                    </svg>
-                    Ưu đãi: {{ product.discountValue.toLocaleString() }} VND
-                  </router-link>
+              <div class="product-overlay">
+                <button class="quick-view-btn">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="product-info">
+              <h6 class="product-name">{{ product.name }}</h6>
+              <div class="price-section">
+                <span class="current-price">{{ formatPrice(product.price) }}</span>
+              </div>
+              <div class="rating-section">
+                <div class="stars">
+                  <i class="bi bi-star-fill" v-for="n in 5" :key="n"></i>
                 </div>
+                <span class="rating-text">(4.9)</span>
+                <span class="sold-count"
+                  >• Đã bán
+                  {{ product.soldCount || Math.floor(Math.random() * 100) + 50 }}</span
+                >
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder khi chưa có dữ liệu -->
+      <div class="row g-4" v-else>
+        <div class="col-12 text-center">
+          <div class="placeholder-section">
+            <i class="bi bi-star display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">Chưa có sản phẩm bán chạy</h5>
+            <p class="text-muted">Dữ liệu sẽ được cập nhật sau khi có đơn hàng</p>
           </div>
         </div>
       </div>
@@ -465,45 +393,44 @@
       </div>
     </section> -->
     <!--end gioi thieu -->
-    <!-- thong tin -->
-    <section style="padding: 8rem 2rem; margin-top: 100px; margin-bottom: 100px">
+    <!-- Features Section -->
+    <section class="features-section">
       <div class="container">
         <div class="row align-items-center">
           <!-- Bên trái -->
-          <div class="col-md-6 mb-4 mb-md-0">
-            <h2 class="fw-bold text-black mb-4">
-              Hãy xem qua những điểm bán hàng độc đáo của chúng tôi
-            </h2>
-            <p class="mb-0">
-              <!-- From Uiverse.io by alexmaracinaru -->
-              <button id="next">
-                <span>Xem thêm</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 74 74"
-                  height="34"
-                  width="34"
-                >
-                  <circle
-                    stroke-width="3"
-                    stroke="black"
-                    r="35.5"
-                    cy="37"
-                    cx="37"
-                  ></circle>
-                  <path
-                    fill="black"
-                    d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z"
-                  ></path>
-                </svg>
-              </button>
-            </p>
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="features-content">
+              <h2 class="features-title">Tại sao chọn chúng tôi?</h2>
+              <p class="features-description">
+                Khám phá những ưu điểm vượt trội khiến hàng nghìn khách hàng tin tưởng và
+                lựa chọn chúng tôi
+              </p>
+
+              <div class="features-stats">
+                <div class="stat-item">
+                  <div class="stat-number">99%</div>
+                  <div class="stat-label">Khách hàng hài lòng</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number">24/7</div>
+                  <div class="stat-label">Hỗ trợ khách hàng</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number">10K+</div>
+                  <div class="stat-label">Sản phẩm</div>
+                </div>
+              </div>
+
+              <router-link to="/products" class="cta-button">
+                <span>Khám phá ngay</span>
+                <i class="bi bi-arrow-right ms-2"></i>
+              </router-link>
+            </div>
           </div>
 
           <!-- Bên phải -->
-          <div class="col-md-6 text-white">
-            <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="col-lg-6">
+            <div class="features-accordion" id="accordionPanelsStayOpenExample">
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
@@ -514,7 +441,8 @@
                     aria-expanded="true"
                     aria-controls="panelsStayOpen-collapseOne"
                   >
-                    Accordion Item #1
+                    <i class="bi bi-shield-check me-3"></i>
+                    Chất lượng đảm bảo
                   </button>
                 </h2>
                 <div
@@ -543,7 +471,8 @@
                     aria-expanded="false"
                     aria-controls="panelsStayOpen-collapseTwo"
                   >
-                    Accordion Item #2
+                    <i class="bi bi-truck me-3"></i>
+                    Giao hàng nhanh chóng
                   </button>
                 </h2>
                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
@@ -569,7 +498,8 @@
                     aria-expanded="false"
                     aria-controls="panelsStayOpen-collapseThree"
                   >
-                    Accordion Item #3
+                    <i class="bi bi-headset me-3"></i>
+                    Hỗ trợ tận tâm
                   </button>
                 </h2>
                 <div
@@ -613,11 +543,24 @@ const discountedProducts = ref([]);
 // Sản phẩm bán chạy
 const bestSellers = ref([]);
 
+// Utility functions
+const formatPrice = (price) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+};
+
+const handleImageError = (event) => {
+  event.target.src = "../../assets/imgs/no-image.png";
+};
+
 // Gọi API khi component mount
 onMounted(async () => {
   try {
-    discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
-    bestSellers.value = await homeService.getBestSellers(); // ✅ gọi từ homeService
+    // Tạm thời bỏ load dữ liệu
+    // discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
+    // bestSellers.value = await homeService.getBestSellers(); // ✅ gọi từ homeService
   } catch (error) {
     console.error("Lỗi khi tải dữ liệu:", error);
   }
@@ -625,142 +568,512 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Tùy chỉnh hiệu ứng dropdown */
-
-.custom-shadow {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+/* Section styles */
+.section-title {
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* From Uiverse.io by alexmaracinaru */
-#next {
+.section-subtitle {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+.section-header {
+  position: relative;
+  text-align: center;
+}
+
+.section-header::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+/* Product Card Styles */
+.product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
   cursor: pointer;
-  font-weight: 700;
-  transition: all 0.2s;
-  padding: 10px 20px;
-  border-radius: 100px;
-  background: #cfef00;
-  border: 1px solid transparent;
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-}
-
-#next:hover {
-  background: #c4e201;
-}
-
-#next > svg {
-  width: 34px;
-  margin-left: 10px;
-  transition: transform 0.3s ease-in-out;
-}
-
-#next:hover svg {
-  transform: translateX(5px);
-}
-
-#next:active {
-  transform: scale(0.95);
-}
-
-/* From Uiverse.io by AKAspidey01 */
-.first-button {
-  background: #ffe8cd;
-  color: #fff;
-  border: none;
-  font-weight: 700;
-  font-size: 1em;
-  min-height: 45px;
-  width: 200px;
-  gap: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition-duration: 0.6s;
-}
-
-.main-section {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 45px;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.product-card.bestseller {
+  border: 2px solid #ffd700;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+}
+
+.product-image-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
   overflow: hidden;
-  align-items: flex-start;
+  background: #f8f9fa;
 }
 
-.main-section:hover .second-button,
-.main-section:hover .first-button {
-  transform: translateY(-45px);
-}
-
-.second-button {
-  background: rgb(209, 15, 57);
-  color: #fff;
-  border: none;
-  font-weight: 700;
-  font-size: 1em;
-  min-height: 45px;
-  width: 200px;
-  gap: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition-duration: 0.6s;
-}
-
-.hstack h3 {
-  font-weight: 700;
-  font-size: 1.6rem;
-  color: #333;
-}
-
-/* Nút "Xem thêm" */
-#next {
-  background-color: #f8f9fa;
-  border: none;
-  border-radius: 50px;
-  padding: 6px 14px;
-  font-weight: 500;
-  color: #000;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-#next:hover {
-  background-color: #ffe484;
-  cursor: pointer;
-}
-
-/* Card sản phẩm */
-.card {
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* Ảnh sản phẩm */
-.card-img-top {
-  height: 200px;
+.product-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 0.5rem;
   transition: transform 0.3s ease;
 }
 
-.card:hover .card-img-top {
-  transform: scale(1.04);
+.product-card:hover .product-image {
+  transform: scale(1.02);
 }
 
-.card-img-top {
-  height: 240px;
+.discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.bestseller-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(238, 90, 82, 0.3);
+}
+
+.product-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+  opacity: 1;
+}
+
+.quick-view-btn {
+  background: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.quick-view-btn:hover {
+  transform: scale(1.1);
+  background: #667eea;
+  color: white;
+}
+
+.product-info {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.8em;
+}
+
+.price-section {
+  margin-bottom: 12px;
+}
+
+.original-price {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 0.9rem;
+  margin-right: 8px;
+}
+
+.current-price {
+  color: #e74c3c;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  font-size: 0.9rem;
+}
+
+.stars {
+  color: #ffc107;
+  display: flex;
+  gap: 2px;
+}
+
+.rating-text {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.sold-count {
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* View More Button */
+.view-more-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.view-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.view-more-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.view-more-btn:hover svg {
+  transform: translateX(4px);
+}
+
+/* Placeholder Section */
+.placeholder-section {
+  padding: 60px 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 2px dashed #dee2e6;
+}
+
+/* Category Cards */
+.category-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  height: 300px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.category-card.large-card {
+  height: 620px;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: top center;
-  padding-top: 6px;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image {
+  transform: scale(1.02);
+}
+
+.category-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  backdrop-filter: blur(2px);
+}
+
+.category-card:hover .category-overlay {
+  opacity: 1;
+}
+
+.sale-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(231, 76, 60, 0.8) 0%,
+    rgba(192, 57, 43, 0.9) 100%
+  );
+}
+
+.category-content {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.category-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.category-desc {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.category-btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.category-btn:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  color: #333;
+}
+
+.sale-btn {
+  background: white;
+  color: #e74c3c;
+}
+
+.sale-btn:hover {
+  background: #fff;
+  color: #c0392b;
+}
+
+.sale-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Features Section */
+.features-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 5rem 2rem;
+  margin-top: 4rem;
+}
+
+.features-content {
+  padding: 2rem 0;
+}
+
+.features-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.features-description {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.features-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #667eea;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+/* Features Accordion */
+.features-accordion .accordion-item {
+  border: none;
+  margin-bottom: 1.5rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.features-accordion .accordion-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.features-accordion .accordion-button {
+  background: white;
+  border: none;
+  font-weight: 600;
+  padding: 1.5rem 2rem;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.features-accordion .accordion-button:not(.collapsed) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: none;
+}
+
+.features-accordion .accordion-button:focus {
+  box-shadow: none;
+}
+
+.features-accordion .accordion-button::after {
+  background-image: none;
+  content: "\F229";
+  font-family: "bootstrap-icons";
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.features-accordion .accordion-button:not(.collapsed)::after {
+  transform: rotate(180deg);
+  color: white;
+}
+
+.features-accordion .accordion-button .bi {
+  color: #667eea;
+  font-size: 1.3rem;
+}
+
+.features-accordion .accordion-button:not(.collapsed) .bi {
+  color: white;
+}
+
+.features-accordion .accordion-body {
+  padding: 2rem;
+  background: white;
+  color: #6c757d;
+  line-height: 1.7;
+  font-size: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Carousel Enhancements */
+.carousel-item img {
+  filter: brightness(0.9);
+  transition: filter 0.3s ease;
+}
+
+.carousel-item.active img {
+  filter: brightness(1);
 }
 
 .carousel-image {
@@ -820,25 +1133,50 @@ onMounted(async () => {
   height: 20px;
 }
 
-/* Pause carousel on hover */
-.carousel:hover {
-  animation-play-state: paused;
+/* Custom shadows */
+.custom-shadow {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* Smooth fade transition */
-.carousel-fade .carousel-item {
-  opacity: 0;
-  transition-property: opacity;
-  transition-duration: 0.8s;
-}
-
-.carousel-fade .carousel-item.active {
-  opacity: 1;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .product-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .product-image-container {
+    height: 220px;
+  }
+
+  .view-more-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .category-card {
+    height: 250px;
+    margin-bottom: 1rem;
+  }
+
+  .category-card.large-card {
+    height: 300px;
+  }
+
+  .features-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .features-title {
+    font-size: 2rem;
+  }
+
   .carousel {
-    margin-top: 60px; /* Smaller margin for mobile */
+    margin-top: 60px;
   }
 
   .carousel-image {
@@ -859,5 +1197,39 @@ onMounted(async () => {
   .carousel-control-next {
     right: 10px;
   }
+}
+
+@media (max-width: 576px) {
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .product-info {
+    padding: 15px;
+  }
+
+  .product-image-container {
+    height: 200px;
+  }
+
+  .features-section {
+    padding: 3rem 1rem;
+  }
+}
+
+/* Loading animations */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.loading {
+  animation: shimmer 1.5s ease-in-out infinite;
+  background: linear-gradient(to right, #f6f7f8 8%, #edeef1 38%, #f6f7f8 54%);
+  background-size: 1000px 640px;
 }
 </style>
