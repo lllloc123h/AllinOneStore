@@ -20,13 +20,15 @@ public class PromotionProducts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
     @Column(name = "id")
-    private int id;
+    private Integer id;
 	
     @Column(name = "require_qty")
     private int requireQty;
 	
     @Column(name = "is_gift")
     private boolean isGift;
+    @Column(name = "gift_option")
+    private String giftOption; // true: gift, false: discount
 
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
