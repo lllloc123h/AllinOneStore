@@ -82,13 +82,20 @@
                   </div>
                   <!-- Nút đánh giá -->
                   <button
-                    v-if="!sp.daDanhGia"
+                    v-if="!sp.daDanhGia && order.trangThai === 'Đã nhận hàng' && selectedTab === 'Đã nhận hàng'"
                     class="btn btn-outline-primary mt-2"
                     @click="toggleReviewForm(order.id, sp.productItemId, sp)"
                   >
                     Đánh giá
                   </button>
-                  <span v-else class="text-success mt-2 d-block">Đã đánh giá</span>
+
+                  <!-- Dòng đã đánh giá -->
+                  <span
+                    v-else-if="sp.daDanhGia && order.trangThai === 'Đã nhận hàng' && selectedTab === 'Đã nhận hàng'"
+                    class="text-success mt-2 d-block"
+                  >
+                    Đã đánh giá
+                  </span>
                   <!-- Form đánh giá -->
                   <transition name="tab-panel">
                     <div v-if="activeReviewKey === `${order.id}_${sp.productItemId}`" class="review-form-card">
