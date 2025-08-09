@@ -60,12 +60,13 @@ public class OrderItems {
     @JoinColumn(name = "promotion_id")
     private Promotions promotions;
     
-    @JoinColumn(name = "combo_group")
+    @Column(name = "combo_group")
     private String comboGroup;
-    
-    @JoinColumn(name = "combo_group_id")
+
+    @Column(name = "combo_group_id")
     private UUID comboGroupId;
     
-    @JoinColumn(name="combo_qty")
+    @Column(name = "combo_qty")
     private Integer comboQty;
+
 }

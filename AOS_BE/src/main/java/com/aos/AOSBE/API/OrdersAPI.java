@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +49,12 @@ import com.aos.AOSBE.Entity.Message;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
+import com.aos.AOSBE.Repository.PromotionsRepository;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.BaseProductsService;
 import com.aos.AOSBE.Service.CartItemsService;
@@ -60,6 +64,7 @@ import com.aos.AOSBE.Service.MessageService;
 import com.aos.AOSBE.Service.OrderItemsService;
 import com.aos.AOSBE.Service.OrdersService;
 import com.aos.AOSBE.Service.ProductItemsService;
+import com.aos.AOSBE.Service.PromotionsService;
 
 @RestController
 @RequestMapping("/api")
@@ -82,8 +87,6 @@ public class OrdersAPI {
 	private AccountsMapper accountsMapper;
 	@Autowired
 	private GhnService ghnService;
-
-
 	@Autowired
 	private ProductItemsService productItemsService;
 	@Autowired
@@ -94,6 +97,11 @@ public class OrdersAPI {
 	private MessageService messageService;
 	@Autowired
 	private MessageMapper messageMapper;
+	@Autowired
+	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private PromotionsService promotionsService;
+
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
 
 	@GetMapping("/admin/Orders")
@@ -170,46 +178,98 @@ public class OrdersAPI {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
 			entity.setAccounts(user.getId());
+
+			// Xóa giỏ hàng
 			cartItemsService.cartItemsDeleteAll(userEmail);
+
+			// Lưu đơn hàng trước
 			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+
+			// Tạo thông báo
 			MessageDTOS entityMessage = new MessageDTOS();
 			entityMessage.setKeyMessage(commonKeyConstant.MessageOrder);
 			entityMessage.setAccounts(userEmail);
 			entityMessage.setNotification("Bạn có đơn hàng: " + saved.getId());
-			Message messageSaved = messageService.messageSave(messageMapper.mapperToObject(entityMessage));
-			// Lưu đơn hàng trước
+			messageService.messageSave(messageMapper.mapperToObject(entityMessage));
 
-			// Mapping các item
+			// Trừ theo combo
+			Set<String> processedComboGroups = new HashSet<>();
+
 			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
 				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
-				ProductItems updateTurnBuy = orderItem.getProductItems();
-				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
-				updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
 
-				BaseProducts updateTurnBuyForBP = orderItem.getProductItems().getBaseProducts();
-				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
-//				updateTurnBuyForBP.setQty(updateTurnBuyForBP.getQty() - saved.getQty());
-				productItemsService.productItemsSave(updateTurnBuy);
-				baseProductsService.baseProductsSave(updateTurnBuyForBP);
+				Promotions promo = orderItem.getPromotions();
+				String comboGroupId = orderItem.getComboGroupId() != null ? orderItem.getComboGroupId().toString() : null;
 
+				if (promo != null) {
+					boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
+					if (!isComboProcessed) {
+						int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
+							? orderItem.getQty() * orderItem.getComboQty()
+							: orderItem.getQty();
+
+						if (promo.getQty() >= qtyToReduce) {
+							promo.setQty(promo.getQty() - qtyToReduce);
+							promo.setUpdatedAt(LocalDateTime.now());
+							promotionsService.promotionsSave(promo);
+						} else {
+							throw new IllegalStateException("Số lượng khuyến mãi không đủ.");
+						}
+						// Đánh dấu combo đã xử lý để không trừ lần 2
+						if (comboGroupId != null) processedComboGroups.add(comboGroupId);
+					}
+				}
 				orderItem.setOrders(saved);
 				return orderItem;
 			}).collect(Collectors.toList());
-				
+			
+			//Trừ theo sản phẩm trong combo
+//			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
+//				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
+//
+//				// ✅ Trừ số lượng khuyến mãi nếu có
+//				if (orderItem.getPromotions() != null) {
+//					Promotions promo = orderItem.getPromotions();
+//					int qtyToReduce = orderItem.getComboQty() != null ? orderItem.getComboQty() : orderItem.getQty();
+//
+//					if (promo.getQty() >= qtyToReduce) {
+//						promo.setQty(promo.getQty() - qtyToReduce);
+//						promo.setUpdatedAt(LocalDateTime.now());
+//						promotionsService.promotionsSave(promo); // ✅ Lưu lại
+//					} else {
+//						throw new IllegalStateException("Số lượng khuyến mãi không đủ để áp dụng.");
+//					}
+//				}
+//
+//				// Cập nhật số lượng và lượt mua sản phẩm
+//				ProductItems updateTurnBuy = orderItem.getProductItems();
+//				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
+//				updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
+//
+//				BaseProducts updateTurnBuyForBP = updateTurnBuy.getBaseProducts();
+//				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
+//
+//				productItemsService.productItemsSave(updateTurnBuy);
+//				baseProductsService.baseProductsSave(updateTurnBuyForBP);
+//
+//				orderItem.setOrders(saved);
+//				return orderItem;
+//			}).collect(Collectors.toList());
+
 			orderItemsService.orderItemsSaveAll(orderItems);
 
-// 			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
+//			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
 //			System.out.println("Số lượng sản phẩm gửi GHN: " + saved.getOrderItems().size());
 // 			saved.setGhnOrderCode(ghnOrderCode);
 // 			ordersService.ordersSave(saved);
-
-
+			
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+
 
 	@GetMapping("/user/Orders/paypending")
 	public ResponseEntity<?> addNewOrdersByUserRolesWithKey(@RequestParam("KEY") String key) {

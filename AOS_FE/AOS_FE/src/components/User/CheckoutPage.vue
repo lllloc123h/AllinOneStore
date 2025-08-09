@@ -122,15 +122,15 @@
                                         class="alert alert-success mt-2" style="font-size: 0.95rem">
                                         <div v-if="selectedFreeshipCoupon">
                                             🚚 Đã áp dụng mã freeship: <strong>{{ selectedFreeshipCoupon.code
-                                                }}</strong><br />
+                                            }}</strong><br />
                                             Miễn phí vận chuyển lên đến <strong>{{
                                                 formatCurrency(selectedFreeshipCoupon.discountValue) }}</strong>
                                         </div>
                                         <div v-if="selectedDiscountCoupon">
                                             💸 Đã áp dụng mã giảm giá: <strong>{{ selectedDiscountCoupon.code
-                                                }}</strong><br />
+                                            }}</strong><br />
                                             Giảm <strong>{{ formatCurrency(selectedDiscountCoupon.discountValue)
-                                                }}</strong>
+                                            }}</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -222,13 +222,13 @@
                                                 <span class="info-label">Người nhận:</span>
                                                 <span class="info-value">{{
                                                     defaultAddressData?.recipientName || "—"
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-label">Số điện thoại:</span>
                                                 <span class="info-value">{{
                                                     defaultAddressData?.phone || "—"
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-label">Địa chỉ:</span>
@@ -238,7 +238,7 @@
                                                 <span class="info-label">Giảm giá:</span>
                                                 <span class="info-value">{{
                                                     selectedCoupon?.code || "Không áp dụng"
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="info-row">
                                                 <span class="info-label">Thanh toán:</span>
@@ -282,7 +282,7 @@
                                                 ✅ Giá combo:
                                                 <strong class="text-success">{{ (group.comboPrice *
                                                     group.comboQty).toLocaleString()
-                                                }}₫</strong>
+                                                    }}₫</strong>
                                             </div>
                                         </div>
 
@@ -305,7 +305,7 @@
                                                 </ul>
                                                 <div class="ps-3">
                                                     💰 Giá gốc: <s>{{ (item.price * item.quantity).toLocaleString()
-                                                    }}₫</s><br />
+                                                        }}₫</s><br />
                                                     🏷️ Tiết kiệm:
                                                     <span class="fw-semibold text-success">
                                                         {{ (item.promotions.discountValue *
@@ -339,7 +339,7 @@
                                                     ✅ Thành tiền:
                                                     <strong class="text-success">{{ (item.price *
                                                         item.quantity).toLocaleString()
-                                                    }}₫</strong>
+                                                        }}₫</strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -395,7 +395,7 @@
                                             <span>{{ item.name }} x{{ item.quantity }}</span>
                                             <span>{{ ((item.price - item.promotions.discountValue) *
                                                 item.quantity).toLocaleString()
-                                            }}₫</span>
+                                                }}₫</span>
                                         </div>
                                     </div>
 
@@ -516,6 +516,8 @@ const showDiscountModal = ref(false);
 const freeshipCoupons = ref([]);
 const discountCoupons = ref([]);
 
+let timer = null;
+
 const openFreeshipModal = async () => {
     showFreeshipModal.value = true
     await fetchCoupons()
@@ -529,6 +531,30 @@ const openDiscountModal = async () => {
 const closeModals = () => {
     showFreeshipModal.value = false
     showDiscountModal.value = false
+}
+
+function calculateSellingPrice(item, groupedProducts) {
+    if (item.promotions?.type === "DISCOUNT" && item.promotions.discountValue) {
+        return item.price - item.promotions.discountValue;
+    }
+
+    if (item.promotions?.type === "COMBO" && item.comboGroupId) {
+        const group = groupedProducts.comboGroups[item.comboGroupId];
+
+        // Tổng số lượng sản phẩm trong combo group
+        const totalUnits = group.items.reduce((sum, i) => sum + i.quantity, 0);
+
+        // Tổng comboPrice thực tế (comboPrice × số combo đã mua)
+        const comboQty = item.comboQty || 1;
+        const totalComboPrice = group.comboPrice * comboQty;
+
+        // Giá chia đều cho mỗi đơn vị sản phẩm
+        const unitPrice = totalComboPrice / totalUnits;
+
+        return unitPrice;
+    }
+
+    return item.price;
 }
 
 const fetchCoupons = async () => {
@@ -564,7 +590,6 @@ function formatCurrency(value) {
     }).format(value);
 }
 
-let timer = null;
 
 // Steps configuration
 const steps = ref([
@@ -698,20 +723,25 @@ function buildOrderPayload() {
         finalTotal: finalPrice.value,
         note: "",
         orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`,
-        products: selectedProducts.value.map((item) => ({
-            productItemId: item.productItemId,
-            quantity: item.quantity,
-            isGift: item.isGift || false,
-            comboId: item.comboId || null,
-            comboQty: item.comboQty || null,
-            comboGroup: item.comboGroup || null,
-            comboGroupId: item.comboGroupId || null,
-            couponCode: item.couponCode || null,
-            promotionId: item.promotions?.id || null,
-            priceAtBuy: item.originalPrice || item.price, // nếu có giá gốc riêng
-            costAtBuy: item.cost || 0,
-            sellingPrice: item.price, // giá sau giảm
-        })),
+        products: selectedProducts.value.map((item) => {
+            const sellingPrice = calculateSellingPrice(item, groupedProducts.value);
+            const total = sellingPrice * item.quantity;
+            return {
+                productItemId: item.productItemId,
+                quantity: item.quantity,
+                isGift: item.isGift || false,
+                comboId: item.comboId || null,
+                comboQty: item.comboQty || null,
+                comboGroup: item.comboGroup || null,
+                comboGroupId: item.comboGroupId || null,
+                couponCode: item.couponCode || null,
+                promotions: item.promotions?.id || null,
+                priceAtBuy: item.originalPrice || item.price,
+                costAtBuy: item.cost || 0,
+                sellingPrice,
+                total
+            };
+        })
     };
 }
 async function confirmOrder() {
@@ -818,7 +848,6 @@ onBeforeRouteLeave((to, from, next) => {
         paymentMethod.value = "COD";
         currentTab.value = 0;
     }
-
     next();
 });
 const shippingFee = ref(0);

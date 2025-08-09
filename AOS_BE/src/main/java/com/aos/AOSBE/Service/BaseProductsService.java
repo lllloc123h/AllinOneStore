@@ -57,4 +57,8 @@ return baseProductsRepository.findAll(spec, pageable);
 			return baseProductsRepository.findAllWithListPriceRaw(pageable, searchByKeyWord, searchByCategory);
 		}
 	}
+	public Page<BaseProducts> findAllByNameContainingIgnoreCase(String name, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return baseProductsRepository.findAllByNameContaining(name, pageable);
+	}
 }
