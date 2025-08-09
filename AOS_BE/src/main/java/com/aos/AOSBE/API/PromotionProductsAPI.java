@@ -1,11 +1,13 @@
 package com.aos.AOSBE.API;
 
 import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Mapper.*;
 import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,7 +72,6 @@ public class PromotionProductsAPI {
 		return ResponseEntity.ok(response);
 	}
 
-
 	@GetMapping("/admin/PromotionProducts/{id}")
 	public ResponseEntity<?> getPromotionProductsById(@PathVariable int id) {
 		PromotionProducts promotionProduct = promotionProductsService.findById(id).orElse(new PromotionProducts());
@@ -86,9 +90,6 @@ public class PromotionProductsAPI {
 	@PostMapping("/admin/PromotionProducts")
 	public ResponseEntity<?> addNewPromotions(@RequestBody PromotionProductsDTOS entity) {
 		try {
-//			Map<Integer,List<PromotionProductsDTOS>> map = promotionProductsService.findAll().stream()
-//					.map(promotionProductsMapper::mapper)
-//					.collect(Collectors.groupingBy(PromotionProductsDTOS::getPromotionId));
 			PromotionProducts saved = promotionProductsService.save(promotionProductsMapper.mapperToObject(entity));
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
@@ -153,31 +154,7 @@ public class PromotionProductsAPI {
 		System.out.println("DetailStatsDTO: " + detailStatsDTO);
 		return ResponseEntity.ok(detailStatsDTO);
 	}
-	@PostMapping("/admin/combos/checkcombo")
-	public ResponseEntity<?> checkCombo(@RequestBody CheckToCreateComboDTO checkToCreateComboDTO) {
-		System.out.println("Checking combo for list: " + checkToCreateComboDTO.getListToAdd());
-		try {
-			String isExist = promotionProductsService.existCombo(checkToCreateComboDTO);
-			return ResponseEntity.ok(isExist);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
-		}
-	}
-	@PutMapping("/admin/combos/checkcombo/update")
-	public ResponseEntity<?> checkComboForUpdate(@RequestBody CheckComboDTO checkComboDTO ) {
-		System.out.println("Checking combo for update with listToAdd: " + checkComboDTO.getListToAdd() + " and listToDelete: " + checkComboDTO.getListToDelete());
-		try {
-			String isExist = promotionProductsService.existComboForUpdate(checkComboDTO);
-			return ResponseEntity.ok(isExist);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-		}
-	}
-
 }
-
 
 
 

@@ -31,6 +31,7 @@ async function syncLocalCartToServer() {
 }
 
 async function handleCartWhileLogin(itemCart) {
+    if (!authService.isLogged()) return;
     try {
         itemCart.accounts = authService.getUserName();
         await api.post('/addToCart', itemCart);
@@ -67,6 +68,10 @@ async function handleUpdateQuantityCartWhileLogin(itemCart, updateType) {
     }
 }
 async function finalHandleCartProgress(itemCart) {
+    if (!authService.isLogged()) {
+        addToCartLocal(itemCart)
+    } else {
         handleCartWhileLogin(itemCart)
+    }
 }
 export { syncLocalCartToServer, finalHandleCartProgress, handleUpdateQuantityCartWhileLogin }

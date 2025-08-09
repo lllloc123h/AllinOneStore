@@ -25,7 +25,6 @@ public class AccountsDTOS {
 	private int loyaltyPoint;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-	private boolean isActive;
 
 	public AccountsDTOS(int id, String email, boolean gender, LocalDateTime birthday, String fullname, String avatarUrl,
 			String phone, double averageOrderValue, String userRank, double totalSpent, int totalOrder,

@@ -4,7 +4,6 @@ import router from '../router' // ✅ đúng, vì bạn đã export router ở r
 import axios, { Axios } from 'axios';
 import { toast } from 'vue3-toastify';
 import { syncLocalCartToServer } from './cart';
-import { notification } from 'ant-design-vue';
 // ${import.meta.env.VITE_PAKE_DOMAIN}
 const api = axios.create({
   baseURL: `http://localhost:8080/api`,
@@ -29,8 +28,7 @@ const excludedPaths = [
   '/reviews/product/count',
   '/reviews/product/average-rating',
   '/reviews/product/',
-  '/discounted-products',
-  '/homepage/bestsellers'
+  '/discounted-products'
 ]
 
 // Automatically attach token to each request
@@ -42,32 +40,17 @@ api.interceptors.request.use(config => {
     path.endsWith('/') ? config.url.startsWith(path) : config.url.includes(path) && !config.url.includes("/admin")
   );
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
-  // neu url ko ngoai le 
+  // neu url ngoai le 
   if (!isExcluded) {
-  // kiểm tra token
-    if (token) {
-  const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
+    const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
     config.headers.Authorization = `Bearer ${token}`;
-      if (!isExpirate >= new Date().toLocaleString()) {
-        notification.info({
-        message: "Token hết hạn",
-        description: `Token hết hạn lúc: ${isExpirate}. Vui lòng đăng nhập lại.`,
-      });
-        localStorage.removeItem('jwtToken')
-      this.removeUserHeader();
-      this.setTokenRef(null);
-      this.updateCart(0);
-      router.push('/login')
-      }
-    }else{
-      console.log('api chưa gắn token');
-      notification.warning({
-        message: "Chưa đăng nhập",
-        description: "Vui lòng đăng nhập để tiếp tục.",
-      });
+    if (token && !isExpirate >= new Date().toLocaleString()) {
+      alert('Đăng nhập hết hạn 1')
+      localStorage.removeItem('jwtToken')
       router.push('/login')
     }
   }
+
   return config;
 });
 
@@ -91,11 +74,9 @@ api.interceptors.response.use(
       } else if (status === 401 && err.response.data.includes('Token đã hết hạn')) {
         localStorage.removeItem('jwtToken')
         localStorage.removeItem('user');
-        // cartSize.value = 0;
-        // tokenRef.value = null;
-        authService.updateCart(0);
-        authService.setTokenRef(null);
-        authService.removeUserHeader();
+        cartSize.value = 0;
+        tokenRef.value = null;
+        this.removeUserHeader();
         router.push('/login')
         setTimeout(() => {
           alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
@@ -132,19 +113,13 @@ const authService = {
         localStorage.removeItem('redirectTo'); // Clear redirect after use
         this.setUserHeader(await this.getProfile());
         setTimeout(() => {
-          notification.success({
-            message: "Đăng nhập thành công",
-            description: "Chào mừng bạn quay trở lại!",
-          });
+          toast.success('Đăng nhập thành công !');
         }, 500);
 
         await router.push(redirectTo);
       })
       .catch(error => {
-        notification.warning({
-          message: "Đăng nhập thất bại",
-          description: error.response.data.message || 'Đăng nhập thất bại',
-        });
+        toast.warning(error.response?.data?.message || 'Đăng nhập thất bại');
         console.log('Đăng nhập thất bại ', error.response)
       })
   },
@@ -243,10 +218,7 @@ const authService = {
     this.removeUserHeader();
     router.push('/');
     setTimeout(() => {
-notification.success({
-      message: "Đăng xuất thành công",
-      description: "Bạn đã đăng xuất thành công.",
-    });
+      toast.success('Đăng xuất thành công !');
     }, 600);
     cartSize.value = 0;
     localStorage.removeItem('cartSize');

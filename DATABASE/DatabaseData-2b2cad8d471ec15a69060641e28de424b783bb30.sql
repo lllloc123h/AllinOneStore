@@ -13,7 +13,6 @@ INSERT INTO accounts (
     total_spent,
     total_order,
     loyalty_point,
-	is_active,
     created_at,
     updated_at
 )
@@ -31,7 +30,6 @@ VALUES
     7500000.00,
     5,
     200,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -48,7 +46,6 @@ VALUES
     10000000.00,
     5,
     300,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -65,7 +62,6 @@ VALUES
     6000000.00,
     5,
     150,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -82,7 +78,6 @@ VALUES
     9000000.00,
     5,
     250,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -99,7 +94,6 @@ VALUES
     12500000.00,
     5,
     400,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -116,7 +110,6 @@ VALUES
     5000000.00,
     5,
     100,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -133,7 +126,6 @@ VALUES
     6500000.00,
     5,
     180,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -150,7 +142,6 @@ VALUES
     8000000.00,
     5,
     280,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -167,7 +158,6 @@ VALUES
     7000000.00,
     5,
     160,
-	1,
     GETDATE(),
     GETDATE()
   ),
@@ -184,7 +174,6 @@ VALUES
     11000000.00,
     5,
     350,
-	1,
     GETDATE(),
     GETDATE()
   );
@@ -943,8 +932,7 @@ INSERT INTO
     safety_stock,
     qty,
     sell_start,
-    sell_end,
-	is_active
+    sell_end
   )
 VALUES
   -- Áo Polo Nam Cotton Pha (ID: 151)
@@ -965,8 +953,7 @@ VALUES
     10,
     50,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -985,8 +972,7 @@ VALUES
     10,
     45,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Áo Khoác Bomber Nam (ID: 152)
   (
@@ -1006,8 +992,7 @@ VALUES
     5,
     15,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Thay thế 'Áo Sơ Mi Linen Nam' bằng 'Áo Thun Dài Tay Nam' (ID: 153)
   (
@@ -1027,8 +1012,7 @@ VALUES
     5,
     25,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Quần Kaki Nam Dáng Thẳng (ID: 156)
   (
@@ -1048,8 +1032,7 @@ VALUES
     5,
     30,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -1068,8 +1051,7 @@ VALUES
     5,
     28,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Váy Đầm Suông Caro (ID: 166)
   (
@@ -1089,8 +1071,7 @@ VALUES
     3,
     20,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -1109,8 +1090,7 @@ VALUES
     3,
     18,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Áo Kiểu Sơ Mi Nữ (ID: 164) (Đã thay đổi từ Áo Blouse Nữ Công Sở để khớp với base_products)
   (
@@ -1130,8 +1110,7 @@ VALUES
     8,
     40,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -1150,8 +1129,7 @@ VALUES
     8,
     35,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Váy Chữ A Dáng Ngắn (ID: 167)
   (
@@ -1171,8 +1149,7 @@ VALUES
     5,
     25,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Bộ Quần Áo Bé Trai Năng Động (ID: 171)
   (
@@ -1192,8 +1169,7 @@ VALUES
     10,
     60,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -1212,8 +1188,7 @@ VALUES
     10,
     55,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Váy Bé Gái Xòe Hoa (ID: 176)
   (
@@ -1233,8 +1208,7 @@ VALUES
     5,
     30,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -1253,8 +1227,7 @@ VALUES
     5,
     28,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Quần Jean Phối Rách Bé Trai (ID: 173)
   (
@@ -1274,8 +1247,7 @@ VALUES
     5,
     20,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Bộ Quần Áo Bé Gái Dễ Thương (ID: 177)
   (
@@ -1295,8 +1267,7 @@ VALUES
     8,
     40,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   (
     (
@@ -1315,8 +1286,7 @@ VALUES
     8,
     35,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   ),
   -- Áo Thun Croptop Nữ (ID: 161)
   (
@@ -1336,8 +1306,7 @@ VALUES
     10,
     50,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ()),
-	1
+    DATEADD (month, 6, GETDATE ())
   );
 
 INSERT INTO
@@ -2131,13 +2100,12 @@ INSERT INTO promotion_products (
     product_item_id,
     require_qty,
     is_gift,
-	gift_option,
     created_at,
     updated_at
 ) VALUES
-(4, 4, 1, 0,0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
-(4, 5, 2, 0,0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
-(5, 6, 1, 1,0, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
+(1, 1, 1, 0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
+(1, 2, 2, 0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
+(2, 3, 1, 1, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
 
 -- Thêm combo khuyến mãi
 INSERT INTO promotion_products (
@@ -2145,15 +2113,14 @@ INSERT INTO promotion_products (
     product_item_id,
     require_qty,
     is_gift,
-	gift_option,
     created_at,
     updated_at
 ) VALUES
-(2, 1, 1, 0,0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
-(2, 2, 1, 0,0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
+(2, 1, 1, 0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
+(2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
 
 -- INSERT 30 orders
-select * from orders where account_id = 1;
+select * from orders where account_id = 2;
 DECLARE @i INT = 1;
 WHILE @i <= 30
 BEGIN
@@ -2245,6 +2212,7 @@ BEGIN
       price_at_buy,
 	  cost_at_buy,
       selling_price,
+      coupon_code,
       created_at,
       updated_at
     )
@@ -2255,6 +2223,7 @@ BEGIN
       (SELECT price FROM product_items WHERE id = @pid),
       (SELECT cost FROM product_items WHERE id = @pid),
       (SELECT price FROM product_items WHERE id = @pid),
+      NULL,
       GETDATE(),
       GETDATE()
     );
@@ -2334,7 +2303,7 @@ BEGIN
         'https://example.com/image3.jpg',
         'https://example.com/video.mp4',
         DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 30), GETDATE())
-    FROM product_items where id = 5
+    FROM product_items where id =1 
     ORDER BY NEWID();
 
     SET @i = @i + 1;

@@ -23,38 +23,38 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductItems {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	
-    @Column(name = "id")
-    private Integer id;
-	
-    @Column(name = "cost")
-    private Double cost;
-	
-    @Column(name = "price")
-    private Double price;
-	
-    @Column(name = "turn_buy")
-    private int turnBuy;
-	
-    @Column(name = "description")
-    private String description;
-	
-    @Column(name = "sku")
-    private String sku;
-	
-    @Column(name = "safety_stock")
-    private int safetyStock;
-	
-    @Column(name = "qty")
-    private int qty;
-	
-    @Column(name = "sell_start")
-    private LocalDateTime sellStart;
-	
-    @Column(name = "sell_end")
-    private LocalDateTime sellEnd;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+	@Column(name = "id")
+	private Integer id;
+
+	@Column(name = "cost")
+	private Double cost;
+
+	@Column(name = "price")
+	private Double price;
+
+	@Column(name = "turn_buy")
+	private int turnBuy;
+
+	@Column(name = "description")
+	private String description;
+
+	@Column(name = "sku")
+	private String sku;
+
+	@Column(name = "safety_stock")
+	private int safetyStock;
+
+	@Column(name = "qty")
+	private int qty;
+
+	@Column(name = "sell_start")
+	private LocalDateTime sellStart;
+
+	@Column(name = "sell_end")
+	private LocalDateTime sellEnd;
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
