@@ -19,6 +19,7 @@
             v-model="formData.id"
             v-if="props.action !== 'create'"
             :hidden="props.action === 'view'"
+            :disabled="props.action === 'update'"
             type="number"
             class="form-control"
             placeholder="`Enter id`"
@@ -58,7 +59,12 @@
         </div> -->
         <div class="mb-3">
           <label for="type" class="form-label text-capitalize">Loại khuyến mãi</label>
-          <select id="type" v-model="formData.type" class="form-select">
+          <select
+            id="type"
+            v-model="formData.type"
+            class="form-select"
+            :disabled="props.action === 'update'"
+          >
             <option disabled value="">Chọn loại khuyến mãi</option>
             <option
               v-for="item in dropdownTypePromotions"
@@ -68,6 +74,9 @@
               {{ item.type }}
             </option>
           </select>
+          <small v-if="props.action === 'update'" class="form-text text-muted">
+            💡 Không thể thay đổi loại khuyến mãi khi cập nhật
+          </small>
         </div>
 
         <div class="mb-3">
@@ -79,9 +88,27 @@
             v-model="formData.discountValue"
             type="number"
             :disabled="formData.type === 'COMBO'"
+            :max="minimumVariantPrice || undefined"
             class="form-control"
+            :class="{ 'is-invalid': !discountValidation.isValid }"
             placeholder="Nhập giá trị giảm giá"
+            min="0"
+            step="1000"
           />
+          
+          <!-- Discount validation message -->
+          <div 
+            v-if="formData.type === 'DISCOUNT' && selectedProductVariants.length > 0" 
+            class="form-text"
+          >
+            <small v-if="minimumVariantPrice" class="text-info">
+              💡 Giá thấp nhất của biến thể đã chọn: {{ formatPrice(minimumVariantPrice) }}
+            </small>
+          </div>
+          
+          <div v-if="!discountValidation.isValid" class="invalid-feedback">
+            {{ discountValidation.message }}
+          </div>
         </div>
 
         <div class="mb-3">
@@ -94,6 +121,19 @@
             class="form-control"
             placeholder="Nhập giá combo"
           />
+          <div
+            v-if="formData.type === 'COMBO' && selectedProductVariants.length > 0"
+            class="form-text"
+          >
+            <small class="text-info">
+              💡 Tổng giá trị sản phẩm:
+              <strong>{{ formatPrice(calculateTotalProductValue()) }}</strong>
+            </small>
+            <br />
+            <small class="text-warning">
+              ⚠️ Giá combo phải nhỏ hơn tổng giá trị sản phẩm để có ý nghĩa khuyến mãi
+            </small>
+          </div>
         </div>
 
         <div class="mb-3">
@@ -129,6 +169,15 @@
             class="form-control"
             placeholder="Chọn ngày kết thúc"
           />
+          <div v-if="formData.startAt && formData.endAt" class="form-text">
+            <small
+              class="text-warning"
+              v-if="new Date(formData.startAt) >= new Date(formData.endAt)"
+            >
+              ⚠️ Ngày bắt đầu phải nhỏ hơn ngày kết thúc
+            </small>
+            <small class="text-success" v-else> ✅ Thời gian khuyến mãi hợp lệ </small>
+          </div>
         </div>
 
         <div class="mb-3">
@@ -268,7 +317,10 @@
                     >Chất liệu: {{ product.material }}</small
                   >
                   <small class="selected-category"
-                    >Danh mục: {{ product.categories?.name || "Chưa phân loại" }}</small
+                    >Danh mục:
+                    {{
+                      product.categories.name || product.categories || "Chưa phân loại"
+                    }}</small
                   >
                 </div>
                 <div class="selected-stats">
@@ -314,80 +366,273 @@
           </div>
         </div>
 
-        <!-- Selected Product Variants with Options -->
+        <!-- Selected Product Variants with Options - Grouped by Base Product -->
         <div v-if="selectedProductVariants.length > 0" class="mb-3">
           <label class="form-label">Biến thể sản phẩm và tùy chọn</label>
-          <div class="selected-variants">
-            <div
-              v-for="variant in selectedProductVariants"
-              :key="variant.idProductItem || variant.id"
-              class="variant-option-card"
-            >
-              <div class="variant-info-section">
-                <img
-                  v-if="variant.imageUrl"
-                  :src="variant.imageUrl"
-                  alt="Variant"
-                  class="variant-option-image"
-                />
-                <div class="variant-info-content">
-                  <h6 class="variant-option-name">{{ variant.name || variant.sku }}</h6>
-                  <small class="variant-option-sku">SKU: {{ variant.sku }}</small>
-                  <small class="variant-option-price">{{
-                    formatPrice(variant.price)
-                  }}</small>
-                </div>
+
+          <!-- Loop through each base product group -->
+          <div
+            v-for="(group, baseProductId) in groupedVariantsByBaseProduct"
+            :key="baseProductId"
+            class="base-product-group"
+          >
+            <!-- Base Product Header -->
+            <div class="base-product-header">
+              <img
+                v-if="group.baseProduct?.mainImageUrl"
+                :src="group.baseProduct.mainImageUrl"
+                alt="Base Product"
+                class="base-product-image"
+              />
+              <div class="base-product-info">
+                <h6 class="base-product-name">{{ group.baseProduct?.name }}</h6>
+                <small class="base-product-material">{{
+                  group.baseProduct?.material
+                }}</small>
+                <small class="base-product-variants-count"
+                  >{{ group.variants.length }} biến thể đã chọn</small
+                >
               </div>
+            </div>
 
-              <div class="variant-options-section">
-                <div class="option-row">
-                  <label class="option-label">Số lượng yêu cầu:</label>
-                  <input
-                    type="number"
-                    class="form-control option-input"
-                    v-model="
-                      variantOptions[variant.idProductItem || variant.id].require_qty
-                    "
-                    min="1"
-                    placeholder="Nhập số lượng"
+            <!-- Variants under this base product -->
+            <div class="selected-variants">
+              <div
+                v-for="variant in group.variants"
+                :key="variant.idProductItem || variant.id"
+                class="variant-option-card"
+              >
+                <div class="variant-info-section">
+                  <img
+                    v-if="variant.imageUrl"
+                    :src="variant.imageUrl"
+                    alt="Variant"
+                    class="variant-option-image"
                   />
-                </div>
-
-                <div class="option-row">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      :id="'isGift_' + (variant.idProductItem || variant.id)"
-                      v-model="
-                        variantOptions[variant.idProductItem || variant.id].is_gift
+                  <div class="variant-info-content">
+                    <h6 class="variant-option-name">{{ variant.name || variant.sku }}</h6>
+                    <div class="variant-details">
+                      <small class="variant-option-sku">SKU: {{ variant.sku }}</small>
+                      <small class="variant-option-price">{{
+                        formatPrice(variant.price)
+                      }}</small>
+                      <small class="variant-option-cost" v-if="variant.cost"
+                        >Cost: {{ formatPrice(variant.cost) }}</small
+                      >
+                    </div>
+                    <div class="variant-stock-info" v-if="variant.qty !== undefined">
+                      <small class="variant-qty">Tồn kho: {{ variant.qty }}</small>
+                      <small
+                        class="variant-safety"
+                        v-if="variant.safetyStock !== undefined"
+                        >An toàn: {{ variant.safetyStock }}</small
+                      >
+                      <small class="variant-rating" v-if="variant.rating !== undefined"
+                        >⭐ {{ variant.rating }}/5</small
+                      >
+                      <small class="variant-turnbuy" v-if="variant.turnBuy !== undefined"
+                        >🔥 {{ variant.turnBuy }} lượt mua</small
+                      >
+                      <div
+                        class="variant-promotions-info"
+                        v-if="variant.inPromotions && variant.inPromotions.length > 0"
+                      >
+                        <small class="promotions-label"
+                          >Đang tham gia các khuyến mãi:</small
+                        >
+                        <div class="promotions-list">
+                          <div
+                            v-for="promotion in variant.inPromotions"
+                            :key="promotion.id"
+                            class="promotion-tag"
+                            :class="{
+                              active: promotion.isActive,
+                              inactive: !promotion.isActive,
+                            }"
+                          >
+                            <div class="promotion-header">
+                              <span class="promotion-name">{{ promotion.name }}</span>
+                              <span class="promotion-id">ID: {{ promotion.id }}</span>
+                            </div>
+                            <div class="promotion-details">
+                              <small class="promotion-type">{{ promotion.type }}</small>
+                              <small class="promotion-dates">
+                                {{ formatPromotionDate(promotion.startAt) }} -
+                                {{ formatPromotionDate(promotion.endAt) }}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <small
+                        class="variant-no-promotions"
+                        v-else-if="
+                          variant.inPromotions && variant.inPromotions.length === 0
+                        "
+                      >
+                        Chưa tham gia khuyến mãi nào
+                      </small>
+                    </div>
+                    <div class="variant-status" v-if="variant.active !== undefined">
+                      <span
+                        class="status-badge"
+                        :class="{
+                          active: variant.active === true || variant.active === 'true',
+                          inactive:
+                            variant.active === false || variant.active === 'false',
+                        }"
+                      >
+                        {{
+                          variant.active === true || variant.active === "true"
+                            ? "Hoạt động"
+                            : "Không hoạt động"
+                        }}
+                      </span>
+                      <small class="variant-id">ID: {{ variant.idProductItem }}</small>
+                    </div>
+                    <div
+                      class="variant-attributes"
+                      v-if="
+                        variant.attributes && Object.keys(variant.attributes).length > 0
                       "
-                    />
-                    <label
-                      class="form-check-label"
-                      :for="'isGift_' + (variant.idProductItem || variant.id)"
                     >
-                      Là quà tặng
-                    </label>
+                      <span
+                        v-for="(value, key) in variant.attributes"
+                        :key="key"
+                        class="attribute-tag"
+                      >
+                        {{ key }}: {{ value }}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="variant-actions">
-                <button
-                  type="button"
-                  class="btn-remove-variant"
-                  @click="removeVariant(variant.idProductItem)"
-                >
-                  <i class="bi bi-x"></i>
-                </button>
+                <div class="variant-options-section">
+                  <!-- Quantity Selector - Only show for COMBO -->
+                  <div class="option-row" v-if="formData.type === 'COMBO'">
+                    <label class="option-label">Số lượng yêu cầu:</label>
+                    <div class="quantity-selector">
+                      <button
+                        type="button"
+                        class="qty-btn qty-decrease"
+                        @click="decreaseQuantity(variant.idProductItem || variant.id)"
+                        :disabled="
+                          (variantOptions[variant.idProductItem || variant.id]
+                            .require_qty || 1) <= 1
+                        "
+                      >
+                        −
+                      </button>
+                      <input
+                        type="number"
+                        class="qty-input"
+                        v-model.number="
+                          variantOptions[variant.idProductItem || variant.id].require_qty
+                        "
+                        min="1"
+                        max="999"
+                        @input="validateQuantity(variant.idProductItem || variant.id)"
+                      />
+                      <button
+                        type="button"
+                        class="qty-btn qty-increase"
+                        @click="increaseQuantity(variant.idProductItem || variant.id)"
+                        :disabled="
+                          (variantOptions[variant.idProductItem || variant.id]
+                            .require_qty || 1) >= 999
+                        "
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Gift Option - Only show for COMBO -->
+                  <div class="option-row" v-if="formData.type === 'COMBO'">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        :id="'isGift_' + (variant.idProductItem || variant.id)"
+                        v-model="
+                          variantOptions[variant.idProductItem || variant.id].is_gift
+                        "
+                      />
+                      <label
+                        class="form-check-label"
+                        :for="'isGift_' + (variant.idProductItem || variant.id)"
+                      >
+                        Là quà tặng
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="variant-actions">
+                  <button
+                    type="button"
+                    class="btn-remove-variant"
+                    @click="removeVariant(variant.idProductItem)"
+                  >
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- Gift Distribution Validation Feedback - Only show for COMBO -->
+          <div
+            v-if="selectedProductVariants.length > 0 && formData.type === 'COMBO'"
+            class="form-text mt-2"
+          >
+            <small
+              class="text-danger"
+              v-if="
+                Object.values(variantOptions).filter((option) => option?.is_gift === true)
+                  .length === selectedProductVariants.length &&
+                selectedProductVariants.length > 0
+              "
+            >
+              ❌ Không thể đặt tất cả sản phẩm làm quà tặng. Phải có ít nhất một sản phẩm
+              bán kèm.
+            </small>
+            <small
+              class="text-success"
+              v-else-if="
+                Object.values(variantOptions).filter((option) => option?.is_gift === true)
+                  .length < selectedProductVariants.length &&
+                Object.values(variantOptions).filter((option) => option?.is_gift === true)
+                  .length > 0
+              "
+            >
+              ✅ Phân phối sản phẩm hợp lệ:
+              {{
+                Object.values(variantOptions).filter(
+                  (option) => option?.is_gift === false
+                ).length
+              }}
+              sản phẩm bán kèm,
+              {{
+                Object.values(variantOptions).filter((option) => option?.is_gift === true)
+                  .length
+              }}
+              quà tặng
+            </small>
+            <small
+              class="text-info"
+              v-else-if="
+                Object.values(variantOptions).filter((option) => option?.is_gift === true)
+                  .length === 0
+              "
+            >
+              💡 Tất cả sản phẩm đều là sản phẩm bán kèm (không có quà tặng)
+            </small>
+          </div>
         </div>
 
-        <!-- Global Gift Option Selection - Show when there are 2 or more gifts -->
-        <div v-if="getTotalGiftsCount() >= 2" class="mb-3">
+        <!-- Global Gift Option Selection - Show when there are 2 or more gifts and type is COMBO -->
+        <div v-if="getTotalGiftsCount() >= 2 && formData.type === 'COMBO'" class="mb-3">
           <label class="form-label">Tùy chọn quà tặng chung</label>
           <div class="gift-option-container">
             <select v-model="globalGiftOption" class="form-select">
@@ -448,12 +693,19 @@
                   class="variant-item"
                   :class="{
                     selected: isVariantSelectedForCurrentProduct(variant.idProductItem),
+                    'conflict-disabled':
+                      !checkPromotionConflict(variant).canAdd &&
+                      !isVariantSelectedForCurrentProduct(variant.idProductItem),
                   }"
                 >
                   <div class="variant-checkbox">
                     <input
                       type="checkbox"
                       :checked="isVariantSelectedForCurrentProduct(variant.idProductItem)"
+                      :disabled="
+                        !checkPromotionConflict(variant).canAdd &&
+                        !isVariantSelectedForCurrentProduct(variant.idProductItem)
+                      "
                       @click.stop
                       @change="toggleProductVariant(variant)"
                     />
@@ -485,11 +737,49 @@
                       <small class="variant-turnbuy"
                         >🔥 {{ variant.turnBuy }} lượt mua</small
                       >
-                      <small class="variant-combo-info">
-                        Đang ở trong {{ variant.inCombo || 0 }} khuyến mãi còn hoạt
-                        động</small
+                      <div
+                        class="variant-promotions-info"
+                        v-if="variant.inPromotions && variant.inPromotions.length > 0"
                       >
+                        <small class="promotions-label">Đang tham gia:</small>
+                        <div class="promotions-list-compact">
+                          <span
+                            v-for="promotion in variant.inPromotions"
+                            :key="promotion.id"
+                            class="promotion-tag-compact"
+                            :class="{
+                              active: promotion.isActive,
+                              inactive: !promotion.isActive,
+                            }"
+                            :title="`ID: ${promotion.id} - ${promotion.type} - ${promotion.name}`"
+                          >
+                            [{{ promotion.id }}] {{ promotion.type }} -
+                            {{ promotion.name }}
+                          </span>
+                        </div>
+                      </div>
+                      <small
+                        class="variant-no-promotions"
+                        v-else-if="
+                          variant.inPromotions && variant.inPromotions.length === 0
+                        "
+                      >
+                        Chưa tham gia khuyến mãi
+                      </small>
                     </div>
+
+                    <!-- Conflict Warning -->
+                    <div
+                      v-if="
+                        !checkPromotionConflict(variant).canAdd &&
+                        !isVariantSelectedForCurrentProduct(variant.idProductItem)
+                      "
+                      class="conflict-warning"
+                    >
+                      <span class="warning-icon">⚠</span>
+                      <span>Không thể chọn do xung đột loại khuyến mãi</span>
+                    </div>
+
                     <div class="variant-status">
                       <span
                         class="status-badge"
@@ -548,7 +838,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, watch } from "vue";
+import { reactive, ref, onMounted, watch, computed } from "vue";
 import {
   formatDate,
   formatDateTimeLocal,
@@ -589,7 +879,7 @@ const formData = reactive({
   qty: "200",
   startAt: "2025-07-01T04:23:00",
   endAt: "2025-07-20T19:22:00",
-  active: "false",
+  active: false,
   createdAt: "",
   updatedAt: "",
 });
@@ -611,6 +901,60 @@ const currentBaseProduct = ref(null);
 const variantOptions = ref({}); // Store options for each selected variant {variantId: {require_qty, is_gift}}
 const globalGiftOption = ref("all"); // Global gift option for all gifts
 const searchDebounceTimeout = ref(null);
+
+// Track deleted items for update scenario
+const deletedPromotionProducts = ref([]); // Track deleted promotion products with full data
+const originalPromotionProducts = ref([]); // Store original promotion products for comparison
+
+// Computed property to group variants by base product
+const groupedVariantsByBaseProduct = computed(() => {
+  const groups = {};
+
+  selectedProductVariants.value.forEach((variant) => {
+    const baseProductId = variant.baseProductId;
+    if (!groups[baseProductId]) {
+      groups[baseProductId] = {
+        baseProduct: selectedBaseProducts.value.find((p) => p.id === baseProductId),
+        variants: [],
+      };
+    }
+    groups[baseProductId].variants.push(variant);
+  });
+
+  return groups;
+});
+
+// Computed property to get minimum price of selected variants for discount validation
+const minimumVariantPrice = computed(() => {
+  if (selectedProductVariants.value.length === 0) {
+    return null;
+  }
+  
+  const prices = selectedProductVariants.value
+    .map(variant => variant.price || 0)
+    .filter(price => price > 0);
+    
+  return prices.length > 0 ? Math.min(...prices) : null;
+});
+
+// Computed property to validate discount value
+const discountValidation = computed(() => {
+  if (formData.type !== 'DISCOUNT' || !formData.discountValue || !minimumVariantPrice.value) {
+    return { isValid: true, message: '' };
+  }
+  
+  const discountValue = parseFloat(formData.discountValue);
+  const minPrice = minimumVariantPrice.value;
+  
+  if (discountValue > minPrice) {
+    return {
+      isValid: false,
+      message: `❌ Giá trị giảm giá (${formatPrice(discountValue)}) không được lớn hơn giá thấp nhất của biến thể (${formatPrice(minPrice)})`
+    };
+  }
+  
+  return { isValid: true, message: '' };
+});
 
 const listDashBoard = [
   "Accounts",
@@ -648,67 +992,104 @@ const dropdownTypePromotions = [
 
 async function submitUpdateForm() {
   try {
+    // Validate discount value before proceeding
+    if (!discountValidation.value.isValid) {
+      alert(discountValidation.value.message);
+      return;
+    }
+
+    // Validate combo price before proceeding
+    if (!validateComboPrice()) {
+      return;
+    }
+
+    // Validate dates before proceeding
+    if (!validateDates()) {
+      return;
+    }
+
+    // Validate gift distribution before proceeding
+    if (!validateGiftDistribution()) {
+      return;
+    }
+
     formData.createdAt = formatDateTimeLocal(formData.createdAt);
     formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
 
-    // Prepare variant data with options
-    const checkSelectedProductVariants = selectedProductVariants.value.map((v) => {
+    // Prepare variant data with options for items to add/update
+    const listToAdd = selectedProductVariants.value.map((v) => {
       const uniqueKey = v.idProductItem;
       const isGift = variantOptions.value[uniqueKey]?.is_gift || false;
       return {
-        id: v.id,
+        id: v.id || null,
         requireQty: variantOptions.value[uniqueKey]?.require_qty || 1,
         gift: isGift,
         giftOption: isGift ? globalGiftOption.value : "", // Nếu không phải quà tặng thì giftOption = ''
         productItem: { id: v.idProductItem }, // Use actual variant ID
-        promotionId: props.id, // Use newly created promotion ID
+        promotionId: props.id, // Use promotion ID
         createdAt: null,
         updatedAt: null,
       };
     });
-    const checkResponse = await api.post(
-      "/admin/combos/checkcombo",
-      checkSelectedProductVariants
-    );
-    console.log("Check combo response:", checkResponse.data);
 
-    if (checkResponse.data === true) {
-      notification.error({
-        message: "Thông báo",
-        description: "Các sản phẩm đã tồn tại ở trong một combo khác.",
-        duration: 3,
-      });
-      return;
-    } else {
-      const response = await formTableService.update(props.id, formData);
-      console.log("checkSelectedProductVariants:", checkSelectedProductVariants);
+    // Prepare list of items to delete - return null if empty
+    const listToDelete =
+      deletedPromotionProducts.value && deletedPromotionProducts.value.length > 0
+        ? deletedPromotionProducts.value
+        : null;
 
-      // Update promotion ID for variants
-      checkSelectedProductVariants.forEach((variant) => {
-        api
-          .put("/admin/PromotionProducts", variant)
-          .then((res) => {
-            console.log("Promotion product created:", res.data);
-            router.push(`/Admin/${props.TableName}`);
-          })
-          .catch((err) => {
-            console.error("Error creating promotion product:", err);
-            notification.error({
-              message: "Lỗi",
-              description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
-              duration: 3,
-            });
-          });
-      });
-      console.log("Update successful:", response.data);
-      router.push(`/Admin/${props.TableName}`);
-    }
+    console.log("List to add:", listToAdd);
+    console.log("List to delete:", listToDelete);
+
+    // Use update-specific API
+    const checkResponse = await api.put("/admin/combos/checkcombo/update", {
+      listToAdd: listToAdd,
+      listToDelete: listToDelete,
+      promotion: formData,
+    });
+    console.log("Check combo update response:", checkResponse.data);
+
+    const response = await formTableService.update(props.id, formData);
+    console.log("Update successful:", response.data);
+    notification.success({
+      message: "Cập nhật thành công",
+      description: "Khuyến mãi đã được cập nhật thành công.",
+      duration: 3,
+    });
+    router.push(`/Admin/${props.TableName}`);
   } catch (error) {
-    console.error("Update failed:", error);
+    console.error("Update failed:", error.response.data.message);
+    notification.error({
+      message: "Cập nhật thất bại",
+      description:
+        error.response.data.message || "Đã xảy ra lỗi khi cập nhật khuyến mãi.",
+      duration: 3,
+    });
   }
 }
 
 async function submitForm() {
+  // Validate discount value before proceeding
+  if (!discountValidation.value.isValid) {
+    alert(discountValidation.value.message);
+    return;
+  }
+
+  // Validate combo price before proceeding
+  if (!validateComboPrice()) {
+    return;
+  }
+
+  // Validate dates before proceeding
+  if (!validateDates()) {
+    return;
+  }
+
+  // Validate gift distribution before proceeding
+  if (!validateGiftDistribution()) {
+    return;
+  }
+
   formData.startAt = toISOStringWithTimezone(formData.startAt);
   formData.endAt = toISOStringWithTimezone(formData.endAt);
   // Prepare variant data with options
@@ -716,12 +1097,12 @@ async function submitForm() {
     const uniqueKey = v.idProductItem || v.id;
     const isGift = variantOptions.value[uniqueKey]?.is_gift || false;
     return {
-      id: 0,
+      id: null,
       requireQty: variantOptions.value[uniqueKey]?.require_qty || 1,
       gift: isGift,
       giftOption: isGift ? globalGiftOption.value : "", // Nếu không phải quà tặng thì giftOption = ''
       productItem: { id: v.idProductItem }, // Use actual variant ID
-      promotionId: 0, // Use newly created promotion ID
+      promotionId: null, // Use newly created promotion ID
       createdAt: null,
       updatedAt: null,
     };
@@ -730,16 +1111,16 @@ async function submitForm() {
 
   try {
     // Check if combo already exists
-    const checkResponse = await api.post(
-      "/admin/combos/checkcombo",
-      checkSelectedProductVariants
-    );
+    const checkResponse = await api.post("/admin/combos/checkcombo", {
+      listToAdd: checkSelectedProductVariants,
+      promotion: formData,
+    });
     console.log("Check combo response:", checkResponse.data);
 
-    if (checkResponse.data === true) {
+    if (checkResponse.data != "NO_CONFLICT") {
       notification.error({
-        message: "Thông báo",
-        description: "Các sản phẩm đã tồn tại ở trong một combo khác.",
+        message: "Lỗi ",
+        description: checkResponse.data,
         duration: 3,
       });
       return;
@@ -858,16 +1239,29 @@ async function loadProductVariants(baseId) {
     const response = await api.get("/admin/products/productitems", {
       params: {
         baseId: baseId,
+        currentPromotionId: props.id || null, // Truyền ID promotion hiện tại
+        promotionType: formData.type || null, // Truyền kiểu promotion hiện tại
       },
     });
 
     console.log("Product variants response:", response.data);
+    console.log("Sample variant data:", response.data[0]); // Log first variant to see structure
 
     if (response.data && Array.isArray(response.data)) {
-      // Store variants for this base product and ensure baseProductId is set
+      // Store variants for this base product and ensure baseProductId is set with full data
       const variantsWithBaseId = response.data.map((variant) => ({
         ...variant,
         baseProductId: baseId, // Ensure baseProductId is available
+        // Ensure all fields have default values if missing
+        name: variant.name || variant.sku,
+        cost: variant.cost || 0,
+        qty: variant.qty || 0,
+        safetyStock: variant.safetyStock || 0,
+        rating: variant.rating || 0,
+        turnBuy: variant.turnBuy || 0,
+        active: variant.active !== undefined ? variant.active : true,
+        inPromotions: variant.inPromotions || [],
+        attributes: variant.attributes || {},
       }));
 
       availableVariants.value[baseId] = variantsWithBaseId;
@@ -896,6 +1290,66 @@ function openVariantsSelection(baseProduct) {
   showVariantsModal.value = true;
 }
 
+// Check promotion type conflict before adding variant
+function checkPromotionConflict(variant) {
+  const currentPromotionType = formData.type; // 'DISCOUNT' hoặc 'COMBO'
+  const currentPromotionId = props.id; // ID của promotion hiện tại (nếu đang update)
+
+  if (!variant.inPromotions || variant.inPromotions.length === 0) {
+    // Biến thể chưa thuộc promotion nào - OK để chọn
+    return { canAdd: true };
+  }
+
+  // Kiểm tra từng promotion mà variant đang thuộc
+  for (const promotion of variant.inPromotions) {
+    // Skip nếu là chính promotion hiện tại (khi update)
+    if (currentPromotionId && promotion.id === currentPromotionId) {
+      continue;
+    }
+
+    // Nếu đang tạo DISCOUNT mà variant thuộc COMBO khác
+    if (currentPromotionType === "DISCOUNT" && promotion.type === "COMBO") {
+      return {
+        canAdd: false,
+        message: `❌ Không thể chọn biến thể "${
+          variant.name || variant.sku
+        }"!\n\nBiến thể này đang thuộc COMBO "${promotion.name}" (ID: ${
+          promotion.id
+        }).\n\nKhi tạo DISCOUNT, không được chọn biến thể đang thuộc COMBO khác.`,
+      };
+    }
+
+    // Nếu đang tạo COMBO mà variant thuộc DISCOUNT khác
+    if (currentPromotionType === "COMBO" && promotion.type === "DISCOUNT") {
+      return {
+        canAdd: false,
+        message: `❌ Không thể chọn biến thể "${
+          variant.name || variant.sku
+        }"!\n\nBiến thể này đang thuộc DISCOUNT "${promotion.name}" (ID: ${
+          promotion.id
+        }).\n\nKhi tạo COMBO, không được chọn biến thể đang thuộc DISCOUNT khác.`,
+      };
+    }
+
+    // Nếu đang tạo DISCOUNT mà variant thuộc DISCOUNT khác (không cho phép)
+    if (currentPromotionType === "DISCOUNT" && promotion.type === "DISCOUNT") {
+      return {
+        canAdd: false,
+        message: `❌ Không thể chọn biến thể "${
+          variant.name || variant.sku
+        }"!\n\nBiến thể này đã thuộc DISCOUNT khác: "${promotion.name}" (ID: ${
+          promotion.id
+        }).\n\nMỗi biến thể chỉ có thể thuộc một DISCOUNT tại một thời điểm.`,
+      };
+    }
+
+    // Nếu đang tạo COMBO mà variant thuộc COMBO khác - CHO PHÉP (không return false)
+    // COMBO có thể chọn biến thể từ COMBO khác
+  }
+
+  return { canAdd: true };
+}
+
 // Select/deselect a product variant
 function toggleProductVariant(variant) {
   console.log(
@@ -922,20 +1376,54 @@ function toggleProductVariant(variant) {
     // Remove variant options using unique key
     delete variantOptions.value[uniqueVariantKey];
   } else {
-    // Add if not selected - ensure baseProductId is set
+    // Check for promotion type conflict before adding
+    const conflictCheck = checkPromotionConflict(variant);
+    if (!conflictCheck.canAdd) {
+      // Show error message and prevent selection
+      console.warn("Promotion conflict detected:", conflictCheck.message);
+      alert(conflictCheck.message);
+      return;
+    }
+
+    // Add if not selected - ensure baseProductId is set and copy all data
     console.log("Adding variant to selection");
     const variantWithBaseId = {
-      ...variant,
+      ...variant, // Copy all original data
       baseProductId: baseProductId,
-      idProductItem: uniqueVariantKey, // Add unique key for reference
+      idProductItem: uniqueVariantKey, // Ensure unique key for reference
+      // Ensure all required fields are present with default values
+      name: variant.name || variant.sku,
+      sku: variant.sku,
+      price: variant.price || 0,
+      cost: variant.cost || 0,
+      imageUrl: variant.imageUrl,
+      qty: variant.qty || 0,
+      safetyStock: variant.safetyStock || 0,
+      rating: variant.rating || 0,
+      turnBuy: variant.turnBuy || 0,
+      active: variant.active !== undefined ? variant.active : true,
+      inPromotions: variant.inPromotions || [],
+      attributes: variant.attributes || {},
     };
 
     selectedProductVariants.value.push(variantWithBaseId);
-    // Initialize variant options with unique key
-    variantOptions.value[uniqueVariantKey] = {
-      require_qty: 1,
-      is_gift: false,
+    console.log("Added variant with full data:", variantWithBaseId);
+
+    // Initialize variant options with unique key - different defaults based on promotion type
+    const defaultOptions = {
+      require_qty: 1, // Always default to 1
+      is_gift: false, // Always default to false
+      gift_option: "", // Always default to empty string
     };
+
+    // For DISCOUNT: set fixed values and hide UI
+    if (formData.type === "DISCOUNT") {
+      defaultOptions.require_qty = 1; // Fixed at 1 for DISCOUNT
+      defaultOptions.is_gift = false; // Fixed at false for DISCOUNT
+      defaultOptions.gift_option = ""; // Fixed at empty for DISCOUNT
+    }
+
+    variantOptions.value[uniqueVariantKey] = defaultOptions;
   }
 
   console.log(
@@ -962,6 +1450,28 @@ function removeVariant(variantId) {
   const variantToRemove = selectedProductVariants.value.find(
     (v) => v.idProductItem === variantId
   );
+
+  // If this is an existing promotion product (has promotionProductId), track it for deletion
+  if (variantToRemove && variantToRemove.promotionProductId) {
+    // Find the original promotion product data
+    const originalItem = originalPromotionProducts.value.find(
+      (item) => item.id === variantToRemove.promotionProductId
+    );
+    if (originalItem) {
+      // Add to deleted list with full promotion product structure
+      deletedPromotionProducts.value.push({
+        id: originalItem.id,
+        requireQty: originalItem.requireQty,
+        gift: originalItem.gift,
+        giftOption: originalItem.giftOption,
+        productItem: { id: originalItem.productItem.id },
+        promotionId: props.id,
+        createdAt: null,
+        updatedAt: null,
+      });
+      console.log("Marked for deletion:", originalItem.id);
+    }
+  }
 
   selectedProductVariants.value = selectedProductVariants.value.filter(
     (v) => v.idProductItem !== variantId
@@ -1031,6 +1541,17 @@ function formatPrice(price) {
   }).format(price);
 }
 
+// Format promotion date for display
+function formatPromotionDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
 // Count total gifts selected
 function getTotalGiftsCount() {
   return Object.values(variantOptions.value).filter((option) => option?.is_gift === true)
@@ -1062,6 +1583,91 @@ function getAvailableGiftOptions() {
   return options;
 }
 
+// Calculate total value of all selected products
+function calculateTotalProductValue() {
+  return selectedProductVariants.value.reduce((total, variant) => {
+    const uniqueKey = variant.idProductItem || variant.id;
+    const requireQty = variantOptions.value[uniqueKey]?.require_qty || 1;
+    const price = variant.price || 0;
+    return total + price * requireQty;
+  }, 0);
+}
+
+// Validate combo price against total product value
+function validateComboPrice() {
+  if (formData.type !== "COMBO" || !formData.comboPrice) {
+    return true; // Skip validation if not combo or no combo price
+  }
+
+  const totalProductValue = calculateTotalProductValue();
+  const comboPrice = parseFloat(formData.comboPrice);
+
+  if (comboPrice >= totalProductValue) {
+    notification.error({
+      message: "Lỗi giá combo",
+      description: `Giá combo (${formatPrice(
+        comboPrice
+      )}) không được lớn hơn hoặc bằng tổng giá trị sản phẩm (${formatPrice(
+        totalProductValue
+      )}).`,
+      duration: 5,
+    });
+    return false;
+  }
+
+  return true;
+}
+
+// Validate start date and end date
+function validateDates() {
+  if (!formData.startAt || !formData.endAt) {
+    notification.error({
+      message: "Lỗi ngày tháng",
+      description: "Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc.",
+      duration: 3,
+    });
+    return false;
+  }
+
+  const startDate = new Date(formData.startAt);
+  const endDate = new Date(formData.endAt);
+
+  if (startDate >= endDate) {
+    notification.error({
+      message: "Lỗi ngày tháng",
+      description: "Ngày bắt đầu phải nhỏ hơn ngày kết thúc.",
+      duration: 3,
+    });
+    return false;
+  }
+
+  return true;
+}
+
+// Validate that not all products are gifts - must have at least one regular product
+function validateGiftDistribution() {
+  if (selectedProductVariants.value.length === 0) {
+    return true; // No validation needed if no products selected
+  }
+
+  const totalProducts = selectedProductVariants.value.length;
+  const giftCount = Object.values(variantOptions.value).filter(
+    (option) => option?.is_gift === true
+  ).length;
+
+  if (giftCount === totalProducts) {
+    notification.error({
+      message: "Lỗi phân phối sản phẩm",
+      description:
+        "Không thể đặt tất cả sản phẩm làm quà tặng. Phải có ít nhất một sản phẩm bán kèm.",
+      duration: 5,
+    });
+    return false;
+  }
+
+  return true;
+}
+
 // Check if product is already selected
 function isProductAlreadySelected(productId) {
   return selectedBaseProducts.value.some((p) => p.id === productId);
@@ -1069,18 +1675,39 @@ function isProductAlreadySelected(productId) {
 
 // Remove all variants of a base product when base product is removed
 function removeBaseProduct(productId) {
-  selectedBaseProducts.value = selectedBaseProducts.value.filter(
-    (p) => p.id !== productId
-  );
-
-  // Remove all variants of this base product and their options
+  // Find and track all variants of this base product for deletion
   const variantsToRemove = selectedProductVariants.value.filter(
     (v) => v.baseProductId === productId
   );
 
   variantsToRemove.forEach((variant) => {
+    // If this is an existing promotion product (has promotionProductId), track it for deletion
+    if (variant.promotionProductId) {
+      // Find the original promotion product data
+      const originalItem = originalPromotionProducts.value.find(
+        (item) => item.id === variant.promotionProductId
+      );
+      if (originalItem) {
+        // Add to deleted list with full promotion product structure
+        deletedPromotionProducts.value.push({
+          id: originalItem.id,
+          requireQty: originalItem.requireQty,
+          gift: originalItem.gift,
+          giftOption: originalItem.giftOption,
+          productItem: { id: originalItem.productItem.id },
+          promotionId: props.id,
+          createdAt: null,
+          updatedAt: null,
+        });
+        console.log("Marked for deletion (base product removal):", originalItem.id);
+      }
+    }
     delete variantOptions.value[variant.idProductItem];
   });
+
+  selectedBaseProducts.value = selectedBaseProducts.value.filter(
+    (p) => p.id !== productId
+  );
 
   selectedProductVariants.value = selectedProductVariants.value.filter(
     (v) => v.baseProductId !== productId
@@ -1160,7 +1787,6 @@ const fetchData = async () => {
     ) {
       const response = await formTableService.getById(props.id);
       console.log("=== PROMOTION DATA RESPONSE ===");
-      console.log("Promotion ID:", props.id);
       console.log("Response data:", response.data);
       console.log("===============================");
 
@@ -1169,18 +1795,34 @@ const fetchData = async () => {
       Object.assign(formData, response.data);
       api
         .get(`/admin/promotionproducts?promotionId=${props.id}`)
-        .then((response) => {
+        .then(async (response) => {
+          console.log("Promotion products response:", response.data);
+          // Store original data for comparison
+          originalPromotionProducts.value = [...response.data];
+
+          // Map promotion products to selected variants with full data
           selectedProductVariants.value = response.data.map((item) => ({
             id: item.id,
             idProductItem: item.productItem.id,
-            baseProductId: item.productItem.baseProductId,
-            name: item.productItem.name,
+            baseProductId: item.productItem.baseId,
+            name: item.productItem.name || item.productItem.sku,
             sku: item.productItem.sku,
-            price: item.productItem.price,
+            price: item.productItem.price || 0,
+            cost: item.productItem.cost || 0,
             imageUrl: item.productItem.imageUrl,
+            qty: item.productItem.qty || 0,
+            safetyStock: item.productItem.safetyStock || 0,
+            rating: item.productItem.rating || 0,
+            turnBuy: item.productItem.turnBuy || 0,
+            active:
+              item.productItem.active !== undefined ? item.productItem.active : true,
+            inCombo: item.productItem.inCombo || 0,
+            attributes: item.productItem.attributes || {},
+            promotionProductId: item.id, // Store the promotion product ID for tracking deletions
           }));
           console.log("Promotion products response:", selectedProductVariants.value);
 
+          // Initialize variant options
           variantOptions.value = response.data.reduce((acc, item) => {
             acc[item.productItem.id] = {
               require_qty: item.requireQty || 1,
@@ -1189,6 +1831,33 @@ const fetchData = async () => {
             return acc;
           }, {});
           console.log("Variant options initialized:", variantOptions.value);
+
+          // Get unique base product IDs from the selected variants
+          const uniqueBaseProductIds = [
+            ...new Set(response.data.map((item) => item.productItem.baseId)),
+          ];
+          console.log("Unique base product IDs:", uniqueBaseProductIds);
+
+          // Load base products information
+          if (uniqueBaseProductIds.length > 0) {
+            try {
+              const baseProductPromises = uniqueBaseProductIds.map(async (baseId) => {
+                const baseResponse = await api.get(`/admin/BaseProducts/${baseId}`);
+                return baseResponse.data;
+              });
+
+              const baseProducts = await Promise.all(baseProductPromises);
+              selectedBaseProducts.value = baseProducts;
+              console.log("Loaded base products:", selectedBaseProducts.value);
+
+              // Load variants for each base product
+              for (const baseId of uniqueBaseProductIds) {
+                await loadProductVariants(baseId);
+              }
+            } catch (error) {
+              console.error("Error loading base products:", error);
+            }
+          }
         })
         .catch((error) => {
           console.error("Failed to load promotion products:", error);
@@ -1256,6 +1925,132 @@ watch(
     }
   }
 );
+
+// Watch for changes in selected variants or quantities to validate combo price
+watch(
+  [
+    () => selectedProductVariants.value,
+    () => variantOptions.value,
+    () => formData.comboPrice,
+  ],
+  () => {
+    // Only validate if it's a combo and has combo price
+    if (
+      formData.type === "COMBO" &&
+      formData.comboPrice &&
+      selectedProductVariants.value.length > 0
+    ) {
+      const totalProductValue = calculateTotalProductValue();
+      const comboPrice = parseFloat(formData.comboPrice);
+
+      // Show warning if combo price is too high (but don't block)
+      if (comboPrice >= totalProductValue) {
+        console.warn(
+          `Combo price (${comboPrice}) should be less than total product value (${totalProductValue})`
+        );
+      }
+    }
+  },
+  { deep: true }
+);
+
+// Watch for changes in start and end dates to validate
+watch([() => formData.startAt, () => formData.endAt], () => {
+  // Only validate if both dates are provided
+  if (formData.startAt && formData.endAt) {
+    const startDate = new Date(formData.startAt);
+    const endDate = new Date(formData.endAt);
+
+    // Show warning if start date is greater than or equal to end date (but don't block)
+    if (startDate >= endDate) {
+      console.warn(
+        `Start date (${formData.startAt}) should be less than end date (${formData.endAt})`
+      );
+    }
+  }
+});
+
+// Watch for promotion type changes to reset variant options accordingly
+watch(
+  () => formData.type,
+  (newType, oldType) => {
+    if (newType !== oldType && Object.keys(variantOptions.value).length > 0) {
+      console.log(
+        `Promotion type changed from ${oldType} to ${newType}, updating variant options...`
+      );
+
+      // Update all existing variant options based on new type
+      Object.keys(variantOptions.value).forEach((variantId) => {
+        if (newType === "DISCOUNT") {
+          // For DISCOUNT: fix values and hide UI
+          variantOptions.value[variantId].require_qty = 1;
+          variantOptions.value[variantId].is_gift = false;
+          variantOptions.value[variantId].gift_option = "";
+        }
+        // For COMBO: keep existing values or set defaults if needed
+        // (no action needed as COMBO allows user customization)
+      });
+    }
+  }
+);
+
+// Watch for discount value changes to validate in real-time
+watch([() => formData.discountValue, () => minimumVariantPrice.value], () => {
+  if (formData.type === 'DISCOUNT' && formData.discountValue && minimumVariantPrice.value) {
+    const discountValue = parseFloat(formData.discountValue);
+    const minPrice = minimumVariantPrice.value;
+    
+    if (discountValue > minPrice) {
+      console.warn(`Discount value (${discountValue}) exceeds minimum variant price (${minPrice})`);
+    }
+  }
+});
+
+// Quantity selector functions - Only for COMBO
+const increaseQuantity = (variantId) => {
+  // Only allow quantity changes for COMBO type
+  if (formData.type !== "COMBO") return;
+
+  const currentQty = variantOptions.value[variantId]?.require_qty || 1;
+  if (currentQty < 999) {
+    variantOptions.value[variantId].require_qty = currentQty + 1;
+  }
+};
+
+const decreaseQuantity = (variantId) => {
+  // Only allow quantity changes for COMBO type
+  if (formData.type !== "COMBO") return;
+
+  const currentQty = variantOptions.value[variantId]?.require_qty || 1;
+  if (currentQty > 1) {
+    variantOptions.value[variantId].require_qty = currentQty - 1;
+  }
+};
+
+const validateQuantity = (variantId) => {
+  // Only allow quantity changes for COMBO type
+  if (formData.type !== "COMBO") {
+    // For DISCOUNT, always keep qty at 1
+    variantOptions.value[variantId].require_qty = 1;
+    return;
+  }
+
+  let qty = variantOptions.value[variantId]?.require_qty;
+
+  // Ensure it's a number
+  if (isNaN(qty) || qty === null || qty === undefined) {
+    qty = 1;
+  }
+
+  // Ensure it's within valid range
+  if (qty < 1) {
+    qty = 1;
+  } else if (qty > 999) {
+    qty = 999;
+  }
+
+  variantOptions.value[variantId].require_qty = parseInt(qty);
+};
 </script>
 <style scoped>
 .card {
@@ -1533,7 +2328,63 @@ watch(
 }
 
 /* Selected Variants with Options Styles */
+.base-product-group {
+  margin-bottom: 2rem;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.base-product-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.base-product-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.base-product-info {
+  flex: 1;
+}
+
+.base-product-name {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.base-product-material {
+  display: block;
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.base-product-variants-count {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
 .selected-variants {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -1950,6 +2801,46 @@ watch(
   background: #e7f3ff;
 }
 
+.variant-item.conflict-disabled {
+  border-color: #dc3545;
+  background: #f8f9fa;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.variant-item.conflict-disabled:hover {
+  border-color: #dc3545;
+  background: #f8f9fa;
+}
+
+.conflict-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dc3545;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: #f8d7da;
+  border: 1px solid #f1aeb5;
+  border-radius: 4px;
+}
+
+.conflict-warning i {
+  font-size: 0.7rem;
+}
+
+.warning-icon {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.variant-item.selected {
+  border-color: #0d6efd;
+  background: #e7f3ff;
+}
+
 .variant-checkbox {
   margin-right: 1rem;
 }
@@ -2057,6 +2948,190 @@ watch(
   text-transform: uppercase;
 }
 
+.variant-option-price {
+  font-weight: 600;
+  color: #28a745;
+}
+
+.variant-option-cost {
+  color: #dc3545;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.variant-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.variant-stock-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.variant-stock-info small {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.variant-qty {
+  color: #17a2b8 !important;
+  font-weight: 500;
+}
+
+.variant-safety {
+  color: #ffc107 !important;
+  font-weight: 500;
+}
+
+.variant-rating {
+  color: #28a745 !important;
+  font-weight: 500;
+}
+
+.variant-turnbuy {
+  color: #fd7e14 !important;
+  font-weight: 500;
+}
+
+.variant-combo-info {
+  color: #6f42c1 !important;
+  font-weight: 500;
+}
+
+.variant-promotions-info {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #6f42c1;
+}
+
+.promotions-label {
+  font-weight: 600;
+  color: #6f42c1;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.promotions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.promotion-tag {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.promotion-tag.active {
+  border-color: #28a745;
+  background: #f8fff9;
+}
+
+.promotion-tag.inactive {
+  border-color: #dc3545;
+  background: #fff5f5;
+  opacity: 0.8;
+}
+
+.promotion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.promotion-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.promotion-id {
+  font-size: 0.7rem;
+  color: #6c757d;
+  background: #f8f9fa;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.promotion-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.promotion-type {
+  font-size: 0.7rem;
+  color: #6c757d;
+  font-weight: 600;
+  background: #e9ecef;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.promotion-dates {
+  font-size: 0.65rem;
+  color: #6c757d;
+}
+
+.promotions-list-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.promotion-tag-compact {
+  background: #6f42c1;
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.promotion-tag-compact.active {
+  background: #28a745;
+}
+
+.promotion-tag-compact.inactive {
+  background: #dc3545;
+  opacity: 0.8;
+}
+
+.variant-no-promotions {
+  color: #6c757d !important;
+  font-style: italic;
+  font-size: 0.75rem;
+}
+
+.variant-status {
+  margin-bottom: 0.5rem;
+}
+
+.status-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
 .status-badge.active {
   background: #d1e7dd;
   color: #0f5132;
@@ -2096,6 +3171,103 @@ watch(
   color: #6c757d;
 }
 
+/* Quantity Selector Styles */
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+  min-width: 120px;
+}
+
+.qty-btn {
+  background: #fff;
+  border: none;
+  width: 32px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #495057;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  border-right: 1px solid #dee2e6;
+  user-select: none;
+}
+
+.qty-btn:last-child {
+  border-right: none;
+  border-left: 1px solid #dee2e6;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.qty-btn:active:not(:disabled) {
+  transform: translateY(0);
+  background: #0056b3;
+}
+
+.qty-btn:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.qty-input {
+  border: none;
+  background: transparent;
+  width: 56px;
+  height: 36px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  outline: none;
+  appearance: textfield; /* Standard property */
+  -moz-appearance: textfield; /* Firefox */
+  -webkit-appearance: none; /* Safari/Chrome */
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qty-input:focus {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #007bff;
+}
+
+.qty-decrease {
+  border-radius: 7px 0 0 7px;
+}
+
+.qty-increase {
+  border-radius: 0 7px 7px 0;
+}
+
+.option-row {
+  margin-bottom: 1rem;
+}
+
+.option-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
 .modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -2106,3 +3278,4 @@ watch(
   border-radius: 0 0 12px 12px;
 }
 </style>
+p

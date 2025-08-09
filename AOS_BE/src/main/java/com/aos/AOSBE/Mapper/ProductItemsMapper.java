@@ -46,7 +46,7 @@ public class ProductItemsMapper {
 				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
 				entity.getBaseProducts().getId(), entity.getBaseProducts().getName(),
 				entity.getBaseProducts().getMaterial(), imgURL,
-				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null));
+				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null),entity.isActive());
 	}
 
 	public ProductItems mapperToObject(ProductItemsDTOS entity) {

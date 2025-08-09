@@ -1,13 +1,11 @@
 package com.aos.AOSBE.API;
 
 import com.aos.AOSBE.DTOS.*;
-import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Mapper.*;
 import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,9 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -159,18 +154,30 @@ public class PromotionProductsAPI {
 		return ResponseEntity.ok(detailStatsDTO);
 	}
 	@PostMapping("/admin/combos/checkcombo")
-	public ResponseEntity<?> checkCombo(@RequestBody List<PromotionProductsDTOS> list) {
-		System.out.println("Checking combo for list: " + list);
+	public ResponseEntity<?> checkCombo(@RequestBody CheckToCreateComboDTO checkToCreateComboDTO) {
+		System.out.println("Checking combo for list: " + checkToCreateComboDTO.getListToAdd());
 		try {
-			Boolean isExist = promotionProductsService.existCombo(list);
+			String isExist = promotionProductsService.existCombo(checkToCreateComboDTO);
 			return ResponseEntity.ok(isExist);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+	@PutMapping("/admin/combos/checkcombo/update")
+	public ResponseEntity<?> checkComboForUpdate(@RequestBody CheckComboDTO checkComboDTO ) {
+		System.out.println("Checking combo for update with listToAdd: " + checkComboDTO.getListToAdd() + " and listToDelete: " + checkComboDTO.getListToDelete());
+		try {
+			String isExist = promotionProductsService.existComboForUpdate(checkComboDTO);
+			return ResponseEntity.ok(isExist);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+		}
+	}
 
 }
+
 
 
 

@@ -88,7 +88,7 @@ public class ProductItemsService {
 		return productItemsRepository.findByBaseProductsId(id);
 	}
 	public List<ProductItems> productItemsByActiveIsTrue(int id) {
-		return productItemsRepository.findByBaseProductsIdAndIsActive(id, true);
+		return productItemsRepository.findByBaseProductsId(id);
 	}
 
 	public List<ProductItems> productItemsFindAllHaveSkuLike(String skuLike) {

@@ -228,15 +228,7 @@ public class ProductItemsAPI {
 	}
 	@GetMapping("/admin/products/productitems")
 	public ResponseEntity<?> getAllProductItems(@RequestParam("baseId") int baseId) {
-		List<PromotionProductsDTOS> list = new ArrayList<>();
-		list.clear();
-		ProductItemsDTOS item = new ProductItemsDTOS();
-		item.setId(5);
-		list.add(new PromotionProductsDTOS(0, 22, false, "0", null, null, item, 0));
-		item.setId(4);
-		list.add(new PromotionProductsDTOS(0, 3, false, "0", null, null, item, 0));
-		System.err.println("check combo "+ 		promotionProductsService.existCombo(list));
-		List<PromotionProductFillterDTO> productItems = productItemsService.productItemsByActiveIsTrue(baseId)
+			List<PromotionProductFillterDTO> productItems = productItemsService.productItemsByActiveIsTrue(baseId)
 				.stream().map(promotionProductFillterMapper::mapper).collect(Collectors.toList());
 		return ResponseEntity.ok(productItems);
 	}

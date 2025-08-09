@@ -1,11 +1,9 @@
 package com.aos.AOSBE.DTOS;
 
-import com.aos.AOSBE.Entity.BaseProducts;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,5 +20,5 @@ public class PromotionProductFillterDTO {
     private int qty;
     private String imageUrl;
     private boolean active;
-    private int inCombo;
+    private List<PromotionsDTOS> inPromotions;
 }

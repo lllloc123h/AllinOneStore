@@ -59,6 +59,6 @@ return baseProductsRepository.findAll(spec, pageable);
 	}
 	public Page<BaseProducts> findAllByNameContainingIgnoreCase(String name, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		return baseProductsRepository.findAllByNameContainingAndIsActiveTrue(name, pageable);
+		return baseProductsRepository.findAllByNameContaining(name, pageable);
 	}
 }

@@ -114,7 +114,7 @@ public class ProductItemsDTOS {
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
 			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
 			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
-			BaseProducts baseProducts) {
+			BaseProducts baseProducts,boolean isActive) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -133,6 +133,7 @@ public class ProductItemsDTOS {
 		this.material = material;
 		this.imageUrl = imageUrl;
 		this.baseProducts = baseProducts;
+		this.isActive = isActive;
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
