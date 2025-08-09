@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.aos.AOSBE.Entity.BaseProducts;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -114,7 +113,7 @@ public class ProductItemsDTOS {
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
 			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
 			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
-			BaseProducts baseProducts,boolean isActive) {
+			BaseProducts baseProducts) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -133,7 +132,6 @@ public class ProductItemsDTOS {
 		this.material = material;
 		this.imageUrl = imageUrl;
 		this.baseProducts = baseProducts;
-		this.isActive = isActive;
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,

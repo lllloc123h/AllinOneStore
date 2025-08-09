@@ -191,32 +191,23 @@
       </form>
     </div>
   </div>
-  <!-- Avatar Update Modal -->
+  <!-- Profile Update Modal -->
   <div v-if="showPopupUpdateAvatar" class="modal-overlay">
-    <div class="modern-modal avatar-modal">
+    <div class="modern-modal">
       <div class="modal-header">
-        <h3>
-          <i class="bi bi-camera-fill me-2"></i>
-          Cập nhật ảnh đại diện
-        </h3>
+        <h3>Cập nhật thông tin</h3>
         <button class="close-btn" @click="openPopupAvatar(false)">×</button>
-      </div>
-      <div class="modal-form avatar-form">
-        <div class="upload-container">
-          <uploadAvatar
-            ref="uploadRef"
-            :maxFiles="1"
-            :aspectRatio="'1:1'"
-            @update:images="handleAvatarUpdate"
-            @delete-image="handleAvatarDelete"
-            :folderName="'profiles'"
-          />
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" @click="openPopupAvatar(false)">
-            <i class="bi bi-x-lg me-2"></i>
-            Hủy
-          </button>
+        <div class="modal-form">
+          <div class="form-grid">
+            <uploadAvatar
+              ref="uploadRef"
+              :maxFiles="1"
+              :aspectRatio="'1:1'"
+              @update:images="handleAvatarUpdate"
+              @delete-image="handleAvatarDelete"
+              :folderName="'profiles'"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -848,24 +839,6 @@ const avatarInput = ref(null);
   animation: modalSlideIn 0.3s ease;
 }
 
-/* Avatar Modal Specific Styling */
-.avatar-modal {
-  max-width: 600px;
-  min-height: 500px;
-}
-
-.avatar-form {
-  padding: 1rem 2rem 2rem 2rem;
-}
-
-.upload-container {
-  min-height: 350px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
 @keyframes modalSlideIn {
   from {
     opacity: 0;
@@ -1136,23 +1109,9 @@ const avatarInput = ref(null);
     border-radius: 15px;
   }
 
-  .avatar-modal {
-    max-width: 95vw;
-    min-height: 400px;
-    margin: 0.5rem;
-  }
-
   .modal-header,
   .modal-form {
     padding: 1rem;
-  }
-
-  .avatar-form {
-    padding: 1rem;
-  }
-
-  .upload-container {
-    min-height: 280px;
   }
 
   .stats-section {

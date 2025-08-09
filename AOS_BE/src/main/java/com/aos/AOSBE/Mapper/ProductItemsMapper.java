@@ -56,7 +56,7 @@ public class ProductItemsMapper {
 		return new ProductItems(entity.getId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
 				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
 				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null),entity.isActive());
+				baseProductsService.baseProductsFindById(entity.getBaseId()).orElse(null), entity.isActive());
 	}
 
 	public ProductItems mapperToObjectUpdateMethod(ProductItemsDTOS entity) {

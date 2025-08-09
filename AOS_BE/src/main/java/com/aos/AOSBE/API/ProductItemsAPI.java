@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.*;
-import com.aos.AOSBE.Mapper.*;
-import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +22,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.DTOS.DiscountedProductDTOS;
+import com.aos.AOSBE.DTOS.ProductItemsDTOS;
+import com.aos.AOSBE.DTOS.filterAdvanceDTOS;
 import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
+import com.aos.AOSBE.Mapper.ProductImagesMapper;
+import com.aos.AOSBE.Mapper.ProductItemsMapper;
+import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
+import com.aos.AOSBE.Service.PriceHistoriesService;
+import com.aos.AOSBE.Service.ProductImagesService;
+import com.aos.AOSBE.Service.ProductItemsService;
+import com.aos.AOSBE.Service.PromotionsService;
 
 @RestController
 @RequestMapping("/api")
@@ -58,9 +67,7 @@ public class ProductItemsAPI {
 	private PromotionsMapper promotionsMapper;
 
 	@Autowired
-	private PromotionProductsService promotionProductsService;
-	@Autowired
-	private PromotionProductFillterMapper promotionProductFillterMapper;
+	private PromotionProductsRepository promotionProductsRepository;
 
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
@@ -133,7 +140,7 @@ public class ProductItemsAPI {
 	@GetMapping("/discounted-products")
 	public ResponseEntity<List<DiscountedProductDTOS>> getDiscountedProducts() {
 		LocalDateTime now = LocalDateTime.now();
-		List<Map<String, Object>> rawResults = promotionProductsService.findDiscountedProductsNative();
+		List<Map<String, Object>> rawResults = promotionProductsRepository.findDiscountedProductsNative();
 
 		List<DiscountedProductDTOS> dtoList = rawResults.stream()
 				.map(map -> new DiscountedProductDTOS(((Number) map.get("productItemId")).longValue(),
@@ -225,12 +232,6 @@ public class ProductItemsAPI {
 			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "Đã có lỗi xảy ra"));
 		}
 
-	}
-	@GetMapping("/admin/products/productitems")
-	public ResponseEntity<?> getAllProductItems(@RequestParam("baseId") int baseId) {
-			List<PromotionProductFillterDTO> productItems = productItemsService.productItemsByActiveIsTrue(baseId)
-				.stream().map(promotionProductFillterMapper::mapper).collect(Collectors.toList());
-		return ResponseEntity.ok(productItems);
 	}
 
 }

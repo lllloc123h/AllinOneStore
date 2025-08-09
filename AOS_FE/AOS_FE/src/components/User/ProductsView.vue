@@ -29,12 +29,7 @@
             <div class="search-section">
               <div class="modern-searchBox">
                 <i class="bi bi-search search-icon"></i>
-                <input
-                  class="modern-searchInput"
-                  type="text"
-                  v-model="keyWord"
-                  placeholder="Tìm kiếm sản phẩm..."
-                />
+                <input class="modern-searchInput" type="text" v-model="keyWord" placeholder="Tìm kiếm sản phẩm..." />
                 <button class="search-clear" v-if="keyWord" @click="keyWord = ''">
                   <i class="bi bi-x"></i>
                 </button>
@@ -42,41 +37,20 @@
             </div>
 
             <div class="filter-section">
-              <div
-                v-for="(items, groupName, index) in dropDowncatalogCategory"
-                :key="groupName"
-                class="filter-group"
-              >
+              <div v-for="(items, groupName, index) in dropDowncatalogCategory" :key="groupName" class="filter-group">
                 <div class="modern-filter-card">
-                  <div
-                    class="filter-card-header"
-                    @click="toggleAccordion('category-' + index)"
-                  >
+                  <div class="filter-card-header" @click="toggleAccordion('category-' + index)">
                     <h4 class="filter-title">
                       <i class="bi bi-tags me-2"></i>
                       <span class="line"></span> {{ groupName }}
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('category-' + index) }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('category-' + index) }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('category-' + index) }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('category-' + index) }">
                     <div class="filter-options">
-                      <label
-                        v-for="item in items"
-                        :key="item.id"
-                        class="modern-filter-option"
-                      >
-                        <input
-                          type="checkbox"
-                          :name="groupName"
-                          :value="item.name"
-                          v-model="selectedCatalogCategory[groupName]"
-                        />
+                      <label v-for="item in items" :key="item.id" class="modern-filter-option">
+                        <input type="checkbox" :name="groupName" :value="item.name"
+                          v-model="selectedCatalogCategory[groupName]" />
                         <span class="checkmark"></span>
                         <span class="option-text">{{ item.name }}</span>
                       </label>
@@ -427,8 +401,7 @@ function increaseQty() {
 const discountedPrice = computed(() => {
   if (selectedProductItem.value?.promotions[0]?.discountValue) {
     return Math.round(
-      currentPrice.value *
-        (1 - selectedProductItem.value.promotions[0].discountValue / 100)
+      currentPrice.value * (1 - selectedProductItem.value.promotions[0].discountValue / 100)
     );
   }
   return currentPrice.value;
@@ -546,13 +519,18 @@ const addToCart = () => {
       sku: selectedProductItem.value.sku,
       createdAt: "",
       updatedAt: "",
-    };
-    console.log(itemUpdate);
+    }
+    console.log(itemUpdate)
     authService.updateCart(quantityForAddToCartPorductItem.value);
 
     if (quantityForAddToCartPorductItem.value <= selectedProductItem.value.qty) {
-      console.log("Adding to cart:", itemUpdate);
       finalHandleCartProgress(itemUpdate);
+      notification.success({
+        message: "Thành công",
+        description: `Đã thêm ${quantityForAddToCartPorductItem.value} x ${selectedProductItem.value.name} vào giỏ hàng`,
+        duration: 4.5,
+      });
+
     } else {
       notification.error({
         message: "Thất bại",
@@ -560,7 +538,7 @@ const addToCart = () => {
         duration: 4.5,
       });
     }
-  }
+  };
 };
 const fetchProductData = async (id) => {
   try {

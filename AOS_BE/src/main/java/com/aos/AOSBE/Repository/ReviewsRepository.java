@@ -26,7 +26,7 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer>, JpaS
     Integer countReviewsByProductItemIdAndCreateAtBetween(Integer productItemId, LocalDateTime startDate, LocalDateTime endDate);
 
     @Query("SELECT AVG(r.rating) FROM Reviews r WHERE r.productItems.id = :productItemId")
-    Double findAverageRatingByProductItemId(@Param("productItemId") Integer productItemId);
+    Double findAverageRatingByProductItemId(@Param("productItemId") Long productItemId);
     @Query("SELECT COUNT(r) FROM Reviews r WHERE r.productItems.id = :productItemId")
     Long countByProductItemId(@Param("productItemId") Long productItemId);
     @Query("SELECT COUNT(r) > 0 FROM Reviews r WHERE r.accounts.id = :accountId AND r.productItems.id = :productItemId AND r.orders.id = :orderId")
