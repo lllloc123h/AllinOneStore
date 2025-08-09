@@ -107,69 +107,112 @@ public class CouponsAPI {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/Coupons/validate")
-	public ResponseEntity<?> validateCoupon(
-	        @RequestParam String code,
-	        @RequestParam(defaultValue = "false") boolean hasCombo,
-	        @RequestParam(defaultValue = "false") boolean hasPromotionItems,
-	        Principal principal) {
-
-	    Optional<Coupons> couponOpt = couponsRepository.findByCode(code);
-
-	    if (couponOpt.isEmpty()) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy mã giảm giá.");
-	    }
-
-	    Coupons coupon = couponOpt.get();
-
-	    // 1. Đang hoạt động & chưa hết hạn
-	    if (!coupon.isActive() || coupon.getEndAt().isBefore(LocalDateTime.now())) {
-	        return ResponseEntity.badRequest().body("Mã giảm giá đã hết hạn hoặc không còn hiệu lực.");
-	    }
-
-	    // 2. Số lượng còn
-	    if (coupon.getQty() <= 0) {
-	        return ResponseEntity.badRequest().body("Mã giảm giá đã hết lượt sử dụng.");
-	    }
-
-	    // 3. Lấy user hiện tại
-	    String email = principal.getName();
-	    Optional<Accounts> userOpt = accountsRepository.findByEmail(email);
+	@GetMapping("/Coupons/available")
+	public ResponseEntity<?> getAvailableCoupons(
+	    @RequestParam(defaultValue = "false") boolean hasCombo,
+	    @RequestParam(defaultValue = "false") boolean hasPromotionItems,
+	    @RequestParam(defaultValue = "0.0") double normalTotal,
+	    @RequestParam(defaultValue = "0.0") double totalPrice,
+	    Principal principal
+	) {
+	    Optional<Accounts> userOpt = accountsRepository.findByEmail(principal.getName());
 	    if (userOpt.isEmpty()) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không tìm thấy người dùng.");
 	    }
+
 	    Accounts currentUser = userOpt.get();
 
-	    // 4. Kiểm tra hạng khách hàng
 	    Map<String, Integer> rankLevels = Map.of(
-	    		"ALL", 0, "Đồng", 1, "Bạc", 2, "Vàng", 3,
-		        "Platinum", 4, "Kim cương", 5, "VIP", 6
-		    );
-		    int couponLevel = rankLevels.getOrDefault(coupon.getCustomerGroup(), 0);
-		    int userLevel = rankLevels.getOrDefault(currentUser.getUserRank(), 0);
-		    if (userLevel < couponLevel) {
-		        return ResponseEntity.badRequest().body("Mã này không áp dụng cho hạng của bạn.");
-		    }
+	        "ALL", 0, "Đồng", 1, "Bạc", 2, "Vàng", 3,
+	        "Platinum", 4, "Kim cương", 5, "VIP", 6
+	    );
+	    int userLevel = rankLevels.getOrDefault(currentUser.getUserRank(), 0);
 
-		// 5. Check coupon type-specific restrictions
-		if ("G-DISCOUNT".equalsIgnoreCase(coupon.getDiscountType())) {
-		    if (hasCombo && !coupon.isAllowVoucher()) {
-		        return ResponseEntity.badRequest().body("Mã giảm giá không áp dụng cho combo.");
-		    }
-		    if (hasPromotionItems) {
-		        return ResponseEntity.badRequest().body("Mã giảm giá không áp dụng cho sản phẩm đang khuyến mãi.");
-		    }
-	    }
-	    
-	    // 5.5. Kiểm tra số lần sử dụng của khách hàng
-	    long usageCount = ordersRepository.countCouponUsage(Long.valueOf(currentUser.getId()), code);
-	    if (usageCount >= coupon.getUsagePerCustomer()) {
-	        return ResponseEntity.badRequest().body("Bạn đã sử dụng mã này đủ số lần cho phép.");
-	    }
+	    // ✅ GỌI REPO ĐÃ TỐI ƯU
+	    List<Coupons> freeshipList = couponsRepository.findActiveFreeshipCoupons();
+	    List<Coupons> discountList = couponsRepository.findActiveDiscountCoupons();
 
-	    // 6. Trả lại DTO nếu hợp lệ
-	    CouponsDTOS dto = couponsMapper.mapper(coupon);
-	    return ResponseEntity.ok(dto);
+	    List<CouponsDTOS> freeshipCoupons = freeshipList.stream()
+	        .filter(coupon -> filterValidCoupon(coupon, currentUser, userLevel, hasCombo, hasPromotionItems, normalTotal, totalPrice))
+	        .map(couponsMapper::mapper)
+	        .collect(Collectors.toList());
+
+	    List<CouponsDTOS> discountCoupons = discountList.stream()
+	        .filter(coupon -> filterValidCoupon(coupon, currentUser, userLevel, hasCombo, hasPromotionItems, normalTotal, totalPrice))
+	        .map(couponsMapper::mapper)
+	        .collect(Collectors.toList());
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("freeshipCoupons", freeshipCoupons);
+	    response.put("discountCoupons", discountCoupons);
+
+	    return ResponseEntity.ok(response);
 	}
+
+	private boolean filterValidCoupon(
+		    Coupons coupon,
+		    Accounts user,
+		    int userLevel,
+		    boolean hasCombo,
+		    boolean hasPromotionItems,
+		    double normalTotal,
+		    double totalPrice
+		) {
+		    if (!coupon.isActive() || coupon.getEndAt().isBefore(LocalDateTime.now()))
+		        return false;
+
+		    if (coupon.getQty() <= 0)
+		        return false;
+
+		    int couponLevel = switch (coupon.getCustomerGroup()) {
+		        case "Đồng" -> 1;
+		        case "Bạc" -> 2;
+		        case "Vàng" -> 3;
+		        case "Platinum" -> 4;
+		        case "Kim cương" -> 5;
+		        case "VIP" -> 6;
+		        default -> 0;
+		    };
+
+		    if (userLevel < couponLevel)
+		        return false;
+
+		    if (coupon.getUsagePerCustomer() != null && coupon.getUsagePerCustomer() > 0) {
+		        long usageCount;
+
+		        if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
+		            usageCount = ordersRepository.countFreeshipCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+		        } else {
+		            usageCount = ordersRepository.countCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+		        }
+
+		        if (usageCount >= coupon.getUsagePerCustomer()) {
+		            return false;
+		        }
+		    }
+
+		    // G-DISCOUNT không áp dụng cho sản phẩm có voucher
+		    if ("G-DISCOUNT".equalsIgnoreCase(coupon.getDiscountType())) {
+		        if (!coupon.isAllowVoucher()) {
+		            // Chỉ áp dụng nếu có sản phẩm bình thường
+		            boolean hasNormalItems = normalTotal > 0;
+		            if (!hasNormalItems)
+		                return false;
+
+		            // Kiểm tra giá trị tối thiểu của sản phẩm bình thường
+		            if (coupon.getMinOrderAmount() != null &&
+		                normalTotal < coupon.getMinOrderAmount())
+		                return false;
+		        }
+		    }
+
+		    if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
+		        if (coupon.getMinOrderAmount() != null &&
+		            totalPrice < coupon.getMinOrderAmount())
+		            return false;
+		    }
+
+		    return true;
+		}
 
 }

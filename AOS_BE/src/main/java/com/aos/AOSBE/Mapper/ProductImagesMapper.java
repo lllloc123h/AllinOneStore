@@ -14,12 +14,12 @@ public class ProductImagesMapper {
 
 	public ProductImagesDTOS mapper(ProductImages entity) {
 		return new ProductImagesDTOS(entity.getId(), entity.getImageUrl(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				entity.getProductItems().getId());
+				entity.getProductItems().getId(), entity.isDefault());
 	}
 
 	public ProductImages mapperToObject(ProductImagesDTOS entity) {
 		return new ProductImages(entity.getId(), entity.getImageUrl(), entity.getCreatedAt(), entity.getUpdatedAt(),
-				productItemsRepository.findById(entity.getProductItems()).orElse(null));
+				productItemsRepository.findById(entity.getProductItems()).orElse(null), entity.isDefault());
 	}
 
 }

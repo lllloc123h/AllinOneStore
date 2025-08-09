@@ -33,6 +33,13 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
+                <button
+                  type="button" v-if="item.shippingStatus === 'Chờ xác nhận' && !item.ghnOrderCode"
+                  @click="approveOrderById(item.id)"
+                  class="btn btn-success btn-sm"
+                >
+                  Xác nhận
+                </button>
                 <button type="button" @click="goToView(item.id)" class="btn btn-info btn-sm action-btn"
                   title="Xem chi tiết">
                   <i class="bi bi-eye"></i>
@@ -373,6 +380,7 @@ import createCrudService from "../../Configs/reusableCRUDService";
 import PageNavigative from "./PageNavigative.vue";
 import FilterDropDown from "./FilterDropDown.vue";
 import dayjs from "dayjs";
+import api from "../../Configs/api";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 const prices = [
@@ -739,6 +747,28 @@ watch(
   },
   { deep: true }
 );
+
+const approveOrderById = async (orderId) => {
+  try {
+    const response = await api.post(`/admin/Orders/approve/${orderId}`);
+
+    // Nếu thành công, xử lý kết quả
+    if (response?.data?.message) {
+      alert(`✅ ${response.data.message}`);
+
+      // Nếu muốn lấy mã GHN để hiển thị
+      const ghnCode = response.data.ghnOrderCode;
+      console.log("🔢 Mã GHN:", ghnCode);
+
+      return response.data; // nếu bạn muốn dùng lại trong component
+    }
+  } catch (error) {
+    console.error("❌ Lỗi khi duyệt đơn:", error);
+    alert(error.response?.data?.message || "Không thể duyệt đơn hàng");
+    throw error; // nếu muốn bắt lại từ nơi gọi
+  }
+};
+
 </script>
 
 <style scoped>

@@ -33,8 +33,8 @@
         </div>
         <div class="mb-3">
           <label for="mainImageUrl" class="form-label text-capitalize fw-semibold">Main Image</label>
-          <ImageUpload :max-images="1" :max-videos="0" folder="products" :heightImg="0" :widthImg="0"
-            :videoDuration="60" ref="imageUploadRef" @result-uploaded="handleGetUploadUrl" />
+          <uploadProducts ref="uploadRef" :maxFiles="1" :aspectRatio="'1:1'"
+            @update:images="handleImagesUploadBaseProduct" @delete-image="handleImagesDeleteBaseProduct" />
         </div>
 
         <div v-if="formData.mainImageUrl" class="mb-3 text-center">
@@ -75,8 +75,53 @@
               <div class="modal-body">
                 <!-- Form -->
                 <div class="mb-4">
+                  <label class="form-label text-capitalize fw-semibold">List Product Items Images</label>
+                  <table class="table table-hover custom-table">
+                    <thead class="table-header-custom">
+                      <tr>
+                        <th class="table-th action-column">ID</th>
+                        <th class="table-th action-column">Images</th>
+                        <th class="table-th action-column">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in formDataUpdateProductItems.images" :key="item.id" class="table-row">
+                        <td class="table-cell action-cell">
+                          {{ item.id }}
+                        </td>
+
+                        <td class="table-cell">
+                          <span class="cell-content">
+                            <img :src="item.imageUrl" alt="image"
+                              style="max-width: 100px; max-height: 60px; object-fit: contain;"
+                              @error="handleImageError($event)" />
+                            <span v-if="item.imageError"
+                              style="padding: 4px 8px; background: #f8f9fa; border-radius: 4px; font-size: 0.8rem;">
+                              Không thể tải ảnh
+                            </span>
+                          </span>
+                        </td>
+
+                        <td class="table-cell action-cell">
+                          <input type="radio" name="defaultImage" :checked="item.default"
+                            @change="setImageDefault(item.id)">
+                        </td>
+
+                        <!-- Delete Button -->
+                        <td class="table-cell action-cell">
+                          <button type="button" @click="deleteImageById(item.id)"
+                            class="btn btn-danger btn-sm action-btn" title="Xóa">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+
+                  </table>
+                </div>
+                <div class="mb-4">
                   <label class="form-label text-capitalize fw-semibold">Avatar</label>
-                  <uploadProducts ref="uploadRef" :maxFiles="1" :aspectRatio="'1:1'" @update:images="handleImagesUpdate"
+                  <uploadProducts ref="uploadRef" :maxFiles="5" :aspectRatio="'1:1'" @update:images="handleImagesUpdate"
                     @delete-image="handleImagesDelete" />
                 </div>
                 <div class="mb-3">
@@ -132,6 +177,18 @@
                   <input id="sellEnd" v-model="formDataUpdateProductItems.sellEnd" type="datetime-local"
                     class="form-control" placeholder="Enter sell end" />
                 </div>
+                <div class="mb-3 d-flex align-items-center gap-3">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="isActiveTrue" :value="true"
+                      v-model="formDataUpdateProductItems.active" />
+                    <label class="form-check-label" for="isActiveTrue">Active</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="isActiveFalse" :value="false"
+                      v-model="formDataUpdateProductItems.active" />
+                    <label class="form-check-label" for="isActiveFalse">Inactive</label>
+                  </div>
+                </div>
               </div>
 
               <div class="modal-footer">
@@ -141,24 +198,27 @@
             </div>
           </div>
         </div>
-        <div class="dropdown mb-3" v-for="(items, groupName) in mapVarriants" :key="groupName">
-          <label class="form-label">Select {{ groupName }}</label>
-          <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-            <span v-if="selected[groupName]">
-              {{ selected[groupName].description }} ({{ selected[groupName].signalSku }})
-            </span>
-            <span v-else>Select a {{ groupName }}</span>
-          </button>
-          <ul class="dropdown-menu w-100">
-            <li v-for="variant in items" :key="variant.id" @click="selectVariant(groupName, variant)"
-              class="dropdown-item d-flex align-items-center" style="cursor: pointer">
-              <div>
-                <strong>{{ variant.description }}</strong><br />
-                <small class="text-muted">{{ variant.signalSku }}</small>
-              </div>
-            </li>
-          </ul>
+        <div class="row">
+          <div class="dropdown mb-3 col-6" v-for="(items, groupName) in mapVarriants" :key="groupName">
+            <label class="form-label">Select {{ groupName }}</label>
+            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
+              <span v-if="selected[groupName]" :style="{ color: refError === true ? 'red' : '' }">
+                {{ selected[groupName].description }} ({{ selected[groupName].signalSku }})
+              </span>
+              <span v-else>Select a {{ groupName }}</span>
+            </button>
+            <ul class=" dropdown-menu w-100">
+              <li v-for="variant in items" :key="variant.id" @click="selectVariant(groupName, variant)"
+                class="dropdown-item d-flex align-items-center" style="cursor: pointer">
+                <div>
+                  <strong>{{ variant.description }}</strong><br />
+                  <small class="text-muted">{{ variant.signalSku }}</small>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
+
         <div class="d-flex flex-column gap-2">
           <button class="btn btn-sm btn-outline-primary" @click="addToListVariantPreview()">
             thêm
@@ -328,7 +388,9 @@ const formDataUpdateProductItems = ref({
   imageUrl: "",
   material: "",
   name: "",
-  productItemsId: ""
+  productItemsId: "",
+  active: "",
+  isActive: ""
 });
 const formDataUpdateProductIamges = ref({
   id: "",
@@ -336,6 +398,7 @@ const formDataUpdateProductIamges = ref({
   createdAt: "",
   updatedAt: "",
   productItems: "",
+  isDefault: ""
 });
 
 function handleGetUploadUrl(results) {
@@ -346,6 +409,8 @@ function handleGetUploadUrl(results) {
 function openPopupToUpdateProductItems(id) {
   showModalToUpdateProductItems.value = true
   formDataUpdateProductItems.value = list.value.find(condition => condition.productItemsId === id)
+  console.log(formDataUpdateProductItems.value)
+
 }
 async function removeVariant(index) {
   try {
@@ -365,7 +430,24 @@ async function removeVariant(index) {
 }
 async function selectVariant(GroupName, Variant) {
   selected.value[GroupName] = Variant
+  for (const groupName in selected.value) {
+    const selectedVariant = selected.value[groupName];
+    if (!selectedVariant) continue;
+    if (!Array.isArray(variantPrevieBeforeSaveBaseProduct.value[groupName])) {
+      variantPrevieBeforeSaveBaseProduct.value[groupName] = [];
+    }
+    const isContain = variantPrevieBeforeSaveBaseProduct.value[groupName].filter(
+      (item) => item.signalSku === selectedVariant.signalSku
+    );
+    if (isContain.length > 0) {
+      refError.value = true
+      continue
+    };
+    refError.value = false
+  }
+
 }
+const refError = ref()
 async function addToListVariantPreview() {
   for (const groupName in selected.value) {
     const selectedVariant = selected.value[groupName];
@@ -408,7 +490,9 @@ async function saveProductItems() {
       imageUrl: "",
       material: "",
       name: "",
-      productItemsId: ""
+      productItemsId: "",
+      active: true,
+      isActive: true
     })
   }
   )
@@ -417,9 +501,10 @@ async function saveProductItems() {
       const isContainSku = list.value.filter((condition) => {
         return condition.sku.includes(productItems.sku);
       });
-      console.log(productItems);
-      console.log(isContainSku);
-      if (isContainSku.length > 0) continue;
+      if (isContainSku.length > 0) {
+        console.log("Debug Avoid duplicate:", productItems)
+        continue;
+      }
       const response = await api.post(`/admin/ProductItems`, productItems);
       console.log("Insert successful:", response.data);
     }
@@ -486,7 +571,6 @@ async function submitFormUpdateProductItems() {
     console.log(formDataUpdateProductItems.value);
     const response = await productItemsService.update(formDataUpdateProductItems.value.productItemsId, formDataUpdateProductItems.value);
     console.log("Update successful:", response.data);
-    // router.push(`/Admin/${props.TableName}`);
     showModalToUpdateProductItems.value = false
     await getProductItems(props.id);
   } catch (error) {
@@ -527,19 +611,16 @@ async function getProductItems(id) {
     console.error("Get failed:", error);
   }
 }
-
-const handleImagesUpdate = async (images) => {
+const handleImagesUploadBaseProduct = async (images) => {
   console.log("Images updated:", images);
-  // Cập nhật avatarUrl với ảnh đầu tiên (nếu có)
   if (images.length > 0) {
-    formDataUpdateProductIamges.value.productItems = formDataUpdateProductItems.value.productItemsId
-    formDataUpdateProductIamges.value.imageUrl = images[0].cloudinaryUrl || images[0].url;
+    formData.mainImageUrl = images[0].cloudinaryUrl || images[0].url;
+    formData.id = props.id
     if (images[0].cloudinaryUrl) {
       try {
-        formDataUpdateProductIamges.value.imageUrl = images[0].cloudinaryUrl;
-        formDataUpdateProductIamges.value.createdAt = formatDateTimeLocal(formDataUpdateProductItems.value.createdAt);
-        formDataUpdateProductIamges.value.updatedAt = formatDateTimeLocal(formDataUpdateProductItems.value.updatedAt);
-        const response = await productImagesService.update(formDataUpdateProductIamges.value.productItems, formDataUpdateProductIamges.value);
+        formData.createdAt = formatDateTimeLocal(formData.createdAt);
+        formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
+        const response = await productItemsService.update(formData.props.id, formData);
         console.log("Update successful:", response.data);
         notification.success({
           message: "Cập nhật thành công",
@@ -554,22 +635,74 @@ const handleImagesUpdate = async (images) => {
         });
         console.error("Failed to update avatar:", error);
       }
-
     }
   } else {
     formDataUpdateProductIamges.value.imageUrl = null;
   }
 
+}
+const handleImagesDeleteBaseProduct = async (index) => {
+  console.log("Deleting image at index:", index);
+  formData.imageUrl = null;
+  try {
+    const response = await productItemsService.update(props.id, formData);
+    notification.success({
+      message: "Xóa thành công",
+      description: `Ảnh đã được xóa thành công.`,
+      duration: 3,
+    });
+    console.log("Image deleted successfully");
+  } catch (error) {
+    notification.error({
+      message: "Xóa thất bại",
+      description: `Không thể xóa ảnh.`,
+      duration: 3,
+    });
+    console.error("Failed to delete image:", error);
+  }
+}
+
+
+const handleImagesUpdate = async (images) => {
+  console.log("Images updated:", images);
+  if (images.length > 0) {
+    formDataUpdateProductIamges.value.productItems = formDataUpdateProductItems.value.productItemsId
+    formDataUpdateProductIamges.value.imageUrl = images[0].cloudinaryUrl || images[0].url;
+    if (images[0].cloudinaryUrl) {
+      try {
+        for (const ImageElement of images) {
+          console.log(ImageElement)
+          formDataUpdateProductIamges.value.imageUrl = ImageElement.cloudinaryUrl;
+          formDataUpdateProductIamges.value.createdAt = formatDateTimeLocal(formDataUpdateProductItems.value.createdAt);
+          formDataUpdateProductIamges.value.updatedAt = formatDateTimeLocal(formDataUpdateProductItems.value.updatedAt);
+          const response = await productImagesService.create(formDataUpdateProductIamges.value);
+          console.log("Update successful:", response.data);
+          notification.success({
+            message: "Cập nhật thành công",
+            description: `Avatar đã được cập nhật thành công.`,
+            duration: 3,
+          });
+        }
+      } catch (error) {
+        notification.error({
+          message: "Cập nhật thất bại",
+          description: `Không thể cập nhật avatar.`,
+          duration: 3,
+        });
+        console.error("Failed to update avatar:", error);
+      }
+    }
+  } else {
+    formDataUpdateProductIamges.value.imageUrl = null;
+  }
   await getProductItems(props.id);
-  // Hiển thị thông báo khi có thay đổi
   if (images.length > 0) {
     console.log("Avatar updated:", formData.avatarUrl);
   }
 };
 const handleImagesDelete = async (index) => {
   console.log("Deleting image at index:", index);
-  // Xử lý xóa ảnh tại index
-  formDataUpdateProductIamges.value.imageUrl = null; // Xóa ảnh khỏi formData
+  formDataUpdateProductIamges.value.imageUrl = null;
   try {
     const response = await productImagesService.update(formDataUpdateProductIamges.value.id, formDataUpdateProductIamges.value); notification.success({
       message: "Xóa thành công",
@@ -586,7 +719,22 @@ const handleImagesDelete = async (index) => {
     console.error("Failed to delete image:", error);
   }
 };
-
+const setImageDefault = async (id) => {
+  try {
+    const response = await api.put(`/admin/ProductImages/` + id);
+    console.log("Update successful:", response.data);
+  } catch (error) {
+    console.error("Update failed:", error);
+  }
+}
+const deleteImageById = async (id) => {
+  try {
+    const response = await productImagesService.delete(id);
+    console.log("Delete successful:", response.data);
+  } catch (error) {
+    console.error("Delete failed:", error);
+  }
+}
 
 const fetchData = async () => {
   if (!props.TableName) return;
@@ -626,7 +774,6 @@ onMounted(() => {
         for (const groupName in resp.data) {
           selected.value[groupName] = [];
           variantPrevieBeforeSaveBaseProduct.value[groupName] = [];
-
         }
       })
       .catch((error) => console.log(error));

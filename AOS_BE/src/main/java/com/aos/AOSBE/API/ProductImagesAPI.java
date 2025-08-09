@@ -50,40 +50,44 @@ public class ProductImagesAPI {
 
 	@GetMapping("/admin/ProductImages/{id}")
 	public ResponseEntity<ProductImages> getProductImagesByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
 		ProductImages productImages = (ProductImages) productImagesService.productImagesFindById(id)
 				.orElse(new ProductImages());
 		return ResponseEntity.ok(productImages);
 	}
 
 	@PostMapping("/admin/ProductImages")
-	public ResponseEntity<ProductImages> addNewProductImages(@RequestBody ProductImagesDTOS entity) {
+	public ResponseEntity<?> addNewProductImages(@RequestBody ProductImagesDTOS entity) {
 
-		ProductImages saved = productImagesService.productImagesSave(productImagesMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+		try {
+			List<ProductImages> isExist = productImagesService
+					.checkContainDefaultImagesByProductItemId(entity.getProductItems());
+			ProductImages mapped = productImagesMapper.mapperToObject(entity);
+			if (isExist.size() <= 0) {
+				mapped.setDefault(true);
+			} else {
+				mapped.setDefault(false);
+			}
+			mapped.setId(null);
+			ProductImages saved = productImagesService.productImagesSave(mapped);
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		}
 	}
 
 	@PutMapping("/admin/ProductImages/{id}")
-	public ResponseEntity<?> updateProductImages(@PathVariable int id, @RequestBody ProductImagesDTOS entity) {
+	public ResponseEntity<?> updateProductImages(@PathVariable int id) {
 		try {
-			List<ProductImages> isExist = productImagesService.findByProductItemsId(id);
-			String imgURL = "";
-			if (isExist.size() != 0) {
-				imgURL = isExist.get(0).getImageUrl();
-			}
-			if (imgURL != null && !imgURL.isEmpty()) {
-				isExist.get(0).setImageUrl(entity.getImageUrl());
-				productImagesService.productImagesSave(isExist.get(0));
-				return ResponseEntity.ok(Map.of("measage", "Update successfuly", "update", isExist.get(0)));
-			} else {
-				ProductImages update = productImagesMapper.mapperToObject(entity);
+			ProductImages address = productImagesService.productImagesFindById(id).orElse(null);
 
-				productImagesService.productImagesSave(update);
-				return ResponseEntity.ok(Map.of("measage", "create successfuly", "update", isExist.get(0)));
+			if (address != null) {
+				ProductImages updated = productImagesService.productImagesSetDefaultAddress(id, address);
+				return ResponseEntity.ok().body(Map.of("message", "Set as default successfully"));
+			} else {
+				return ResponseEntity.badRequest().body(Map.of("message", "Address not found"));
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));

@@ -138,6 +138,57 @@ public class ProductItemsDTOS {
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
 			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+			BaseProducts baseProducts, List<ProductImagesDTOS> images) {
+		super();
+		this.id = id;
+		this.cost = cost;
+		this.price = price;
+		this.turnBuy = turnBuy;
+		this.description = description;
+		this.sku = sku;
+		this.safetyStock = safetyStock;
+		this.qty = qty;
+		this.sellStart = sellStart;
+		this.sellEnd = sellEnd;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.baseId = baseId;
+		this.name = name;
+		this.material = material;
+		this.imageUrl = imageUrl;
+		this.baseProducts = baseProducts;
+		this.images = images;
+	}
+
+	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
+			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+			BaseProducts baseProducts, List<ProductImagesDTOS> images, boolean isActive) {
+		super();
+		this.id = id;
+		this.cost = cost;
+		this.price = price;
+		this.turnBuy = turnBuy;
+		this.description = description;
+		this.sku = sku;
+		this.safetyStock = safetyStock;
+		this.qty = qty;
+		this.sellStart = sellStart;
+		this.sellEnd = sellEnd;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.baseId = baseId;
+		this.name = name;
+		this.material = material;
+		this.imageUrl = imageUrl;
+		this.baseProducts = baseProducts;
+		this.images = images;
+		this.isActive = isActive;
+	}
+
+	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
+			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
 			LocalDateTime updatedAt, int baseId) {
 		super();
 		this.id = id;

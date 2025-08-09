@@ -24,6 +24,9 @@ public interface ProductItemsRepository
 	List<ProductItems> findByBaseProductsIdAndIsActive(int id, boolean isActive);
 
 
+	@Query("SELECT a FROM ProductItems a WHERE a.baseProducts.id =  ?1   AND a.isActive = true")
+	List<ProductItems> findByBaseProductsIdWithTheActiveTrue(int id);
+
 	// Add custom query methods here if needed
 	@Query("SELECT MIN(p.price),MAX(p.price) FROM ProductItems p WHERE p.baseProducts.id = ?1")
 	List<Double> findMinAndMaxPriceByBaseId(int id);
@@ -115,6 +118,8 @@ public interface ProductItemsRepository
 				    (:idProductItemIsEmpty = 1 OR  pit.id = :idProductItem)
 				AND
 					bp.is_active = 1
+				AND
+					pit.is_active = 1
 				AND
 					qty > 0
 				GROUP BY

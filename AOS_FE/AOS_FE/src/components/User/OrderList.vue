@@ -121,7 +121,7 @@ const loadOrders = async () => {
       id: order.id,
       maDon: order.orderCode,
       ngayDat: order.createdAt,
-      trangThai: order.shippingStatus,
+      trangThai: translateStatus(order.shippingStatus),
       maVanDon: order.orderCode || "Đang cập nhật",
       tongTien: order.finalTotal,
       sanPham: (order.products || []).map((i) => ({
@@ -148,7 +148,6 @@ const reorder = (order) => {
 
 const getStatusClass = (status) => {
   const statusMap = {
-    "Đang xử lý": "status-processing",
     "Đã xác nhận": "status-confirmed",
     "Đang giao": "status-shipping",
     "Đã giao": "status-delivered",
@@ -176,14 +175,48 @@ const tabs = [
 const filteredOrders = computed(() => {
   const tabMap = {
     "Chờ xác nhận": "Chờ xác nhận",
-    "Chờ lấy hàng": "ready_to_pick",
-    "Chờ giao hàng": "picking",
+    "Chờ lấy hàng": "Chờ lấy hàng",
+    "Chờ giao hàng": "Chờ giao hàng",
     "Đã nhận hàng": "Đã giao",
     "Đã hủy": "Đã hủy",
   };
   const status = tabMap[selectedTab.value];
   return orders.value.filter((o) => o.trangThai === status);
 });
+
+const translateStatus = (status) => {
+  const map = {
+    // GHN: Chờ lấy hàng
+    ready_to_pick: "Chờ lấy hàng",
+    picking: "Chờ lấy hàng",
+    money_collect_picking: "Chờ lấy hàng",
+
+    // GHN: Chờ giao hàng
+    picked: "Chờ giao hàng",
+    storing: "Chờ giao hàng",
+    sorting: "Chờ giao hàng",
+    transporting: "Chờ giao hàng",
+    delivering: "Chờ giao hàng",
+    money_collect_delivering: "Chờ giao hàng",
+
+    // GHN: Đã nhận
+    delivered: "Đã nhận hàng",
+
+    // GHN: Đã hủy / trả hàng
+    cancel: "Đã hủy",
+    return: "Đã hủy",
+    returning: "Đã hủy",
+    returned: "Đã hủy",
+    return_sorting: "Đã hủy",
+    return_transporting: "Đã hủy",
+    lost: "Đã hủy",
+    damage: "Đã hủy",
+    delivery_fail: "Đã hủy",
+    exception: "Đã hủy",
+  };
+  return map[status] || status;
+};
+
 
 </script>
 

@@ -41,12 +41,15 @@ public class ProductItemsMapper {
 		if (productImages.size() != 0) {
 			imgURL = productImages.get(0).getImageUrl();
 		}
+		List<ProductImagesDTOS> productImagesDTOS = productImagesRepository.findByProductItemsId(entity.getId())
+				.stream().map(productImagesMapper::mapper).collect(Collectors.toList());
 		return new ProductItemsDTOS(entity.getId(), entity.getCost(), entity.getPrice(), entity.getTurnBuy(),
 				entity.getDescription(), entity.getSku(), entity.getSafetyStock(), entity.getQty(),
 				entity.getSellStart(), entity.getSellEnd(), entity.getCreatedAt(), entity.getUpdatedAt(),
 				entity.getBaseProducts().getId(), entity.getBaseProducts().getName(),
 				entity.getBaseProducts().getMaterial(), imgURL,
-				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null),entity.isActive());
+				baseProductsService.baseProductsFindById(entity.getBaseProducts().getId()).orElse(null),
+				productImagesDTOS, entity.isActive());
 	}
 
 	public ProductItems mapperToObject(ProductItemsDTOS entity) {
