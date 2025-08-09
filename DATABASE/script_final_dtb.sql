@@ -194,7 +194,6 @@ create table
 		sell_end datetime default getdate (),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
-		is_active bit default 1,
 		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
 GO
