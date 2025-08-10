@@ -2,7 +2,6 @@ package com.aos.AOSBE.API;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,15 +12,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ContentDisposition;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,12 +40,9 @@ import com.aos.AOSBE.DTOS.OrderExportDto;
 import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
-import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.EWallets;
-import com.aos.AOSBE.Entity.Message;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
-import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.MessageMapper;
@@ -152,8 +146,6 @@ public class OrdersAPI {
 		}
 	}
 
-
-
 	@PutMapping("/admin/Orders/{id}")
 	public ResponseEntity<?> updateOrders(@PathVariable int id, @RequestBody OrdersDTOS entity) {
 		try {
@@ -180,7 +172,7 @@ public class OrdersAPI {
 			entity.setAccounts(user.getId());
 
 			// Xóa giỏ hàng
-			cartItemsService.cartItemsDeleteAll(userEmail);
+			cartItemsService.cartItemsDeleteAll(userEmail, entity.getProducts());
 
 			// Lưu đơn hàng trước
 			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
@@ -199,14 +191,15 @@ public class OrdersAPI {
 				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
 
 				Promotions promo = orderItem.getPromotions();
-				String comboGroupId = orderItem.getComboGroupId() != null ? orderItem.getComboGroupId().toString() : null;
+				String comboGroupId = orderItem.getComboGroupId() != null ? orderItem.getComboGroupId().toString()
+						: null;
 
 				if (promo != null) {
 					boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
 					if (!isComboProcessed) {
 						int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
-							? orderItem.getQty() * orderItem.getComboQty()
-							: orderItem.getQty();
+								? orderItem.getQty() * orderItem.getComboQty()
+								: orderItem.getQty();
 
 						if (promo.getQty() >= qtyToReduce) {
 							promo.setQty(promo.getQty() - qtyToReduce);
@@ -216,14 +209,15 @@ public class OrdersAPI {
 							throw new IllegalStateException("Số lượng khuyến mãi không đủ.");
 						}
 						// Đánh dấu combo đã xử lý để không trừ lần 2
-						if (comboGroupId != null) processedComboGroups.add(comboGroupId);
+						if (comboGroupId != null)
+							processedComboGroups.add(comboGroupId);
 					}
 				}
 				orderItem.setOrders(saved);
 				return orderItem;
 			}).collect(Collectors.toList());
-			
-			//Trừ theo sản phẩm trong combo
+
+			// Trừ theo sản phẩm trong combo
 //			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
 //				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
 //
@@ -262,14 +256,13 @@ public class OrdersAPI {
 //			System.out.println("Số lượng sản phẩm gửi GHN: " + saved.getOrderItems().size());
 // 			saved.setGhnOrderCode(ghnOrderCode);
 // 			ordersService.ordersSave(saved);
-			
+
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
-
 
 	@GetMapping("/user/Orders/paypending")
 	public ResponseEntity<?> addNewOrdersByUserRolesWithKey(@RequestParam("KEY") String key) {
@@ -410,45 +403,39 @@ public class OrdersAPI {
 			return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống"));
 		}
 	}
-	
+
 	@GetMapping("/orders/export")
 	public ResponseEntity<?> exportExcel(
-	    @RequestParam(value = "start", required = false)
-	    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
 
-	    @RequestParam(value = "end", required = false)
-	    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
-	) throws IOException {
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+			throws IOException {
 
-	    // Gán giá trị mặc định nếu không có dữ liệu từ FE
-	    if (startDate == null) {
-	        startDate = LocalDateTime.now().minusDays(7); // mặc định là 7 ngày trước
-	    }
-	    if (endDate == null) {
-	        endDate = LocalDateTime.now(); // mặc định là thời điểm hiện tại
-	    }
+		// Gán giá trị mặc định nếu không có dữ liệu từ FE
+		if (startDate == null) {
+			startDate = LocalDateTime.now().minusDays(7); // mặc định là 7 ngày trước
+		}
+		if (endDate == null) {
+			endDate = LocalDateTime.now(); // mặc định là thời điểm hiện tại
+		}
 
-	    // 1. Lấy danh sách đơn hàng cần export
-	    List<OrderExportDto> orders = ordersService.getOrdersForExport(startDate, endDate);
+		// 1. Lấy danh sách đơn hàng cần export
+		List<OrderExportDto> orders = ordersService.getOrdersForExport(startDate, endDate);
 
-	    // 2. Xuất ra file Excel dưới dạng InputStream
-	    ByteArrayInputStream excelStream = ordersService.exportOrdersToExcel(orders);
-	    InputStreamResource resource = new InputStreamResource(excelStream);
+		// 2. Xuất ra file Excel dưới dạng InputStream
+		ByteArrayInputStream excelStream = ordersService.exportOrdersToExcel(orders);
+		InputStreamResource resource = new InputStreamResource(excelStream);
 
-	    // 3. Tạo header trả về
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setContentDisposition(ContentDisposition.builder("attachment")
-	        .filename("orders.xlsx")
-	        .build());
-	    headers.setContentType(MediaType.parseMediaType(
-	        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+		// 3. Tạo header trả về
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename("orders.xlsx").build());
+		headers.setContentType(
+				MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
 
-	    // 4. Trả ResponseEntity chứa file Excel
-	    return ResponseEntity.ok()
-	        .headers(headers)
-	        .body(resource);
+		// 4. Trả ResponseEntity chứa file Excel
+		return ResponseEntity.ok().headers(headers).body(resource);
 	}
-	
+
 	@PostMapping("/admin/Orders/approve/{orderId}")
 	public ResponseEntity<?> approveAndSendToGhn(@PathVariable int orderId) {
 		try {
@@ -474,16 +461,12 @@ public class OrdersAPI {
 
 			ordersService.ordersSave(order);
 
-			return ResponseEntity.ok(Map.of(
-				"message", "Đã duyệt và gửi đơn GHN thành công",
-				"ghnOrderCode", ghnOrderCode
-			));
+			return ResponseEntity
+					.ok(Map.of("message", "Đã duyệt và gửi đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of(
-				"message", "Lỗi khi gửi đơn GHN",
-				"error", e.getMessage() != null ? e.getMessage() : "Không rõ lỗi"
-			));
+			return ResponseEntity.badRequest().body(Map.of("message", "Lỗi khi gửi đơn GHN", "error",
+					e.getMessage() != null ? e.getMessage() : "Không rõ lỗi"));
 		}
 	}
 
