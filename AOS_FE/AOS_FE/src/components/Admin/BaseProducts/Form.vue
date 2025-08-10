@@ -67,7 +67,8 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">Product Form</h5>
-                <button type="button" class="btn-close" @click="showModalToUpdateProductItems = false"></button>
+                <button type="button" class="btn-close"
+                  @click="() => { showModalToUpdateProductItems = false }"></button>
               </div>
 
               <div class="modal-body">
@@ -419,11 +420,6 @@ function openPopupToUpdateProductItems(id) {
   formDataUpdateProductItems.value = list.value.find(
     (condition) => condition.productItemsId === id
   );
-  console.log("formDataUpdateProductItems.value:", formDataUpdateProductItems.value);
-  if (uploadRefProductItems.value && formDataUpdateProductItems.value.images && formDataUpdateProductItems.value.images.length > 0) {
-    uploadRefProductItems.value.loadFromUrls([formDataUpdateProductItems.value.images]);
-  }
-  console.log(formDataUpdateProductItems.value);
 }
 async function removeVariant(index) {
   try {
