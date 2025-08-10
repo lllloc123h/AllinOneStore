@@ -127,12 +127,29 @@
                             required
                           ></textarea>
                         </div>
-
                         <div class="form-group">
-                          <label class="form-label">Hình ảnh (tùy chọn):</label>
-                          <CloudinaryUploader :key="uploaderKey" @uploaded="handleImageUploaded" />
+                          <ImageUploader
+                            :max-images="5"
+                            :max-videos="2"
+                            folder="profiles"
+                            :width-img="600"
+                            :height-img="750"
+                            :video-duration="60"
+                            @result-uploaded="handleImageUploaded"
+                          />
+                          <div v-if="reviewImageUrl.length" class="mt-3">
+                          <label class="form-label">Ảnh bạn đã chọn:</label>
+                          <div class="d-flex flex-wrap gap-3">
+                            <img
+                              v-for="(url, index) in reviewImageUrl"
+                              :key="index"
+                              :src="url"
+                              alt="Ảnh đánh giá"
+                              style="width: 120px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1)"
+                            />
+                          </div>
                         </div>
-
+                        </div>
                         <button type="submit" class="submit-review-btn">
                           <i class="bi bi-send me-2"></i>
                           Gửi đánh giá
@@ -165,7 +182,7 @@ import { useRouter } from "vue-router";
 import api from "../../Configs/api";
 import { ref, onMounted, computed } from "vue";
 import { notification } from "ant-design-vue";
-import CloudinaryUploader from "../Module/Cloudinary.vue";
+import ImageUploader from "../Module/ImageUpload.vue";
 
 const orders = ref([]);
 const router = useRouter();
@@ -308,7 +325,7 @@ const translateStatus = (status) => {
 };
 
 const activeReviewKey = ref(null);
-const reviewImageUrl = ref('');
+const reviewImageUrl = ref([]);
 
 const newReview = ref({
   rating: 0,
@@ -338,7 +355,9 @@ async function submitReview(sp, orderId) {
       orderId: orderId,
       rating: newReview.value.rating,
       comment: newReview.value.text,
-      imageUrl1: reviewImageUrl.value || null,
+      imageUrl1: reviewImageUrl.value[0] || null,
+      imageUrl2: reviewImageUrl.value[1] || null,
+      imageUrl3: reviewImageUrl.value[2] || null,
     });
 
     notification.success({
@@ -364,6 +383,16 @@ async function submitReview(sp, orderId) {
       duration: 4.5,
     });
     console.error(err);
+  }
+}
+
+const uploaderKey = ref(Date.now());
+
+function handleImageUploaded(results) {
+  if (Array.isArray(results) && results.length > 0) {
+    const images = results.filter((r) => r.type === "image");
+    reviewImageUrl.value = images.map((img) => img.url);
+    newReview.value.imageUrl = reviewImageUrl.value.join(','); 
   }
 }
 
