@@ -54,11 +54,8 @@
 
               <!-- Address Cards -->
               <div v-else class="address-cards">
-                <div
-                  v-for="(address, index) in shippingAddress"
-                  :key="address.id"
-                  :class="['address-card', { 'default-address': address.default }]"
-                >
+                <div v-for="(address, index) in shippingAddress" :key="address.id"
+                  :class="['address-card', { 'default-address': address.default }]">
                   <div class="address-card-header">
                     <div class="address-label">
                       <i :class="getAddressIcon(address.label)" class="label-icon"></i>
@@ -69,20 +66,12 @@
                         <i class="bi bi-star-fill me-1"></i>
                         Mặc định
                       </span>
-                      <button
-                        v-else
-                        class="set-default-btn"
-                        @click="setAddressDefault(address.id)"
-                        title="Đặt làm mặc định"
-                      >
+                      <button v-else class="set-default-btn" @click="setAddressDefault(address.id)"
+                        title="Đặt làm mặc định">
                         <i class="bi bi-star me-1"></i>
                         Chọn mặc định
                       </button>
-                      <button
-                        class="delete-btn"
-                        @click="removeAddress(address.id)"
-                        title="Xóa địa chỉ"
-                      >
+                      <button class="delete-btn" @click="removeAddress(address.id)" title="Xóa địa chỉ">
                         <i class="bi bi-trash"></i>
                       </button>
                     </div>
@@ -148,26 +137,14 @@
                     <i class="bi bi-person-circle me-1"></i>
                     Họ và tên
                   </label>
-                  <input
-                    type="text"
-                    class="form-input"
-                    placeholder="Nhập họ và tên"
-                    v-model="name"
-                    required
-                  />
+                  <input type="text" class="form-input" placeholder="Nhập họ và tên" v-model="name" required />
                 </div>
                 <div class="form-group">
                   <label class="form-label">
                     <i class="bi bi-telephone me-1"></i>
                     Số điện thoại
                   </label>
-                  <input
-                    type="tel"
-                    class="form-input"
-                    placeholder="Nhập số điện thoại"
-                    v-model="phone"
-                    required
-                  />
+                  <input type="tel" class="form-input" placeholder="Nhập số điện thoại" v-model="phone" required />
                 </div>
               </div>
             </div>
@@ -182,37 +159,19 @@
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Tỉnh/Thành phố</label>
-                  <select
-                    class="form-select"
-                    v-model="selectedProvince"
-                    @change="loadDistricts"
-                    required
-                  >
+                  <select class="form-select" v-model="selectedProvince" @change="loadDistricts" required>
                     <option value="" disabled>Chọn Tỉnh/Thành phố</option>
-                    <option
-                      v-for="prov in provinces"
-                      :key="prov.ProvinceID"
-                      :value="prov.ProvinceID"
-                    >
+                    <option v-for="prov in provinces" :key="prov.ProvinceID" :value="prov.ProvinceID">
                       {{ prov.ProvinceName }}
                     </option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Quận/Huyện</label>
-                  <select
-                    class="form-select"
-                    v-model="selectedDistrict"
-                    @change="loadWards"
-                    :disabled="!districts.length"
-                    required
-                  >
+                  <select class="form-select" v-model="selectedDistrict" @change="loadWards"
+                    :disabled="!districts.length" required>
                     <option value="" disabled>Chọn Quận/Huyện</option>
-                    <option
-                      v-for="dist in districts"
-                      :key="dist.DistrictID"
-                      :value="dist.DistrictID"
-                    >
+                    <option v-for="dist in districts" :key="dist.DistrictID" :value="dist.DistrictID">
                       {{ dist.DistrictName }}
                     </option>
                   </select>
@@ -222,18 +181,9 @@
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Phường/Xã</label>
-                  <select
-                    class="form-select"
-                    v-model="selectedWard"
-                    :disabled="!wards.length"
-                    required
-                  >
+                  <select class="form-select" v-model="selectedWard" :disabled="!wards.length" required>
                     <option value="" disabled>Chọn Phường/Xã</option>
-                    <option
-                      v-for="ward in wards"
-                      :key="ward.WardCode"
-                      :value="ward.WardCode"
-                    >
+                    <option v-for="ward in wards" :key="ward.WardCode" :value="ward.WardCode">
                       {{ ward.WardName }}
                     </option>
                   </select>
@@ -253,13 +203,8 @@
                   <i class="bi bi-house-door me-1"></i>
                   Địa chỉ cụ thể
                 </label>
-                <input
-                  type="text"
-                  class="form-input"
-                  placeholder="Số nhà, tên đường..."
-                  v-model="detailAddress"
-                  required
-                />
+                <input type="text" class="form-input" placeholder="Số nhà, tên đường..." v-model="detailAddress"
+                  required />
               </div>
 
               <div class="form-group">
@@ -267,12 +212,8 @@
                   <i class="bi bi-chat-text me-1"></i>
                   Ghi chú (tùy chọn)
                 </label>
-                <textarea
-                  class="form-textarea"
-                  placeholder="Ghi chú thêm về địa chỉ..."
-                  v-model="note"
-                  rows="3"
-                ></textarea>
+                <textarea class="form-textarea" placeholder="Ghi chú thêm về địa chỉ..." v-model="note"
+                  rows="3"></textarea>
               </div>
             </div>
 
@@ -314,9 +255,9 @@ export default {
   data() {
     return {
       showModal: false,
-      name: "Trần Hữu Lộc",
-      phone: "0969214372",
-      detailAddress: "123 Đường ABC",
+      name: "",
+      phone: "",
+      detailAddress: "",
       provinces: [],
       districts: [],
       wards: [],
@@ -381,10 +322,10 @@ export default {
     },
     async loadProvinces() {
       const res = await fetch(
-        "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province",
+        "https://online-gateway.ghn.vn/shiip/public-api/master-data/province",
         {
           headers: {
-            Token: "cc2fea72-5000-11f0-9b81-222185cb68c8",
+            Token: "79736863-63cc-11f0-b8ec-d6282448e823",
             "Content-Type": "application/json",
           },
         }
@@ -402,11 +343,11 @@ export default {
 
       if (this.selectedProvince) {
         const res = await fetch(
-          "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district",
+          "https://online-gateway.ghn.vn/shiip/public-api/master-data/district",
           {
             method: "POST",
             headers: {
-              Token: "cc2fea72-5000-11f0-9b81-222185cb68c8",
+              Token: "79736863-63cc-11f0-b8ec-d6282448e823",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -424,11 +365,11 @@ export default {
       this.wards = [];
       if (this.selectedDistrict) {
         const res = await fetch(
-          "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id",
+          "https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id",
           {
             method: "POST",
             headers: {
-              Token: "cc2fea72-5000-11f0-9b81-222185cb68c8",
+              Token: "79736863-63cc-11f0-b8ec-d6282448e823",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -561,8 +502,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
-    repeat-x;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>') repeat-x;
   background-size: 1000px 100px;
   animation: wave 10s infinite linear;
 }
@@ -571,6 +511,7 @@ export default {
   0% {
     background-position-x: 0;
   }
+
   100% {
     background-position-x: 1000px;
   }
@@ -940,6 +881,7 @@ export default {
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
