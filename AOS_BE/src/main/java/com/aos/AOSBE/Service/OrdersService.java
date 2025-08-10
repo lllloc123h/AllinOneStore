@@ -230,13 +230,13 @@ public class OrdersService {
 	        // ===============================
 	        // 7. Gọi GHN để tạo vận đơn
 	        // ===============================
-	        try {
-	            String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(savedOrder);
-	            savedOrder.setGhnOrderCode(ghnOrderCode);
-	            ordersRepository.save(savedOrder);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
+	        // try {
+	        //     String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(savedOrder);
+	        //     savedOrder.setGhnOrderCode(ghnOrderCode);
+	        //     ordersRepository.save(savedOrder);
+	        // } catch (Exception e) {
+	        //     e.printStackTrace();
+	        // }
 
 	        return savedOrder;
 
