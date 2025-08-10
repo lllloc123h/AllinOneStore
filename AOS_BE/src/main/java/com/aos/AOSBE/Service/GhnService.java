@@ -156,9 +156,13 @@ public class GhnService {
             }
         }
 
+        int totalProductCost = listOrderItemToCreateGHN.stream()
+        .mapToInt(item -> (int) item.getTotal())
+        .sum();
+
 
         // 6. Chi tiết đơn hàng
-        dto.setCod_amount((int) order.getFinalTotal());
+        dto.setCod_amount(totalProductCost);
         dto.setContent("Theo New York Times"); // hoặc nội dung động tùy bạn
         dto.setLength(12);
         dto.setWidth(12);
@@ -167,7 +171,7 @@ public class GhnService {
         dto.setCod_failed_amount(2000);
         dto.setPick_station_id(1444);
         dto.setDeliver_station_id(null);
-        dto.setInsurance_value((int) order.getFinalTotal());
+        dto.setInsurance_value(totalProductCost);
         dto.setService_type_id(2);
         dto.setCoupon(null);
 
