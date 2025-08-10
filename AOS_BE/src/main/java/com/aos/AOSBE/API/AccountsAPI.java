@@ -90,12 +90,6 @@ public class AccountsAPI {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/test")
-	public ResponseEntity<?> test() {
-		return ResponseEntity.ok(authoritiesService.findAllByEmail("adminCUDE@gmail.com").stream()
-				.map(authority -> authority.getAccounts().getEmail()).toList());
-	}
-
 	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
 		Accounts accounts = (Accounts) accountsService.accountsFindById(id).orElse(new Accounts());
@@ -197,23 +191,14 @@ public class AccountsAPI {
 
 	@PutMapping("/Accounts/change-password")
 	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTOS dto) {
-	    try {
-	        accountsService.changePassword(dto);
-	        return ResponseEntity.ok(Map.of(
-	            "status", "success",
-	            "message", "Đổi mật khẩu thành công"
-	        ));
-	    } catch (RuntimeException e) {
-	        return ResponseEntity.badRequest().body(Map.of(
-	            "status", "error",
-	            "message", e.getMessage()
-	        ));
-	    } catch (Exception e) {
-	        return ResponseEntity.internalServerError().body(Map.of(
-	            "status", "error",
-	            "message", "Lỗi hệ thống"
-	        ));
-	    }
+		try {
+			accountsService.changePassword(dto);
+			return ResponseEntity.ok(Map.of("status", "success", "message", "Đổi mật khẩu thành công"));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(Map.of("status", "error", "message", e.getMessage()));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("status", "error", "message", "Lỗi hệ thống"));
+		}
 	}
 
 	@PutMapping("/admin/Accounts/ResetPassword/{email}")
@@ -242,7 +227,8 @@ public class AccountsAPI {
 
 			AccountProfileDTO dto = new AccountProfileDTO(acc.getFullname(), acc.getEmail(), acc.getPhone(),
 					acc.getAvatarUrl(), acc.getAverageOrderValue(), acc.getUserRank(), acc.getTotalSpent(),
-					acc.getTotalOrder(), acc.getLoyaltyPoint(),acc.isGender(), acc.getBirthday(), acc.getCreatedAt(),acc.getUpdatedAt());
+					acc.getTotalOrder(), acc.getLoyaltyPoint(), acc.isGender(), acc.getBirthday(), acc.getCreatedAt(),
+					acc.getUpdatedAt());
 
 			return ResponseEntity.ok(dto);
 		} catch (Exception e) {
@@ -272,7 +258,7 @@ public class AccountsAPI {
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
 		System.out.println("du lieu tu update avatar: " + dto);
 		try {
-			Accounts acc= accountsService.updateProfile(dto);
+			Accounts acc = accountsService.updateProfile(dto);
 			return ResponseEntity.ok(acc);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
