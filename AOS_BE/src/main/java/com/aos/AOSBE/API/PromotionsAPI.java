@@ -72,11 +72,7 @@ public class PromotionsAPI {
 	@GetMapping("/Promotions/{id}")
 	public ResponseEntity<?> getPromotionProductsByPromotionId(@PathVariable int id) {
 		List<PromotionProducts> promotionProducts = promotionProductsService.findPromotionProductsByPromotionId(id);
-		Map<BaseProducts, List<ProductItems>> map = promotionProducts.stream().peek(pro -> {
-			ProductItems item = pro.getProductItems();
-			item.setQty(pro.getRequireQty());
-		}).collect(Collectors.groupingBy(pro -> pro.getProductItems().getBaseProducts(),
-				Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())));
+		Map<BaseProducts, List<ProductItems>> map = promotionProducts.stream().peek(pro -> {ProductItems item = pro.getProductItems();item.setQty(pro.getRequireQty());}).collect(Collectors.groupingBy(pro -> pro.getProductItems().getBaseProducts(), Collectors.mapping(PromotionProducts::getProductItems, Collectors.toList())));
 		List<GroupProductDTO> listGroups = map.entrySet().stream().map(entry -> {
 			GroupProductDTO groupProductDTO = new GroupProductDTO();
 			groupProductDTO.setBaseProduct(groupProductMapper.mapperToBaseProductsDTOS(entry.getKey()));
@@ -86,6 +82,12 @@ public class PromotionsAPI {
 		}).toList();
 
 		return ResponseEntity.ok(listGroups);
+	}
+	@GetMapping("/Promotions/baseproducts")
+	public ResponseEntity<?> getAllPromotionsByBaseProductId(@RequestParam("baseProductId") int baseProductId) {
+		List<Promotions> promotions = promotionsService.findActivePromotionsByBaseProductId(baseProductId);
+		List<PromotionsDTOS> promotionsDTOS = promotions.stream().map(promotionsMapper :: mapper).toList();
+		return ResponseEntity.ok(promotionsDTOS);
 	}
 
 	@GetMapping("/admin/Promotions")

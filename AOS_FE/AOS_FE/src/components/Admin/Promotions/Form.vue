@@ -95,17 +95,18 @@
             min="0"
             step="1000"
           />
-          
+
           <!-- Discount validation message -->
-          <div 
-            v-if="formData.type === 'DISCOUNT' && selectedProductVariants.length > 0" 
+          <div
+            v-if="formData.type === 'DISCOUNT' && selectedProductVariants.length > 0"
             class="form-text"
           >
             <small v-if="minimumVariantPrice" class="text-info">
-              💡 Giá thấp nhất của biến thể đã chọn: {{ formatPrice(minimumVariantPrice) }}
+              💡 Giá thấp nhất của biến thể đã chọn:
+              {{ formatPrice(minimumVariantPrice) }}
             </small>
           </div>
-          
+
           <div v-if="!discountValidation.isValid" class="invalid-feedback">
             {{ discountValidation.message }}
           </div>
@@ -929,31 +930,37 @@ const minimumVariantPrice = computed(() => {
   if (selectedProductVariants.value.length === 0) {
     return null;
   }
-  
+
   const prices = selectedProductVariants.value
-    .map(variant => variant.price || 0)
-    .filter(price => price > 0);
-    
+    .map((variant) => variant.price || 0)
+    .filter((price) => price > 0);
+
   return prices.length > 0 ? Math.min(...prices) : null;
 });
 
 // Computed property to validate discount value
 const discountValidation = computed(() => {
-  if (formData.type !== 'DISCOUNT' || !formData.discountValue || !minimumVariantPrice.value) {
-    return { isValid: true, message: '' };
+  if (
+    formData.type !== "DISCOUNT" ||
+    !formData.discountValue ||
+    !minimumVariantPrice.value
+  ) {
+    return { isValid: true, message: "" };
   }
-  
+
   const discountValue = parseFloat(formData.discountValue);
   const minPrice = minimumVariantPrice.value;
-  
+
   if (discountValue > minPrice) {
     return {
       isValid: false,
-      message: `❌ Giá trị giảm giá (${formatPrice(discountValue)}) không được lớn hơn giá thấp nhất của biến thể (${formatPrice(minPrice)})`
+      message: `❌ Giá trị giảm giá (${formatPrice(
+        discountValue
+      )}) không được lớn hơn giá thấp nhất của biến thể (${formatPrice(minPrice)})`,
     };
   }
-  
-  return { isValid: true, message: '' };
+
+  return { isValid: true, message: "" };
 });
 
 const listDashBoard = [
@@ -1827,10 +1834,30 @@ const fetchData = async () => {
             acc[item.productItem.id] = {
               require_qty: item.requireQty || 1,
               is_gift: item.gift || false,
+              gift_option: item.giftOption || "", // Fill gift_option from server data
             };
             return acc;
           }, {});
           console.log("Variant options initialized:", variantOptions.value);
+
+          // Set globalGiftOption based on existing data for update mode
+          if (props.action === "update") {
+            const giftOptions = response.data
+              .filter((item) => item.gift) // Only consider gifts
+              .map((item) => item.giftOption)
+              .filter((option) => option); // Remove empty options
+
+            if (giftOptions.length > 0) {
+              // If all gifts have the same option, use that
+              const uniqueOptions = [...new Set(giftOptions)];
+              if (uniqueOptions.length === 1) {
+                globalGiftOption.value = uniqueOptions[0];
+              } else {
+                // If mixed options, keep default "all"
+                globalGiftOption.value = "all";
+              }
+            }
+          }
 
           // Get unique base product IDs from the selected variants
           const uniqueBaseProductIds = [
@@ -1996,12 +2023,18 @@ watch(
 
 // Watch for discount value changes to validate in real-time
 watch([() => formData.discountValue, () => minimumVariantPrice.value], () => {
-  if (formData.type === 'DISCOUNT' && formData.discountValue && minimumVariantPrice.value) {
+  if (
+    formData.type === "DISCOUNT" &&
+    formData.discountValue &&
+    minimumVariantPrice.value
+  ) {
     const discountValue = parseFloat(formData.discountValue);
     const minPrice = minimumVariantPrice.value;
-    
+
     if (discountValue > minPrice) {
-      console.warn(`Discount value (${discountValue}) exceeds minimum variant price (${minPrice})`);
+      console.warn(
+        `Discount value (${discountValue}) exceeds minimum variant price (${minPrice})`
+      );
     }
   }
 });
