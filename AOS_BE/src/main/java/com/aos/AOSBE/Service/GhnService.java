@@ -197,9 +197,9 @@ public class GhnService {
 
         GhnCreateOrderRequestDTO dto = buildGhnDTOFromOrder(order);
         HttpEntity<GhnCreateOrderRequestDTO> request = new HttpEntity<>(dto, headers);
-
+    System.out.println("GHN Request: " + dto);
         ResponseEntity<Map> response = restTemplate.postForEntity(GHN_CREATE_ORDER_URL, request, Map.class);
-
+    System.err.println("GHN Response: " + response.getBody());
         if (response.getBody() != null && ((Integer) response.getBody().get("code")) == 200) {
             Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
             return data != null ? (String) data.get("order_code") : null;

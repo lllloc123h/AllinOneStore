@@ -3,9 +3,12 @@
   <div class="product-card">
     <div class="modern-card">
       <!-- Discount Badge -->
-      <div class="discount-badge">
+      <div
+        v-if="props.product.promotions && props.product.promotions.length > 0"
+        class="discount-badge"
+      >
         <i class="bi bi-lightning-charge me-1"></i>
-        Giảm giá
+        Ưu đãi
       </div>
 
       <!-- Image Container with 4:5 Aspect Ratio -->
@@ -88,10 +91,38 @@
 import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { catchUserEvent } from "../../Configs/handleCatchUserProductEvent";
+import api from "../../Configs/api";
 const props = defineProps({
   product: Object,
 });
 
+// Khởi tạo promotions để tránh lỗi
+if (!props.product.promotions) {
+  props.product.promotions = [];
+}
+
+// Chỉ gọi API nếu product có id
+if (props.product?.id) {
+  api
+    .get(`/Promotions/baseproducts?baseProductId=${props.product.id}`)
+    .then((res) => {
+      if (res.data.length > 0) {
+        props.product.promotions = res.data;
+        console.log("load promotions ", props.product.promotions.length);
+        // props.product.discountedPrice = Math.round(
+        //   props.product.price * (1 - res.data[0].discountValue / 100)
+        // );
+      } else {
+        props.product.promotions = [];
+        props.product.discountedPrice = props.product.price;
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching promotions:", error);
+      // Đảm bảo promotions vẫn là array nếu API lỗi
+      props.product.promotions = [];
+    });
+}
 const router = useRouter();
 const listPrice = ref([]);
 const displayPrice = ref([]);
