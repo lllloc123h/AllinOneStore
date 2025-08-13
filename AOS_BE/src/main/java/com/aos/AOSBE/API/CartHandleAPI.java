@@ -190,11 +190,13 @@ public class CartHandleAPI {
 		System.out.println(">> Customs List: " + customsDTOSList);
 		return ResponseEntity.ok(customsDTOSList);
 	}
-	@PostMapping("/customs/save")
+		@PostMapping("/customs/save")
 	public ResponseEntity<?> addCustoms(@RequestBody CustomsDTOS entity) {
 		try {
+			System.out.println(">> Customs Entity: " + entity);
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
+			entity.setAccountId(account.getId());
 			customsService.customsSave(customsMapper.mapperToObject(entity));
 			return ResponseEntity.ok(Map.of("message", "Customs added successfully"));
 		} catch (Exception e) {
@@ -202,4 +204,39 @@ public class CartHandleAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+	@PutMapping("/customs/save")
+	public ResponseEntity<?> updateCustom(@RequestBody CustomsDTOS entity) {
+		try {
+			System.out.println(">> Customs Entity: " + entity);
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts account = accountsService.accountsFindByEmail(userEmail).orElse(null);
+			entity.setAccountId(account.getId());
+			customsService.customsSave(customsMapper.mapperToObject(entity));
+			return ResponseEntity.ok(Map.of("message", "Customs added successfully"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+	@GetMapping("/customs/{id}")
+	public ResponseEntity<?> getCustomsById(@PathVariable int id) {
+		try {
+			Customs custom = customsService.customsFindById(id).get();
+			return ResponseEntity.ok(customsMapper.mapper(custom));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+	@DeleteMapping("/customs/{id}")
+	public ResponseEntity<?> deleteCustoms(@PathVariable int id) {
+		try {
+			customsService.customsDeleteById(id);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
+		}
+	}
+
 }

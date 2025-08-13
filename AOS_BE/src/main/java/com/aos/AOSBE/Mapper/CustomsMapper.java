@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 public class CustomsMapper {
 	@Autowired
 	private ProductItemsService productItemsService;
-	
+	@Autowired
+	private OrderItemsMapper orderItemsMapper;
+	@Autowired
+	private ProductItemsMapper productItemsMapper;
 	public CustomsDTOS mapper(Customs entity) {
 		return new CustomsDTOS(
 				    entity.getId(),
@@ -19,7 +22,8 @@ public class CustomsMapper {
 				    entity.getDesignName(),
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
-				    entity.getProductItems().getId()
+				    productItemsMapper.mapper2(entity.getProductItems()),
+				    entity.getOrderItem() != null ? orderItemsMapper.mapper(entity.getOrderItem()) : null
 			);
 	}
 	public Customs mapperToObject(CustomsDTOS entity) {
@@ -33,8 +37,9 @@ public class CustomsMapper {
 					entity.getDesignName(),
 					entity.getCreatedAt(),
 					entity.getUpdatedAt(),
-					productItemsService.productItemsFindById(entity.getProductItems()).orElse(null)
-			);
+					productItemsService.productItemsFindById(entity.getProductItems().getId()).orElse(null),
+				entity.getOrderItem() != null ? orderItemsMapper.mapperToObject(entity.getOrderItem()) : null
+		);
 	}
 	
 }

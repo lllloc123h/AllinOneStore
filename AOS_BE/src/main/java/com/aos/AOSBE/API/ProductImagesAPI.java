@@ -47,6 +47,14 @@ public class ProductImagesAPI {
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/ProductItems/image/default/{productItemId}")
+	public ResponseEntity<?> getAllProductImagesApi(@PathVariable int productItemId) {
+		List<ProductImages> productImages = productImagesService.checkContainDefaultImagesByProductItemId(productItemId);
+		List<ProductImagesDTOS> productImagesDTOS = productImages.stream().map(productImagesMapper::mapper).collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", productImagesDTOS);
+		return ResponseEntity.ok(response);
+	}
 
 	@GetMapping("/admin/ProductImages/{id}")
 	public ResponseEntity<ProductImages> getProductImagesByIdApi(@PathVariable int id) {

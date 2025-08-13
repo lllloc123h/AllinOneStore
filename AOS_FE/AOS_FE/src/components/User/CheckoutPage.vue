@@ -95,8 +95,8 @@
                     </div>
                     <div v-else class="no-address">
                       <i class="bi bi-exclamation-triangle"></i>
-                      <span>Chưa có địa chỉ giao hàng</span>
-                      <button class="add-address-btn" @click="goToAddress">
+                      <span> Chưa có địa chỉ giao hàng</span>
+                      <button class="next-step-btn mt-2" @click="goToAddress">
                         Thêm địa chỉ
                       </button>
                     </div>

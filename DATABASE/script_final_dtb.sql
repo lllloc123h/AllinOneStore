@@ -85,7 +85,7 @@ create table
 		gender bit default 0,
 		birthday date ,
 		fullname nvarchar (100) not null,
-		avatar_url varchar(255),
+		avatar_url varchar(1000),
 		phone varchar(15) null,
 		average_order_value decimal(18, 2) default 0,
 		user_rank nvarchar (20) default N'Đồng',
@@ -197,19 +197,7 @@ create table
 		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
 GO
-create table
-	customs (
-		id int identity (1, 1) primary key,
-		product_item_id int not null,
-		account_id int not null, -- kh cần liên kết cũng đc
-		canvas_json nvarchar (max) not null,
-		image_url nvarchar (255) not null,
-		design_name nvarchar (50) not null, -- mặt trước, mặt sau 
-		created_at datetime default getdate (),
-		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
-	);
-GO
+
 --CREATE TABLE
 --	user_logs (
 --		id INT IDENTITY (1, 1) PRIMARY KEY,
@@ -429,6 +417,21 @@ create table
 		foreign key (promotion_id) references promotions (id) ON DELETE CASCADE
 	);
 
+GO
+create table
+	customs (
+		id int identity (1, 1) primary key,
+		product_item_id int not null,
+		account_id int not null, -- kh cần liên kết cũng đc
+		canvas_json nvarchar (max) not null,
+		image_url nvarchar (255) not null,
+		design_name nvarchar (50) not null, -- mặt trước, mặt sau
+		order_item_id int  null,
+		created_at datetime default getdate (),
+		updated_at datetime default getdate (),
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (order_item_id) references order_items (id)
+	);
 GO
 CREATE TABLE
 	returns (

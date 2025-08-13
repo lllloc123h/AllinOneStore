@@ -213,13 +213,17 @@
                         </div>
                         <div class="col">
                           <div class="item-info">
-                            <h6 class="item-name mb-1">
-                              {{ item.name }}
+                            <div class="d-flex align-items-center flex-wrap mb-1 gap-2">
+                              <h6 class="item-name mb-0">{{ item.name }}</h6>
                               <span v-if="item.isGift" class="gift-badge">
                                 <i class="bi bi-gift-fill me-1"></i>
                                 Quà tặng
                               </span>
-                            </h6>
+                              <span v-if="item.custom" class="custom-badge">
+                                <i class="bi bi-palette me-1"></i>
+                                Có thể tùy chỉnh
+                              </span>
+                            </div>
                             <p class="item-sku text-muted mb-0">{{ item.sku }}</p>
                           </div>
                         </div>
@@ -327,7 +331,13 @@
                     <!-- Product Info -->
                     <div class="col">
                       <div class="product-info">
-                        <h6 class="product-name mb-1">{{ item.name }}</h6>
+                        <div class="d-flex align-items-center flex-wrap mb-1 gap-2">
+                          <h6 class="product-name mb-0">{{ item.name }}</h6>
+                          <span v-if="item.custom" class="custom-badge">
+                            <i class="bi bi-palette me-1"></i>
+                            Có thể tùy chỉnh
+                          </span>
+                        </div>
                         <p class="product-sku text-muted mb-2">{{ item.sku }}</p>
 
                         <!-- Price -->
@@ -402,19 +412,6 @@
                         @click="removeItem(item)"
                       >
                         <i class="bi bi-trash3"></i>
-                      </button>
-                    </div>
-
-                    <!-- Custom Button -->
-                    <div class="col-auto" v-if="item.custom">
-                      <button
-                        class="btn btn-outline-primary btn-sm"
-                        @click="openCustomModal(item)"
-                        data-bs-toggle="modal"
-                        data-bs-target="#customDraftsModal"
-                        title="Xem bản phát thảo tùy chỉnh"
-                      >
-                        <i class="bi bi-palette"></i>
                       </button>
                     </div>
                   </div>
@@ -532,13 +529,19 @@
                       <div class="card-body p-4">
                         <!-- Header: badge + tên + giá -->
                         <div
-                          class="d-flex justify-content-between align-items-center mb-3"
+                          class="d-flex justify-content-between align-items-start mb-3"
                         >
-                          <div class="d-flex align-items-center">
-                            <span class="badge bg-warning text-dark me-2 px-3 py-2">
-                              <i class="bi bi-gift-fill me-1"></i> Ưu đãi
-                            </span>
-                            <h6 class="fw-bold mb-0">{{ item.name }}</h6>
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                              <span class="badge bg-warning text-dark me-2 px-3 py-2">
+                                <i class="bi bi-gift-fill me-1"></i> Ưu đãi
+                              </span>
+                              <h6 class="fw-bold mb-0">{{ item.name }}</h6>
+                              <span v-if="item.custom" class="custom-badge">
+                                <i class="bi bi-palette me-1"></i>
+                                Có thể tùy chỉnh
+                              </span>
+                            </div>
                           </div>
                           <div class="promotion-price fw-bold text-danger fs-5">
                             {{ item.comboPrice.toLocaleString() }}₫
@@ -861,164 +864,6 @@
         </div>
       </div>
 
-      <!-- Modal bản phát thảo tùy chỉnh -->
-      <div
-        class="modal fade"
-        id="customDraftsModal"
-        aria-hidden="true"
-        aria-labelledby="customDraftsModalLabel"
-        tabindex="-1"
-      >
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-          <div class="modal-content rounded-4 border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white rounded-top-4">
-              <h1 class="modal-title fs-4" id="customDraftsModalLabel">
-                <i class="bi bi-palette me-2"></i>
-                Bản phát thảo tùy chỉnh: {{ currentCustomItem?.name }}
-              </h1>
-              <button
-                type="button"
-                class="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body p-4">
-              <div v-if="currentCustomItem" class="custom-drafts-container">
-                <!-- Thông tin sản phẩm -->
-                <div class="row mb-4">
-                  <div class="col-md-4">
-                    <div class="product-preview text-center">
-                      <img
-                        :src="currentCustomItem.image"
-                        :alt="currentCustomItem.name"
-                        class="img-fluid rounded-3 shadow-sm mb-3"
-                        style="max-height: 300px"
-                      />
-                      <h5 class="product-name">{{ currentCustomItem.name }}</h5>
-                      <p class="text-muted">{{ currentCustomItem.sku }}</p>
-                    </div>
-                  </div>
-                  <div class="col-md-8">
-                    <!-- Nút tạo bản phát thảo mới -->
-                    <div class="mb-4">
-                      <button
-                        class="btn btn-success btn-lg w-100"
-                        @click="createNewDraft"
-                      >
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Tạo bản phát thảo mới
-                      </button>
-                    </div>
-
-                    <!-- Loading state -->
-                    <div v-if="loadingDrafts" class="text-center py-5">
-                      <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Đang tải...</span>
-                      </div>
-                      <p class="mt-3 text-muted">Đang tải danh sách bản phát thảo...</p>
-                    </div>
-
-                    <!-- Danh sách bản phát thảo -->
-                    <div v-else-if="customDrafts.length > 0" class="drafts-list">
-                      <h6 class="mb-3">
-                        <i class="bi bi-bookmark-star me-2"></i>
-                        Bản phát thảo đã lưu ({{ customDrafts.length }})
-                      </h6>
-                      <div class="row g-3">
-                        <div
-                          v-for="draft in customDrafts"
-                          :key="draft.id"
-                          class="col-md-6"
-                        >
-                          <div
-                            class="card draft-card h-100 border-0 shadow-sm hover-card"
-                          >
-                            <div class="card-body p-0">
-                              <!-- Preview ảnh -->
-                              <div class="draft-preview position-relative">
-                                <img
-                                  :src="draft.imageUrl || '/default-design.png'"
-                                  :alt="draft.designName"
-                                  class="img-fluid w-100"
-                                  style="height: 200px; object-fit: cover"
-                                />
-                              </div>
-
-                              <!-- Thông tin chi tiết -->
-                              <div class="draft-details p-3">
-                                <!-- Tên thiết kế -->
-                                <h6 class="draft-name mb-2 fw-bold">
-                                  {{ draft.designName || `Thiết kế #${draft.id}` }}
-                                </h6>
-
-                                <!-- Ngày tạo -->
-                                <p class="text-muted small mb-3">
-                                  <i class="bi bi-calendar3 me-1"></i>
-                                  {{ formatDate(draft.createdAt) }}
-                                </p>
-
-                                <!-- Action buttons -->
-                                <div class="draft-actions d-flex gap-2">
-                                  <button
-                                    class="btn btn-primary btn-sm flex-grow-1"
-                                    @click="selectDraft(draft)"
-                                  >
-                                    <i class="bi bi-check-circle me-1"></i>
-                                    Chọn
-                                  </button>
-                                  <button
-                                    class="btn btn-outline-warning btn-sm"
-                                    @click="editDraft(draft)"
-                                    title="Chỉnh sửa"
-                                  >
-                                    <i class="bi bi-pencil"></i>
-                                  </button>
-                                  <button
-                                    class="btn btn-outline-danger btn-sm"
-                                    @click="deleteDraft(draft)"
-                                    title="Xóa"
-                                  >
-                                    <i class="bi bi-trash3"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Empty state -->
-                    <div v-else class="empty-drafts text-center py-5">
-                      <i class="bi bi-inbox display-1 text-muted mb-3"></i>
-                      <h5 class="text-muted">Chưa có bản phát thảo nào</h5>
-                      <p class="text-muted">
-                        Tạo bản phát thảo đầu tiên để bắt đầu tùy chỉnh sản phẩm
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer bg-light rounded-bottom-4 p-4">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                Đóng
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="refreshDrafts"
-                :disabled="loadingDrafts"
-              >
-                <i class="bi bi-arrow-clockwise me-2"></i>
-                Làm mới
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Sản phẩm gợi ý -->
       <div class="suggestions-section mt-5">
         <div class="row">
@@ -1126,11 +971,6 @@ const giftGroups = computed(() => {
 
   return Object.values(groups);
 });
-
-// Custom drafts variables
-const currentCustomItem = ref(null);
-const customDrafts = ref([]);
-const loadingDrafts = ref(false);
 
 const comboGroups = computed(() => {
   // Gom nhóm combo theo comboGroupId (bao gồm cả khi promotions null)
@@ -1958,135 +1798,6 @@ function checkout() {
   });
 }
 
-// Custom drafts functions
-function openCustomModal(item) {
-  currentCustomItem.value = item;
-  loadCustomDrafts(item);
-}
-
-async function loadCustomDrafts(item) {
-  loadingDrafts.value = true;
-  try {
-    // Gọi API để lấy danh sách bản phát thảo
-    const response = await api.get(`/customs/email`);
-    customDrafts.value = response.data || [];
-    console.log("Custom drafts loaded:", customDrafts.value);
-  } catch (error) {
-    console.error("Error loading custom drafts:", error);
-    customDrafts.value = [];
-    // Có thể hiển thị thông báo lỗi cho user
-    alert("Không thể tải danh sách bản phát thảo. Vui lòng thử lại sau.");
-  } finally {
-    loadingDrafts.value = false;
-  }
-}
-
-function refreshDrafts() {
-  if (currentCustomItem.value) {
-    loadCustomDrafts(currentCustomItem.value);
-  }
-}
-
-function createNewDraft() {
-  if (!currentCustomItem.value) return;
-
-  // Chuyển hướng đến trang Customizer để tạo mới với props đúng format
-  const productItemId = currentCustomItem.value.productItemId;
-
-  // Sử dụng router navigation với đúng route name
-  router.push({
-    name: "CustomizerCreate",
-    params: { id: productItemId },
-  });
-}
-
-function viewDraft(draft) {
-  console.log("Viewing draft:", draft);
-  // Có thể mở modal xem chi tiết hoặc chuyển đến trang xem
-  alert(`Xem chi tiết bản phát thảo: ${draft.title || draft.id}`);
-}
-
-function editDraft(draft) {
-  if (!currentCustomItem.value) return;
-
-  // Chuyển hướng đến trang Customizer để chỉnh sửa với props đúng format
-  const customId = draft.id;
-
-  // Sử dụng router navigation với đúng route name
-  router.push({
-    name: "CustomizerUpdate",
-    params: { id: customId },
-  });
-}
-
-function duplicateDraft(draft) {
-  if (!currentCustomItem.value) return;
-
-  // Để duplicate, ta có thể tạo một API endpoint riêng hoặc xử lý ở frontend
-  // Ở đây tạm thời chuyển đến create mode với productItemId
-  const productItemId = currentCustomItem.value.productItemId;
-
-  // TODO: Có thể thêm query params để chỉ định đây là duplicate
-  router.push({
-    name: "CustomizerCreate",
-    params: { id: productItemId },
-    query: { duplicate: draft.id },
-  });
-}
-
-async function deleteDraft(draft) {
-  if (!confirm(`Bạn có chắc muốn xóa bản phát thảo "${draft.title || draft.id}"?`)) {
-    return;
-  }
-
-  try {
-    await api.delete(`/customs/${draft.id}`);
-    alert("Đã xóa bản phát thảo thành công!");
-    // Reload danh sách
-    refreshDrafts();
-  } catch (error) {
-    console.error("Error deleting draft:", error);
-    alert("Không thể xóa bản phát thảo. Vui lòng thử lại sau.");
-  }
-}
-
-function selectDraft(draft) {
-  console.log("Selected draft:", draft);
-  // Có thể thêm logic để apply draft vào cart item
-  alert(`Đã chọn bản phát thảo: ${draft.title || draft.id}`);
-
-  // Đóng modal
-  const modal = document.getElementById("customDraftsModal");
-  const bsModal = bootstrap.Modal.getInstance(modal);
-  if (bsModal) {
-    bsModal.hide();
-  }
-}
-
-// Utility functions
-function formatDate(dateString) {
-  if (!dateString) return "";
-
-  const date = new Date(dateString);
-  return date.toLocaleDateString("vi-VN", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function getStatusText(status) {
-  const statusMap = {
-    draft: "Nháp",
-    pending: "Chờ duyệt",
-    completed: "Hoàn thành",
-    rejected: "Bị từ chối",
-  };
-  return statusMap[status] || status;
-}
-
 // Tải giỏ hàng khi trang được mount
 onMounted(() => {
   loadCart();
@@ -2454,26 +2165,56 @@ onMounted(() => {
 .gift-badge {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.6rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  animation: sparkle 2s ease-in-out infinite;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 4px rgba(40, 167, 69, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: sparkle 4s ease-in-out infinite;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.custom-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: glow-custom 4s ease-in-out infinite;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@keyframes glow-custom {
+  0%,
+  100% {
+    box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transform: scale(1.01);
+  }
 }
 
 @keyframes sparkle {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 1px 4px rgba(40, 167, 69, 0.2);
   }
   50% {
-    transform: scale(1.02);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+    transform: scale(1.01);
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
   }
 }
 
@@ -2962,338 +2703,6 @@ onMounted(() => {
 
 .suggestion-current-price {
   font-size: 1.1rem;
-}
-
-/* Custom Drafts Modal Styles */
-.custom-drafts-container {
-  min-height: 400px;
-}
-
-.draft-card {
-  transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
-  overflow: hidden;
-}
-
-.hover-card:hover {
-  border-color: #0d6efd;
-  box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
-  transform: translateY(-3px);
-}
-
-/* Draft Header with Gradient */
-.draft-header .gradient-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  opacity: 0.9;
-}
-
-.draft-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  z-index: 1;
-}
-
-.draft-header .position-relative {
-  z-index: 2;
-}
-
-/* Preview Image with Overlay Effect */
-.draft-preview {
-  overflow: hidden;
-}
-
-.preview-overlay {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
-  transition: all 0.3s ease;
-  opacity: 0;
-}
-
-.draft-card:hover .preview-overlay {
-  opacity: 1;
-}
-
-.draft-card:hover .preview-btn {
-  opacity: 1 !important;
-  transform: translateY(0);
-}
-
-.preview-btn {
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.9) !important;
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Information Cards */
-.draft-details {
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
-}
-
-.time-info {
-  background: rgba(13, 110, 253, 0.05);
-  border-radius: 8px;
-  padding: 0.75rem;
-  border-left: 3px solid #0d6efd;
-}
-
-.canvas-info {
-  background: rgba(108, 117, 125, 0.05);
-  border-radius: 8px;
-  padding: 0.75rem;
-  border-left: 3px solid #6c757d;
-}
-
-/* Enhanced Badge Styles */
-.badge.bg-light {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-  color: #495057 !important;
-  border: 1px solid #dee2e6;
-  font-weight: 600;
-}
-
-.badge.bg-info {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
-  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
-}
-
-.badge.bg-secondary {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
-  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-}
-
-/* Action Buttons Enhancement */
-.draft-actions .btn {
-  font-size: 0.875rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.draft-actions .btn-primary {
-  background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
-  border: none;
-  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
-}
-
-.draft-actions .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
-}
-
-.draft-actions .btn-outline-primary {
-  border: 2px solid #0d6efd;
-  background: transparent;
-  color: #0d6efd;
-}
-
-.draft-actions .btn-outline-primary:hover {
-  background: #0d6efd;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
-}
-
-.draft-actions .btn-outline-info {
-  border: 2px solid #17a2b8;
-  background: transparent;
-  color: #17a2b8;
-}
-
-.draft-actions .btn-outline-info:hover {
-  background: #17a2b8;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3);
-}
-
-/* Dropdown Menu Enhancement */
-.dropdown-menu {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  border: none;
-  border-radius: 12px;
-  padding: 0.5rem 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-}
-
-.dropdown-item {
-  padding: 0.75rem 1.25rem;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  border-radius: 0;
-  font-weight: 500;
-}
-
-.dropdown-item:hover {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  color: #0d6efd;
-  padding-left: 1.5rem;
-}
-
-.dropdown-item.text-danger:hover {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
-  color: #dc3545;
-  padding-left: 1.5rem;
-}
-
-.dropdown-item i {
-  width: 16px;
-  text-align: center;
-}
-
-/* Empty State Enhancement */
-.empty-drafts {
-  color: #6c757d;
-  padding: 3rem 2rem;
-}
-
-.empty-drafts .display-1 {
-  font-size: 4rem;
-  opacity: 0.3;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Product Preview Enhancement */
-.product-preview {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid #dee2e6;
-  position: relative;
-  overflow: hidden;
-}
-
-.product-preview::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, transparent 70%);
-  animation: rotate 20s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.product-preview > * {
-  position: relative;
-  z-index: 1;
-}
-
-.product-preview img {
-  border: 3px solid white;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-}
-
-.product-preview .product-name {
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Loading Animation Enhancement */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-  border-width: 0.3em;
-  border-color: #0d6efd transparent #0d6efd transparent;
-}
-
-/* Modal Header Enhancement */
-.modal-header.bg-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  border: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.modal-header.bg-primary::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-}
-
-.modal-header > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .modal-dialog.modal-xl {
-    max-width: 95%;
-    margin: 0.5rem auto;
-  }
-
-  .draft-card .row {
-    --bs-gutter-x: 0.75rem;
-  }
-
-  .draft-actions {
-    flex-direction: column;
-  }
-
-  .draft-actions .btn {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .product-preview {
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-}
-
-/* Loading animation */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-  border-width: 0.3em;
-}
-
-/* Status badges */
-.badge.bg-success {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-}
-
-.badge.bg-warning {
-  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
-  color: #212529 !important;
-}
-
-.badge.bg-secondary {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
 }
 
 /* Responsive */

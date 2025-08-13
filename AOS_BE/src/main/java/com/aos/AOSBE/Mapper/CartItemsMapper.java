@@ -32,7 +32,7 @@ public class CartItemsMapper {
 	public CartItemsDTOS mapper(CartItems entity) {
 		if((entity.getPromotions()) == null){
 			List<Promotions> pro= promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems().getId());
-			if(!pro.isEmpty()){
+			if(pro.size()>0){
 				entity.setPromotions(pro.get(0));
 			}
 		}
