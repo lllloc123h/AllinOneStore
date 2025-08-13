@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aos.AOSBE.CommonFunctions.CommonKeyConstant;
 import com.aos.AOSBE.DTOS.AccountsDTOS;
 import com.aos.AOSBE.DTOS.GeneralStatsDTO;
+import com.aos.AOSBE.DTOS.GhnDTO;
 import com.aos.AOSBE.DTOS.MessageDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
 import com.aos.AOSBE.DTOS.OrderExportDto;
@@ -469,5 +471,16 @@ public class OrdersAPI {
 					e.getMessage() != null ? e.getMessage() : "Không rõ lỗi"));
 		}
 	}
+	
+	@GetMapping("/log/{orderCode}")
+    public ResponseEntity<List<GhnDTO.StatusHistory>> getOrderLog(@PathVariable String orderCode) {
+        GhnDTO orderDetail = ghnService.getOrderDetailFromGHN(orderCode);
+
+        if (orderDetail == null || orderDetail.getLog() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(orderDetail.getLog());
+    }
 
 }

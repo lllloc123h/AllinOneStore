@@ -464,6 +464,24 @@ const loadOrder = async () => {
           : []),
       ],
     };
+    if (order.value.vanChuyen.maVanDon && order.value.vanChuyen.maVanDon !== "Đang cập nhật") {
+  try {
+    const logRes = await api.get(`/log/${order.value.vanChuyen.maVanDon}`);
+    const ghnLogs = logRes.data.map((log) => {
+      console.log("Log từ GHN:", log);
+
+      return {
+        thoiGian: log.updated_date,
+        noiDung: statusDisplayMap[log.status] || `Trạng thái: ${log.status}`,
+      };
+    });
+
+    order.value.lichSu.push(...ghnLogs);
+    order.value.lichSu.sort((a, b) => new Date(a.thoiGian) - new Date(b.thoiGian));
+  } catch (err) {
+    console.warn("Không thể lấy log từ GHN:", err);
+  }
+}
 
     statusIndex.value = statusMap[order.value.trangThai] ?? 0;
   } catch (error) {
@@ -585,6 +603,8 @@ const statusDisplayMap = {
   ready_to_pick: "Chờ lấy hàng",
   picking: "Đang lấy hàng",
   picked: "Đã lấy hàng",
+  storing: "Đã bàn giao đơn vị vận chuyển",
+  transporting: "Đang vận chuyển giữa các kho",
   delivering: "Đang giao hàng",
   delivered: "Đã giao hàng thành công",
   cancel: "Đã huỷ",
