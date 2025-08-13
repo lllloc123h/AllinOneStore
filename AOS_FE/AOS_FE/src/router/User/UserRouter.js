@@ -67,7 +67,8 @@ export default [
         name: 'cart',
         component: Cart,
         meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
-    }, {
+    },
+     {
         path: '/load',
         name: 'load',
         component: () => import('../../components/Module/ImageUpload.vue')
@@ -78,7 +79,12 @@ export default [
         component: UserInfo,
         meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
-
+    {
+        path: '/custom',
+        name: 'custom',
+        component: () => import('../../components/User/CustomView.vue'),
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
+    },
     {
         path: '/OrderStatus/:id?',
         name: 'OrderStatus',

@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.DTOS.CreateComboDTO;
+import com.aos.AOSBE.DTOS.OrderItemsDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.CartItems;
 import com.aos.AOSBE.Repository.CartItemsRepository;
@@ -50,8 +52,15 @@ public class CartItemsService {
 	}
 
 	@Transactional
-	public void cartItemsDeleteAll(String email) {
-		List<CartItems> listCartNeedToRemove = cartItemsFindAccounts(email);
+	public void cartItemsDeleteAll(String email, List<OrderItemsDTOS> cartItemsSelected) {
+		List<CartItems> listCartNeedToRemove = new ArrayList<>();
+		for (OrderItemsDTOS element : cartItemsSelected) {
+			CartItems temp = cartItemsRepository.findByAccountsEmailAndProductItemsId(email, element.getProductItemId())
+					.orElse(null);
+			if (temp != null) {
+				listCartNeedToRemove.add(temp);
+			}
+		}
 		cartItemsRepository.deleteAll(listCartNeedToRemove);
 	}
 

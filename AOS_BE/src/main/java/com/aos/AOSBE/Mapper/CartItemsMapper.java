@@ -1,7 +1,9 @@
 package com.aos.AOSBE.Mapper;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.Entity.ProductImages;
 import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Repository.ProductImagesRepository;
 import com.aos.AOSBE.Repository.ProductItemsRepository;
 import com.aos.AOSBE.Repository.VariantValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,12 @@ public class CartItemsMapper {
 	private PromotionsService promotionsService;
 	@Autowired
 	private HandleListSkuToFilter handleListSkuToFilter;
-
+	@Autowired
+	private ProductImagesRepository productImagesRepository;
 	public CartItemsDTOS mapper(CartItems entity) {
 		if((entity.getPromotions()) == null){
 			List<Promotions> pro= promotionsService.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems().getId());
-			if(!pro.isEmpty()){
+			if(pro.size()>0){
 				entity.setPromotions(pro.get(0));
 			}
 		}
@@ -37,7 +40,7 @@ public class CartItemsMapper {
 				entity.getId(),
 				entity.getQty(),
 				entity.getProductItems().getBaseProducts().getName(),
-				entity.getProductItems().getBaseProducts().getMainImageUrl(),
+				productImagesRepository.checkContainDefaultImagesByProductItemId(entity.getProductItems().getId()).get(0).getImageUrl(),
 				entity.getProductItems().getPrice(),
 				handleListSkuToFilter.getDescriptionOfSku(entity.getProductItems().getSku()),
 				entity.getCreatedAt(),

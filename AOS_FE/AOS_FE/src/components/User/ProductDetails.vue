@@ -279,7 +279,7 @@
                 </div>
 
                 <!-- Review Form -->
-                <div class="review-form-card">
+                <!-- <div class="review-form-card">
                   <h5 class="form-title">Viết đánh giá của bạn</h5>
                   <form @submit.prevent="submitReview" class="review-form">
                     <div class="rating-input">
@@ -307,7 +307,7 @@
                       Gửi đánh giá
                     </button>
                   </form>
-                </div>
+                </div> -->
 
                 <!-- Reviews List -->
                 <div class="reviews-list">

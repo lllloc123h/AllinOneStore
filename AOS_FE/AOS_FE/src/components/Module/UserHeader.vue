@@ -32,12 +32,8 @@
             </RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink
-              class="nav-link modern-nav-link"
-              aria-current="page"
-              to="/Customizer"
-            >
-              <i class="bi bi-palette-fill me-2"></i>Customizer
+            <RouterLink class="nav-link modern-nav-link" aria-current="page" to="/custom">
+              <i class="bi bi-palette-fill me-2"></i>Tùy chỉnh của bạn
             </RouterLink>
           </li>
           <li class="nav-item">

@@ -36,14 +36,18 @@ public class ProductItemsDTOS {
 	private List<PromotionsDTOS> promotions;
 	private List<ProductImagesDTOS> images;
 	private boolean isActive;
+	private String giftOption;
 
-	public ProductItemsDTOS(int id, double price, String description, String sku, int qty, Boolean isGift) {
+	public ProductItemsDTOS(int id, double price, String description, String sku, int qty, Boolean isGift, String giftOption, String imageUrl) {
 		this.id = id;
 		this.price = price;
 		this.description = description;
 		this.sku = sku;
 		this.qty = qty;
 		this.isGift = isGift;
+		this.giftOption = giftOption;
+		this.imageUrl = imageUrl;
+
 	}
 
 	public ProductItemsDTOS(double cost, int id, double price, int turnBuy, String description, int safetyStock,

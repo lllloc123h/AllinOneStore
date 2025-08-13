@@ -33,17 +33,17 @@
         </div>
         <div class="mb-3">
           <label for="mainImageUrl" class="form-label text-capitalize fw-semibold">Main Image</label>
-          <uploadProducts ref="uploadRef" :maxFiles="1" :aspectRatio="'1:1'"
+          <uploadProducts ref="uploadRef" :maxFiles="1" :aspectRatio="'4:5'"
             @update:images="handleImagesUploadBaseProduct" @delete-image="handleImagesDeleteBaseProduct" />
         </div>
 
-        <div v-if="formData.mainImageUrl" class="mb-3 text-center">
+        <!-- <div v-if="formData.mainImageUrl" class="mb-3 text-center">
           <label class="form-label fw-semibold">Preview:</label>
           <div class="preview-img-wrapper d-flex justify-content-center align-items-center">
             <img :src="previewImg" alt="mainImageUrl Preview" class="img-thumbnail shadow"
               style="max-height: 150px; border-radius: 8px" />
           </div>
-        </div>
+        </div> -->
         <div class="mb-3 d-flex align-items-center gap-3">
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" id="isActiveTrue" :value="true" v-model="formData.active" />
@@ -54,8 +54,6 @@
             <label class="form-check-label" for="isActiveFalse">Inactive</label>
           </div>
         </div>
-
-
 
         <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary w-100 py-2 fw-bold">
           <span v-if="props.action === 'create'">Create</span>
@@ -69,7 +67,8 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">Product Form</h5>
-                <button type="button" class="btn-close" @click="showModalToUpdateProductItems = false"></button>
+                <button type="button" class="btn-close"
+                  @click="() => { showModalToUpdateProductItems = false }"></button>
               </div>
 
               <div class="modal-body">
@@ -92,11 +91,17 @@
 
                         <td class="table-cell">
                           <span class="cell-content">
-                            <img :src="item.imageUrl" alt="image"
-                              style="max-width: 100px; max-height: 60px; object-fit: contain;"
-                              @error="handleImageError($event)" />
-                            <span v-if="item.imageError"
-                              style="padding: 4px 8px; background: #f8f9fa; border-radius: 4px; font-size: 0.8rem;">
+                            <img :src="item.imageUrl" alt="image" style="
+                                max-width: 100px;
+                                max-height: 60px;
+                                object-fit: contain;
+                              " @error="handleImageError($event)" />
+                            <span v-if="item.imageError" style="
+                                padding: 4px 8px;
+                                background: #f8f9fa;
+                                border-radius: 4px;
+                                font-size: 0.8rem;
+                              ">
                               Không thể tải ảnh
                             </span>
                           </span>
@@ -104,7 +109,7 @@
 
                         <td class="table-cell action-cell">
                           <input type="radio" name="defaultImage" :checked="item.default"
-                            @change="setImageDefault(item.id)">
+                            @change="setImageDefault(item.id)" />
                         </td>
 
                         <!-- Delete Button -->
@@ -116,13 +121,12 @@
                         </td>
                       </tr>
                     </tbody>
-
                   </table>
                 </div>
                 <div class="mb-4">
                   <label class="form-label text-capitalize fw-semibold">Avatar</label>
-                  <uploadProducts ref="uploadRef" :maxFiles="5" :aspectRatio="'1:1'" @update:images="handleImagesUpdate"
-                    @delete-image="handleImagesDelete" />
+                  <uploadProducts ref="uploadRefProductItems" :maxFiles="5" :aspectRatio="'4:5'"
+                    @update:images="handleImagesUpdate" @delete-image="handleImagesDelete" />
                 </div>
                 <div class="mb-3">
                   <label for="cost" class="form-label text-capitalize">Cost</label>
@@ -192,8 +196,12 @@
               </div>
 
               <div class="modal-footer">
-                <button class="btn btn-secondary" @click="showModalToUpdateProductItems = false">Close</button>
-                <button class="btn btn-success" @click="submitFormUpdateProductItems">Save</button>
+                <button class="btn btn-secondary" @click="showModalToUpdateProductItems = false">
+                  Close
+                </button>
+                <button class="btn btn-success" @click="submitFormUpdateProductItems">
+                  Save
+                </button>
               </div>
             </div>
           </div>
@@ -203,11 +211,13 @@
             <label class="form-label">Select {{ groupName }}</label>
             <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
               <span v-if="selected[groupName]" :style="{ color: refError === true ? 'red' : '' }">
-                {{ selected[groupName].description }} ({{ selected[groupName].signalSku }})
+                {{ selected[groupName].description }} ({{
+                  selected[groupName].signalSku
+                }})
               </span>
               <span v-else>Select a {{ groupName }}</span>
             </button>
-            <ul class=" dropdown-menu w-100">
+            <ul class="dropdown-menu w-100">
               <li v-for="variant in items" :key="variant.id" @click="selectVariant(groupName, variant)"
                 class="dropdown-item d-flex align-items-center" style="cursor: pointer">
                 <div>
@@ -240,10 +250,11 @@
         <label class="form-label">Preview combinations variant</label>
         <div v-for="(combo, index) in combinations" :key="index" class="mb-2">
           <div class="border p-2 rounded">
-            <span v-for="(variant, index) in combo" :key="variant.signalSku">{{ variant.description }} {{
-              index == 0 ? '- ' : '' }} </span>
-            <span v-for="(variant, index) in combo" :key="variant.signalSku">{{ variant.signalSku }} {{
-              index == 0 ? '- ' : '' }}</span>
+            <span v-for="(variant, index) in combo" :key="variant.signalSku">{{ variant.description }} {{ index == 0 ?
+              "-" : "" }}
+            </span>
+            <span v-for="(variant, index) in combo" :key="variant.signalSku">{{ variant.signalSku }} {{ index == 0 ? "-"
+              : "" }}</span>
           </div>
         </div>
         <div class="d-flex flex-column gap-2">
@@ -329,22 +340,24 @@ const mapVarriants = ref({});
 const selected = ref([]);
 const variantPrevieBeforeSaveBaseProduct = ref({});
 const combinations = ref({});
+const uploadRef = ref(null);
+const uploadRefProductItems = ref(null);
 
 const listProductItemsToSave = ref({});
 const expandedSections = ref(["category-0", "productItems-0", "variant-0", "price"]);
-const showModalToUpdateProductItems = ref(false)
+const showModalToUpdateProductItems = ref(false);
 import { notification } from "ant-design-vue";
 const formData = reactive({
   id: "",
-  name: "",
-  material: "",
+  name: "áo thun 1",
+  material: "Cotton Nam",
   categories: "",
   mainImageUrl: "",
-  isCustom: "",
-  turnBuy: "",
-  rating: "",
-  isActive: "",
-  active: "",
+  isCustom: "true",
+  turnBuy: "0",
+  rating: "0",
+  isActive: "true",
+  active: "true",
   createdAt: "",
   updatedAt: "",
 });
@@ -390,7 +403,7 @@ const formDataUpdateProductItems = ref({
   name: "",
   productItemsId: "",
   active: "",
-  isActive: ""
+  isActive: "",
 });
 const formDataUpdateProductIamges = ref({
   id: "",
@@ -398,19 +411,15 @@ const formDataUpdateProductIamges = ref({
   createdAt: "",
   updatedAt: "",
   productItems: "",
-  isDefault: ""
+  isDefault: "",
 });
 
-function handleGetUploadUrl(results) {
-  resultUpload.value = results;
-  formData.mainImageUrl = resultUpload.value[0]?.url;
-  previewImg.value = resultUpload.value[0]?.url;
-}
-function openPopupToUpdateProductItems(id) {
-  showModalToUpdateProductItems.value = true
-  formDataUpdateProductItems.value = list.value.find(condition => condition.productItemsId === id)
-  console.log(formDataUpdateProductItems.value)
 
+function openPopupToUpdateProductItems(id) {
+  showModalToUpdateProductItems.value = true;
+  formDataUpdateProductItems.value = list.value.find(
+    (condition) => condition.productItemsId === id
+  );
 }
 async function removeVariant(index) {
   try {
@@ -429,7 +438,7 @@ async function removeVariant(index) {
   });
 }
 async function selectVariant(GroupName, Variant) {
-  selected.value[GroupName] = Variant
+  selected.value[GroupName] = Variant;
   for (const groupName in selected.value) {
     const selectedVariant = selected.value[groupName];
     if (!selectedVariant) continue;
@@ -440,14 +449,13 @@ async function selectVariant(GroupName, Variant) {
       (item) => item.signalSku === selectedVariant.signalSku
     );
     if (isContain.length > 0) {
-      refError.value = true
-      continue
-    };
-    refError.value = false
+      refError.value = true;
+      continue;
+    }
+    refError.value = false;
   }
-
 }
-const refError = ref()
+const refError = ref();
 async function addToListVariantPreview() {
   for (const groupName in selected.value) {
     const selectedVariant = selected.value[groupName];
@@ -462,12 +470,13 @@ async function addToListVariantPreview() {
     variantPrevieBeforeSaveBaseProduct.value[groupName].push(selectedVariant);
     selected.value[groupName] = null;
   }
-  combinations.value = generateVariantCombinations(variantPrevieBeforeSaveBaseProduct.value);
-
+  combinations.value = generateVariantCombinations(
+    variantPrevieBeforeSaveBaseProduct.value
+  );
 }
 async function saveProductItems() {
   listProductItemsToSave.value = combinations.value.map((item) => {
-    return ({
+    return {
       id: null,
       baseId: props.id,
       cost: 0,
@@ -492,30 +501,28 @@ async function saveProductItems() {
       name: "",
       productItemsId: "",
       active: true,
-      isActive: true
-    })
-  }
-  )
+      isActive: true,
+    };
+  });
   try {
     for (const productItems of listProductItemsToSave.value) {
       const isContainSku = list.value.filter((condition) => {
         return condition.sku.includes(productItems.sku);
       });
       if (isContainSku.length > 0) {
-        console.log("Debug Avoid duplicate:", productItems)
+        console.log("Debug Avoid duplicate:", productItems);
         continue;
       }
       const response = await api.post(`/admin/ProductItems`, productItems);
       console.log("Insert successful:", response.data);
+      await getProductItems(props.id);
     }
-
   } catch (error) {
     console.error("Insert failed:", error);
   }
-  console.log(listProductItemsToSave.value)
 
+  console.log(listProductItemsToSave.value);
 }
-
 
 function generateVariantCombinations(groupedVariants) {
   const groupNames = Object.keys(groupedVariants);
@@ -536,7 +543,7 @@ function generateVariantCombinations(groupedVariants) {
       currentCombo.pop();
     }
   }
-  console.log(result)
+  console.log(result);
   backtrack(0, []);
   return result;
 }
@@ -556,22 +563,36 @@ async function submitUpdateForm() {
     const response = await formTableService.update(props.id, formData);
     console.log("Update successful:", response.data);
     router.push(`/Admin/${props.TableName}`);
+
+    await getProductItems(props.id);
   } catch (error) {
     console.error("Insert failed:", error);
   }
+
 }
 
 async function submitFormUpdateProductItems() {
   try {
-    formDataUpdateProductItems.value.createdAt = formatDateTimeLocal(formDataUpdateProductItems.value.createdAt);
-    formDataUpdateProductItems.value.updatedAt = formatDateTimeLocal(formDataUpdateProductItems.value.updatedAt);
-    formDataUpdateProductItems.value.sellStart = formatDateTimeLocal(formDataUpdateProductItems.value.sellStart);
-    formDataUpdateProductItems.value.sellEnd = formatDateTimeLocal(formDataUpdateProductItems.value.sellEnd);
+    formDataUpdateProductItems.value.createdAt = formatDateTimeLocal(
+      formDataUpdateProductItems.value.createdAt
+    );
+    formDataUpdateProductItems.value.updatedAt = formatDateTimeLocal(
+      formDataUpdateProductItems.value.updatedAt
+    );
+    formDataUpdateProductItems.value.sellStart = formatDateTimeLocal(
+      formDataUpdateProductItems.value.sellStart
+    );
+    formDataUpdateProductItems.value.sellEnd = formatDateTimeLocal(
+      formDataUpdateProductItems.value.sellEnd
+    );
     formDataUpdateProductItems.value.id = formDataUpdateProductItems.value.productItemsId;
     console.log(formDataUpdateProductItems.value);
-    const response = await productItemsService.update(formDataUpdateProductItems.value.productItemsId, formDataUpdateProductItems.value);
+    const response = await productItemsService.update(
+      formDataUpdateProductItems.value.productItemsId,
+      formDataUpdateProductItems.value
+    );
     console.log("Update successful:", response.data);
-    showModalToUpdateProductItems.value = false
+    showModalToUpdateProductItems.value = false;
     await getProductItems(props.id);
   } catch (error) {
     console.error("Insert failed:", error);
@@ -584,6 +605,7 @@ async function submitForm() {
     const response = await formTableService.create(formData);
     console.log("Insert successful:", response.data);
     router.push(`/Admin/${props.TableName}`);
+    await getProductItems(props.id);
   } catch (error) {
     console.error("Insert failed:", error);
   }
@@ -593,15 +615,15 @@ async function getProductItems(id) {
   if (!props.TableName) return;
   try {
     const response = await api.get("/admin/ProductItems/ByBaseProductId/" + id);
-    console.log(response.data.content)
+    console.log(response.data.content);
     if (response.data.content && response.data.content.length > 0) {
       list.value = response.data.content.map((item) => {
         return {
           ...item,
           name: item.baseProducts.name,
-          imgPreview: item.imageUrl || previewMainImg.value || "",
+          imgPreview: item.images.filter((image) => image.default === true)[0]?.imageUrl || "",
           fileNameImgOfVariant: item.fileNameImgOfVariant || "",
-          productItemsId: item.id
+          productItemsId: item.id,
         };
       });
     } else {
@@ -615,7 +637,7 @@ const handleImagesUploadBaseProduct = async (images) => {
   console.log("Images updated:", images);
   if (images.length > 0) {
     formData.mainImageUrl = images[0].cloudinaryUrl || images[0].url;
-    formData.id = props.id
+    formData.id = props.id;
     if (images[0].cloudinaryUrl) {
       try {
         formData.createdAt = formatDateTimeLocal(formData.createdAt);
@@ -639,8 +661,8 @@ const handleImagesUploadBaseProduct = async (images) => {
   } else {
     formDataUpdateProductIamges.value.imageUrl = null;
   }
-
-}
+  await getProductItems(props.id);
+};
 const handleImagesDeleteBaseProduct = async (index) => {
   console.log("Deleting image at index:", index);
   formData.imageUrl = null;
@@ -652,6 +674,7 @@ const handleImagesDeleteBaseProduct = async (index) => {
       duration: 3,
     });
     console.log("Image deleted successfully");
+    await getProductItems(props.id);
   } catch (error) {
     notification.error({
       message: "Xóa thất bại",
@@ -660,22 +683,28 @@ const handleImagesDeleteBaseProduct = async (index) => {
     });
     console.error("Failed to delete image:", error);
   }
-}
-
+};
 
 const handleImagesUpdate = async (images) => {
   console.log("Images updated:", images);
   if (images.length > 0) {
-    formDataUpdateProductIamges.value.productItems = formDataUpdateProductItems.value.productItemsId
+    formDataUpdateProductIamges.value.productItems =
+      formDataUpdateProductItems.value.productItemsId;
     formDataUpdateProductIamges.value.imageUrl = images[0].cloudinaryUrl || images[0].url;
     if (images[0].cloudinaryUrl) {
       try {
         for (const ImageElement of images) {
-          console.log(ImageElement)
+          console.log(ImageElement);
           formDataUpdateProductIamges.value.imageUrl = ImageElement.cloudinaryUrl;
-          formDataUpdateProductIamges.value.createdAt = formatDateTimeLocal(formDataUpdateProductItems.value.createdAt);
-          formDataUpdateProductIamges.value.updatedAt = formatDateTimeLocal(formDataUpdateProductItems.value.updatedAt);
-          const response = await productImagesService.create(formDataUpdateProductIamges.value);
+          formDataUpdateProductIamges.value.createdAt = formatDateTimeLocal(
+            formDataUpdateProductItems.value.createdAt
+          );
+          formDataUpdateProductIamges.value.updatedAt = formatDateTimeLocal(
+            formDataUpdateProductItems.value.updatedAt
+          );
+          const response = await productImagesService.create(
+            formDataUpdateProductIamges.value
+          );
           console.log("Update successful:", response.data);
           notification.success({
             message: "Cập nhật thành công",
@@ -704,12 +733,17 @@ const handleImagesDelete = async (index) => {
   console.log("Deleting image at index:", index);
   formDataUpdateProductIamges.value.imageUrl = null;
   try {
-    const response = await productImagesService.update(formDataUpdateProductIamges.value.id, formDataUpdateProductIamges.value); notification.success({
+    const response = await productImagesService.update(
+      formDataUpdateProductIamges.value.id,
+      formDataUpdateProductIamges.value
+    );
+    notification.success({
       message: "Xóa thành công",
       description: `Ảnh đã được xóa thành công.`,
       duration: 3,
     });
     console.log("Image deleted successfully");
+    await getProductItems(props.id);
   } catch (error) {
     notification.error({
       message: "Xóa thất bại",
@@ -723,25 +757,27 @@ const setImageDefault = async (id) => {
   try {
     const response = await api.put(`/admin/ProductImages/` + id);
     console.log("Update successful:", response.data);
+    await getProductItems(props.id);
   } catch (error) {
     console.error("Update failed:", error);
   }
-}
+};
 const deleteImageById = async (id) => {
   try {
     const response = await productImagesService.delete(id);
     console.log("Delete successful:", response.data);
+    await getProductItems(props.id);
   } catch (error) {
     console.error("Delete failed:", error);
   }
-}
+};
 
 const fetchData = async () => {
   if (!props.TableName) return;
   try {
     if (!props.action || props.action === "view" || props.action === "update") {
       const response = await formTableService.getById(props.id);
-      previewImg.value = response.data.mainImageUrl;
+      console.log("Response data:", response.data);
       const responseCategories = await categoriesService.getAll(0, 1000);
       categoriesDropDownList.value = responseCategories.data.content.map((category) => {
         return {
@@ -749,6 +785,9 @@ const fetchData = async () => {
           name: category.name,
         };
       });
+      if (uploadRef.value && response.data.mainImageUrl) {
+        uploadRef.value.loadFromUrls([response.data.mainImageUrl]);
+      }
       await getProductItems(props.id);
       Object.assign(formData, response.data);
     }
@@ -770,7 +809,7 @@ onMounted(() => {
       .get("/VariantValues")
       .then((resp) => {
         mapVarriants.value = resp.data;
-        console.log(mapVarriants.value)
+        console.log(mapVarriants.value);
         for (const groupName in resp.data) {
           selected.value[groupName] = [];
           variantPrevieBeforeSaveBaseProduct.value[groupName] = [];
@@ -930,7 +969,6 @@ watch(() => props.id, fetchData);
   flex-direction: column;
   gap: 1rem;
 }
-
 
 /* Tiêu đề danh sách */
 .variant-preview h5 {

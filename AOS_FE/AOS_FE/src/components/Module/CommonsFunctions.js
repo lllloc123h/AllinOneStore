@@ -19,3 +19,25 @@ export function toISOStringWithTimezone(datetimeLocalString) {
   const date = new Date(datetimeLocalString)
   return date.toISOString()
 }
+
+// Gender options for radio buttons
+export function getGenderOptions() {
+  return [
+    { value: true, label: 'Nam' },
+    { value: false, label: 'Nữ' }
+  ]
+}
+
+// Format gender value for display
+export function formatGender(genderValue) {
+  if (genderValue === true) return 'Nam'
+  if (genderValue === false) return 'Nữ'
+  return 'Chưa xác định'
+}
+
+// Get gender icon
+export function getGenderIcon(genderValue) {
+  if (genderValue === true) return '👨'
+  if (genderValue === false) return '👩'
+  return '⚧'
+}

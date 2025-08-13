@@ -71,6 +71,30 @@
             </div>
 
             <div class="form-group">
+              <label class="form-label">
+                <i class="bi bi-person-badge me-2"></i>
+                Giới tính
+              </label>
+              <div class="radio-group">
+                <label
+                  v-for="option in genderOptions"
+                  :key="option.value"
+                  class="radio-option"
+                >
+                  <input
+                    type="radio"
+                    :value="option.value"
+                    v-model="userRegister.gender"
+                    name="gender"
+                  />
+                  <span class="radio-custom">
+                    {{ option.label }}
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
               <label for="passwordInput" class="form-label">
                 <i class="bi bi-lock me-2"></i>
                 Mật khẩu
@@ -178,6 +202,9 @@ import api, { authService } from "../../Configs/api";
 import OTPView from "./OTPView.vue";
 import { RouterLink } from "vue-router";
 import { notification } from "ant-design-vue";
+import { getGenderOptions } from "./CommonsFunctions";
+
+const genderOptions = getGenderOptions();
 
 const userRegister = ref({
   email: "tranhuuloc123@gmail.com",
@@ -185,6 +212,7 @@ const userRegister = ref({
   phone: "0901234567",
   password: "123",
   confirmPassword: "123",
+  gender: true, // Default to Nam (true)
 });
 
 const showOption = ref(false);
@@ -219,6 +247,7 @@ const sendOTP = () => {
       password: userRegister.value.password,
       fullname: userRegister.value.fullname,
       phone: userRegister.value.phone,
+      gender: userRegister.value.gender,
     })
     .then((resp) => {
       toast.success("Mã OTP đã được gửi: " + resp.data.OTP);
@@ -247,6 +276,7 @@ const verified = () => {
     userRegister.value.fullname = "";
     userRegister.value.confirmPassword = "";
     userRegister.value.phone = "";
+    userRegister.value.gender = true; // Reset to default
     showOption.value = false;
     toast.success("Đăng ký thành công!");
   }, 1000);
@@ -379,9 +409,9 @@ const verified = () => {
 
 .form-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #10b981;
   background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   transform: translateY(-1px);
 }
 
@@ -405,6 +435,62 @@ const verified = () => {
 
 .password-toggle:hover {
   color: #4a5568;
+}
+
+/* Radio Button Styles */
+.radio-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  width: 0;
+  height: 0;
+}
+
+.radio-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f7fafc;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #4a5568;
+  width: 100%;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.radio-option input[type="radio"]:checked + .radio-custom {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
+}
+
+.radio-option:hover .radio-custom {
+  border-color: #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
 }
 
 .register-btn {
@@ -594,6 +680,17 @@ const verified = () => {
   .feature-item {
     flex: 0 1 auto;
     min-width: 120px;
+  }
+
+  /* Mobile radio styles */
+  .radio-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .radio-custom {
+    justify-content: flex-start;
+    padding: 1rem;
   }
 }
 

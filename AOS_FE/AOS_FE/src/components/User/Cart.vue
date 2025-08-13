@@ -213,13 +213,17 @@
                         </div>
                         <div class="col">
                           <div class="item-info">
-                            <h6 class="item-name mb-1">
-                              {{ item.name }}
+                            <div class="d-flex align-items-center flex-wrap mb-1 gap-2">
+                              <h6 class="item-name mb-0">{{ item.name }}</h6>
                               <span v-if="item.isGift" class="gift-badge">
                                 <i class="bi bi-gift-fill me-1"></i>
                                 Quà tặng
                               </span>
-                            </h6>
+                              <span v-if="item.custom" class="custom-badge">
+                                <i class="bi bi-palette me-1"></i>
+                                Có thể tùy chỉnh
+                              </span>
+                            </div>
                             <p class="item-sku text-muted mb-0">{{ item.sku }}</p>
                           </div>
                         </div>
@@ -327,7 +331,13 @@
                     <!-- Product Info -->
                     <div class="col">
                       <div class="product-info">
-                        <h6 class="product-name mb-1">{{ item.name }}</h6>
+                        <div class="d-flex align-items-center flex-wrap mb-1 gap-2">
+                          <h6 class="product-name mb-0">{{ item.name }}</h6>
+                          <span v-if="item.custom" class="custom-badge">
+                            <i class="bi bi-palette me-1"></i>
+                            Có thể tùy chỉnh
+                          </span>
+                        </div>
                         <p class="product-sku text-muted mb-2">{{ item.sku }}</p>
 
                         <!-- Price -->
@@ -404,19 +414,6 @@
                         <i class="bi bi-trash3"></i>
                       </button>
                     </div>
-
-                    <!-- Custom Button -->
-                    <div class="col-auto" v-if="item.custom">
-                      <button
-                        class="btn btn-outline-primary btn-sm"
-                        @click="openCustomModal(item)"
-                        data-bs-toggle="modal"
-                        data-bs-target="#customDraftsModal"
-                        title="Xem bản phát thảo tùy chỉnh"
-                      >
-                        <i class="bi bi-palette"></i>
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -444,7 +441,7 @@
                       Tạm tính
                     </span>
                     <span class="summary-value"
-                      >{{ selectedTotal.toLocaleString() }}₫</span
+                      >{{ (selectedTotal + totalDiscount).toLocaleString() }}₫</span
                     >
                   </div>
                   <div
@@ -532,13 +529,19 @@
                       <div class="card-body p-4">
                         <!-- Header: badge + tên + giá -->
                         <div
-                          class="d-flex justify-content-between align-items-center mb-3"
+                          class="d-flex justify-content-between align-items-start mb-3"
                         >
-                          <div class="d-flex align-items-center">
-                            <span class="badge bg-warning text-dark me-2 px-3 py-2">
-                              <i class="bi bi-gift-fill me-1"></i> Ưu đãi
-                            </span>
-                            <h6 class="fw-bold mb-0">{{ item.name }}</h6>
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                              <span class="badge bg-warning text-dark me-2 px-3 py-2">
+                                <i class="bi bi-gift-fill me-1"></i> Ưu đãi
+                              </span>
+                              <h6 class="fw-bold mb-0">{{ item.name }}</h6>
+                              <span v-if="item.custom" class="custom-badge">
+                                <i class="bi bi-palette me-1"></i>
+                                Có thể tùy chỉnh
+                              </span>
+                            </div>
                           </div>
                           <div class="promotion-price fw-bold text-danger fs-5">
                             {{ item.comboPrice.toLocaleString() }}₫
@@ -612,268 +615,228 @@
                 ></button>
               </div>
               <div class="modal-body p-4">
-                <!-- Hiển thị groupProducts -->
+                <!-- Hiển thị combo details theo nhóm sản phẩm -->
                 <div v-if="groupProducts.length" class="combo-details">
-                  <div
-                    v-for="(group, idx) in groupProducts"
-                    :key="'group-' + idx"
-                    class="combo-group card mb-4 border-0 shadow-sm rounded-3"
-                  >
-                    <div class="card-body p-4">
-                      <!-- Thông tin combo -->
-                      <div
-                        class="combo-base-info d-flex align-items-center mb-4 p-3 bg-light rounded-3"
-                      >
-                        <img
-                          :src="group.baseProduct.mainImageUrl"
-                          alt="Ảnh sản phẩm"
-                          class="combo-base-image me-3"
-                        />
-                        <div class="flex-grow-1">
-                          <h5 class="combo-base-name mb-2">
-                            {{ group.baseProduct.name }}
-                          </h5>
-                          <p class="combo-base-material text-muted mb-2">
-                            {{ group.baseProduct.material }}
+                  <!-- Sản phẩm bắt buộc -->
+                  <div class="required-section mb-5">
+                    <div class="section-header mb-4">
+                      <div class="d-flex align-items-center">
+                        <div class="section-icon me-3">
+                          <i class="bi bi-check-circle-fill text-primary fs-4"></i>
+                        </div>
+                        <div>
+                          <h4 class="text-primary mb-1 fw-bold">Sản phẩm bắt buộc</h4>
+                          <p class="text-muted mb-0 small">
+                            Các sản phẩm này sẽ được thêm vào combo của bạn
                           </p>
-                          <div class="combo-base-badges">
-                            <span class="badge bg-success me-2">
-                              <i class="bi bi-star-fill"></i>
-                              {{ group.baseProduct.rating }}/5
-                            </span>
-                            <span class="badge bg-info">{{
-                              group.baseProduct.categories
-                            }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row g-4">
+                      <template
+                        v-for="(group, groupIdx) in groupProducts"
+                        :key="'group-' + groupIdx"
+                      >
+                        <div
+                          v-for="item in group.items.filter((i) => !i.isGift)"
+                          :key="'required-' + item.id"
+                          class="col-lg-6"
+                        >
+                          <div
+                            class="required-product-card card h-100 shadow-sm border-0"
+                          >
+                            <div class="card-body p-4">
+                              <div class="d-flex align-items-start">
+                                <div class="product-image-wrapper me-4 flex-shrink-0">
+                                  <div class="image-container">
+                                    <img
+                                      :src="item.imageUrl"
+                                      alt="Ảnh sản phẩm"
+                                      class="combo-product-image"
+                                    />
+                                    <div class="image-overlay">
+                                      <i class="bi bi-eye text-white"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="product-info flex-grow-1 min-width-0">
+                                  <div class="mb-3">
+                                    <h5 class="product-name mb-2 text-dark fw-semibold">
+                                      {{ group.baseProduct.name }}
+                                    </h5>
+                                    <div class="product-sku mb-2">
+                                      <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-upc-scan me-1"></i>{{ item.sku }}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class="product-meta">
+                                    <div
+                                      class="d-flex align-items-center justify-content-between"
+                                    >
+                                      <div class="price-info">
+                                        <span class="price text-danger fw-bold fs-5">
+                                          {{ item.price.toLocaleString() }}₫
+                                        </span>
+                                      </div>
+                                      <div class="quantity-info">
+                                        <span
+                                          class="badge bg-primary bg-gradient px-3 py-2"
+                                        >
+                                          <i class="bi bi-box me-1"></i
+                                          >{{ item.qty || 1 }} sản phẩm
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Nhóm quà tặng theo gift options -->
+                  <template
+                    v-for="giftGroup in giftGroups"
+                    :key="'gift-group-' + giftGroup.option"
+                  >
+                    <div class="gift-section mb-5">
+                      <div class="section-header mb-4">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="section-icon me-3">
+                              <i class="bi bi-gift-fill text-success fs-4"></i>
+                            </div>
+                            <div>
+                              <h4 class="text-success mb-1 fw-bold">
+                                {{ giftGroup.displayName }}
+                              </h4>
+                              <p class="text-muted mb-0 small">
+                                {{ giftGroup.description }}
+                              </p>
+                            </div>
+                          </div>
+                          <div class="selection-progress">
+                            <div class="progress-badge">
+                              <span class="badge bg-info bg-gradient px-4 py-2 fs-6">
+                                <i class="bi bi-check2-circle me-1"></i>
+                                {{ getSelectedGiftsCount(giftGroup) }}/{{
+                                  giftGroup.maxSelection
+                                }}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
 
-                      <!-- Danh sách item trong combo -->
-                      <div class="combo-items-table table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                          <thead class="table-light">
-                            <tr>
-                              <th width="50"></th>
-                              <th>Tên sản phẩm</th>
-                              <th>Loại</th>
-                              <th>Giá</th>
-                              <th width="150">Số lượng</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr
-                              v-for="item in group.items"
-                              :key="item.id"
-                              :class="{ 'table-success bg-opacity-25': item.isGift }"
-                            >
-                              <td>
-                                <input
-                                  type="checkbox"
-                                  :checked="selectedComboItems[item.id] > 0"
-                                  disabled
-                                  class="form-check-input"
-                                />
-                              </td>
-                              <td>
-                                <div class="d-flex align-items-center">
-                                  <span>{{ group.baseProduct.name }}</span>
-                                  <span v-if="item.isGift" class="badge bg-success ms-2">
-                                    <i class="bi bi-gift-fill me-1"></i>Quà tặng
-                                  </span>
-                                </div>
-                              </td>
-                              <td>
-                                <code>{{ item.sku }}</code>
-                              </td>
-                              <td>
-                                <span class="fw-bold text-danger">
-                                  {{ item.price.toLocaleString() }}₫
-                                </span>
-                              </td>
-                              <td>
-                                <template v-if="item.isGift">
-                                  <span
-                                    class="badge bg-success bg-opacity-25 text-success px-3 py-2"
-                                  >
-                                    {{ item.qty }}
-                                  </span>
-                                </template>
-                                <template v-else>
-                                  <div
-                                    class="quantity-controls-combo d-flex align-items-center"
-                                  >
-                                    <button
-                                      class="btn btn-sm btn-outline-secondary"
-                                      @click="decreaseComboQty(item)"
-                                      :disabled="
-                                        !selectedComboItems[item.id] ||
-                                        selectedComboItems[item.id] <= 0
-                                      "
-                                    >
-                                      <i class="bi bi-dash"></i>
-                                    </button>
-                                    <span class="quantity-display mx-3">{{
-                                      selectedComboItems[item.id] || 0
-                                    }}</span>
-                                    <button
-                                      class="btn btn-sm btn-outline-secondary"
-                                      @click="increaseComboQty(item, group)"
-                                      :disabled="
-                                        selectedComboItems[item.id] >= item.qty ||
-                                        getBaseProductTotalQty(group) >= item.qty
-                                      "
-                                    >
-                                      <i class="bi bi-plus"></i>
-                                    </button>
-                                  </div>
-                                  <small class="text-muted">Tối đa: {{ item.qty }}</small>
-                                </template>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                      <!-- Checkbox chọn tất cả cho gift option "all" -->
+                      <div v-if="giftGroup.option.toLowerCase() === 'all'" class="mb-4">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :checked="isAllGiftsSelected(giftGroup)"
+                            :id="`select-all-${giftGroup.option}`"
+                            @change="
+                              toggleGiftSelection(giftGroup.items[0], giftGroup, $event)
+                            "
+                          />
+                          <label
+                            class="form-check-label fw-semibold text-primary"
+                            :for="`select-all-${giftGroup.option}`"
+                          >
+                            <i class="bi bi-check-all me-2"></i>
+                            Chọn tất cả sản phẩm quà tặng
+                          </label>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer bg-light rounded-bottom-4 p-4">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-lg px-4"
-                  data-bs-dismiss="modal"
-                  :disabled="!iscalculateTotalQuantity"
-                  @click="handleProcessCombo()"
-                >
-                  <i class="bi bi-check-circle me-2"></i>
-                  Hoàn tất
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Modal bản phát thảo tùy chỉnh -->
-      <div
-        class="modal fade"
-        id="customDraftsModal"
-        aria-hidden="true"
-        aria-labelledby="customDraftsModalLabel"
-        tabindex="-1"
-      >
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-          <div class="modal-content rounded-4 border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white rounded-top-4">
-              <h1 class="modal-title fs-4" id="customDraftsModalLabel">
-                <i class="bi bi-palette me-2"></i>
-                Bản phát thảo tùy chỉnh: {{ currentCustomItem?.name }}
-              </h1>
-              <button
-                type="button"
-                class="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body p-4">
-              <div v-if="currentCustomItem" class="custom-drafts-container">
-                <!-- Thông tin sản phẩm -->
-                <div class="row mb-4">
-                  <div class="col-md-4">
-                    <div class="product-preview text-center">
-                      <img
-                        :src="currentCustomItem.image"
-                        :alt="currentCustomItem.name"
-                        class="img-fluid rounded-3 shadow-sm mb-3"
-                        style="max-height: 300px"
-                      />
-                      <h5 class="product-name">{{ currentCustomItem.name }}</h5>
-                      <p class="text-muted">{{ currentCustomItem.sku }}</p>
-                    </div>
-                  </div>
-                  <div class="col-md-8">
-                    <!-- Nút tạo bản phát thảo mới -->
-                    <div class="mb-4">
-                      <button
-                        class="btn btn-success btn-lg w-100"
-                        @click="createNewDraft"
-                      >
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Tạo bản phát thảo mới
-                      </button>
-                    </div>
-
-                    <!-- Loading state -->
-                    <div v-if="loadingDrafts" class="text-center py-5">
-                      <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Đang tải...</span>
-                      </div>
-                      <p class="mt-3 text-muted">Đang tải danh sách bản phát thảo...</p>
-                    </div>
-
-                    <!-- Danh sách bản phát thảo -->
-                    <div v-else-if="customDrafts.length > 0" class="drafts-list">
-                      <h6 class="mb-3">
-                        <i class="bi bi-bookmark-star me-2"></i>
-                        Bản phát thảo đã lưu ({{ customDrafts.length }})
-                      </h6>
-                      <div class="row g-3">
+                      <div class="row g-4">
                         <div
-                          v-for="draft in customDrafts"
-                          :key="draft.id"
-                          class="col-md-6"
+                          v-for="item in giftGroup.items"
+                          :key="'gift-' + item.id"
+                          class="col-lg-6"
                         >
                           <div
-                            class="card draft-card h-100 border-0 shadow-sm hover-card"
+                            class="gift-product-card card h-100 shadow-sm border-0 position-relative"
+                            :class="{ 'selected-gift': selectedComboItems[item.id] > 0 }"
                           >
-                            <div class="card-body p-0">
-                              <!-- Preview ảnh -->
-                              <div class="draft-preview position-relative">
-                                <img
-                                  :src="draft.imageUrl || '/default-design.png'"
-                                  :alt="draft.designName"
-                                  class="img-fluid w-100"
-                                  style="height: 200px; object-fit: cover"
-                                />
+                            <!-- Selection checkbox (ẩn khi gift option là "all") -->
+                            <div
+                              v-if="giftGroup.option.toLowerCase() !== 'all'"
+                              class="selection-checkbox"
+                            >
+                              <input
+                                type="checkbox"
+                                :checked="selectedComboItems[item.id] > 0"
+                                class="form-check-input shadow-sm"
+                                :id="`gift-${item.id}`"
+                                @change="toggleGiftSelection(item, giftGroup, $event)"
+                                :disabled="
+                                  !canSelectMoreGifts(giftGroup) &&
+                                  selectedComboItems[item.id] === 0
+                                "
+                              />
+                            </div>
+
+                            <!-- Selected indicator -->
+                            <div
+                              v-if="selectedComboItems[item.id] > 0"
+                              class="selected-indicator"
+                            >
+                              <div class="selected-badge">
+                                <i class="bi bi-check-lg text-white"></i>
                               </div>
+                            </div>
 
-                              <!-- Thông tin chi tiết -->
-                              <div class="draft-details p-3">
-                                <!-- Tên thiết kế -->
-                                <h6 class="draft-name mb-2 fw-bold">
-                                  {{ draft.designName || `Thiết kế #${draft.id}` }}
-                                </h6>
-
-                                <!-- Ngày tạo -->
-                                <p class="text-muted small mb-3">
-                                  <i class="bi bi-calendar3 me-1"></i>
-                                  {{ formatDate(draft.createdAt) }}
-                                </p>
-
-                                <!-- Action buttons -->
-                                <div class="draft-actions d-flex gap-2">
-                                  <button
-                                    class="btn btn-primary btn-sm flex-grow-1"
-                                    @click="selectDraft(draft)"
-                                  >
-                                    <i class="bi bi-check-circle me-1"></i>
-                                    Chọn
-                                  </button>
-                                  <button
-                                    class="btn btn-outline-warning btn-sm"
-                                    @click="editDraft(draft)"
-                                    title="Chỉnh sửa"
-                                  >
-                                    <i class="bi bi-pencil"></i>
-                                  </button>
-                                  <button
-                                    class="btn btn-outline-danger btn-sm"
-                                    @click="deleteDraft(draft)"
-                                    title="Xóa"
-                                  >
-                                    <i class="bi bi-trash3"></i>
-                                  </button>
+                            <div class="card-body p-4">
+                              <div class="d-flex align-items-start">
+                                <div class="product-image-wrapper me-4 flex-shrink-0">
+                                  <div class="image-container">
+                                    <img
+                                      :src="item.imageUrl || '/default-product.png'"
+                                      alt="Ảnh quà tặng"
+                                      class="combo-product-image"
+                                    />
+                                    <div class="image-overlay">
+                                      <i class="bi bi-gift text-white"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="product-info flex-grow-1 min-width-0">
+                                  <div class="mb-3">
+                                    <h5 class="product-name mb-2 text-dark fw-semibold">
+                                      {{ item.baseProduct?.name || "Sản phẩm quà tặng" }}
+                                    </h5>
+                                    <div class="product-sku mb-2">
+                                      <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-upc-scan me-1"></i>{{ item.sku }}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class="product-meta">
+                                    <div
+                                      class="d-flex align-items-center justify-content-between"
+                                    >
+                                      <div class="price-info">
+                                        <span class="price text-success fw-bold fs-5">
+                                          <i class="bi bi-gift me-1"></i>Miễn phí
+                                        </span>
+                                      </div>
+                                      <div class="quantity-info">
+                                        <span
+                                          class="badge bg-success bg-gradient px-3 py-2"
+                                        >
+                                          <i class="bi bi-box me-1"></i
+                                          >{{ item.qty || 1 }} sản phẩm
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -881,32 +844,21 @@
                         </div>
                       </div>
                     </div>
-
-                    <!-- Empty state -->
-                    <div v-else class="empty-drafts text-center py-5">
-                      <i class="bi bi-inbox display-1 text-muted mb-3"></i>
-                      <h5 class="text-muted">Chưa có bản phát thảo nào</h5>
-                      <p class="text-muted">
-                        Tạo bản phát thảo đầu tiên để bắt đầu tùy chỉnh sản phẩm
-                      </p>
-                    </div>
-                  </div>
+                  </template>
                 </div>
               </div>
-            </div>
-            <div class="modal-footer bg-light rounded-bottom-4 p-4">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                Đóng
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="refreshDrafts"
-                :disabled="loadingDrafts"
-              >
-                <i class="bi bi-arrow-clockwise me-2"></i>
-                Làm mới
-              </button>
+              <div class="modal-footer bg-light rounded-bottom-4 p-4">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-lg px-4"
+                  data-bs-dismiss="modal"
+                  :disabled="!isComboSelectionComplete"
+                  @click="handleProcessCombo()"
+                >
+                  <i class="bi bi-check-circle me-2"></i>
+                  Hoàn tất
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -982,10 +934,43 @@ const groupProducts = ref([]);
 const productItemIdRef = ref({});
 const promotonIdRef = ref(null);
 
-// Custom drafts variables
-const currentCustomItem = ref(null);
-const customDrafts = ref([]);
-const loadingDrafts = ref(false);
+// Computed property để nhóm quà tặng theo gift options
+const giftGroups = computed(() => {
+  const groups = {};
+
+  groupProducts.value.forEach((group) => {
+    group.items.forEach((item) => {
+      if (item.isGift && item.giftOption) {
+        const option = item.giftOption;
+        if (!groups[option]) {
+          groups[option] = {
+            option: option,
+            displayName: formatGiftOptionDisplay(option),
+            description: getGiftOptionDescription(option),
+            maxSelection: 0, // Sẽ được tính lại sau
+            items: [],
+            baseProduct: group.baseProduct,
+          };
+        }
+        groups[option].items.push({
+          ...item,
+          baseProduct: group.baseProduct,
+        });
+      }
+    });
+  });
+
+  // Tính lại maxSelection sau khi có đủ items
+  Object.values(groups).forEach((group) => {
+    if (group.option.toLowerCase() === "all") {
+      group.maxSelection = group.items.length; // Phải chọn tất cả items
+    } else {
+      group.maxSelection = getMaxSelectionFromOption(group.option);
+    }
+  });
+
+  return Object.values(groups);
+});
 
 const comboGroups = computed(() => {
   // Gom nhóm combo theo comboGroupId (bao gồm cả khi promotions null)
@@ -1250,36 +1235,57 @@ function openSpecificPromotionModal(promotionId) {
     .then((response) => {
       groupProducts.value = response.data;
       console.log("Group products for promotion:", promotionId, groupProducts.value);
-      // Tự động set số lượng  cho item trùng id
-      if (productItemIdRef.value) {
-        groupProducts.value.forEach((group) => {
-          group.items.forEach((item) => {
-            if (item.id === productItemIdRef.value) {
-              selectedComboItems.value[item.id] = 1; // Mặc định chọn 1 sản phẩm
-            }
-            if (item.isGift) {
-              selectedComboItems.value[item.id] = item.qty; //  chọn sản phẩm tặng kèm
-            }
-          });
+
+      // Reset selectedComboItems
+      selectedComboItems.value = {};
+
+      // Set số lượng cho từng sản phẩm
+      groupProducts.value.forEach((group) => {
+        group.items.forEach((item) => {
+          if (item.isGift) {
+            // Sản phẩm quà tặng: khởi tạo = 0, để user tự chọn theo giftOption
+            selectedComboItems.value[item.id] = 0;
+          } else {
+            // Sản phẩm thường: set cố định = qty
+            selectedComboItems.value[item.id] = item.qty || 1;
+          }
         });
-        iscalculateTotalQuantity.value = calculateTotalQuantity();
-      }
+      });
+
+      console.log("Set selectedComboItems:", selectedComboItems.value);
     })
     .catch((error) => {
       console.error("Error fetching specific promotion:", error);
     });
 }
-// Hàm kiểm tra tổng số lượng đã chọn có đủ cho tất cả nhóm sản phẩm
-function calculateTotalQuantity() {
-  // Trả về true nếu tất cả group đều đủ số lượng yêu cầu
-  return groupProducts.value.every((group) => {
-    console.log("Checking group:", getBaseProductTotalQty(group));
-
-    // Giả sử tất cả item trong group đều có cùng qty yêu cầu
-    const requiredQty = group.items[0]?.qty || 0;
-    return getBaseProductTotalQty(group) == requiredQty;
+const isComboSelectionComplete = computed(() => {
+  // Kiểm tra tất cả sản phẩm bắt buộc đã có đủ số lượng
+  const requiredItemsValid = groupProducts.value.every((group) => {
+    return group.items
+      .filter((item) => !item.isGift)
+      .every((item) => {
+        const selectedQty = selectedComboItems.value[item.id] || 0;
+        const requiredQty = item.requireQty || 1;
+        return selectedQty >= requiredQty;
+      });
   });
-}
+
+  // Kiểm tra tất cả gift groups đã chọn đủ số lượng theo yêu cầu
+  const giftGroupsValid = giftGroups.value.every((giftGroup) => {
+    const selectedGiftsCount = getSelectedGiftsCount(giftGroup);
+    const requiredCount = giftGroup.maxSelection;
+
+    console.log(
+      `Gift group ${giftGroup.displayName}: selected=${selectedGiftsCount}, required=${requiredCount}`
+    );
+    return selectedGiftsCount >= requiredCount;
+  });
+
+  console.log(
+    `Required items valid: ${requiredItemsValid}, Gift groups valid: ${giftGroupsValid}`
+  );
+  return requiredItemsValid && giftGroupsValid;
+});
 const selectedComboItems = ref({}); // { [itemId]: số lượng đã chọn }
 
 function getBaseProductTotalQty(group) {
@@ -1289,16 +1295,128 @@ function getBaseProductTotalQty(group) {
     0
   );
 }
-const iscalculateTotalQuantity = ref(false); // Biến kiểm tra xem có đủ số lượng đã chọn hay không
+
 function increaseComboQty(item, group) {
-  const totalQty = getBaseProductTotalQty(group);
   if (!selectedComboItems.value[item.id]) selectedComboItems.value[item.id] = 0;
-  // Chỉ cho tăng nếu tổng chưa vượt quá item.qty
-  if (selectedComboItems.value[item.id] < item.qty && totalQty < item.qty) {
-    selectedComboItems.value[item.id]++;
+
+  if (item.isGift) {
+    // Cho gift product, kiểm tra tổng gift đã chọn trong group
+    const currentGiftTotal = calculateCurrentGiftTotal(group);
+    const maxGiftAllowed = getMaxGiftAllowed(group);
+
+    if (
+      currentGiftTotal < maxGiftAllowed &&
+      selectedComboItems.value[item.id] < item.qty
+    ) {
+      selectedComboItems.value[item.id]++;
+    }
+  } else {
+    // Cho regular product, không cho phép tăng (đã set cố định ở require qty)
+    return;
   }
-  iscalculateTotalQuantity.value = calculateTotalQuantity();
 }
+
+// Helper functions cho gift options
+function formatGiftOptionDisplay(option) {
+  if (!option) return "Quà tặng";
+
+  // Nếu gift option là "all" thì hiển thị "Chọn tất cả"
+  if (option.toLowerCase() === "all") {
+    return "Chọn tất cả";
+  }
+
+  // Ví dụ: "2_trong_3" -> "Chọn 2 trong 3"
+  const parts = option.split("_");
+  if (parts.length >= 3 && parts[1] === "trong") {
+    return `Chọn ${parts[0]} trong ${parts[2]}`;
+  }
+
+  return option;
+}
+
+function getGiftOptionDescription(option) {
+  if (!option) return "Chọn quà tặng miễn phí";
+
+  // Nếu gift option là "all" thì mô tả phải chọn tất cả
+  if (option.toLowerCase() === "all") {
+    return "Bạn cần chọn tất cả sản phẩm quà tặng trong nhóm này";
+  }
+
+  const parts = option.split("_");
+  if (parts.length >= 3 && parts[1] === "trong") {
+    return `Bạn có thể chọn ${parts[0]} sản phẩm quà tặng từ ${parts[2]} sản phẩm có sẵn`;
+  }
+
+  return "Chọn quà tặng miễn phí";
+}
+
+function getMaxSelectionFromOption(option) {
+  if (!option) return 1;
+
+  const parts = option.split("_");
+  if (parts.length >= 1) {
+    const num = parseInt(parts[0]);
+    return isNaN(num) ? 1 : num;
+  }
+
+  return 1;
+}
+
+function getSelectedGiftsCount(giftGroup) {
+  // Đếm số sản phẩm được chọn (có selectedComboItems > 0), không phải tổng số lượng
+  return giftGroup.items.reduce((count, item) => {
+    return count + (selectedComboItems.value[item.id] > 0 ? 1 : 0);
+  }, 0);
+}
+
+function canSelectMoreGifts(giftGroup) {
+  const currentCount = getSelectedGiftsCount(giftGroup);
+  return currentCount < giftGroup.maxSelection;
+}
+
+// Kiểm tra xem tất cả gifts trong group có được chọn hay không (cho trường hợp "all")
+function isAllGiftsSelected(giftGroup) {
+  if (giftGroup.option.toLowerCase() !== "all") return false;
+
+  return giftGroup.items.every((item) => {
+    return selectedComboItems.value[item.id] > 0;
+  });
+}
+
+function toggleGiftSelection(item, giftGroup, event) {
+  const isChecked = event.target.checked;
+
+  // Nếu gift option là "all", thì tick/untick tất cả gifts trong group
+  if (giftGroup.option.toLowerCase() === "all") {
+    if (isChecked) {
+      // Tick tất cả gifts trong group này
+      giftGroup.items.forEach((giftItem) => {
+        selectedComboItems.value[giftItem.id] = giftItem.qty || 1;
+      });
+    } else {
+      // Untick tất cả gifts trong group này
+      giftGroup.items.forEach((giftItem) => {
+        selectedComboItems.value[giftItem.id] = 0;
+      });
+    }
+    return;
+  }
+
+  // Logic cũ cho các trường hợp khác (1_trong_2, 2_trong_3, etc.)
+  if (isChecked) {
+    // Kiểm tra xem còn có thể chọn thêm gift không
+    if (canSelectMoreGifts(giftGroup)) {
+      selectedComboItems.value[item.id] = item.qty || 1;
+    } else {
+      // Không cho chọn thêm, revert checkbox
+      event.target.checked = false;
+    }
+  } else {
+    // Bỏ chọn
+    selectedComboItems.value[item.id] = 0;
+  }
+}
+
 function handleProcessCombo() {
   // Lấy danh sách item đã chọn và số lượng, theo đúng thứ tự hiển thị
   const selectedList = [];
@@ -1333,14 +1451,36 @@ function handleProcessCombo() {
   // Gửi selectedList về backend ở đây
 }
 
-function decreaseComboQty(item) {
-  if (selectedComboItems.value[item.id] > 1) {
-    selectedComboItems.value[item.id]--;
-  } else {
-    selectedComboItems.value[item.id] = 0;
-  }
-  iscalculateTotalQuantity.value = calculateTotalQuantity();
+// Helper functions cho gift selection
+function calculateCurrentGiftTotal(group) {
+  let total = 0;
+  group.items.forEach((item) => {
+    if (item.isGift) {
+      total += selectedComboItems.value[item.id] || 0;
+    }
+  });
+  return total;
 }
+
+function getMaxGiftAllowed(group) {
+  // Tìm giftOption trong group
+  const giftItem = group.items.find((item) => item.giftOption);
+  if (giftItem && giftItem.giftOption) {
+    // Parse format "2_trong_3" để lấy số 2
+    const match = giftItem.giftOption.match(/(\d+)_trong_\d+/);
+    return match ? parseInt(match[1]) : 1;
+  }
+  return 1;
+}
+
+function hasGiftInGroup(group) {
+  return group.items.some((item) => item.isGift);
+}
+
+function getCurrentGiftSelection(group) {
+  return calculateCurrentGiftTotal(group);
+}
+
 // ...existing code...
 
 const isAllSelected = computed(() => {
@@ -1656,135 +1796,6 @@ function checkout() {
       products: JSON.stringify(selectedProducts),
     },
   });
-}
-
-// Custom drafts functions
-function openCustomModal(item) {
-  currentCustomItem.value = item;
-  loadCustomDrafts(item);
-}
-
-async function loadCustomDrafts(item) {
-  loadingDrafts.value = true;
-  try {
-    // Gọi API để lấy danh sách bản phát thảo
-    const response = await api.get(`/customs/email`);
-    customDrafts.value = response.data || [];
-    console.log("Custom drafts loaded:", customDrafts.value);
-  } catch (error) {
-    console.error("Error loading custom drafts:", error);
-    customDrafts.value = [];
-    // Có thể hiển thị thông báo lỗi cho user
-    alert("Không thể tải danh sách bản phát thảo. Vui lòng thử lại sau.");
-  } finally {
-    loadingDrafts.value = false;
-  }
-}
-
-function refreshDrafts() {
-  if (currentCustomItem.value) {
-    loadCustomDrafts(currentCustomItem.value);
-  }
-}
-
-function createNewDraft() {
-  if (!currentCustomItem.value) return;
-
-  // Chuyển hướng đến trang Customizer để tạo mới với props đúng format
-  const productItemId = currentCustomItem.value.productItemId;
-
-  // Sử dụng router navigation với đúng route name
-  router.push({
-    name: "CustomizerCreate",
-    params: { id: productItemId },
-  });
-}
-
-function viewDraft(draft) {
-  console.log("Viewing draft:", draft);
-  // Có thể mở modal xem chi tiết hoặc chuyển đến trang xem
-  alert(`Xem chi tiết bản phát thảo: ${draft.title || draft.id}`);
-}
-
-function editDraft(draft) {
-  if (!currentCustomItem.value) return;
-
-  // Chuyển hướng đến trang Customizer để chỉnh sửa với props đúng format
-  const customId = draft.id;
-
-  // Sử dụng router navigation với đúng route name
-  router.push({
-    name: "CustomizerUpdate",
-    params: { id: customId },
-  });
-}
-
-function duplicateDraft(draft) {
-  if (!currentCustomItem.value) return;
-
-  // Để duplicate, ta có thể tạo một API endpoint riêng hoặc xử lý ở frontend
-  // Ở đây tạm thời chuyển đến create mode với productItemId
-  const productItemId = currentCustomItem.value.productItemId;
-
-  // TODO: Có thể thêm query params để chỉ định đây là duplicate
-  router.push({
-    name: "CustomizerCreate",
-    params: { id: productItemId },
-    query: { duplicate: draft.id },
-  });
-}
-
-async function deleteDraft(draft) {
-  if (!confirm(`Bạn có chắc muốn xóa bản phát thảo "${draft.title || draft.id}"?`)) {
-    return;
-  }
-
-  try {
-    await api.delete(`/customs/${draft.id}`);
-    alert("Đã xóa bản phát thảo thành công!");
-    // Reload danh sách
-    refreshDrafts();
-  } catch (error) {
-    console.error("Error deleting draft:", error);
-    alert("Không thể xóa bản phát thảo. Vui lòng thử lại sau.");
-  }
-}
-
-function selectDraft(draft) {
-  console.log("Selected draft:", draft);
-  // Có thể thêm logic để apply draft vào cart item
-  alert(`Đã chọn bản phát thảo: ${draft.title || draft.id}`);
-
-  // Đóng modal
-  const modal = document.getElementById("customDraftsModal");
-  const bsModal = bootstrap.Modal.getInstance(modal);
-  if (bsModal) {
-    bsModal.hide();
-  }
-}
-
-// Utility functions
-function formatDate(dateString) {
-  if (!dateString) return "";
-
-  const date = new Date(dateString);
-  return date.toLocaleDateString("vi-VN", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function getStatusText(status) {
-  const statusMap = {
-    draft: "Nháp",
-    pending: "Chờ duyệt",
-    completed: "Hoàn thành",
-    rejected: "Bị từ chối",
-  };
-  return statusMap[status] || status;
 }
 
 // Tải giỏ hàng khi trang được mount
@@ -2115,8 +2126,8 @@ onMounted(() => {
 }
 
 .item-image {
-  width: 80px;
-  height: 100px; /* Tỷ lệ 4:5 cho ảnh 600x750 */
+  width: 100px;
+  height: 125px; /* Tỷ lệ 4:5 cho ảnh 600x750 */
   object-fit: cover;
   border-radius: 12px;
 }
@@ -2154,26 +2165,56 @@ onMounted(() => {
 .gift-badge {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.6rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  animation: sparkle 2s ease-in-out infinite;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 4px rgba(40, 167, 69, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: sparkle 4s ease-in-out infinite;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.custom-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: glow-custom 4s ease-in-out infinite;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@keyframes glow-custom {
+  0%,
+  100% {
+    box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transform: scale(1.01);
+  }
 }
 
 @keyframes sparkle {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 1px 4px rgba(40, 167, 69, 0.2);
   }
   50% {
-    transform: scale(1.02);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+    transform: scale(1.01);
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
   }
 }
 
@@ -2233,8 +2274,8 @@ onMounted(() => {
 }
 
 .product-image-wrapper {
-  width: 80px;
-  height: 100px; /* Tỷ lệ 4:5 cho ảnh 600x750 */
+  width: 100px;
+  height: 125px; /* Tỷ lệ 4:5 cho ảnh 600x750 */
   border-radius: 12px;
   overflow: visible;
   position: relative;
@@ -2664,338 +2705,6 @@ onMounted(() => {
   font-size: 1.1rem;
 }
 
-/* Custom Drafts Modal Styles */
-.custom-drafts-container {
-  min-height: 400px;
-}
-
-.draft-card {
-  transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
-  overflow: hidden;
-}
-
-.hover-card:hover {
-  border-color: #0d6efd;
-  box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
-  transform: translateY(-3px);
-}
-
-/* Draft Header with Gradient */
-.draft-header .gradient-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  opacity: 0.9;
-}
-
-.draft-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  z-index: 1;
-}
-
-.draft-header .position-relative {
-  z-index: 2;
-}
-
-/* Preview Image with Overlay Effect */
-.draft-preview {
-  overflow: hidden;
-}
-
-.preview-overlay {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
-  transition: all 0.3s ease;
-  opacity: 0;
-}
-
-.draft-card:hover .preview-overlay {
-  opacity: 1;
-}
-
-.draft-card:hover .preview-btn {
-  opacity: 1 !important;
-  transform: translateY(0);
-}
-
-.preview-btn {
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.9) !important;
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Information Cards */
-.draft-details {
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
-}
-
-.time-info {
-  background: rgba(13, 110, 253, 0.05);
-  border-radius: 8px;
-  padding: 0.75rem;
-  border-left: 3px solid #0d6efd;
-}
-
-.canvas-info {
-  background: rgba(108, 117, 125, 0.05);
-  border-radius: 8px;
-  padding: 0.75rem;
-  border-left: 3px solid #6c757d;
-}
-
-/* Enhanced Badge Styles */
-.badge.bg-light {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-  color: #495057 !important;
-  border: 1px solid #dee2e6;
-  font-weight: 600;
-}
-
-.badge.bg-info {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
-  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
-}
-
-.badge.bg-secondary {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
-  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-}
-
-/* Action Buttons Enhancement */
-.draft-actions .btn {
-  font-size: 0.875rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.draft-actions .btn-primary {
-  background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
-  border: none;
-  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
-}
-
-.draft-actions .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
-}
-
-.draft-actions .btn-outline-primary {
-  border: 2px solid #0d6efd;
-  background: transparent;
-  color: #0d6efd;
-}
-
-.draft-actions .btn-outline-primary:hover {
-  background: #0d6efd;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
-}
-
-.draft-actions .btn-outline-info {
-  border: 2px solid #17a2b8;
-  background: transparent;
-  color: #17a2b8;
-}
-
-.draft-actions .btn-outline-info:hover {
-  background: #17a2b8;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3);
-}
-
-/* Dropdown Menu Enhancement */
-.dropdown-menu {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  border: none;
-  border-radius: 12px;
-  padding: 0.5rem 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-}
-
-.dropdown-item {
-  padding: 0.75rem 1.25rem;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  border-radius: 0;
-  font-weight: 500;
-}
-
-.dropdown-item:hover {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  color: #0d6efd;
-  padding-left: 1.5rem;
-}
-
-.dropdown-item.text-danger:hover {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
-  color: #dc3545;
-  padding-left: 1.5rem;
-}
-
-.dropdown-item i {
-  width: 16px;
-  text-align: center;
-}
-
-/* Empty State Enhancement */
-.empty-drafts {
-  color: #6c757d;
-  padding: 3rem 2rem;
-}
-
-.empty-drafts .display-1 {
-  font-size: 4rem;
-  opacity: 0.3;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Product Preview Enhancement */
-.product-preview {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid #dee2e6;
-  position: relative;
-  overflow: hidden;
-}
-
-.product-preview::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, transparent 70%);
-  animation: rotate 20s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.product-preview > * {
-  position: relative;
-  z-index: 1;
-}
-
-.product-preview img {
-  border: 3px solid white;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-}
-
-.product-preview .product-name {
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Loading Animation Enhancement */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-  border-width: 0.3em;
-  border-color: #0d6efd transparent #0d6efd transparent;
-}
-
-/* Modal Header Enhancement */
-.modal-header.bg-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  border: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.modal-header.bg-primary::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-}
-
-.modal-header > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .modal-dialog.modal-xl {
-    max-width: 95%;
-    margin: 0.5rem auto;
-  }
-
-  .draft-card .row {
-    --bs-gutter-x: 0.75rem;
-  }
-
-  .draft-actions {
-    flex-direction: column;
-  }
-
-  .draft-actions .btn {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .product-preview {
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-}
-
-/* Loading animation */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-  border-width: 0.3em;
-}
-
-/* Status badges */
-.badge.bg-success {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-}
-
-.badge.bg-warning {
-  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
-  color: #212529 !important;
-}
-
-.badge.bg-secondary {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .cart-title {
@@ -3012,8 +2721,8 @@ onMounted(() => {
 
   .product-image,
   .item-image {
-    width: 72px;
-    height: 90px; /* Tỷ lệ 4:5 cho mobile */
+    width: 80px;
+    height: 100px; /* Tỷ lệ 4:5 cho mobile */
   }
 
   .checkout-sticky {
@@ -3115,6 +2824,320 @@ onMounted(() => {
   ) !important;
   color: #6c757d !important;
   border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+/* Combo Details Styles */
+.combo-product-image {
+  width: 120px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+/* Image containers */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 120px;
+  height: 150px;
+  flex-shrink: 0;
+}
+
+.image-overlay {
+  display: none;
+}
+
+/* Required product cards */
+.required-product-card {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+}
+
+/* Gift product cards */
+.gift-product-card {
+  border-radius: 12px;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.gift-product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: #28a745;
+}
+
+.gift-product-card.selected-gift {
+  background: #f8fff9;
+  border: 2px solid #28a745;
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.15);
+}
+
+/* Selection elements */
+.selection-checkbox {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+}
+
+.selection-checkbox .form-check-input {
+  width: 1.3em;
+  height: 1.3em;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selection-checkbox .form-check-input:hover {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.1rem rgba(40, 167, 69, 0.25);
+}
+
+.selection-checkbox .form-check-input:checked {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.selection-checkbox .form-check-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.selected-indicator {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+}
+
+.selected-badge {
+  width: 28px;
+  height: 28px;
+  background: #28a745;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Section headers */
+.section-header {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid;
+  margin-bottom: 1.5rem;
+}
+
+.required-section .section-header {
+  border-left-color: #007bff;
+}
+
+.gift-section .section-header {
+  border-left-color: #28a745;
+}
+
+.section-icon {
+  width: 45px;
+  height: 45px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+/* Progress badge */
+.progress-badge .badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+/* Typography improvements */
+.product-name {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #2c3e50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.product-sku .badge {
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+
+.price {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Product info container */
+.product-info {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.product-info.min-width-0 {
+  min-width: 0;
+}
+
+.product-image-wrapper {
+  flex-shrink: 0;
+}
+
+.product-meta {
+  margin-top: auto;
+}
+
+/* Card body responsive */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 180px;
+}
+
+.d-flex.align-items-start {
+  height: 100%;
+  gap: 1rem;
+}
+
+/* Badges and labels */
+.badge.bg-gradient {
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Section spacing */
+.required-section,
+.gift-section {
+  margin-bottom: 2.5rem;
+}
+
+.gift-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .image-container {
+    width: 100px;
+    height: 125px;
+  }
+
+  .combo-product-image {
+    width: 100px;
+    height: 125px;
+  }
+
+  .card-body {
+    min-height: 160px;
+  }
+
+  /* Cart images for tablet */
+  .product-image-wrapper,
+  .item-image-wrapper {
+    width: 90px;
+    height: 112px;
+  }
+
+  .product-image,
+  .item-image {
+    width: 90px;
+    height: 112px;
+  }
+
+  .combo-base-image {
+    width: 90px;
+    height: 112px;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    width: 90px;
+    height: 112px;
+  }
+
+  .combo-product-image {
+    width: 90px;
+    height: 112px;
+  }
+
+  .section-header {
+    padding: 15px;
+  }
+
+  .section-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .product-name {
+    font-size: 0.9rem;
+  }
+
+  .price {
+    font-size: 0.9rem;
+  }
+
+  .selection-checkbox {
+    top: 10px;
+    left: 10px;
+  }
+
+  .selected-indicator {
+    top: 10px;
+    right: 10px;
+  }
+
+  .card-body {
+    min-height: 140px;
+    padding: 1rem;
+  }
+
+  .d-flex.align-items-start {
+    gap: 0.75rem;
+  }
+}
+
+/* Layout fixes */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 180px;
+}
+
+.d-flex.align-items-start {
+  height: 100%;
+  gap: 1rem;
+}
+
+.product-image-wrapper {
+  flex-shrink: 0;
+}
+
+/* Simplified styling - remove unnecessary animations */
+.required-product-card,
+.gift-product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 /* Accessibility */

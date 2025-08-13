@@ -50,9 +50,6 @@ public class CatalogsAPI {
 
 	@GetMapping("/admin/Catalogs/{id}")
 	public ResponseEntity<Catalogs> getCatalogsByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
 
 		Catalogs catalogs = (Catalogs) catalogsService.catalogsFindById(id).orElse(new Catalogs());
 		return ResponseEntity.ok(catalogs);

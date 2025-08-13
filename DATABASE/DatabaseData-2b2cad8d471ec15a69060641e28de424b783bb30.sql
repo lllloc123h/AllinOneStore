@@ -426,7 +426,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203158/products/tpktrmvmjmohap5adypd.jpg',
     0,
     100,
     4,
@@ -443,7 +443,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752202930/products/hhnomfnhcmute6ff1qfb.webp',
     0,
     75,
     5,
@@ -460,7 +460,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838419/products/gqdzt4vyniiv5nw7sxr7.webp',
     0,
     90,
     4,
@@ -477,7 +477,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838522/products/h3qqeqhkigd90j2jywlt.webp',
     0,
     30,
     5,
@@ -494,7 +494,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752202930/products/hhnomfnhcmute6ff1qfb.webp',
     0,
     110,
     4,
@@ -512,7 +512,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849618/uwkj22xvyxotdmnaddqc.jpg',
     0,
     85,
     4,
@@ -529,7 +529,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850466/avihrdgblepkfwobilid.webp',
     0,
     130,
     4,
@@ -546,7 +546,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849619/gzocnmsgprbl8f659o17.jpg',
     0,
     60,
     5,
@@ -563,7 +563,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849618/dkcj4tpyigmltfnzmja7.jpg',
     0,
     95,
     4,
@@ -580,7 +580,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849618/ifeuyabdle9ztwontqno.webp',
     0,
     50,
     3,
@@ -598,7 +598,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754596840/products/m1cjtjzaqrlnmopgiesk.jpg',
     0,
     160,
     4,
@@ -615,7 +615,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754596809/products/pkjixtajigjgsve3hx9b.jpg',
     0,
     70,
     5,
@@ -632,7 +632,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754475778/products/sil2kg70vh2wawhundas.webp',
     0,
     80,
     4,
@@ -649,7 +649,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203877/products/rk4gfkdcetcaykxn3c7x.jpg',
     0,
     105,
     4,
@@ -666,7 +666,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752198281/products/tb0adwgoge36tgp2kxbj.jpg',
     0,
     45,
     4,
@@ -684,7 +684,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/y6qbtb77x07xikspgtpq.jpg',
     0,
     90,
     4,
@@ -701,7 +701,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/bhpd7txb4moeic4nmvm0.webp',
     0,
     115,
     4,
@@ -718,7 +718,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751964597/qclbaowfuxqfbudyc5fh.jpg',
     0,
     70,
     5,
@@ -752,7 +752,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/bhpd7txb4moeic4nmvm0.webp',
     0,
     80,
     4,
@@ -770,7 +770,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850755/mqtmovngedrdwxvjaziz.jpg',
     0,
     120,
     4,
@@ -787,7 +787,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850754/p32b87icsywpjwi7xfua.jpg',
     0,
     140,
     4,
@@ -804,7 +804,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850754/ynfkdff0ahq8mzv1uqlf.jpg',
     0,
     70,
     4,
@@ -821,7 +821,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850755/a7otpjz1yiayhvli1ebh.jpg',
     0,
     60,
     5,
@@ -838,7 +838,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850755/mqtmovngedrdwxvjaziz.jpg',
     0,
     90,
     4,
@@ -856,7 +856,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     110,
     5,
@@ -873,7 +873,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     130,
     4,
@@ -890,7 +890,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'ao_khoac_jean_be_gai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     50,
     4,
@@ -924,7 +924,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     150,
     4,
@@ -1344,7 +1344,7 @@ INSERT INTO
   product_images (product_item_id, image_url)
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754337289/products/a4hhumhd6iu0x1cpt7qa.jpg'
 FROM
   product_items
 WHERE
@@ -1352,7 +1352,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203063/products/kz8rcofeawtxaqmtjtgb.jpg'
 FROM
   product_items
 WHERE
@@ -1368,7 +1368,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/aaosozyrjyqgblpqzkmp.jpg'
 FROM
   product_items
 WHERE
@@ -1376,7 +1376,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838479/products/bnsvpwuan5kfslrpqxd7.webp'
 FROM
   product_items
 WHERE
@@ -1392,7 +1392,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/aaosozyrjyqgblpqzkmp.jpg'
 FROM
   product_items
 WHERE
@@ -1400,7 +1400,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/aaosozyrjyqgblpqzkmp.jpg'
 FROM
   product_items
 WHERE
@@ -1416,7 +1416,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849619/to239za16bv9cf2dh72n.jpg'
 FROM
   product_items
 WHERE
@@ -1432,7 +1432,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849728/cnsqam59ax7a2l9nwqiu.webp'
 FROM
   product_items
 WHERE
@@ -1440,7 +1440,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_kieu_so_mi_nu_trang_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1753888979/products/bs1nrdeo0hu0xpf3fnec.jpg'
 FROM
   product_items
 WHERE
@@ -1448,7 +1448,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754739803/products/yjxxtwipr5g6kl0clyz4.jpg'
 FROM
   product_items
 WHERE
@@ -1456,7 +1456,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838522/products/h3qqeqhkigd90j2jywlt.webp'
 FROM
   product_items
 WHERE
@@ -1464,7 +1464,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838522/products/h3qqeqhkigd90j2jywlt.webp'
 FROM
   product_items
 WHERE
@@ -1472,7 +1472,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1753951166/products/iozurikq559erdlfsjkh.webp'
 FROM
   product_items
 WHERE
@@ -1480,7 +1480,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1753978081/products/ofuhoowyllwihxkbrgfm.webp'
 FROM
   product_items
 WHERE
@@ -1488,7 +1488,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_croptop_nu_trang_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752211056/products/m3ylkf2xuwrunxxw7prc.jpg'
 FROM
   product_items
 WHERE
@@ -1496,7 +1496,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203364/products/ri9et2iceglxd0waflq6.jpg'
 FROM
   product_items
 WHERE
