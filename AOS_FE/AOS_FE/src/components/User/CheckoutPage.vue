@@ -254,6 +254,16 @@
                         <span class="info-label">Thanh toán:</span>
                         <span class="info-value">{{ paymentMethod?.name || "—" }}</span>
                       </div>
+                      <!-- Ghi chú cho cửa hàng -->
+                      <div class="mb-2">
+                        <label for="note" class="form-label">
+                          <i class="bi bi-chat-left-text me-1"></i>
+                          Ghi chú cho cửa hàng
+                        </label>
+                        <textarea id="note" class="form-control" rows="3"
+                          placeholder="Nhập ghi chú (ví dụ: giao buổi sáng, không gọi điện)..."
+                          v-model="orderNote"></textarea>
+                      </div>
                     </div>
                   </div>
 
@@ -543,7 +553,7 @@ const selectedFreeshipCoupon = ref(null);
 const selectedDiscountCoupon = ref(null);
 const showFreeshipModal = ref(false);
 const showDiscountModal = ref(false);
-
+const orderNote = ref("");
 const freeshipCoupons = ref([]);
 const discountCoupons = ref([]);
 
@@ -752,8 +762,8 @@ function buildOrderPayload() {
     actualShippingFee: shippingFee.value,
     discountValue: discountAmount.value || 0,
     finalTotal: finalPrice.value,
-    note: "",
-    orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`,
+    note: orderNote.value,
+    orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value} - ${defaultAddressData.value.note}`,
     products: selectedProducts.value.map((item) => {
       const sellingPrice = calculateSellingPrice(item, groupedProducts.value);
       const total = sellingPrice * item.quantity;
