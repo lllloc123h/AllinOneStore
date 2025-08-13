@@ -39,12 +39,6 @@
                 <option value="name-desc">Tên Z-A</option>
               </select>
             </div>
-            <div class="col-md-3">
-              <button class="btn btn-primary w-100" @click="createNewDraft">
-                <i class="bi bi-plus-circle me-2"></i>
-                Tạo thiết kế mới
-              </button>
-            </div>
           </div>
         </div>
 

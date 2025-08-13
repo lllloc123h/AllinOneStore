@@ -113,7 +113,7 @@ public class GhnService {
         dto.setReturn_ward_code("21204");
 
         // 3. Mã đơn hàng khách (client)
-        dto.setClient_order_code(String.valueOf(order.getId()));
+        dto.setClient_order_code(UUID.randomUUID().toString());
 
         // 4. Người gửi
         Map<String, Object> shop = ghnShippingService.getShopAddressFromGHN();

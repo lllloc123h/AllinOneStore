@@ -75,7 +75,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 	@Query("SELECT SUM(o.estimatedShippingFee)-SUM(o.actualShippingFee) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'Đã thanh toán'")
 	Double totalActualShippingFeeDelivered();
 
-
 	// tổng chiết trừ giảm giá ước tính
 	@Query("SELECT SUM(o.discountValue) FROM Orders o WHERE o.shippingStatus != 'cancel'")
 	Double totalEstimatedDiscountValue();
