@@ -346,7 +346,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../Configs/api";
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const order = ref(null);
 
@@ -354,6 +354,7 @@ const steps = [
   { label: "Chờ xác nhận", icon: "bi bi-hourglass-split" },
   { label: "Chờ lấy hàng", icon: "bi bi-box-seam" },
   { label: "Chờ giao hàng", icon: "bi bi-truck" },
+  { label: "Đang giao hàng", icon: "bi bi-a" },
   { label: "Đã nhận hàng", icon: "bi bi-check-circle-fill" },
 ];
 
@@ -371,11 +372,12 @@ const statusMap = {
 
   // Chờ giao hàng
   picked: "Chờ giao hàng",
-  storing: "Chờ giao hàng",
-  sorting: "Chờ giao hàng",
-  transporting: "Chờ giao hàng",
-  delivering: "Chờ giao hàng",
-  money_collect_delivering: "Chờ giao hàng",
+  //Đang giao hàng
+  storing: "Đang giao hàng",
+  sorting: "Đang giao hàng",
+  transporting: "Đang giao hàng",
+  delivering: "Đang giao hàng",
+  money_collect_delivering: "Đang giao hàng",
 
   // Đã nhận hàng
   delivered: "Đã nhận hàng",
@@ -391,7 +393,6 @@ const statusMap = {
   damage: "Đã hủy",
   delivery_fail: "Đã hủy",
   exception: "Đã hủy",
-
 };
 
 function getStatusText(status) {
@@ -402,8 +403,9 @@ const statusToIndex = {
   "Chờ xác nhận": 0,
   "Chờ lấy hàng": 1,
   "Chờ giao hàng": 2,
-  "Đã nhận hàng": 3,
-  "Đã hủy": 4,
+  "Đang giao hàng": 3,
+  "Đã nhận hàng": 4,
+  "Đã hủy": 5,
 };
 
 // Dùng trạng thái hiện tại để xác định bước hiện tại
@@ -420,6 +422,7 @@ const loadOrder = async () => {
   try {
     const res = await api.get(`/Orders/detail/${maDon}`);
     const orderData = res.data;
+    console.log("dữ liệu chi tiết đơn hàng", res.data);
     const [tenKH, sdtKH, diaChiKH] = orderData.order.orderInfor?.split(" - ") || [];
 
     order.value = {
@@ -636,6 +639,7 @@ const statusDisplayMap = {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  padding-bottom: 2rem;
 }
 
 /* Card Styles */
