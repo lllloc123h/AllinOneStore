@@ -146,6 +146,13 @@
                             :titleUpload="'đánh giá sản phẩm'"
                             @uploaded="handleImageUploaded"
                           />
+                          <div class="form-group">
+                            <UploadVideos
+                              type="video"
+                              folderName="reviews"
+                              @uploaded="handleVideoUploaded"
+                            />
+                          </div>
                         </div>
                         <button type="submit" class="submit-review-btn">
                           <i class="bi bi-send me-2"></i>
@@ -181,6 +188,7 @@ import api from "../../Configs/api";
 import { ref, onMounted, computed } from "vue";
 import { notification } from "ant-design-vue";
 import UploadImages from "../Module/upload-images.vue";
+import UploadVideos from "../Module/upload-single-img-video.vue";
 
 const orders = ref([]);
 const router = useRouter();
@@ -332,6 +340,7 @@ const newReview = ref({
   rating: 0,
   text: "",
   imageUrl: "",
+  videoUrl: "",
 });
 
 const toggleReviewForm = (orderId, productItemId, sp) => {
@@ -359,6 +368,7 @@ async function submitReview(sp, orderId) {
       imageUrl1: reviewImageUrl.value[0] || null,
       imageUrl2: reviewImageUrl.value[1] || null,
       imageUrl3: reviewImageUrl.value[2] || null,
+      videoUrl: newReview.value.videoUrl || null,
     });
 
     notification.success({
@@ -392,6 +402,16 @@ const uploaderKey = ref(Date.now());
 function handleImageUploaded(urls) {
   reviewImageUrl.value = urls;
   newReview.value.imageUrl = urls.join(",");
+}
+
+const reviewVideoUrl = ref([]);
+function handleVideoUploaded(files) {
+  const urls = Array.isArray(files)
+    ? files.map((f) => (typeof f === "string" ? f : f.url))
+    : [];
+
+  reviewVideoUrl.value = urls;
+  newReview.value.videoUrl = urls.join(",");
 }
 </script>
 

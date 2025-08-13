@@ -343,6 +343,14 @@
                         <img v-if="review.imageUrl3" :src="review.imageUrl3" alt="Ảnh đánh giá 3"
                           class="review-image" />
                       </div>
+                      <div class="review-video" v-if="review.videoUrl">
+                          <video
+                            :src="review.videoUrl"
+                            controls
+                            class="review-video-player"
+                            style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px;"
+                          ></video>
+                        </div>
                     </div>
                   </div>
 
@@ -703,6 +711,7 @@ const fetchReviews = async () => {
       },
     });
     reviews.value = res.data.content || [];
+    console.log("Danh sách đánh giá:", res.data.content);
     totalPages.value = res.data.totalPages || 0;
   } catch (err) {
     console.error("Lỗi tải đánh giá:", err);
