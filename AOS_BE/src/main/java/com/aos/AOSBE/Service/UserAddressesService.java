@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.aos.AOSBE.DTOS.UserAddressesDTOS;
 import com.aos.AOSBE.Entity.UserAddresses;
 import com.aos.AOSBE.Repository.UserAddressesRepository;
 
@@ -83,4 +84,29 @@ public class UserAddressesService {
 	public void userAddressesDeleteById(int id) {
 		userAddressesRepository.deleteById(id);
 	}
+	
+	@Transactional
+	public void updateAddressAsDefault(int id, UserAddressesDTOS dto, int accountId) {
+	    // Bỏ mặc định của các địa chỉ khác
+	    userAddressesRepository.clearDefaultForUser(accountId);
+
+	    // Cập nhật địa chỉ này thành mặc định
+	    UserAddresses entity = userAddressesRepository.findById(id)
+	        .orElseThrow(() -> new RuntimeException("Không tìm thấy địa chỉ"));
+	    entity.setRecipientName(dto.getRecipientName());
+	    entity.setPhone(dto.getPhone());
+	    entity.setProvince(dto.getProvince());
+	    entity.setDistrict(dto.getDistrict());
+	    entity.setWard(dto.getWard());
+	    entity.setStreet(dto.getStreet());
+	    entity.setLabel(dto.getLabel());
+	    entity.setNote(dto.getNote());
+	    entity.setDefault(true);
+	    entity.setGhnProvinceId(dto.getGhnProvinceId());
+	    entity.setGhnDistrictId(dto.getGhnDistrictId());
+	    entity.setGhnWardCode(dto.getGhnWardCode());
+
+	    userAddressesRepository.save(entity);
+	}
+
 }

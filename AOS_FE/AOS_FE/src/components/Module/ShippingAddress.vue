@@ -74,6 +74,9 @@
                       <button class="delete-btn" @click="removeAddress(address.id)" title="Xóa địa chỉ">
                         <i class="bi bi-trash"></i>
                       </button>
+                      <button class="edit-btn" @click="editAddress(address)" title="Sửa địa chỉ">
+                        <i class="bi bi-pencil"></i>
+                      </button>
                     </div>
                   </div>
 
@@ -110,13 +113,13 @@
       </div>
     </div>
 
-    <!-- Add/Edit Address Modal -->
+    <!-- Modal -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-container">
         <div class="modal-header">
           <h3 class="modal-title">
             <i class="bi bi-house-add me-2"></i>
-            Thêm địa chỉ mới
+            {{ editingId === null ? "Thêm địa chỉ mới" : "Cập nhật địa chỉ" }}
           </h3>
           <button class="modal-close-btn" @click="closeModal">
             <i class="bi bi-x-lg"></i>
@@ -124,7 +127,7 @@
         </div>
 
         <div class="modal-content">
-          <form @submit.prevent="addAddress" class="address-form">
+          <form @submit.prevent="saveAddress" class="address-form">
             <!-- Personal Information -->
             <div class="form-section">
               <h4 class="section-title">
@@ -238,7 +241,7 @@
               </button>
               <button type="submit" class="submit-btn" :disabled="!isFormValid">
                 <i class="bi bi-check-circle me-2"></i>
-                Lưu địa chỉ
+                {{ editingId === null ? "Lưu địa chỉ" : "Cập nhật địa chỉ" }}
               </button>
             </div>
           </form>
@@ -268,6 +271,7 @@ export default {
       selectedWard: "",
       shippingAddress: [],
       fromCheckout: false,
+      editingId: null,
     };
   },
   computed: {
@@ -307,18 +311,16 @@ export default {
       this.showModal = false;
       this.resetForm();
     },
-
     resetForm() {
+      this.editingId = null;
       this.name = "";
       this.phone = "";
+      this.label = "Nhà Riêng";
       this.detailAddress = "";
+      this.note = "";
       this.selectedProvince = "";
       this.selectedDistrict = "";
       this.selectedWard = "";
-      this.districts = [];
-      this.wards = [];
-      this.label = "Nhà Riêng";
-      this.note = "";
     },
     async loadProvinces() {
       const res = await fetch(
@@ -382,6 +384,34 @@ export default {
         this.wards = data.data;
       }
     },
+    async editAddress(address) {
+      this.editingId = address.id;
+      this.name = address.recipientName;
+      this.phone = address.phone;
+      this.label = address.label;
+      this.detailAddress = address.street;
+      this.note = address.note;
+
+      // Chọn tỉnh
+      const provinceObj = this.provinces.find(p => p.ProvinceName === address.province);
+      this.selectedProvince = provinceObj?.ProvinceID || null;
+
+      // Load quận/huyện
+      if (this.selectedProvince) {
+        await this.loadDistricts();
+        const districtObj = this.districts.find(d => d.DistrictName === address.district);
+        this.selectedDistrict = districtObj?.DistrictID || null;
+
+        // Load phường/xã
+        if (this.selectedDistrict) {
+          await this.loadWards();
+          const wardObj = this.wards.find(w => w.WardName === address.ward);
+          this.selectedWard = wardObj?.WardCode || null;
+        }
+      }
+
+      this.showModal = true;
+    },
     async fetchData() {
       try {
         const res = await api.get(`/UserAddresses`);
@@ -415,15 +445,11 @@ export default {
         });
       }
     },
-    async addAddress() {
+    async saveAddress() {
       try {
-        const provinceObj = this.provinces.find(
-          (p) => p.ProvinceID === this.selectedProvince
-        );
-        const districtObj = this.districts.find(
-          (d) => d.DistrictID === this.selectedDistrict
-        );
-        const wardObj = this.wards.find((w) => w.WardCode === this.selectedWard);
+        const provinceObj = this.provinces.find(p => p.ProvinceID === this.selectedProvince);
+        const districtObj = this.districts.find(d => d.DistrictID === this.selectedDistrict);
+        const wardObj = this.wards.find(w => w.WardCode === this.selectedWard);
 
         const formData = {
           recipientName: this.name,
@@ -435,40 +461,30 @@ export default {
           label: this.label,
           isDefault: false,
           note: this.note,
-          districtId: districtObj?.DistrictID || null,
-          wardCode: wardObj?.WardCode || null,
+          ghnProvinceId: provinceObj?.ProvinceID || null,
+          ghnDistrictId: districtObj?.DistrictID || null,
+          ghnWardCode: wardObj?.WardCode || null,
           accounts: "",
         };
 
-        const isContainAddress = this.shippingAddress.some(
-          (item) =>
-            item.province === formData.province &&
-            item.district === formData.district &&
-            item.ward === formData.ward &&
-            item.street === formData.street
-        );
-        if (isContainAddress) {
-          notification.error({
-            message: "Địa chỉ đã tồn tại",
-            description: "Vui lòng kiểm tra lại địa chỉ bạn vừa nhập.",
-          });
-          return;
+        if (this.editingId === null) {
+          // Thêm mới
+          formData.isDefault = true;
+          await api.post(`/UserAddresses`, formData);
+          notification.success({ message: "Thành công", description: "Đã thêm địa chỉ mới." });
+        } else {
+          // Cập nhật
+          formData.isDefault = true;
+          await api.put(`/UserAddresses/edit/${this.editingId}`, formData);
+          notification.success({ message: "Thành công", description: "Đã cập nhật địa chỉ." });
         }
-        await api.post(`/UserAddresses`, formData);
 
         this.resetForm();
         this.fetchData();
         this.showModal = false;
-        notification.success({
-          message: "Thành công",
-          description: "Đã thêm địa chỉ mới.",
-        });
       } catch (err) {
         console.error(err);
-        notification.error({
-          message: "Lỗi khi thêm địa chỉ",
-          description: err.message,
-        });
+        notification.error({ message: "Lỗi", description: err.message });
       }
     },
     goBackToCheckout() {
@@ -1088,6 +1104,27 @@ export default {
   transform: none;
   box-shadow: none;
 }
+
+.edit-btn {
+  background: transparent;
+  color: #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.edit-btn:hover {
+  background: #0d6efd;
+  color: white;
+  transform: scale(1.1);
+}
+
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {

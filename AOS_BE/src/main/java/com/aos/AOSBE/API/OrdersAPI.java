@@ -191,80 +191,52 @@ public class OrdersAPI {
 			Set<String> processedComboGroups = new HashSet<>();
 
 			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
-				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
+	            OrderItems orderItem = orderItemsMapper.mapperToObject(item);
 
-				// Trừ sản phẩm tồn kho
-				ProductItems updateTurnBuy = orderItem.getProductItems();
-				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
-				updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
-				productItemsService.productItemsSave(updateTurnBuy);
+	            // ✅ 1. Trừ tồn kho sản phẩm (luôn trừ, bất kể combo hay không)
+	            ProductItems updateTurnBuy = orderItem.getProductItems();
+	            updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
+	            updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
+	            productItemsService.productItemsSave(updateTurnBuy);
 
-				// Cộng sản phẩm đã bán
+	            // Cộng sản phẩm đã bán
 //				BaseProducts updateTurnBuyForBP = orderItem.getProductItems().getBaseProducts();
 //				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
 //				baseProductsService.baseProductsSave(updateTurnBuyForBP);
+	            
+	            // ✅ 2. Trừ số lượng khuyến mãi (combo) — chỉ 1 lần cho mỗi comboGroup
+	            Promotions promo = orderItem.getPromotions();
+	            String comboGroupId = orderItem.getComboGroupId() != null
+	                    ? orderItem.getComboGroupId().toString()
+	                    : null;
 
-//				updateTurnBuyForBP.setQty(updateTurnBuyForBP.getQty() - saved.getQty());
-				
-				Promotions promo = orderItem.getPromotions();
-				String comboGroupId = orderItem.getComboGroupId() != null ? orderItem.getComboGroupId().toString()
-						: null;
+	            if (promo != null) {
+	                boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
 
-				if (promo != null) {
-					boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
-					if (!isComboProcessed) {
-						int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
-								? orderItem.getQty() * orderItem.getComboQty()
-								: orderItem.getQty();
+	                if (!isComboProcessed) {
+	                    // Nếu có comboQty thì dùng comboQty, ngược lại dùng số lượng sản phẩm
+	                    int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
+	                            ? orderItem.getComboQty()
+	                            : orderItem.getQty();
 
-						if (promo.getQty() >= qtyToReduce) {
-							promo.setQty(promo.getQty() - qtyToReduce);
-							promo.setUpdatedAt(LocalDateTime.now());
-							promotionsService.promotionsSave(promo);
-						} else {
-							throw new IllegalStateException("Số lượng khuyến mãi không đủ.");
-						}
-						// Đánh dấu combo đã xử lý để không trừ lần 2
-						if (comboGroupId != null)
-							processedComboGroups.add(comboGroupId);
-					}
-				}
-				orderItem.setOrders(saved);
+	                    if (promo.getQty() >= qtyToReduce) {
+	                        promo.setQty(promo.getQty() - qtyToReduce);
+	                        promo.setUpdatedAt(LocalDateTime.now());
+	                        promotionsService.promotionsSave(promo);
+	                    } else {
+	                        throw new IllegalStateException("Số lượng khuyến mãi không đủ.");
+	                    }
+
+	                    // Đánh dấu combo đã xử lý
+	                    if (comboGroupId != null) {
+	                        processedComboGroups.add(comboGroupId);
+	                    }
+	                }
+	            }
+
+	            orderItem.setOrders(saved);
 				return orderItem;
 			}).collect(Collectors.toList());
-
-			// Trừ theo sản phẩm trong combo
-//			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
-//				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
-//
-//				// ✅ Trừ số lượng khuyến mãi nếu có
-//				if (orderItem.getPromotions() != null) {
-//					Promotions promo = orderItem.getPromotions();
-//					int qtyToReduce = orderItem.getComboQty() != null ? orderItem.getComboQty() : orderItem.getQty();
-//
-//					if (promo.getQty() >= qtyToReduce) {
-//						promo.setQty(promo.getQty() - qtyToReduce);
-//						promo.setUpdatedAt(LocalDateTime.now());
-//						promotionsService.promotionsSave(promo); // ✅ Lưu lại
-//					} else {
-//						throw new IllegalStateException("Số lượng khuyến mãi không đủ để áp dụng.");
-//					}
-//				}
-//
-//				// Cập nhật số lượng và lượt mua sản phẩm
-//				ProductItems updateTurnBuy = orderItem.getProductItems();
-//				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
-//				updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
-//
-//				BaseProducts updateTurnBuyForBP = updateTurnBuy.getBaseProducts();
-//				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
-//
-//				productItemsService.productItemsSave(updateTurnBuy);
-//				baseProductsService.baseProductsSave(updateTurnBuyForBP);
-//
-//				orderItem.setOrders(saved);
-//				return orderItem;
-//			}).collect(Collectors.toList());
 
 			orderItemsService.orderItemsSaveAll(orderItems);
 
