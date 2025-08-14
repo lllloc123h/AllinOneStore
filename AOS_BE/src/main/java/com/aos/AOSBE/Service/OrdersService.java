@@ -41,6 +41,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
@@ -70,6 +71,8 @@ public class OrdersService {
 	private OrderItemsRepository orderItemsRepository;
 	@Autowired
 	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private AccountsRepository accountsRepository;
 
 	private final String ghnToken = System.getProperty("GHN_TOKEN");
 	private final String ghnShopId = System.getProperty("GHN_SHOPID");
@@ -299,6 +302,23 @@ public class OrdersService {
 
 				order.setShippingStatus(status);
 				ordersRepository.save(order);
+				
+//				Cộng điểm cho rank
+//				if ("delivered".equalsIgnoreCase(status)) {
+//				    // Tính điểm từ tổng tiền đơn hàng
+//				    int points = (int) (order.getFinalTotal() / 10000);
+//
+//				    // Lưu điểm vào đơn hàng
+//				    order.setPoint(points);
+//
+//				    // Cộng điểm vào tài khoản
+//				    Accounts account = order.getAccounts();
+//				    account.setLoyaltyPoint(account.getLoyaltyPoint() + points);
+//
+//				    accountsRepository.save(account);
+//				    ordersRepository.save(order);
+//				}
+
 				return order;
 			} else {
 				throw new RuntimeException("GHN trả về lỗi: " + response.getStatusCode());
