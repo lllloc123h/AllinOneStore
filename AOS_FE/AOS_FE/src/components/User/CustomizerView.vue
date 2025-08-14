@@ -42,7 +42,7 @@
 
             <div class="form-grid">
               <div class="form-group">
-                <label class="form-label">Màu chữ</label>
+                <label class="form-label mt-3">Màu chữ</label>
                 <input
                   type="color"
                   v-model="textColor"
@@ -166,14 +166,14 @@
               {{ btnDraw ? "Hủy chế độ vẽ" : "Bật chế độ vẽ" }}
             </button>
 
-            <button class="secondary-btn" @click="toggleEraser">
+            <!-- <button class="secondary-btn" @click="toggleEraser">
               <i class="bi bi-eraser"></i>
               {{ isErasing ? "Vẽ lại" : "Gôm" }}
-            </button>
+            </button> -->
 
             <div class="form-grid">
               <div class="form-group">
-                <label class="form-label">Chế độ vẽ</label>
+                <label class="form-label mt-3">Chế độ vẽ</label>
                 <select v-model="drawingMode" class="form-select">
                   <option value="Circle">Circle</option>
                   <option value="Pencil">Pencil</option>
@@ -241,7 +241,7 @@
               />
             </div>
 
-            <div class="form-group">
+            <div class="form-group mt-3">
               <label class="form-label">Tên phác thảo</label>
               <input
                 type="text"
@@ -251,7 +251,7 @@
               />
             </div>
 
-            <button class="success-btn" @click="saveCanvas">
+            <button class="success-btn mt-3" @click="saveCanvas">
               <i class="bi bi-save"></i>
               Lưu thiết kế
             </button>

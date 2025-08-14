@@ -9,19 +9,7 @@
 
   <!-- Main Container -->
   <div class="main-container my-5">
-    <!-- Empty State -->
-    <div v-if="filteredOrders.length === 0" class="empty-state">
-      <div class="empty-icon">
-        <i class="bi bi-bag-x"></i>
-      </div>
-      <h3>Không có đơn hàng</h3>
-      <p>Không có đơn hàng ở trạng thái "{{ selectedTab }}"</p>
-      <button class="btn-shop-now" @click="$router.push('/products')">
-        <i class="bi bi-bag-plus me-2"></i>Mua sắm ngay
-      </button>
-    </div>
-
-        <!-- Order Tabs -->
+    <!-- Order Tabs -->
     <div class="order-tabs mb-4" v-if="orders.length > 0">
       <button
         v-for="tab in tabs"
@@ -33,7 +21,21 @@
       </button>
     </div>
 
-    <!-- Orders List -->
+    <!-- Content Area with fixed height -->
+    <div class="content-area">
+      <!-- Empty State -->
+      <div v-if="filteredOrders.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="bi bi-bag-x"></i>
+        </div>
+        <h3>Không có đơn hàng</h3>
+        <p>Không có đơn hàng ở trạng thái "{{ selectedTab }}"</p>
+        <button class="btn-shop-now" @click="$router.push('/products')">
+          <i class="bi bi-bag-plus me-2"></i>Mua sắm ngay
+        </button>
+      </div>
+
+      <!-- Orders List -->
       <div class="orders-list" v-if="orders.length > 0 && filteredOrders.length > 0">
         <div class="order-card" v-for="order in filteredOrders" :key="order.id">
           <!-- Order Header -->
@@ -63,11 +65,7 @@
               <i class="bi bi-box me-2"></i>Sản phẩm ({{ order.sanPham.length }})
             </h4>
             <div class="products-grid">
-              <div
-                v-for="(sp, i) in order.sanPham"
-                :key="i"
-                class="product-item"
-              >
+              <div v-for="(sp, i) in order.sanPham" :key="i" class="product-item">
                 <div class="product-image">
                   <img :src="sp.anh" :alt="sp.ten" />
                 </div>
@@ -82,7 +80,11 @@
                   </div>
                   <!-- Nút đánh giá -->
                   <button
-                    v-if="!sp.daDanhGia && order.trangThai === 'Đã nhận hàng' && selectedTab === 'Đã nhận hàng'"
+                    v-if="
+                      !sp.daDanhGia &&
+                      order.trangThai === 'Đã nhận hàng' &&
+                      selectedTab === 'Đã nhận hàng'
+                    "
                     class="btn btn-outline-primary mt-2"
                     @click="toggleReviewForm(order.id, sp.productItemId, sp)"
                   >
@@ -91,16 +93,26 @@
 
                   <!-- Dòng đã đánh giá -->
                   <span
-                    v-else-if="sp.daDanhGia && order.trangThai === 'Đã nhận hàng' && selectedTab === 'Đã nhận hàng'"
+                    v-else-if="
+                      sp.daDanhGia &&
+                      order.trangThai === 'Đã nhận hàng' &&
+                      selectedTab === 'Đã nhận hàng'
+                    "
                     class="text-success mt-2 d-block"
                   >
                     Đã đánh giá
                   </span>
                   <!-- Form đánh giá -->
                   <transition name="tab-panel">
-                    <div v-if="activeReviewKey === `${order.id}_${sp.productItemId}`" class="review-form-card">
+                    <div
+                      v-if="activeReviewKey === `${order.id}_${sp.productItemId}`"
+                      class="review-form-card"
+                    >
                       <h5 class="form-title">Viết đánh giá của bạn</h5>
-                      <form @submit.prevent="submitReview(sp, order.id)" class="review-form">
+                      <form
+                        @submit.prevent="submitReview(sp, order.id)"
+                        class="review-form"
+                      >
                         <div class="rating-input">
                           <label class="form-label">Đánh giá của bạn:</label>
                           <div class="star-rating">
@@ -111,7 +123,7 @@
                               :class="[
                                 'bi',
                                 star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
-                                'star-button'
+                                'star-button',
                               ]"
                             ></i>
                           </div>
@@ -128,27 +140,19 @@
                           ></textarea>
                         </div>
                         <div class="form-group">
-                          <ImageUploader
-                            :max-images="5"
-                            :max-videos="2"
-                            folder="profiles"
-                            :width-img="600"
-                            :height-img="750"
-                            :video-duration="60"
-                            @result-uploaded="handleImageUploaded"
+                          <UploadImages
+                            :maxFiles="5"
+                            :aspectRatio="'4:5'"
+                            :titleUpload="'đánh giá sản phẩm'"
+                            @uploaded="handleImageUploaded"
                           />
-                          <div v-if="reviewImageUrl.length" class="mt-3">
-                          <label class="form-label">Ảnh bạn đã chọn:</label>
-                          <div class="d-flex flex-wrap gap-3">
-                            <img
-                              v-for="(url, index) in reviewImageUrl"
-                              :key="index"
-                              :src="url"
-                              alt="Ảnh đánh giá"
-                              style="width: 120px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1)"
+                          <div class="form-group">
+                            <UploadVideos
+                              type="video"
+                              folderName="reviews"
+                              @uploaded="handleVideoUploaded"
                             />
                           </div>
-                        </div>
                         </div>
                         <button type="submit" class="submit-review-btn">
                           <i class="bi bi-send me-2"></i>
@@ -174,15 +178,17 @@
         </div>
       </div>
     </div>
+    <!-- Close content-area -->
+  </div>
 </template>
 
 <script setup>
-
 import { useRouter } from "vue-router";
 import api from "../../Configs/api";
 import { ref, onMounted, computed } from "vue";
 import { notification } from "ant-design-vue";
-import ImageUploader from "../Module/ImageUpload.vue";
+import UploadImages from "../Module/upload-images.vue";
+import UploadVideos from "../Module/upload-single-img-video.vue";
 
 const orders = ref([]);
 const router = useRouter();
@@ -208,15 +214,15 @@ const loadOrders = async () => {
           ten: i.name,
           soLuong: i.quantity,
           gia: i.price,
-          daDanhGia: false // mặc định
+          daDanhGia: false, // mặc định
         };
 
         try {
           const reviewRes = await api.get("/user/reviews/check", {
             params: {
               productItemId: sp.productItemId,
-              orderId: sp.orderId
-            }
+              orderId: sp.orderId,
+            },
           });
           sp.daDanhGia = reviewRes.data.hasReviewed;
         } catch (err) {
@@ -233,7 +239,7 @@ const loadOrders = async () => {
         trangThai: translateStatus(order.shippingStatus),
         maVanDon: order.orderCode || "Đang cập nhật",
         tongTien: order.finalTotal,
-        sanPham: sanPham
+        sanPham: sanPham,
       });
     }
 
@@ -275,6 +281,7 @@ const tabs = [
   "Chờ xác nhận",
   "Chờ lấy hàng",
   "Chờ giao hàng",
+  "Đang giao hàng",
   "Đã nhận hàng",
   "Đã hủy",
 ];
@@ -284,6 +291,7 @@ const filteredOrders = computed(() => {
     "Chờ xác nhận": "Chờ xác nhận",
     "Chờ lấy hàng": "Chờ lấy hàng",
     "Chờ giao hàng": "Chờ giao hàng",
+    "Đang giao hàng": "Đang giao hàng",
     "Đã nhận hàng": "Đã nhận hàng",
     "Đã hủy": "Đã hủy",
   };
@@ -300,11 +308,12 @@ const translateStatus = (status) => {
 
     // GHN: Chờ giao hàng
     picked: "Chờ giao hàng",
-    storing: "Chờ giao hàng",
-    sorting: "Chờ giao hàng",
-    transporting: "Chờ giao hàng",
-    delivering: "Chờ giao hàng",
-    money_collect_delivering: "Chờ giao hàng",
+    // đang giao hàng
+    storing: "Đang giao hàng",
+    sorting: "Đang giao hàng",
+    transporting: "Đang giao hàng",
+    delivering: "Đang giao hàng",
+    money_collect_delivering: "Đang giao hàng",
 
     // GHN: Đã nhận
     delivered: "Đã nhận hàng",
@@ -329,8 +338,9 @@ const reviewImageUrl = ref([]);
 
 const newReview = ref({
   rating: 0,
-  text: '',
-  imageUrl: ''
+  text: "",
+  imageUrl: "",
+  videoUrl: "",
 });
 
 const toggleReviewForm = (orderId, productItemId, sp) => {
@@ -341,8 +351,8 @@ const toggleReviewForm = (orderId, productItemId, sp) => {
 
   newReview.value = {
     rating: 5,
-    text: '',
-    imageUrl: ''
+    text: "",
+    imageUrl: "",
   };
 };
 
@@ -358,6 +368,7 @@ async function submitReview(sp, orderId) {
       imageUrl1: reviewImageUrl.value[0] || null,
       imageUrl2: reviewImageUrl.value[1] || null,
       imageUrl3: reviewImageUrl.value[2] || null,
+      videoUrl: newReview.value.videoUrl || null,
     });
 
     notification.success({
@@ -388,14 +399,20 @@ async function submitReview(sp, orderId) {
 
 const uploaderKey = ref(Date.now());
 
-function handleImageUploaded(results) {
-  if (Array.isArray(results) && results.length > 0) {
-    const images = results.filter((r) => r.type === "image");
-    reviewImageUrl.value = images.map((img) => img.url);
-    newReview.value.imageUrl = reviewImageUrl.value.join(','); 
-  }
+function handleImageUploaded(urls) {
+  reviewImageUrl.value = urls;
+  newReview.value.imageUrl = urls.join(",");
 }
 
+const reviewVideoUrl = ref([]);
+function handleVideoUploaded(files) {
+  const urls = Array.isArray(files)
+    ? files.map((f) => (typeof f === "string" ? f : f.url))
+    : [];
+
+  reviewVideoUrl.value = urls;
+  newReview.value.videoUrl = urls.join(",");
+}
 </script>
 
 <style scoped>
@@ -433,6 +450,12 @@ function handleImageUploaded(results) {
   margin: 0 auto;
   padding: 0 1rem;
   min-height: 800px;
+}
+
+/* Content Area - Fixed height to prevent layout shift */
+.content-area {
+  min-height: 600px;
+  transition: all 0.3s ease;
 }
 
 /* Empty State */
@@ -724,6 +747,17 @@ function handleImageUploaded(results) {
     font-size: 2rem;
   }
 
+  .order-tabs {
+    position: relative;
+    top: auto;
+    padding: 0.5rem;
+    box-shadow: none;
+  }
+
+  .content-area {
+    min-height: 400px;
+  }
+
   .order-card {
     padding: 1.5rem;
   }
@@ -788,6 +822,13 @@ function handleImageUploaded(results) {
   gap: 0.75rem;
   justify-content: center;
   margin-bottom: 2rem;
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+  background: white;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .tab-button {
@@ -815,8 +856,14 @@ function handleImageUploaded(results) {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Card form đánh giá */
@@ -904,5 +951,47 @@ function handleImageUploaded(results) {
 .submit-review-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Vue Transition Classes */
+.tab-panel-enter-active,
+.tab-panel-leave-active {
+  transition: all 0.3s ease;
+}
+
+.tab-panel-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.tab-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.tab-panel-enter-to,
+.tab-panel-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fix layout issues */
+.orders-list {
+  min-height: 200px;
+  transition: all 0.3s ease;
+}
+
+.order-card {
+  transition: all 0.3s ease;
+}
+
+.review-form-card {
+  background: #f8fafc;
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 </style>

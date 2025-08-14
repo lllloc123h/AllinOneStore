@@ -45,6 +45,7 @@ import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
+import com.aos.AOSBE.Entity.ProductItems;
 import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.MessageMapper;
@@ -192,6 +193,19 @@ public class OrdersAPI {
 			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
 				OrderItems orderItem = orderItemsMapper.mapperToObject(item);
 
+				// Trừ sản phẩm tồn kho
+				ProductItems updateTurnBuy = orderItem.getProductItems();
+				updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
+				updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
+				productItemsService.productItemsSave(updateTurnBuy);
+
+				// Cộng sản phẩm đã bán
+//				BaseProducts updateTurnBuyForBP = orderItem.getProductItems().getBaseProducts();
+//				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
+//				baseProductsService.baseProductsSave(updateTurnBuyForBP);
+
+//				updateTurnBuyForBP.setQty(updateTurnBuyForBP.getQty() - saved.getQty());
+				
 				Promotions promo = orderItem.getPromotions();
 				String comboGroupId = orderItem.getComboGroupId() != null ? orderItem.getComboGroupId().toString()
 						: null;

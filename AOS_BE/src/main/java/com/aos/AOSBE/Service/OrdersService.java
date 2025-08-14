@@ -273,14 +273,11 @@ public class OrdersService {
 		if (optionalOrder.isEmpty()) {
 			throw new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + id);
 		}
-
 		Orders order = optionalOrder.get();
 		String orderCode = order.getGhnOrderCode();
-
 		if (orderCode == null || orderCode.isEmpty()) {
 			throw new IllegalArgumentException("Đơn hàng chưa có mã vận đơn GHN.");
 		}
-
 		try {
 			String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
 

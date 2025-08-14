@@ -330,7 +330,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:images", "primary-changed", "delete-image"]);
+const emit = defineEmits(["update:images", "primary-changed", "delete-image", "uploaded"]);
 
 // Reactive Data
 const images = ref([]);
@@ -435,7 +435,7 @@ const handleDragLeave = (event) => {
     isDragOver.value = false;
   }
 };
-
+//1
 const addFiles = async (files) => {
   const validFiles = files.filter((file) => {
     // Kiểm tra loại file
@@ -528,6 +528,11 @@ const uploadSingleImage = async (index) => {
     images.value[index].uploading = false;
     alert(`Upload thất bại: ${image.name}. Vui lòng thử lại.`);
   }
+  const uploadedUrls = images.value
+    .filter((img) => img.cloudinaryUrl)
+    .map((img) => img.cloudinaryUrl);
+
+  emit("uploaded", uploadedUrls);
 };
 
 const uploadAllImages = async () => {
@@ -590,6 +595,11 @@ const uploadAllImages = async () => {
   } finally {
     isUploading.value = false;
   }
+  const uploadedUrls = images.value
+    .filter((img) => img.cloudinaryUrl)
+    .map((img) => img.cloudinaryUrl);
+
+  emit("uploaded", uploadedUrls);
 };
 
 const loadImagesFromProduct = async (productId) => {
@@ -746,7 +756,7 @@ const handleImageDrop = (event, targetIndex) => {
   // Emit primary changed if first image changed
   emit("primary-changed", images.value[0]);
 };
-
+//2
 // Preview
 const previewImage = (image) => {
   previewModal.value = {

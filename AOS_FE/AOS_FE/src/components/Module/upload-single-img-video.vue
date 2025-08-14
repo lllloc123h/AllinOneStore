@@ -220,7 +220,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:file", "upload-success", "upload-error"]);
+const emit = defineEmits(["update:file", "upload-success", "upload-error", "uploaded"]);
 
 // Computed
 const isVideo = computed(() => props.type === "video");
@@ -372,6 +372,10 @@ const uploadFile = async () => {
 
     updateParent();
     emit("upload-success", selectedFile.value);
+emit("uploaded", [{
+  url: selectedFile.value.cloudinaryUrl,
+  type: "video"
+}]);
   } catch (error) {
     console.error(`Upload failed:`, error);
     selectedFile.value.uploading = false;
