@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.aos.AOSBE.Repository.OrderItemsRepository;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,8 @@ public class PromotionsService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private OrderItemsRepository orderItemsRepository;
 
 	public Page<Promotions> promotionsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -40,6 +44,9 @@ public class PromotionsService {
 
 	@Transactional
 	public void promotionsDeleteById(int id) {
+		if(orderItemsRepository.findByPromotionId(id).size() > 0) {
+			throw new RuntimeException("Ưu đãi đã được áp dụng cho đơn hàng, không thể xóa.");
+		}
 		promotionsRepository.deleteById(id);
 	}
 

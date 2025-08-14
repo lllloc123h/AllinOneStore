@@ -1,14 +1,25 @@
 package com.aos.AOSBE.Service;
 
+import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.Entity.ProductItems;
+import com.aos.AOSBE.Repository.ProductImagesRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.aos.AOSBE.AIConfigs.AITools;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class OpenAIService {
@@ -21,6 +32,7 @@ public class OpenAIService {
 	@Autowired
 	private AITools aiTools;
 
+
 	public OpenAIService(@Qualifier("chatClientForCustomer") ChatClient chatClientForCustomer,
 			@Qualifier("chatClientForForecast") ChatClient chatClientForForecast,
 			@Qualifier("chatClientForCustomerForRequest") ChatClient chatClientForCustomerForRequest) {
@@ -32,7 +44,9 @@ public class OpenAIService {
 	public String userChatBot(String message, String conversationId) {
 		// dinh dang response dep hon
 		String resp = this.chatClientForCustomer.prompt().user(message)
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId)).call().content();
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "size == 'M'"))
+				.call().content();
 		return resp;
 	}
 
@@ -56,6 +70,7 @@ public class OpenAIService {
 				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId)).call().content();
 		return resp;
 	}
+
 
 //        sử dụng khi bấm nút muốn làm chức năng gì đó, chỉ gán vào 1 lần request này
 //        ToolCallback[] dateTimeTools = ToolCallbacks.from(new DateTimeTools());

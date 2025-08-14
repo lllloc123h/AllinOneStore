@@ -395,7 +395,6 @@ public class OrdersAPI {
 			if (user == null) {
 				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
 			}
-
 			List<OrdersDTOS> orders = ordersService.ordersFindByAccount(user.getId()).stream()
 					.map(ordersMapper::mapperForOrderDetail).collect(Collectors.toList());
 

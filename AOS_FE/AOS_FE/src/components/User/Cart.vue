@@ -94,19 +94,19 @@
                                 :class="{
                                   'status-expired':
                                     getPromotionStatusMessage(items[0].promotions) ===
-                                    'Hết hạn',
+                                    'Ưu đãi đã hết hạn',
                                   'status-out-of-stock':
                                     getPromotionStatusMessage(items[0].promotions) ===
-                                    'Hết hàng',
+                                    'Ưu đãi đã hết hàng',
                                   'status-inactive':
                                     getPromotionStatusMessage(items[0].promotions) ===
-                                    'Ngừng hoạt động',
+                                    'Ưu đãi đã ngừng hoạt động',
                                   'status-not-started':
                                     getPromotionStatusMessage(items[0].promotions) ===
-                                    'Chưa bắt đầu',
+                                    'Ưu đãi chưa bắt đầu',
                                   'status-deleted':
                                     getPromotionStatusMessage(items[0].promotions) ===
-                                    'Combo không còn tồn tại',
+                                    'Ưu đãi đã bị xóa hoặc đã thay đổi',
                                 }"
                               >
                                 {{ getPromotionStatusMessage(items[0].promotions) }}
@@ -1008,21 +1008,21 @@ function isPromotionValid(promotion) {
 
 // Hàm lấy thông báo trạng thái promotion
 function getPromotionStatusMessage(promotion) {
-  if (!promotion) return "Combo không còn tồn tại";
+  if (!promotion) return "Ưu đãi đã bị xóa hoặc đã thay đổi";
 
   // Kiểm tra active
-  if (!promotion.active) return "Ngừng hoạt động";
+  if (!promotion.active) return "Ưu đãi đã ngừng hoạt động";
 
   // Kiểm tra số lượng
-  if (promotion.qty <= 0) return "Hết hàng";
+  if (promotion.qty <= 0) return "Ưu đãi đã hết hàng";
 
   // Kiểm tra thời gian
   const now = new Date();
   const startAt = new Date(promotion.startAt);
   const endAt = new Date(promotion.endAt);
 
-  if (now < startAt) return "Chưa bắt đầu";
-  if (now > endAt) return "Hết hạn";
+  if (now < startAt) return "Ưu đãi chưa bắt đầu";
+  if (now > endAt) return "Ưu đãi đã hết hạn";
 
   return "Đang hoạt động";
 }

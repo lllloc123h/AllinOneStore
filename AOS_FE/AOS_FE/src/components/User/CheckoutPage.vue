@@ -350,7 +350,7 @@
                             ).toLocaleString()
                           }}₫ </span
                         ><br />
-                        <i class="bi bi-check-circle me-2"></i>Tổng :
+                        <i class="bi bi-check-circle me-2"></i>Thành tiền:
                         <strong class="text-success"
                           >{{
                             (group.comboPrice * group.comboQty).toLocaleString()

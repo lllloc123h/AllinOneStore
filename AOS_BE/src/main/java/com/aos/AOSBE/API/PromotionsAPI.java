@@ -136,10 +136,16 @@ public class PromotionsAPI {
 	}
 
 	@DeleteMapping("/admin/Promotions/{id}")
-	public ResponseEntity<Void> deletePromotions(@PathVariable int id) {
-		promotionsService.promotionsDeleteById(id);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<?> deletePromotions(@PathVariable int id) {
+	try {
+			promotionsService.promotionsDeleteById(id);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+		}
 	}
+
 
 	@GetMapping("/Users/PromotionProducts")
 	public ResponseEntity<?> getAllPromotionProductUsers(@RequestParam(defaultValue = "0") int page,

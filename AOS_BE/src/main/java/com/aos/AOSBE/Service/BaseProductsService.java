@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.aos.AOSBE.Repository.OrderItemsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,8 @@ public class BaseProductsService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private BaseProductsMapper baseProductsMapper;
+	@Autowired
+	private OrderItemsRepository orderItemsRepository;
 
 	public Page<BaseProducts> baseProductsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -42,6 +45,9 @@ return baseProductsRepository.findAll(spec, pageable);
 
 	@Transactional
 	public void baseProductsDeleteById(int id) {
+		if (!orderItemsRepository.findAllByBaseId(id).isEmpty()) {
+			throw new RuntimeException("Sản phẩm đã được mua, không thể xóa.");
+		}
 		baseProductsRepository.deleteById(id);
 	}
 
