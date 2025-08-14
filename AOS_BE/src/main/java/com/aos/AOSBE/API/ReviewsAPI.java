@@ -3,6 +3,7 @@ package com.aos.AOSBE.API;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,6 +219,38 @@ public class ReviewsAPI {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body(Map.of("message", "Lỗi kiểm tra đánh giá", "error", e.getMessage()));
+		}
+	}
+
+	@GetMapping("/user/reviews/detail")
+	public ResponseEntity<?> getReviewDetail(
+		@RequestParam Long productItemId,
+		@RequestParam Long orderId
+	) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
+
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.status(401).body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			Optional<Reviews> reviewOpt = reviewsService.findByAccountAndProductItemAndOrder(
+				(long) account.getId(), productItemId, orderId
+			);
+
+			if (reviewOpt.isEmpty()) {
+				return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy đánh giá"));
+			}
+
+			ReviewsDTOS dto = reviewsMapper.mapper(reviewOpt.get());
+			return ResponseEntity.ok(dto);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi khi lấy chi tiết đánh giá", "error", e.getMessage()));
 		}
 	}
 }

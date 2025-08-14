@@ -102,6 +102,13 @@
                   >
                     Đã đánh giá
                   </span>
+                  <button
+                    v-if="sp.daDanhGia"
+                    class="btn btn-link text-primary p-0 mt-1"
+                    @click="toggleViewReview(order.id, sp.productItemId)"
+                  >
+                    Xem đánh giá
+                  </button>
                   <!-- Form đánh giá -->
                   <transition name="tab-panel">
                     <div
@@ -146,7 +153,18 @@
                             :titleUpload="'đánh giá sản phẩm'"
                             @uploaded="handleImageUploaded"
                           />
-                          <div class="form-group">
+                          <!-- Nút thêm video -->
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary mt-2"
+                            @click="showVideoUpload = !showVideoUpload"
+                          >
+                            <i class="bi bi-camera-video me-1"></i>
+                            {{ showVideoUpload ? 'Ẩn video' : 'Thêm video' }}
+                          </button>
+
+                          <!-- Form upload video -->
+                          <div v-if="showVideoUpload" class="form-group mt-2">
                             <UploadVideos
                               type="video"
                               folderName="reviews"
@@ -159,6 +177,51 @@
                           Gửi đánh giá
                         </button>
                       </form>
+                    </div>
+                  </transition>
+                  <transition name="fade">
+                    <div
+                      v-if="activeViewReviewKey === `${order.id}_${sp.productItemId}` && sp.review"
+                      class="review-view-card mt-3"
+                    >
+                      <h6 class="mb-2">Đánh giá đã gửi</h6>
+
+                      <!-- Số sao -->
+                      <div class="rating-display mb-2">
+                        <i
+                          v-for="star in 5"
+                          :key="star"
+                          :class="[
+                            'bi',
+                            star <= sp.review.rating ? 'bi-star-fill' : 'bi-star',
+                            'text-warning',
+                          ]"
+                        ></i>
+                      </div>
+
+                      <!-- Nội dung -->
+                      <p class="review-text">{{ sp.review.text }}</p>
+
+                      <!-- Ảnh -->
+                      <div v-if="sp.review.images?.length" class="review-images mt-2">
+                        <img
+                          v-for="(img, index) in sp.review.images"
+                          :key="index"
+                          :src="img"
+                          class="review-img"
+                          alt="Ảnh đánh giá"
+                          style="max-width: 120px; margin-right: 8px; border-radius: 6px;"
+                        />
+                      </div>
+
+                      <!-- Video -->
+                      <div v-if="sp.review.video" class="review-video mt-2">
+                        <video
+                          controls
+                          :src="sp.review.video"
+                          style="width: 100%; max-width: 400px; border-radius: 8px;"
+                        ></video>
+                      </div>
                     </div>
                   </transition>
                 </div>
@@ -225,6 +288,25 @@ const loadOrders = async () => {
             },
           });
           sp.daDanhGia = reviewRes.data.hasReviewed;
+          if (sp.daDanhGia) {
+            const detailRes = await api.get("/user/reviews/detail", {
+              params: {
+                productItemId: sp.productItemId,
+                orderId: sp.orderId,
+              },
+            });
+
+            sp.review = {
+              rating: detailRes.data.rating,
+              text: detailRes.data.comment,
+              images: [
+                detailRes.data.imageUrl1,
+                detailRes.data.imageUrl2,
+                detailRes.data.imageUrl3,
+              ].filter(Boolean),
+              video: detailRes.data.videoUrl || null,
+            };
+          }
         } catch (err) {
           console.warn("Không thể kiểm tra đánh giá:", err);
         }
@@ -376,7 +458,13 @@ async function submitReview(sp, orderId) {
       description: "Cảm ơn bạn đã đánh giá sản phẩm!",
       duration: 2.5,
     });
-
+    showVideoUpload.value = false;
+    sp.review = {
+      rating: newReview.value.rating,
+      text: newReview.value.text,
+      images: reviewImageUrl.value,
+      video: newReview.value.videoUrl,
+    };
     sp.daDanhGia = true;
     activeReviewKey.value = null;
 
@@ -413,6 +501,16 @@ function handleVideoUploaded(files) {
   reviewVideoUrl.value = urls;
   newReview.value.videoUrl = urls.join(",");
 }
+
+const activeViewReviewKey = ref(null);
+function toggleViewReview(orderId, productItemId) {
+  const key = `${orderId}_${productItemId}`;
+  activeViewReviewKey.value =
+    activeViewReviewKey.value === key ? null : key;
+}
+
+const showVideoUpload = ref(false);
+
 </script>
 
 <style scoped>

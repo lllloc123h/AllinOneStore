@@ -79,7 +79,7 @@ public class GhnService {
 
             GhnCreateOrderRequestDTO.GhnItemDTO dtoItem = new GhnCreateOrderRequestDTO.GhnItemDTO();
             dtoItem.setName(baseProduct.getName());
-            dtoItem.setCode("SKU-" + productItem.getId());
+            dtoItem.setCode(productItem.getSku());
             dtoItem.setQuantity(item.getQty());
             dtoItem.setPrice((int) item.getSellingPrice()); // ép kiểu double -> int
             dtoItem.setLength(12);

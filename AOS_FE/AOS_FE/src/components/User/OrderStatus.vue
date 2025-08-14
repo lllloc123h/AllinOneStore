@@ -384,15 +384,14 @@ const statusMap = {
 
   // Đã hủy (gộp các trường hợp trả, lỗi, hủy, thất bại)
   cancel: "Đã hủy",
-  return: "Đã hủy",
-  returning: "Đã hủy",
-  returned: "Đã hủy",
-  return_sorting: "Đã hủy",
-  return_transporting: "Đã hủy",
-  lost: "Đã hủy",
-  damage: "Đã hủy",
-  delivery_fail: "Đã hủy",
-  exception: "Đã hủy",
+  return: "Đổi/Trả hàng",
+  returning: "Đổi/Trả hàng",
+  returned: "Đổi/Trả hàng",
+  return_sorting: "Đổi/Trả hàng",
+  return_transporting: "Đổi/Trả hàng",
+  lost: "Đổi/Trả hàng",
+  damage: "Đổi/Trả hàng",
+  delivery_fail: "Đổi/Trả hàng",
 };
 
 function getStatusText(status) {
@@ -485,7 +484,9 @@ const loadOrder = async () => {
     console.warn("Không thể lấy log từ GHN:", err);
   }
 }
-
+    if (statusMap[order.value.trangThai] === "Đã nhận hàng") {
+      order.value.thanhToan.trangThai = "Đã thanh toán";
+    }
     statusIndex.value = statusMap[order.value.trangThai] ?? 0;
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết đơn hàng", error);

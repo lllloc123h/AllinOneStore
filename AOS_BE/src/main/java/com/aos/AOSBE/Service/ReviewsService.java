@@ -67,4 +67,9 @@ public class ReviewsService {
 	public boolean hasReviewed(Long accountId, Long productItemId, Long orderId) {
 		return reviewsRepository.existsByAccountAndProductAndOrder(accountId, productItemId, orderId);
 	}
+
+	@Transactional
+	public Optional<Reviews> findByAccountAndProductItemAndOrder(Long accountId, Long productItemId, Long orderId) {
+		return reviewsRepository.findByAccountsIdAndProductItemsIdAndOrdersId(accountId, productItemId, orderId);
+	}
 }

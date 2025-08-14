@@ -2,6 +2,7 @@ package com.aos.AOSBE.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -33,4 +34,5 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Integer>, JpaS
     boolean existsByAccountAndProductAndOrder(@Param("accountId") Long accountId,
                                             @Param("productItemId") Long productItemId,
                                             @Param("orderId") Long orderId);
+    Optional<Reviews> findByAccountsIdAndProductItemsIdAndOrdersId(Long accountId, Long productItemId, Long orderId);
 }
