@@ -64,7 +64,7 @@ public class GhnService {
 
     private static final String GHN_CREATE_ORDER_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create";
 
-    public GhnCreateOrderRequestDTO buildGhnDTOFromOrder(Orders order) {
+    public GhnCreateOrderRequestDTO buildGhnDTOFromOrder(Orders order, String requiredNote) {
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", ghnToken);
@@ -103,7 +103,7 @@ public class GhnService {
 
         // 1. Thông tin thanh toán & ghi chú
         dto.setPayment_type_id(2); // người nhận trả
-        dto.setRequired_note("KHONGCHOXEMHANG");
+        dto.setRequired_note(requiredNote);
 
         // 2. Thông tin trả hàng
         dto.setReturn_phone("0332190158");
@@ -188,7 +188,7 @@ public class GhnService {
 
 
 @Transactional
-    public String createGhnOrderCodeFromOrder(Orders order) {
+    public String createGhnOrderCodeFromOrder(Orders order, String requiredNote) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -196,7 +196,7 @@ public class GhnService {
         headers.set("ShopId", ghnShopId);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        GhnCreateOrderRequestDTO dto = buildGhnDTOFromOrder(order);
+        GhnCreateOrderRequestDTO dto = buildGhnDTOFromOrder(order, requiredNote);
         HttpEntity<GhnCreateOrderRequestDTO> request = new HttpEntity<>(dto, headers);
     System.out.println("GHN Request: " + dto);
         ResponseEntity<Map> response = restTemplate.postForEntity(GHN_CREATE_ORDER_URL, request, Map.class);
@@ -209,4 +209,10 @@ public class GhnService {
         }
 
     }
+
+    @Transactional
+    public String createGhnOrderCodeFromOrder(Orders order) {
+        // Gọi phiên bản đầy đủ với giá trị mặc định
+        return createGhnOrderCodeFromOrder(order, "KHONGCHOXEMHANG");
+}
 }

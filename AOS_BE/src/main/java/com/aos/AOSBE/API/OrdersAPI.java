@@ -425,7 +425,7 @@ public class OrdersAPI {
 	}
 
 	@PostMapping("/admin/Orders/approve/{orderId}")
-	public ResponseEntity<?> approveAndSendToGhn(@PathVariable int orderId) {
+	public ResponseEntity<?> approveAndSendToGhn(@PathVariable int orderId, @RequestBody Map<String, String> payload) {
 		try {
 			Optional<Orders> optionalOrder = ordersService.ordersFindById(orderId);
 			if (optionalOrder.isEmpty()) {
@@ -442,15 +442,18 @@ public class OrdersAPI {
 				return ResponseEntity.badRequest().body(Map.of("message", "Đơn hàng đã được gửi GHN"));
 			}
 
-			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order);
+			// ✅ Lấy requiredNote từ payload
+			String requiredNote = payload.getOrDefault("requiredNote", "KHONGCHOXEMHANG");
+
+			// ✅ Truyền vào service
+			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order, requiredNote);
+
 			order.setGhnOrderCode(ghnOrderCode);
 			order.setShippingStatus("Chờ lấy hàng");
-			// order.setIsApproved(true); // nếu có field này
 
 			ordersService.ordersSave(order);
 
-			return ResponseEntity
-					.ok(Map.of("message", "Đã duyệt và gửi đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
+			return ResponseEntity.ok(Map.of("message", "Đã duyệt và gửi đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Lỗi khi gửi đơn GHN", "error",
