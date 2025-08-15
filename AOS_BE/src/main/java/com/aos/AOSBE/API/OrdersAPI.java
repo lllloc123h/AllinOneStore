@@ -51,6 +51,7 @@ import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
+import com.aos.AOSBE.Repository.OrdersRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
 import com.aos.AOSBE.Service.AccountsService;
 import com.aos.AOSBE.Service.BaseProductsService;
@@ -72,6 +73,8 @@ public class OrdersAPI {
 	private OrdersService ordersService;
 	@Autowired
 	private OrdersMapper ordersMapper;
+	@Autowired
+	private OrdersRepository ordersRepository;
 	@Autowired
 	private OrderItemsService orderItemsService;
 	@Autowired
@@ -451,7 +454,8 @@ public class OrdersAPI {
 			order.setGhnOrderCode(ghnOrderCode);
 			order.setShippingStatus("Chờ lấy hàng");
 
-			ordersService.ordersSave(order);
+//			ordersService.ordersSave(order);
+	        ordersRepository.save(order);
 
 			return ResponseEntity.ok(Map.of("message", "Đã duyệt và gửi đơn GHN thành công", "ghnOrderCode", ghnOrderCode));
 		} catch (Exception e) {
