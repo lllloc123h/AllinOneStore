@@ -117,12 +117,12 @@ public class OrdersService {
 	            if (!discountCoupon.isActive()) {
 	                throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
 	            }
-	            long usageCount = ordersRepository.countCouponUsage(
-	                    (long) orders.getAccounts().getId(), discountCoupon.getCode());
-	            if (discountCoupon.getUsagePerCustomer() != null &&
-	                usageCount >= discountCoupon.getUsagePerCustomer()) {
-	                throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
-	            }
+//	            long usageCount = ordersRepository.countCouponUsage(
+//	                    (long) orders.getAccounts().getId(), discountCoupon.getCode());
+//	            if (discountCoupon.getUsagePerCustomer() != null &&
+//	                usageCount >= discountCoupon.getUsagePerCustomer()) {
+//	                throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
+//	            }
 	            if (discountCoupon.getQty() <= 0) {
 	                throw new IllegalArgumentException("Mã giảm giá đã hết lượt sử dụng.");
 	            }
