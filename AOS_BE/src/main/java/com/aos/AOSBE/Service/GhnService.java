@@ -103,7 +103,6 @@ public class GhnService {
 
         // 1. Thông tin thanh toán & ghi chú
         dto.setPayment_type_id(2); // người nhận trả
-        dto.setNote(order.getNote() != null ? order.getNote() : "Giao hàng nhanh");
         dto.setRequired_note("KHONGCHOXEMHANG");
 
         // 2. Thông tin trả hàng
@@ -137,14 +136,16 @@ public class GhnService {
 
         if (orderInfor != null && !orderInfor.isBlank()) {
             String[] parts = orderInfor.split(" - ");
-            if (parts.length == 3) {
+            if (parts.length == 4) {
                 String toName = parts[0].trim();
                 String toPhone = parts[1].trim();
                 String toAddressFull = parts[2].trim();
+                String note = parts[3].trim();
 
                 dto.setTo_name(toName);
                 dto.setTo_phone(toPhone);
                 dto.setTo_address(toAddressFull);
+                dto.setNote(note);
 
                 // Tách tỉnh/thành, quận, phường từ địa chỉ
                 String[] addressParts = toAddressFull.split(",");
