@@ -25,14 +25,8 @@
                 Email
               </label>
               <div class="input-wrapper">
-                <input
-                  type="email"
-                  id="emailInput"
-                  class="form-input"
-                  v-model="userRegister.email"
-                  placeholder="Nhập email của bạn"
-                  required
-                />
+                <input type="email" id="emailInput" class="form-input" v-model="userRegister.email"
+                  placeholder="Nhập email của bạn" required />
               </div>
             </div>
 
@@ -42,14 +36,8 @@
                 Họ và tên
               </label>
               <div class="input-wrapper">
-                <input
-                  type="text"
-                  id="fullnameInput"
-                  class="form-input"
-                  v-model="userRegister.fullname"
-                  placeholder="Nhập họ và tên"
-                  required
-                />
+                <input type="text" id="fullnameInput" class="form-input" v-model="userRegister.fullname"
+                  placeholder="Nhập họ và tên" required />
               </div>
             </div>
 
@@ -59,14 +47,8 @@
                 Số điện thoại
               </label>
               <div class="input-wrapper">
-                <input
-                  type="tel"
-                  id="phoneInput"
-                  class="form-input"
-                  v-model="userRegister.phone"
-                  placeholder="Nhập số điện thoại"
-                  required
-                />
+                <input type="tel" id="phoneInput" class="form-input" v-model="userRegister.phone"
+                  placeholder="Nhập số điện thoại" required />
               </div>
             </div>
 
@@ -76,17 +58,8 @@
                 Giới tính
               </label>
               <div class="radio-group">
-                <label
-                  v-for="option in genderOptions"
-                  :key="option.value"
-                  class="radio-option"
-                >
-                  <input
-                    type="radio"
-                    :value="option.value"
-                    v-model="userRegister.gender"
-                    name="gender"
-                  />
+                <label v-for="option in genderOptions" :key="option.value" class="radio-option">
+                  <input type="radio" :value="option.value" v-model="userRegister.gender" name="gender" />
                   <span class="radio-custom">
                     {{ option.label }}
                   </span>
@@ -100,19 +73,9 @@
                 Mật khẩu
               </label>
               <div class="input-wrapper password-wrapper">
-                <input
-                  :type="showPassword ? 'text' : 'password'"
-                  id="passwordInput"
-                  v-model="userRegister.password"
-                  class="form-input"
-                  placeholder="Nhập mật khẩu"
-                  required
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  @click="showPassword = !showPassword"
-                >
+                <input :type="showPassword ? 'text' : 'password'" id="passwordInput" v-model="userRegister.password"
+                  class="form-input" placeholder="Nhập mật khẩu" required />
+                <button type="button" class="password-toggle" @click="showPassword = !showPassword">
                   <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                 </button>
               </div>
@@ -124,19 +87,9 @@
                 Nhập lại mật khẩu
               </label>
               <div class="input-wrapper password-wrapper">
-                <input
-                  :type="showConfirmPassword ? 'text' : 'password'"
-                  id="confirmPasswordInput"
-                  v-model="userRegister.confirmPassword"
-                  class="form-input"
-                  placeholder="Nhập lại mật khẩu"
-                  required
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  @click="showConfirmPassword = !showConfirmPassword"
-                >
+                <input :type="showConfirmPassword ? 'text' : 'password'" id="confirmPasswordInput"
+                  v-model="userRegister.confirmPassword" class="form-input" placeholder="Nhập lại mật khẩu" required />
+                <button type="button" class="password-toggle" @click="showConfirmPassword = !showConfirmPassword">
                   <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                 </button>
               </div>
@@ -188,12 +141,7 @@
     </div>
   </div>
 
-  <OTPView
-    :show="showOption"
-    @verified="verified"
-    @resend="sendOTP"
-    @close="closeModal"
-  ></OTPView>
+  <OTPView :show="showOption" @verified="verified" @resend="sendOTP" @close="closeModal"></OTPView>
 </template>
 <script setup>
 import { ref } from "vue";
@@ -312,6 +260,7 @@ const verified = () => {
     opacity: 0;
     transform: translateY(40px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -479,7 +428,7 @@ const verified = () => {
   font-size: 0.95rem;
 }
 
-.radio-option input[type="radio"]:checked + .radio-custom {
+.radio-option input[type="radio"]:checked+.radio-custom {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border-color: #10b981;
@@ -531,6 +480,7 @@ const verified = () => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -561,10 +511,12 @@ const verified = () => {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }

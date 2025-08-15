@@ -34,7 +34,7 @@ const isVisible = ref(Array(12).fill(false));
 function toggleList(index) {
   isVisible.value[index] = !isVisible.value[index];
 }
-localStorage.setItem('active',JSON.stringify(isVisible));
+localStorage.setItem('active', JSON.stringify(isVisible));
 const actived = localStorage.getItem('active');
 console.log(actived)
 function goToView(tableName) {
@@ -84,6 +84,10 @@ const menuItems = [
       {
         name: "Quản lý Hình ảnh sản phẩm",
         path: "/Admin/ProductImages",
+      },
+      {
+        name: "Quản lý các loại biến thể ",
+        path: "/Admin/VariantValues",
       },
     ],
   },
@@ -155,7 +159,7 @@ const menuItems = [
       }
     ],
   },
-    {
+  {
     title: "Thống kê",
     children: [
       {

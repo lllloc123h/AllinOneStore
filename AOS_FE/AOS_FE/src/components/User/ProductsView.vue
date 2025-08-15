@@ -29,12 +29,7 @@
             <div class="search-section">
               <div class="modern-searchBox">
                 <i class="bi bi-search search-icon"></i>
-                <input
-                  class="modern-searchInput"
-                  type="text"
-                  v-model="keyWord"
-                  placeholder="Tìm kiếm sản phẩm..."
-                />
+                <input class="modern-searchInput" type="text" v-model="keyWord" placeholder="Tìm kiếm sản phẩm..." />
                 <button class="search-clear" v-if="keyWord" @click="keyWord = ''">
                   <i class="bi bi-x"></i>
                 </button>
@@ -42,41 +37,20 @@
             </div>
 
             <div class="filter-section">
-              <div
-                v-for="(items, groupName, index) in dropDowncatalogCategory"
-                :key="groupName"
-                class="filter-group"
-              >
+              <div v-for="(items, groupName, index) in dropDowncatalogCategory" :key="groupName" class="filter-group">
                 <div class="modern-filter-card">
-                  <div
-                    class="filter-card-header"
-                    @click="toggleAccordion('category-' + index)"
-                  >
+                  <div class="filter-card-header" @click="toggleAccordion('category-' + index)">
                     <h4 class="filter-title">
                       <i class="bi bi-tags me-2"></i>
                       <span class="line"></span> {{ groupName }}
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('category-' + index) }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('category-' + index) }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('category-' + index) }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('category-' + index) }">
                     <div class="filter-options">
-                      <label
-                        v-for="item in items"
-                        :key="item.id"
-                        class="modern-filter-option"
-                      >
-                        <input
-                          type="checkbox"
-                          :name="groupName"
-                          :value="item.name"
-                          v-model="selectedCatalogCategory[groupName]"
-                        />
+                      <label v-for="item in items" :key="item.id" class="modern-filter-option">
+                        <input type="checkbox" :name="groupName" :value="item.name"
+                          v-model="selectedCatalogCategory[groupName]" />
                         <span class="checkmark"></span>
                         <span class="option-text">{{ item.name }}</span>
                       </label>
@@ -84,42 +58,21 @@
                   </div>
                 </div>
               </div>
-              <div
-                v-for="(items, groupName, index) in mapVarriants"
-                :key="groupName"
-                class="filter-group"
-              >
+              <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="filter-group">
                 <div class="modern-filter-card">
-                  <div
-                    class="filter-card-header"
-                    @click="toggleAccordion('variant-' + index)"
-                  >
+                  <div class="filter-card-header" @click="toggleAccordion('variant-' + index)">
                     <h4 class="filter-title">
                       <i class="bi bi-palette me-2" v-if="groupName.includes('Màu')"></i>
                       <i class="bi bi-rulers me-2" v-else></i>
                       <span class="line"></span> {{ groupName }}
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('variant-' + index) }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('variant-' + index) }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('variant-' + index) }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('variant-' + index) }">
                     <div class="filter-options">
-                      <label
-                        v-for="item in items"
-                        :key="item.id"
-                        class="modern-filter-option"
-                      >
-                        <input
-                          type="checkbox"
-                          :name="groupName"
-                          :value="item.signalSku"
-                          v-model="selected[groupName]"
-                        />
+                      <label v-for="item in items" :key="item.id" class="modern-filter-option">
+                        <input type="checkbox" :name="groupName" :value="item.signalSku"
+                          v-model="selected[groupName]" />
                         <span class="checkmark"></span>
                         <span class="option-text">{{ item.description }}</span>
                       </label>
@@ -135,53 +88,27 @@
                       <i class="bi bi-currency-dollar me-2"></i>
                       <span class="line"></span> Khoảng giá
                     </h4>
-                    <i
-                      class="bi bi-chevron-down toggle-icon"
-                      :class="{ rotated: isExpanded('price') }"
-                    ></i>
+                    <i class="bi bi-chevron-down toggle-icon" :class="{ rotated: isExpanded('price') }"></i>
                   </div>
-                  <div
-                    class="filter-card-content"
-                    :class="{ expanded: isExpanded('price') }"
-                  >
+                  <div class="filter-card-content" :class="{ expanded: isExpanded('price') }">
                     <div class="price-options">
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value="100-200"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value="100-200" />
                         <span class="radio-mark"></span>
                         <span class="price-range">100k - 200k</span>
                       </label>
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value="200-500"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value="200-500" />
                         <span class="radio-mark"></span>
                         <span class="price-range">200k - 500k</span>
                       </label>
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value="500-700"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value="500-700" />
                         <span class="radio-mark"></span>
                         <span class="price-range">500k - 700k</span>
                       </label>
                       <label class="modern-price-option">
-                        <input
-                          type="radio"
-                          name="price"
-                          v-model="selectedPrice"
-                          value=">700"
-                        />
+                        <input type="radio" name="price" v-model="selectedPrice" value=">700" />
                         <span class="radio-mark"></span>
                         <span class="price-range">&gt; 700k</span>
                       </label>
@@ -204,12 +131,7 @@
                 </h2>
                 <div class="modern-searchBox-mobile d-lg-none">
                   <i class="bi bi-search search-icon"></i>
-                  <input
-                    class="modern-searchInput"
-                    type="text"
-                    v-model="keyWord"
-                    placeholder="Tìm kiếm sản phẩm..."
-                  />
+                  <input class="modern-searchInput" type="text" v-model="keyWord" placeholder="Tìm kiếm sản phẩm..." />
                   <button class="search-clear" v-if="keyWord" @click="keyWord = ''">
                     <i class="bi bi-x"></i>
                   </button>
@@ -219,11 +141,7 @@
 
             <!-- Products Grid -->
             <div class="product-flatform row mt-4 g-4">
-              <div
-                v-for="product in products"
-                :key="product.id"
-                class="col-lg-4 col-md-6 col-sm-12"
-              >
+              <div v-for="product in products" :key="product.id" class="col-lg-4 col-md-6 col-sm-12">
                 <div class="product-card-wrapper">
                   <ProductCard :product="product" @view-detail="openModal" />
                 </div>
@@ -242,11 +160,7 @@
 
               <!-- Pagination -->
               <div class="col-12 pagination-wrapper">
-                <PageNavigative
-                  :totalPage="data"
-                  v-model:currentPage="pageIndex"
-                  v-model:currentSize="pageSize"
-                />
+                <PageNavigative :totalPage="data" v-model:currentPage="pageIndex" v-model:currentSize="pageSize" />
               </div>
             </div>
           </div>
@@ -282,18 +196,10 @@
                   <img :src="currentImage" class="main-image" alt="Product Image" />
 
                   <!-- Navigation Arrows -->
-                  <button
-                    class="gallery-nav gallery-nav-prev"
-                    @click="prevImage"
-                    v-if="images.length > 1"
-                  >
+                  <button class="gallery-nav gallery-nav-prev" @click="prevImage" v-if="images.length > 1">
                     <i class="bi bi-chevron-left"></i>
                   </button>
-                  <button
-                    class="gallery-nav gallery-nav-next"
-                    @click="nextImage"
-                    v-if="images.length > 1"
-                  >
+                  <button class="gallery-nav gallery-nav-next" @click="nextImage" v-if="images.length > 1">
                     <i class="bi bi-chevron-right"></i>
                   </button>
 
@@ -305,12 +211,8 @@
 
                 <!-- Thumbnail Gallery -->
                 <div class="thumbnail-gallery" v-if="images.length > 1">
-                  <div
-                    v-for="(img, idx) in images"
-                    :key="idx"
-                    :class="['thumbnail-item', { active: currentImageIndex === idx }]"
-                    @click="selectImage(idx)"
-                  >
+                  <div v-for="(img, idx) in images" :key="idx"
+                    :class="['thumbnail-item', { active: currentImageIndex === idx }]" @click="selectImage(idx)">
                     <img :src="img.imageUrl" :alt="`Ảnh ${idx + 1}`" />
                     <div class="thumbnail-overlay"></div>
                   </div>
@@ -329,23 +231,17 @@
                 <!-- Rating -->
                 <div class="rating-section">
                   <div class="stars">
-                    <i
-                      v-for="i in 5"
-                      :key="i"
-                      :class="[
-                        'bi',
-                        i <= (selectedProductItem?.baseProducts?.rating || 0)
-                          ? 'bi-star-fill'
-                          : 'bi-star',
-                      ]"
-                    ></i>
+                    <i v-for="i in 5" :key="i" :class="[
+                      'bi',
+                      i <= (selectedProductItem?.baseProducts?.rating || 0)
+                        ? 'bi-star-fill'
+                        : 'bi-star',
+                    ]"></i>
                   </div>
                   <span class="rating-text">{{
                     (selectedProductItem?.baseProducts?.rating || 0).toFixed(1)
                   }}</span>
-                  <span class="rating-count"
-                    >({{ Math.floor(Math.random() * 100) + 10 }} đánh giá)</span
-                  >
+                  <span class="rating-count">({{ Math.floor(Math.random() * 100) + 10 }} đánh giá)</span>
                 </div>
 
                 <!-- Price Section -->
@@ -373,43 +269,24 @@
               </div>
 
               <!-- Variant Selection -->
-              <div
-                class="variant-section"
-                v-if="Object.keys(mapVarriantsOfListBaseProduct).length > 0"
-              >
-                <div
-                  v-for="(items, groupName, index) in mapVarriantsOfListBaseProduct"
-                  :key="groupName"
-                  class="variant-group"
-                >
+              <div class="variant-section" v-if="Object.keys(mapVarriantsOfListBaseProduct).length > 0">
+                <div v-for="(items, groupName, index) in mapVarriantsOfListBaseProduct" :key="groupName"
+                  class="variant-group">
                   <h5 class="variant-label">
-                    <i
-                      class="bi bi-palette-fill me-2"
-                      v-if="groupName.includes('Màu')"
-                    ></i>
+                    <i class="bi bi-palette-fill me-2" v-if="groupName.includes('Màu')"></i>
                     <i class="bi bi-rulers me-2" v-else></i>
                     {{ groupName }}
                   </h5>
                   <div class="variant-options">
-                    <label
-                      v-for="item in items"
-                      :key="item.id"
-                      :class="[
-                        'variant-button',
-                        {
-                          active: selectedVariant[groupName] === item.signalSku,
-                          disabled: item.isActive === false,
-                        },
-                      ]"
-                    >
-                      <input
-                        type="radio"
-                        :name="groupName"
-                        :value="item.signalSku"
-                        :disabled="item.isActive === false"
-                        v-model="selectedVariant[groupName]"
-                        class="d-none"
-                      />
+                    <label v-for="item in items" :key="item.id" :class="[
+                      'variant-button',
+                      {
+                        active: selectedVariant[groupName] === item.signalSku,
+                        disabled: item.isActive === false,
+                      },
+                    ]">
+                      <input type="radio" :name="groupName" :value="item.signalSku" :disabled="item.isActive === false"
+                        v-model="selectedVariant[groupName]" class="d-none" />
                       <span class="variant-content">{{ item.description }}</span>
                     </label>
                   </div>
@@ -451,15 +328,13 @@
                     </div>
                     <div class="detail-content">
                       <span class="detail-label">Tình trạng</span>
-                      <span
-                        :class="[
-                          'detail-value',
-                          'stock-status',
-                          (selectedProductItem?.qty || 0) > 0
-                            ? 'in-stock'
-                            : 'out-of-stock',
-                        ]"
-                      >
+                      <span :class="[
+                        'detail-value',
+                        'stock-status',
+                        (selectedProductItem?.qty || 0) > 0
+                          ? 'in-stock'
+                          : 'out-of-stock',
+                      ]">
                         {{
                           (selectedProductItem?.qty || 0) > 0
                             ? `Còn ${selectedProductItem?.qty} sản phẩm`
@@ -479,38 +354,22 @@
                     Số lượng
                   </label>
                   <div class="quantity-controls">
-                    <button
-                      @click="decreaseQty"
-                      class="qty-btn qty-minus"
-                      :disabled="quantityForAddToCartPorductItem <= 1"
-                    >
+                    <button @click="decreaseQty" class="qty-btn qty-minus"
+                      :disabled="quantityForAddToCartPorductItem <= 1">
                       <i class="bi bi-dash-lg"></i>
                     </button>
-                    <input
-                      type="number"
-                      v-model="quantityForAddToCartPorductItem"
-                      class="qty-input"
-                      min="1"
-                      :max="selectedProductItem?.qty || 1"
-                    />
-                    <button
-                      @click="increaseQty"
-                      class="qty-btn qty-plus"
-                      :disabled="
-                        quantityForAddToCartPorductItem >= (selectedProductItem?.qty || 1)
-                      "
-                    >
+                    <input type="number" v-model="quantityForAddToCartPorductItem" class="qty-input" min="1"
+                      :max="selectedProductItem?.qty || 1" />
+                    <button @click="increaseQty" class="qty-btn qty-plus" :disabled="quantityForAddToCartPorductItem >= (selectedProductItem?.qty || 1)
+                      ">
                       <i class="bi bi-plus-lg"></i>
                     </button>
                   </div>
                 </div>
 
                 <div class="action-buttons">
-                  <button
-                    @click="addToCart"
-                    class="btn-action btn-add-cart"
-                    :disabled="(selectedProductItem?.qty || 0) <= 0"
-                  >
+                  <button @click="addToCart" class="btn-action btn-add-cart"
+                    :disabled="(selectedProductItem?.qty || 0) <= 0">
                     <i class="bi bi-bag-plus-fill me-2"></i>
                     <span>Thêm vào giỏ hàng</span>
                   </button>
@@ -612,7 +471,7 @@ const discountedPrice = computed(() => {
   if (selectedProductItem.value?.promotions[0]?.discountValue) {
     return Math.round(
       currentPrice.value *
-        (1 - selectedProductItem.value.promotions[0].discountValue / 100)
+      (1 - selectedProductItem.value.promotions[0].discountValue / 100)
     );
   }
   return currentPrice.value;
@@ -1568,13 +1427,13 @@ watch(images, (newImages) => {
   background: white;
 }
 
-.modern-filter-option input[type="checkbox"]:checked + .checkmark {
+.modern-filter-option input[type="checkbox"]:checked+.checkmark {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: #667eea;
   transform: scale(1.1);
 }
 
-.modern-filter-option input[type="checkbox"]:checked + .checkmark::after {
+.modern-filter-option input[type="checkbox"]:checked+.checkmark::after {
   content: "✓";
   color: white;
   font-size: 0.9rem;
@@ -1628,12 +1487,12 @@ watch(images, (newImages) => {
   background: white;
 }
 
-.modern-price-option input[type="radio"]:checked + .radio-mark {
+.modern-price-option input[type="radio"]:checked+.radio-mark {
   border-color: #667eea;
   transform: scale(1.1);
 }
 
-.modern-price-option input[type="radio"]:checked + .radio-mark::after {
+.modern-price-option input[type="radio"]:checked+.radio-mark::after {
   content: "";
   width: 12px;
   height: 12px;
@@ -1759,6 +1618,7 @@ watch(images, (newImages) => {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1782,6 +1642,7 @@ watch(images, (newImages) => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1910,6 +1771,7 @@ watch(images, (newImages) => {
 .gallery-nav-prev {
   left: 20px;
 }
+
 .gallery-nav-next {
   right: 20px;
 }

@@ -54,16 +54,27 @@
               <!-- Product Title & Rating -->
               <div class="product-header">
                 <h1 class="product-title">{{ selectedProduct.baseProducts.name }}</h1>
-
-                <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="variant-group">
-                  <h5 class="mb-2">Select {{ groupName }}</h5>
-                  <div class="variant-options">
-                    <label v-for="item in items" :key="item.id" class="variant-button"
-                      :class="{ active: selected[groupName] === item.signalSku }">
-                      <input type="radio" :name="groupName" :value="item.signalSku" :disabled="item.isActive === false"
-                        v-model="selected[groupName]" class="d-none" />
-                      {{ item.description }}
-                    </label>
+                <!-- Variant Selection -->
+                <div class="variant-section" v-if="Object.keys(mapVarriants).length > 0">
+                  <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="variant-group">
+                    <h5 class="variant-label">
+                      <i class="bi bi-palette-fill me-2" v-if="groupName.includes('Màu')"></i>
+                      <i class="bi bi-rulers me-2" v-else></i>
+                      {{ groupName }}
+                    </h5>
+                    <div class="variant-options">
+                      <label v-for="item in items" :key="item.id" :class="[
+                        'variant-button',
+                        {
+                          active: selected[groupName] === item.signalSku,
+                          disabled: item.isActive === false,
+                        },
+                      ]">
+                        <input type="radio" :name="groupName" :value="item.signalSku"
+                          :disabled="item.isActive === false" v-model="selected[groupName]" class="d-none" />
+                        <span class="variant-content">{{ item.description }}</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
@@ -344,13 +355,9 @@
                           class="review-image" />
                       </div>
                       <div class="review-video" v-if="review.videoUrl">
-                          <video
-                            :src="review.videoUrl"
-                            controls
-                            class="review-video-player"
-                            style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px;"
-                          ></video>
-                        </div>
+                        <video :src="review.videoUrl" controls class="review-video-player"
+                          style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px;"></video>
+                      </div>
                     </div>
                   </div>
 
@@ -841,36 +848,65 @@ const fileInputRef = ref(null);
   font-weight: 500;
 }
 
+.variant-section {
+  margin-bottom: 2rem;
+}
+
 .variant-group {
   margin-bottom: 1.5rem;
 }
 
+.variant-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
 .variant-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .variant-button {
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: black;
-  padding: 10px 0;
-  border: 1px solid #ccc;
-  text-align: center;
-  border-radius: 8px;
-  background-color: #f8f9fa;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease;
   user-select: none;
   font-weight: 500;
+  min-width: 70px;
+  color: black
+}
+
+.variant-button:hover:not(.disabled) {
+  border-color: #667eea;
+  background: #f0f2ff;
 }
 
 .variant-button.active {
-  background-color: black;
+  background: #667eea;
   color: white;
-  border-color: black;
+  border-color: #667eea;
+}
+
+.variant-button.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+.variant-content {
+  position: relative;
 }
 
 /* ==================== PRODUCT GALLERY ==================== */
