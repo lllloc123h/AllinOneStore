@@ -11,12 +11,8 @@
   <div class="main-container my-5">
     <!-- Order Tabs -->
     <div class="order-tabs mb-4" v-if="orders.length > 0">
-      <button
-        v-for="tab in tabs"
-        :key="tab"
-        :class="['tab-button', { active: selectedTab === tab }]"
-        @click="selectedTab = tab"
-      >
+      <button v-for="tab in tabs" :key="tab" :class="['tab-button', { active: selectedTab === tab }]"
+        @click="selectedTab = tab">
         {{ tab }}
       </button>
     </div>
@@ -57,6 +53,11 @@
               <span class="total-label">Tổng tiền</span>
               <span class="total-amount">{{ formatMoney(order.tongTien) }}</span>
             </div>
+            <div class="order-actions">
+              <button v-if="order.paymentStatus === 'Chưa thanh toán'" class="btn-pay" @click="pay(order)">
+                <i class="bi bi-credit-card me-2"></i>Thanh toán
+              </button>
+            </div>
           </div>
 
           <!-- Products Section -->
@@ -79,97 +80,60 @@
                     Thành tiền: <strong>{{ formatMoney(sp.gia * sp.soLuong) }}</strong>
                   </div>
                   <!-- Nút đánh giá -->
-                  <button
-                    v-if="
-                      !sp.daDanhGia &&
-                      order.trangThai === 'Đã nhận hàng' &&
-                      selectedTab === 'Đã nhận hàng'
-                    "
-                    class="btn btn-outline-primary mt-2"
-                    @click="toggleReviewForm(order.id, sp.productItemId, sp)"
-                  >
+                  <button v-if="
+                    !sp.daDanhGia &&
+                    order.trangThai === 'Đã nhận hàng' &&
+                    selectedTab === 'Đã nhận hàng'
+                  " class="btn btn-outline-primary mt-2" @click="toggleReviewForm(order.id, sp.productItemId, sp)">
                     Đánh giá
                   </button>
 
                   <!-- Dòng đã đánh giá -->
-                  <span
-                    v-else-if="
-                      sp.daDanhGia &&
-                      order.trangThai === 'Đã nhận hàng' &&
-                      selectedTab === 'Đã nhận hàng'
-                    "
-                    class="text-success mt-2 d-block"
-                  >
+                  <span v-else-if="
+                    sp.daDanhGia &&
+                    order.trangThai === 'Đã nhận hàng' &&
+                    selectedTab === 'Đã nhận hàng'
+                  " class="text-success mt-2 d-block">
                     Đã đánh giá
                   </span>
-                  <button
-                    v-if="sp.daDanhGia"
-                    class="btn btn-link text-primary p-0 mt-1"
-                    @click="toggleViewReview(order.id, sp.productItemId)"
-                  >
+                  <button v-if="sp.daDanhGia" class="btn btn-link text-primary p-0 mt-1"
+                    @click="toggleViewReview(order.id, sp.productItemId)">
                     Xem đánh giá
                   </button>
                   <!-- Form đánh giá -->
                   <transition name="tab-panel">
-                    <div
-                      v-if="activeReviewKey === `${order.id}_${sp.productItemId}`"
-                      class="review-form-card"
-                    >
+                    <div v-if="activeReviewKey === `${order.id}_${sp.productItemId}`" class="review-form-card">
                       <h5 class="form-title">Viết đánh giá của bạn</h5>
-                      <form
-                        @submit.prevent="submitReview(sp, order.id)"
-                        class="review-form"
-                      >
+                      <form @submit.prevent="submitReview(sp, order.id)" class="review-form">
                         <div class="rating-input">
                           <label class="form-label">Đánh giá của bạn:</label>
                           <div class="star-rating">
-                            <i
-                              v-for="star in 5"
-                              :key="star"
-                              @click="newReview.rating = star"
-                              :class="[
-                                'bi',
-                                star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
-                                'star-button',
-                              ]"
-                            ></i>
+                            <i v-for="star in 5" :key="star" @click="newReview.rating = star" :class="[
+                              'bi',
+                              star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
+                              'star-button',
+                            ]"></i>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="form-label">Nội dung đánh giá:</label>
-                          <textarea
-                            class="form-textarea"
-                            rows="4"
-                            v-model="newReview.text"
-                            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
-                            required
-                          ></textarea>
+                          <textarea class="form-textarea" rows="4" v-model="newReview.text"
+                            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." required></textarea>
                         </div>
                         <div class="form-group">
-                          <UploadImages
-                            :maxFiles="5"
-                            :aspectRatio="'4:5'"
-                            :titleUpload="'đánh giá sản phẩm'"
-                            @uploaded="handleImageUploaded"
-                          />
+                          <UploadImages :maxFiles="5" :aspectRatio="'4:5'" :titleUpload="'đánh giá sản phẩm'"
+                            @uploaded="handleImageUploaded" />
                           <!-- Nút thêm video -->
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary mt-2"
-                            @click="showVideoUpload = !showVideoUpload"
-                          >
+                          <button type="button" class="btn btn-outline-secondary mt-2"
+                            @click="showVideoUpload = !showVideoUpload">
                             <i class="bi bi-camera-video me-1"></i>
                             {{ showVideoUpload ? 'Ẩn video' : 'Thêm video' }}
                           </button>
 
                           <!-- Form upload video -->
                           <div v-if="showVideoUpload" class="form-group mt-2">
-                            <UploadVideos
-                              type="video"
-                              folderName="reviews"
-                              @uploaded="handleVideoUploaded"
-                            />
+                            <UploadVideos type="video" folderName="reviews" @uploaded="handleVideoUploaded" />
                           </div>
                         </div>
                         <button type="submit" class="submit-review-btn">
@@ -180,23 +144,17 @@
                     </div>
                   </transition>
                   <transition name="fade">
-                    <div
-                      v-if="activeViewReviewKey === `${order.id}_${sp.productItemId}` && sp.review"
-                      class="review-view-card mt-3"
-                    >
+                    <div v-if="activeViewReviewKey === `${order.id}_${sp.productItemId}` && sp.review"
+                      class="review-view-card mt-3">
                       <h6 class="mb-2">Đánh giá đã gửi</h6>
 
                       <!-- Số sao -->
                       <div class="rating-display mb-2">
-                        <i
-                          v-for="star in 5"
-                          :key="star"
-                          :class="[
-                            'bi',
-                            star <= sp.review.rating ? 'bi-star-fill' : 'bi-star',
-                            'text-warning',
-                          ]"
-                        ></i>
+                        <i v-for="star in 5" :key="star" :class="[
+                          'bi',
+                          star <= sp.review.rating ? 'bi-star-fill' : 'bi-star',
+                          'text-warning',
+                        ]"></i>
                       </div>
 
                       <!-- Nội dung -->
@@ -204,23 +162,14 @@
 
                       <!-- Ảnh -->
                       <div v-if="sp.review.images?.length" class="review-images mt-2">
-                        <img
-                          v-for="(img, index) in sp.review.images"
-                          :key="index"
-                          :src="img"
-                          class="review-img"
-                          alt="Ảnh đánh giá"
-                          style="max-width: 120px; margin-right: 8px; border-radius: 6px;"
-                        />
+                        <img v-for="(img, index) in sp.review.images" :key="index" :src="img" class="review-img"
+                          alt="Ảnh đánh giá" style="max-width: 120px; margin-right: 8px; border-radius: 6px;" />
                       </div>
 
                       <!-- Video -->
                       <div v-if="sp.review.video" class="review-video mt-2">
-                        <video
-                          controls
-                          :src="sp.review.video"
-                          style="width: 100%; max-width: 400px; border-radius: 8px;"
-                        ></video>
+                        <video controls :src="sp.review.video"
+                          style="width: 100%; max-width: 400px; border-radius: 8px;"></video>
                       </div>
                     </div>
                   </transition>
@@ -228,7 +177,25 @@
               </div>
             </div>
           </div>
-
+          <div v-if="payURL && showPopUp" class="modal-overlay" @click.self="closePopup">
+            <div class="payment-modal">
+              <div class="modal-header">
+                <h3><i class="bi bi-credit-card me-2"></i>Thanh toán MoMo</h3>
+                <button class="close-btn" @click="closePopup">×</button>
+              </div>
+              <div class="modal-body">
+                <p>Nhấn vào nút bên dưới để mở trang thanh toán MoMo.</p>
+                <div class="payment-actions">
+                  <a :href="payURL" target="_blank" class="btn-payment">
+                    <i class="bi bi-credit-card me-2"></i>Mở trang thanh toán
+                  </a>
+                  <button class="btn-cancel" @click="closePopup">
+                    <i class="bi bi-x-circle me-2"></i>Đóng
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- Order Actions -->
           <div class="order-actions">
             <button class="btn-detail" @click="goToOrder(order.id)">
@@ -255,7 +222,8 @@ import UploadVideos from "../Module/upload-single-img-video.vue";
 
 const orders = ref([]);
 const router = useRouter();
-
+const showPopUp = ref(false);
+const payURL = ref("");
 // Gọi API lấy danh sách đơn hàng người dùng
 const loadOrders = async () => {
   try {
@@ -319,6 +287,8 @@ const loadOrders = async () => {
         maDon: order.orderCode,
         ngayDat: order.createdAt,
         trangThai: translateStatus(order.shippingStatus),
+        paymentMethodId: order.paymentMethodId,
+        paymentStatus: order.paymentStatus,
         maVanDon: order.orderCode || "Đang cập nhật",
         tongTien: order.finalTotal,
         sanPham: sanPham,
@@ -360,6 +330,7 @@ onMounted(loadOrders);
 const selectedTab = ref("Chờ xác nhận");
 
 const tabs = [
+  "Chờ thanh toán",
   "Chờ xác nhận",
   "Chờ lấy hàng",
   "Chờ giao hàng",
@@ -370,6 +341,7 @@ const tabs = [
 
 const filteredOrders = computed(() => {
   const tabMap = {
+    "Chờ thanh toán": "Chưa thanh toán",
     "Chờ xác nhận": "Chờ xác nhận",
     "Chờ lấy hàng": "Chờ lấy hàng",
     "Chờ giao hàng": "Chờ giao hàng",
@@ -378,9 +350,38 @@ const filteredOrders = computed(() => {
     "Đã hủy": "Đã hủy",
   };
   const status = tabMap[selectedTab.value];
-  return orders.value.filter((o) => o.trangThai === status);
-});
+  console.log(orders.value)
+  console.log("Filtering orders for status:", status, selectedTab.value);
 
+
+  if (selectedTab.value === "Chờ thanh toán") {
+    console.log("Filtering for unpaid orders");
+    return orders.value.filter((o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2);
+  } else {
+    if (orders.value.filter((o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2).length > 0) {
+      console.warn("Có đơn hàng chưa thanh toán, nhưng đang lọc theo trạng thái khác");
+      return [];
+    }
+    console.log("Filtering for orders with status:", status);
+    return orders.value.filter((o) => o.trangThai === status);
+  }
+});
+async function pay(orderID) {
+  try {
+    console.log("Order ID:", orderID);
+    console.log("Order ID:", orderID.id);
+    const payLoad = { orderId: orderID.id, finalToTal: orderID.tongTien };
+
+    console.log("Order ID:", payLoad);
+    console.log("Order ID:", orderID.id);
+    const response = await api.post(`/e-wallet/orderpay`, payLoad);
+    console.log("Payment URL:", response.data);
+    payURL.value = response.data.payUrl;
+    showPopUp.value = true;
+  } catch (err) {
+    console.error();
+  }
+}
 const translateStatus = (status) => {
   const map = {
     // GHN: Chờ lấy hàng
@@ -664,6 +665,23 @@ const showVideoUpload = ref(false);
   color: #856404;
 }
 
+.btn-pay {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.btn-pay:hover {
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
 .status-confirmed {
   background: #d4edda;
   color: #155724;
@@ -791,6 +809,131 @@ const showVideoUpload = ref(false);
 .product-total {
   color: #2c3e50;
   font-size: 0.95rem;
+}
+
+/* Payment Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.payment-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f8f9fa;
+  color: #e74c3c;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-body p {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.payment-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-payment {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-payment:hover {
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-cancel {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cancel:hover {
+  background: #e9ecef;
+  color: #495057;
+  border-color: #667eea;
 }
 
 /* Order Actions */
@@ -958,6 +1101,7 @@ const showVideoUpload = ref(false);
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
