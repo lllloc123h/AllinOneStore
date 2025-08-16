@@ -107,7 +107,7 @@ public class NewsAPI {
 
 	// Đổi tên để tránh trùng lặp với /admin/News nếu không có sự khác biệt rõ ràng
 	// Hoặc bạn có thể thêm logic lọc khác biệt cho người dùng nếu cần
-	@GetMapping("/Users/News")
+	@GetMapping("/News")
 	public ResponseEntity<?> getAllNewsApiUser(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {

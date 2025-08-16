@@ -34,9 +34,9 @@ const isVisible = ref(Array(12).fill(false));
 function toggleList(index) {
   isVisible.value[index] = !isVisible.value[index];
 }
-localStorage.setItem('active',JSON.stringify(isVisible));
-const actived = localStorage.getItem('active');
-console.log(actived)
+localStorage.setItem("active", JSON.stringify(isVisible));
+const actived = localStorage.getItem("active");
+console.log(actived);
 function goToView(tableName) {
   router.push(`/Admin/${tableName}`);
 }
@@ -59,6 +59,15 @@ const menuItems = [
       {
         name: "Quản lý địa chỉ nhận hàng",
         path: "/Admin/UserAddresses",
+      },
+    ],
+  },
+  {
+    title: "QUẢN LÝ TIN TỨC",
+    children: [
+      {
+        name: "Quản lí tin tức",
+        path: "/Admin/News",
       },
     ],
   },
@@ -143,7 +152,7 @@ const menuItems = [
       {
         name: "Quản lý COUPONS",
         path: "/Admin/Coupons",
-      }
+      },
     ],
   },
   {
@@ -152,10 +161,10 @@ const menuItems = [
       {
         name: "Quản lý CUSTOMS",
         path: "/Admin/Customs",
-      }
+      },
     ],
   },
-    {
+  {
     title: "Thống kê",
     children: [
       {

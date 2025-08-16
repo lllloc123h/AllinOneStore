@@ -12,6 +12,7 @@ public class NewsMapper {
 	public NewsDTOS mapper(News entity) {
 		return new NewsDTOS(
 				    entity.getId(),
+				    entity.getTitle(),
 				    entity.getImageUrl(),
 				    entity.isHome(),
 				    entity.getDescription(),
@@ -22,6 +23,7 @@ public class NewsMapper {
 	public News mapperToObject(NewsDTOS entity) {
 		return new News(
 					entity.getId(),
+					entity.getTitle(),
 					entity.getImageUrl(),
 					entity.isHome(),
 					entity.getDescription(),

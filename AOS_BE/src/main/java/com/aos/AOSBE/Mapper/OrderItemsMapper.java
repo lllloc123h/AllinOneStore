@@ -19,7 +19,7 @@ public class OrderItemsMapper {
 	        entity.getId(),
 	        entity.getQty(),
 	        entity.getPriceAtBuy(),
-				        entity.getCostAtBuy(),
+			entity.getCostAtBuy(),
 	        entity.isGift(),
 	        entity.getSellingPrice(),
 	        entity.getTotal(),

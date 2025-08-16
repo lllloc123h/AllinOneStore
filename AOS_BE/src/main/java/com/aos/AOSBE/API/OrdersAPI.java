@@ -114,8 +114,14 @@ public class OrdersAPI {
 		return ResponseEntity.ok(response);
 
 	}
+//	@GetMapping("/admin/Orders/items")
+//	public ResponseEntity<?> getAllItemByOrderId(@RequestParam("orderId") int orderId) {
+//		List<OrderItemsDTOS> orderItems = orderItemsService.findByOrderId(orderId).stream()
+//				.map(orderItemsMapper::mapper).collect(Collectors.toList());
+//		return ResponseEntity.ok(orderItems);
+//	}
 
-	@GetMapping("/admin/Orders/{id}")
+    @GetMapping("/admin/Orders/{id}")
 	public ResponseEntity<Orders> getOrdersByIdApi(@PathVariable int id) {
 		Orders orders = (Orders) ordersService.ordersFindById(id).orElse(new Orders());
 		return ResponseEntity.ok(orders);
