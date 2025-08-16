@@ -12,21 +12,21 @@ public class AccountsMapper {
 		return new AccountsDTOS(entity.getId(), entity.getEmail(), entity.getPassword(), entity.isGender(),
 				entity.getBirthday(), entity.getFullname(), entity.getAvatarUrl(), entity.getPhone(),
 				entity.getAverageOrderValue(), entity.getUserRank(), entity.getTotalSpent(), entity.getTotalOrder(),
-				entity.getLoyaltyPoint(), entity.getCreatedAt(), entity.getUpdatedAt());
+				entity.getLoyaltyPoint(), entity.getCreatedAt(), entity.getUpdatedAt(),entity.isActive());
 	}
 
 	public AccountsDTOS mapperWithPasswordHidden(Accounts entity) {
 		return new AccountsDTOS(entity.getId(), entity.getEmail(), entity.isGender(), entity.getBirthday(),
 				entity.getFullname(), entity.getAvatarUrl(), entity.getPhone(), entity.getAverageOrderValue(),
 				entity.getUserRank(), entity.getTotalSpent(), entity.getTotalOrder(), entity.getLoyaltyPoint(),
-				entity.getCreatedAt(), entity.getUpdatedAt());
+				entity.getCreatedAt(), entity.getUpdatedAt(), entity.isActive());
 	}
 
 	public Accounts mapperToObject(AccountsDTOS entity) {
 		return new Accounts(entity.getId(), entity.getEmail(), entity.getPassword(), entity.isGender(),
 				entity.getBirthday(), entity.getFullname(), entity.getAvatarUrl(), entity.getPhone(),
 				entity.getAverageOrderValue(), entity.getUserRank(), entity.getTotalSpent(), entity.getTotalOrder(),
-				entity.getLoyaltyPoint(), entity.getCreatedAt(), entity.getUpdatedAt());
+				entity.getLoyaltyPoint(), entity.getCreatedAt(), entity.getUpdatedAt(),entity.isActive());
 	}
 
 }

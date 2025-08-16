@@ -69,6 +69,17 @@
           />
         </div>
         <div class="mb-4">
+          <label for="phone" class="form-label text-capitalize fw-semibold">Phone</label>
+          <input
+            id="phone"
+            v-model="formData.phone"
+            type="text"
+            class="form-control custom-input"
+            placeholder="Enter phone"
+          />
+        </div>
+
+        <div class="mb-4">
           <label class="form-label text-capitalize fw-semibold">Gender</label>
           <div>
             <label class="form-check-label me-3">
@@ -88,6 +99,30 @@
                 :value="false"
               />
               Female
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label text-capitalize fw-semibold">Active</label>
+          <div>
+            <label class="form-check-label me-3">
+              <input
+                type="radio"
+                class="form-check-input"
+                v-model="formData.active"
+                :value="true"
+              />
+              Active
+            </label>
+            <label class="form-check-label me-3">
+              <input
+                type="radio"
+                class="form-check-input"
+                v-model="formData.active"
+                :value="false"
+              />
+              Inactive
             </label>
           </div>
         </div>
@@ -115,20 +150,7 @@
         </div>
 
         <div class="row mb-4">
-          <div class="col-md-4">
-            <label for="phone" class="form-label text-capitalize fw-semibold"
-              >Phone</label
-            >
-            <input
-              id="phone"
-              v-model="formData.phone"
-              type="text"
-              class="form-control custom-input"
-              placeholder="Enter phone"
-            />
-          </div>
-
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="averageOrderValue" class="form-label text-capitalize fw-semibold"
               >Avg. Order Value</label
             >
@@ -137,20 +159,85 @@
               v-model="formData.averageOrderValue"
               type="number"
               class="form-control custom-input"
-              placeholder="Enter average order value"
+              placeholder="Auto-calculated from Total Spent ÷ Total Orders"
+              disabled
+              :style="{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }"
             />
+            <small class="text-muted">
+              ⚡ Tự động tính: Total Spent ÷ Total Orders
+            </small>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="userRank" class="form-label text-capitalize fw-semibold"
               >User Rank</label
             >
-            <input
+            <select
               id="userRank"
               v-model="formData.userRank"
               type="text"
-              class="form-control custom-input"
-              placeholder="Enter user rank"
-            />
+              class="form-control"
+              disabled
+              :style="{ backgroundColor: '#f8f9fa', cursor: 'not-allowed' }"
+            >
+              <option value="Đồng">Đồng</option>
+              <option value="Bạc">Bạc</option>
+              <option value="Vàng">Vàng</option>
+              <option value="Bạch Kim">Bạch Kim</option>
+              <option value="Kim Cương">Kim Cương</option>
+            </select>
+            <small class="text-muted"> ⚡ Tự động tính dựa trên Loyalty Points </small>
+          </div>
+        </div>
+
+        <!-- Rank Information Table -->
+        <div class="mb-4 p-4 rounded bg-light border">
+          <h6 class="fw-semibold mb-3 text-primary">
+            📊 Bảng Thông Tin Xếp Hạng Khách Hàng
+          </h6>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+              <thead class="table-primary">
+                <tr>
+                  <th class="text-center">Hạng</th>
+                  <th class="text-center">Điều Kiện Loyalty Points</th>
+                  <th class="text-center">Mô Tả</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="rule in userRankRules"
+                  :key="rule.rank"
+                  :class="{ 'table-warning': autoCalculatedRank === rule.rank }"
+                >
+                  <td class="text-center">
+                    <span
+                      class="badge"
+                      :style="{ backgroundColor: rule.color, color: '#000' }"
+                    >
+                      {{ rule.rank }}
+                    </span>
+                  </td>
+                  <td class="text-center">{{ rule.description }}</td>
+                  <td class="text-center">
+                    <span v-if="rule.rank === 'Đồng'">Khách hàng mới</span>
+                    <span v-else-if="rule.rank === 'Bạc'">Khách hàng thân thiết</span>
+                    <span v-else-if="rule.rank === 'Vàng'">Khách hàng VIP</span>
+                    <span v-else-if="rule.rank === 'Bạch Kim'">Khách hàng cao cấp</span>
+                    <span v-else-if="rule.rank === 'Kim Cương'">Khách hàng đặc biệt</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-2">
+            <small class="text-info">
+              💡 <strong>Hiện tại:</strong>
+              <span v-if="formData.loyaltyPoint">
+                {{ formatNumber(formData.loyaltyPoint) }} điểm →
+                <span class="fw-bold text-primary">{{ autoCalculatedRank }}</span>
+              </span>
+              <span v-else class="text-muted">Nhập loyalty points để xem rank</span>
+            </small>
           </div>
         </div>
 
@@ -179,6 +266,9 @@
               class="form-control custom-input"
               placeholder="Enter total orders"
             />
+            <small class="text-info" v-if="formData.totalSpent && formData.totalOrder">
+              💡 Avg. Order Value: {{ formatCurrency(autoCalculatedAverageOrderValue) }}
+            </small>
           </div>
 
           <div class="col-md-4">
@@ -192,6 +282,38 @@
               class="form-control custom-input"
               placeholder="Enter loyalty points"
             />
+          </div>
+        </div>
+
+        <!-- Average Order Value Calculation Info -->
+        <div class="mb-4 p-3 rounded bg-info bg-opacity-10 border border-info">
+          <h6 class="fw-semibold mb-2 text-info">
+            🧮 Tính Toán Trung Bình Đơn Hàng (Average Order Value)
+          </h6>
+          <div class="row">
+            <div class="col-md-12">
+              <small class="text-muted">
+                <strong>Công thức:</strong>
+                <code>Average Order Value = Total Spent ÷ Total Orders</code>
+              </small>
+              <br />
+              <small class="text-info">
+                <strong>Ví dụ:</strong>
+                <span
+                  v-if="
+                    formData.totalSpent && formData.totalOrder && formData.totalOrder > 0
+                  "
+                >
+                  {{ formatCurrency(formData.totalSpent) }} ÷ {{ formData.totalOrder }} =
+                  <strong class="text-primary">{{
+                    formatCurrency(autoCalculatedAverageOrderValue)
+                  }}</strong>
+                </span>
+                <span v-else class="text-muted">
+                  1,000,000 VND ÷ 5 đơn hàng = 200,000 VND/đơn
+                </span>
+              </small>
+            </div>
           </div>
         </div>
 
@@ -231,7 +353,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, watch, nextTick } from "vue";
+import { reactive, ref, onMounted, watch, nextTick, computed } from "vue";
 import { formatDate } from "../../Module/CommonsFunctions.js";
 import Dashboard from "../../Module/DashBoard.vue";
 import createCrudService from "../../../Configs/reusableCRUDService.js";
@@ -243,8 +365,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { dropDown } from "../../../Configs/DropDownList.js";
 import api from "../../../Configs/api.js";
-import uploadProducts from "../../Module/upload-products.vue";
-import uploadProduct2 from "../../Module/upload-products.vue";
+import uploadProducts from "../../Module/upload-images.vue";
 import { notification } from "ant-design-vue";
 const uploadRef = ref(null);
 const props = defineProps({
@@ -280,7 +401,106 @@ const formData = reactive({
   loyaltyPoint: "",
   createdAt: "",
   updatedAt: "",
+  active: false,
 });
+
+// User Rank Rules based on Loyalty Points
+const userRankRules = [
+  { min: 0, max: 10000, rank: "Đồng", color: "#CD7F32", description: "0 - 10,000 điểm" },
+  {
+    min: 10000,
+    max: 20000,
+    rank: "Bạc",
+    color: "#C0C0C0",
+    description: "10,000 - 20,000 điểm",
+  },
+  {
+    min: 20000,
+    max: 30000,
+    rank: "Vàng",
+    color: "#FFD700",
+    description: "20,000 - 30,000 điểm",
+  },
+  {
+    min: 30000,
+    max: 50000,
+    rank: "Bạch Kim",
+    color: "#E5E4E2",
+    description: "30,000 - 50,000 điểm",
+  },
+  {
+    min: 50000,
+    max: Infinity,
+    rank: "Kim Cương",
+    color: "#B9F2FF",
+    description: "Trên 50,000 điểm",
+  },
+];
+
+// Format number with thousand separators
+const formatNumber = (num) => {
+  if (!num) return "0";
+  return parseInt(num).toLocaleString("vi-VN");
+};
+
+// Format currency with VND
+const formatCurrency = (amount) => {
+  if (!amount || amount === 0) return "0 VND";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+// Function to calculate user rank based on loyalty points
+const calculateUserRank = (loyaltyPoints) => {
+  const points = parseInt(loyaltyPoints) || 0;
+  const rule = userRankRules.find((rule) => points >= rule.min && points < rule.max);
+  return rule ? rule.rank : "Đồng";
+};
+
+// Computed property for auto-calculated rank
+const autoCalculatedRank = computed(() => {
+  return calculateUserRank(formData.loyaltyPoint);
+});
+
+// Watch loyalty points changes to auto-update rank
+watch(
+  () => formData.loyaltyPoint,
+  (newPoints) => {
+    if (newPoints !== undefined && newPoints !== null && newPoints !== "") {
+      formData.userRank = calculateUserRank(newPoints);
+    }
+  },
+  { immediate: true }
+);
+
+// Function to calculate average order value
+const calculateAverageOrderValue = (totalSpent, totalOrder) => {
+  const spent = parseFloat(totalSpent) || 0;
+  const orders = parseInt(totalOrder) || 0;
+
+  if (orders === 0) return 0;
+  return Math.round((spent / orders) * 100) / 100; // Round to 2 decimal places
+};
+
+// Computed property for auto-calculated average order value
+const autoCalculatedAverageOrderValue = computed(() => {
+  return calculateAverageOrderValue(formData.totalSpent, formData.totalOrder);
+});
+
+// Watch totalSpent and totalOrder changes to auto-update average order value
+watch(
+  [() => formData.totalSpent, () => formData.totalOrder],
+  ([newSpent, newOrder]) => {
+    const calculatedAverage = calculateAverageOrderValue(newSpent, newOrder);
+    formData.averageOrderValue = calculatedAverage;
+  },
+  { immediate: true }
+);
+
 const selectedRoles = ref([]);
 async function submitUpdateForm() {
   console.log("Debug update: ", formData);
@@ -341,23 +561,25 @@ const handleImagesUpdate = (images) => {
       const payload = {
         ...formData, // Add this if your backend needs role IDs
       };
-      api
-        .put(`/admin/${props.TableName}/` + props.id, payload)
-        .then(() => {
-          notification.success({
-            message: "Cập nhật thành công",
-            description: `Avatar đã được cập nhật thành công.`,
-            duration: 3,
+      if (props.action === "update") {
+        api
+          .put(`/admin/${props.TableName}/` + props.id, payload)
+          .then(() => {
+            notification.success({
+              message: "Cập nhật thành công",
+              description: `Avatar đã được cập nhật thành công.`,
+              duration: 3,
+            });
+          })
+          .catch((error) => {
+            notification.error({
+              message: "Cập nhật thất bại",
+              description: `Không thể cập nhật avatar.`,
+              duration: 3,
+            });
+            console.error("Failed to update avatar:", error);
           });
-        })
-        .catch((error) => {
-          notification.error({
-            message: "Cập nhật thất bại",
-            description: `Không thể cập nhật avatar.`,
-            duration: 3,
-          });
-          console.error("Failed to update avatar:", error);
-        });
+      }
     }
   } else {
     formData.avatarUrl = null;
@@ -526,5 +748,50 @@ watch(
 .role-date {
   font-size: 0.85rem;
   color: #777;
+}
+
+/* Rank Table Styles */
+.table-warning {
+  background-color: #fff3cd !important;
+  border: 2px solid #ffc107 !important;
+}
+
+.badge {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+.text-primary {
+  color: #0d6efd !important;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.border {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px !important;
+}
+
+/* User Rank Select Styling */
+select:disabled {
+  background-color: #f8f9fa !important;
+  opacity: 0.8;
+  cursor: not-allowed !important;
 }
 </style>

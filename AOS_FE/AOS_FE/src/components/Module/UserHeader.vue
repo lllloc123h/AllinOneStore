@@ -32,12 +32,8 @@
             </RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink
-              class="nav-link modern-nav-link"
-              aria-current="page"
-              to="/Customizer"
-            >
-              <i class="bi bi-palette-fill me-2"></i>Customizer
+            <RouterLink class="nav-link modern-nav-link" aria-current="page" to="/custom">
+              <i class="bi bi-palette-fill me-2"></i>Tùy chỉnh của bạn
             </RouterLink>
           </li>
           <li class="nav-item">
@@ -197,6 +193,14 @@
                   <i class="bi bi-shield-check me-2"></i>Trang quản trị
                 </RouterLink>
               </li>
+              <li v-if="isAdmin">
+                <button
+                  class="dropdown-item modern-dropdown-item"
+                  @click="handleUpdateData"
+                >
+                  <i class="bi bi-shield-check me-2"></i> Đồng bộ dữ liệu
+                </button>
+              </li>
               <li v-if="isLogged">
                 <RouterLink class="dropdown-item modern-dropdown-item" to="/UserInfo">
                   <i class="bi bi-gear me-2"></i>Cài đặt tài khoản
@@ -232,6 +236,7 @@
 // ...existing code...
 import { computed, onMounted, watch, ref } from "vue";
 import api, { authService } from "../../Configs/api";
+import { notification } from "ant-design-vue";
 const isLogged = computed(() => {
   return !!authService.isLogged();
 });
@@ -250,6 +255,15 @@ const messageCount = ref(0);
 const logout = () => {
   authService.logout();
 };
+async function handleUpdateData() {
+  const userReload = await authService.getProfile();
+  authService.setUserHeader(userReload);
+  notification.success({
+    message: "Cập nhật thành công",
+    description: `${userReload} Người dùng đã được cập nhật thành công.`,
+    duration: 3,
+  });
+}
 function formatCell(item) {
   switch (item.keyMessage) {
     case "MessagePromotion":
@@ -272,13 +286,16 @@ function formatCell(item) {
   }
 }
 async function getNotification() {
-  try {
-    const response = await api.get(`/user/Message`);
-    console.log(response.data);
-    messages.value = response.data.content;
-    messageCount.value = response.data.totalElements;
-  } catch (error) {
-    console.error("Error fetching notifications:", error);
+  if (authService.isLogged() == true) {
+    try {
+      const response = await api.get(`/user/Message`);
+      messages.value = response.data.content;
+      messageCount.value = response.data.totalElements;
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  } else {
+    return;
   }
 }
 onMounted(getNotification);
@@ -313,6 +330,7 @@ const handleAvatarError = (event) => {
   border-radius: 8px;
   padding: 5px;
 }
+
 .modern-brand:hover {
   color: #667eea !important;
   background: rgba(102, 126, 234, 0.1);
@@ -427,6 +445,7 @@ const handleAvatarError = (event) => {
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -907,6 +926,7 @@ section .section-title {
   font-size: 15px;
   padding: 24px 46px 24px 26px;
 }
+
 /* Footer */
 #footer {
   padding: 60px 0;

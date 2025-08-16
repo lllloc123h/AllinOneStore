@@ -37,7 +37,7 @@
             />
             <button
               class="avatar-upload-btn"
-              @click="$refs.avatarInput.click()"
+              @click="openPopupAvatar(true)"
               title="Đổi ảnh đại diện"
             >
               <i class="bi bi-camera-fill"></i>
@@ -191,6 +191,36 @@
       </form>
     </div>
   </div>
+  <!-- Avatar Update Modal -->
+  <div v-if="showPopupUpdateAvatar" class="modal-overlay">
+    <div class="modern-modal avatar-modal">
+      <div class="modal-header">
+        <h3>
+          <i class="bi bi-camera-fill me-2"></i>
+          Cập nhật ảnh đại diện
+        </h3>
+        <button class="close-btn" @click="openPopupAvatar(false)">×</button>
+      </div>
+      <div class="modal-form avatar-form">
+        <div class="upload-container">
+          <uploadAvatar
+            ref="uploadRef"
+            :maxFiles="1"
+            :aspectRatio="'1:1'"
+            @update:images="handleAvatarUpdate"
+            @delete-image="handleAvatarDelete"
+            :folderName="'profiles'"
+          />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" @click="openPopupAvatar(false)">
+            <i class="bi bi-x-lg me-2"></i>
+            Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Password Change Modal -->
   <div v-if="showPopupDoiMatKhau" class="modal-overlay">
@@ -269,13 +299,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { authService } from "../../Configs/api";
 import { notification } from "ant-design-vue";
 import dayjs from "dayjs";
+import uploadAvatar from "../Module/upload-images.vue";
 const router = useRouter();
-
 // 👤 Dữ liệu người dùng
 const user = ref({
   fullname: "",
@@ -298,8 +328,31 @@ const user = ref({
 // 🔄 Trạng thái popup
 const showPopupTaiKhoan = ref(false);
 const showPopupDoiMatKhau = ref(false);
+const showPopupUpdateAvatar = ref(false);
+const uploadRef = ref(null);
 
 // 🧭 Các nút điều hướng
+const openPopupAvatar = async (value) => {
+  showPopupUpdateAvatar.value = value;
+
+  // Load ảnh avatar khi mở modal và có ảnh (tương tự Form.vue)
+  if (
+    value &&
+    user.value.avatarUrl &&
+    user.value.avatarUrl !== "null" &&
+    user.value.avatarUrl !== ""
+  ) {
+    // Sử dụng nextTick để đảm bảo component đã được render
+    await nextTick();
+    // Thêm một delay nhỏ để đảm bảo component upload đã mount hoàn toàn
+    if (uploadRef.value && uploadRef.value.loadFromUrls) {
+      console.log("Loading avatar:", user.value.avatarUrl);
+      uploadRef.value.loadFromUrls([user.value.avatarUrl]);
+    } else {
+      console.warn("uploadRef.value hoặc loadFromUrls không tồn tại");
+    }
+  }
+};
 const openPopupTaiKhoan = () => {
   showPopupTaiKhoan.value = true;
 };
@@ -331,6 +384,7 @@ const togglePasswordCurrent = () => {
 };
 const dto = ref({
   fullname: "",
+  avatarUrl: "",
   phone: "",
   gender: "",
   birthday: "",
@@ -338,10 +392,10 @@ const dto = ref({
 // ✅ Lấy thông tin người dùng từ API qua authService
 const daysDiff = ref(0);
 onMounted(async () => {
+  await nextTick(); // Đợi DOM được render như Form.vue
   try {
     const data = await authService.getProfile();
     console.log("Thông tin người dùng:", data);
-
     // Format ngày tạo tài khoản - tính số ngày từ khi tạo
     if (data.createdAt) {
       const createdDate = dayjs(data.createdAt);
@@ -352,14 +406,78 @@ onMounted(async () => {
     user.value = { ...user.value, ...data };
     dto.value = {
       fullname: data.fullname,
+      avatarUrl: data.avatarUrl,
       phone: data.phone,
       gender: data.gender,
       birthday: data.birthday,
     };
+    // KHÔNG load ảnh trong onMounted vì uploadRef chưa sẵn sàng
+    // Sẽ load khi user mở modal avatar
   } catch (err) {
     console.error("Không thể lấy thông tin tài khoản", err);
   }
 });
+const handleAvatarUpdate = async (images) => {
+  try {
+    dto.value.avatarUrl = images[0].cloudinaryUrl || images[0].url;
+    const response = await authService.updateProfile(dto.value);
+    console.log("response ", response);
+    user.value = {
+      ...user.value,
+      fullname: dto.value.fullname,
+      avatarUrl: dto.value.avatarUrl,
+      phone: dto.value.phone,
+      gender: dto.value.gender,
+      birthday: dto.value.birthday,
+      createAt: response.createAt, // Giữ nguyên ngày tạo nếu không có
+      updateAt: response.updateAt, // Giữ nguyên ngày cập nhật nếu không có
+    };
+    authService.setUserHeader(user.value);
+    setTimeout(
+      notification.success({
+        message: "Cập nhật thành công",
+        description: "Ảnh đại diện đã được xóa ",
+      }),
+      200
+    );
+  } catch (error) {
+    notification.error({
+      message: "Cập nhật thất bại",
+      description: error.response?.data?.message || "Lỗi cập nhật ảnh đại diện",
+    });
+  }
+};
+
+const handleAvatarDelete = async (index) => {
+  try {
+    dto.value.avatarUrl = null;
+    const response = await authService.updateProfile(dto.value);
+    console.log("response ", response);
+    user.value = {
+      ...user.value,
+      fullname: dto.value.fullname,
+      avatarUrl: dto.value.avatarUrl,
+      phone: dto.value.phone,
+      gender: dto.value.gender,
+      birthday: dto.value.birthday,
+      createAt: response.createAt, // Giữ nguyên ngày tạo nếu không có
+      updateAt: response.updateAt, // Giữ nguyên ngày cập nhật nếu không có
+    };
+    authService.setUserHeader(user.value);
+    setTimeout(
+      notification.success({
+        message: "Cập nhật thành công",
+        description: "Ảnh đại diện đã được xóa ",
+      }),
+      200
+    );
+  } catch (error) {
+    notification.error({
+      message: "Cập nhật thất bại",
+      description: error.response?.data?.message || "Lỗi cập nhật ảnh đại diện",
+    });
+  }
+};
 // ✅ Cập nhật thông tin người dùng
 const updateProfile = async () => {
   try {
@@ -371,6 +489,7 @@ const updateProfile = async () => {
     user.value = {
       ...user.value,
       fullname: dto.value.fullname,
+      avatarUrl: dto.value.avatarUrl,
       phone: dto.value.phone,
       gender: dto.value.gender,
       birthday: dto.value.birthday,
@@ -379,7 +498,6 @@ const updateProfile = async () => {
       // Không cập nhật email vì không cho phép thay đổi
     };
     authService.setUserHeader(user.value);
-    showPopupTaiKhoan.value = false;
   } catch (err) {
     notification.error({
       message: "Cập nhật thất bại",
@@ -420,30 +538,6 @@ const clearDto = () => {
   showPopupTaiKhoan.value = false;
 };
 const avatarInput = ref(null);
-
-const handleAvatarChange = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const res = await authService.uploadAvatar(formData);
-    user.value.avatarUrl = res.avatarUrl;
-    alert("Cập nhật ảnh đại diện thành công!");
-  } catch (err) {
-    alert(err.response?.data?.message || "Lỗi khi cập nhật ảnh đại diện");
-  }
-};
-
-const handleAvatarError = (event) => {
-  event.target.style.display = "none";
-  const fallback = event.target.nextElementSibling;
-  if (fallback) {
-    fallback.style.display = "block";
-  }
-};
 </script>
 
 <style scoped>
@@ -754,6 +848,24 @@ const handleAvatarError = (event) => {
   animation: modalSlideIn 0.3s ease;
 }
 
+/* Avatar Modal Specific Styling */
+.avatar-modal {
+  max-width: 600px;
+  min-height: 500px;
+}
+
+.avatar-form {
+  padding: 1rem 2rem 2rem 2rem;
+}
+
+.upload-container {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
 @keyframes modalSlideIn {
   from {
     opacity: 0;
@@ -1024,9 +1136,23 @@ const handleAvatarError = (event) => {
     border-radius: 15px;
   }
 
+  .avatar-modal {
+    max-width: 95vw;
+    min-height: 400px;
+    margin: 0.5rem;
+  }
+
   .modal-header,
   .modal-form {
     padding: 1rem;
+  }
+
+  .avatar-form {
+    padding: 1rem;
+  }
+
+  .upload-container {
+    min-height: 280px;
   }
 
   .stats-section {

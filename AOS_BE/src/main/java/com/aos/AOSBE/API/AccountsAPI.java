@@ -90,12 +90,6 @@ public class AccountsAPI {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/test")
-	public ResponseEntity<?> test() {
-		return ResponseEntity.ok(authoritiesService.findAllByEmail("adminCUDE@gmail.com").stream()
-				.map(authority -> authority.getAccounts().getEmail()).toList());
-	}
-
 	@GetMapping("/admin/Accounts/{id}")
 	public ResponseEntity<Accounts> getAccountsByIdApi(@PathVariable int id) {
 		Accounts accounts = (Accounts) accountsService.accountsFindById(id).orElse(new Accounts());
@@ -147,7 +141,6 @@ public class AccountsAPI {
 	@PostMapping("/Accounts/login")
 	public ResponseEntity<?> handleLogin(@RequestBody loginRequestDTOS entity) {
 		try {
-
 			new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword());
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
@@ -161,7 +154,15 @@ public class AccountsAPI {
 							(a, b) -> a + b.getQty(), Integer::sum)));
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", "Sai thông tin đăng nhập"));
+			String response = "";
+			if (e.getMessage().equals("User is disabled")) {
+				response = "Tài khoản của bạn đã bị khóa, vui lòng liên hệ quản trị viên để biết thêm chi tiết.";
+			} else if (e.getMessage().equals("Bad credentials")) {
+				response = "Sai thông tin đăng nhập, vui lòng kiểm tra lại email và mật khẩu của bạn.";
+			} else {
+				response = "Đã có lỗi xảy ra trong quá trình đăng nhập, vui lòng thử lại sau.";
+			}
+			return ResponseEntity.badRequest().body(Map.of("message", response));
 		}
 	}
 
@@ -190,23 +191,14 @@ public class AccountsAPI {
 
 	@PutMapping("/Accounts/change-password")
 	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTOS dto) {
-	    try {
-	        accountsService.changePassword(dto);
-	        return ResponseEntity.ok(Map.of(
-	            "status", "success",
-	            "message", "Đổi mật khẩu thành công"
-	        ));
-	    } catch (RuntimeException e) {
-	        return ResponseEntity.badRequest().body(Map.of(
-	            "status", "error",
-	            "message", e.getMessage()
-	        ));
-	    } catch (Exception e) {
-	        return ResponseEntity.internalServerError().body(Map.of(
-	            "status", "error",
-	            "message", "Lỗi hệ thống"
-	        ));
-	    }
+		try {
+			accountsService.changePassword(dto);
+			return ResponseEntity.ok(Map.of("status", "success", "message", "Đổi mật khẩu thành công"));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(Map.of("status", "error", "message", e.getMessage()));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("status", "error", "message", "Lỗi hệ thống"));
+		}
 	}
 
 	@PutMapping("/admin/Accounts/ResetPassword/{email}")
@@ -235,7 +227,8 @@ public class AccountsAPI {
 
 			AccountProfileDTO dto = new AccountProfileDTO(acc.getFullname(), acc.getEmail(), acc.getPhone(),
 					acc.getAvatarUrl(), acc.getAverageOrderValue(), acc.getUserRank(), acc.getTotalSpent(),
-					acc.getTotalOrder(), acc.getLoyaltyPoint(),acc.isGender(), acc.getBirthday(), acc.getCreatedAt(),acc.getUpdatedAt());
+					acc.getTotalOrder(), acc.getLoyaltyPoint(), acc.isGender(), acc.getBirthday(), acc.getCreatedAt(),
+					acc.getUpdatedAt());
 
 			return ResponseEntity.ok(dto);
 		} catch (Exception e) {
@@ -263,8 +256,9 @@ public class AccountsAPI {
 
 	@PutMapping("/Accounts/me")
 	public ResponseEntity<?> updateMyProfile(@RequestBody UpdateProfileDTO dto) {
+		System.out.println("du lieu tu update avatar: " + dto);
 		try {
-			Accounts acc= accountsService.updateProfile(dto);
+			Accounts acc = accountsService.updateProfile(dto);
 			return ResponseEntity.ok(acc);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));

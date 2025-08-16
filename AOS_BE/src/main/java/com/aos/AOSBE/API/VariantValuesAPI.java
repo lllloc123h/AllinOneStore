@@ -61,16 +61,26 @@ public class VariantValuesAPI {
 	}
 
 	@PostMapping("/admin/VariantValues")
-	public ResponseEntity<VariantValues> addNewVariantValues(@RequestBody VariantValuesDTOS entity) {
-
-		VariantValues saved = variantValuesService.variantValuesSave(variantValuesMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+	public ResponseEntity<?> addNewVariantValues(@RequestBody VariantValuesDTOS entity) {
+		try {
+			VariantValues mapped = variantValuesMapper.mapperToObject(entity);
+			VariantValues saved = variantValuesService.variantValuesSave(mapped);
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
 	}
 
-	@PutMapping("/admin/VariantValues")
-	public ResponseEntity<VariantValues> updateVariantValues(@RequestBody VariantValues entity) {
-		VariantValues updated = variantValuesService.variantValuesSave(entity);
-		return ResponseEntity.ok(updated);
+	@PutMapping("/admin/VariantValues/{id}")
+	public ResponseEntity<?> updateVariantValues(@PathVariable int id, @RequestBody VariantValuesDTOS entity) {
+		try {
+			VariantValues mapped = variantValuesMapper.mapperToObject(entity);
+			VariantValues updated = variantValuesService.variantValuesSave(mapped);
+			return ResponseEntity.ok(updated);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
+
 	}
 
 	@DeleteMapping("/admin/VariantValues/{id}")

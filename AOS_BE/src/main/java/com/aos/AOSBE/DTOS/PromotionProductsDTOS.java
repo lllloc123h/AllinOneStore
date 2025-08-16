@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PromotionProductsDTOS {
-    private int id;
+    private Integer id;
     private int requireQty;
     private boolean isGift;
+    private String giftOption;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private ProductItemsDTOS productItem;
-    private int promotionId;
+    private Integer promotionId;
 }
 

@@ -22,7 +22,6 @@ public class OrderItemsDTOS {
     private boolean isGift;
     private double sellingPrice;
     private double total;
-    private String couponCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int orders;

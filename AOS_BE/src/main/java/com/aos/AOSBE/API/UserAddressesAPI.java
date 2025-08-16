@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -143,6 +144,31 @@ public class UserAddressesAPI {
 		}
 	}
 
-	
+	@PutMapping("/UserAddresses/edit/{id}")
+	@Transactional
+	public ResponseEntity<?> updateUserAddress(
+	        @PathVariable int id,
+	        @RequestBody UserAddressesDTOS entity) {
+	    try {
+	        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+	        UserAddresses existingAddress = userAddressesService.userAddressesFindById(id).orElse(null);
+	        if (existingAddress == null) {
+	            return ResponseEntity.badRequest().body(Map.of("message", "Address not found"));
+	        }
+
+	        if (!existingAddress.getAccounts().getEmail().equals(email)) {
+	            return ResponseEntity.status(403).body(Map.of("message", "You don't have permission to edit this address"));
+	        }
+
+	        // Gọi service để vừa clear default vừa update
+	        userAddressesService.updateAddressAsDefault(id, entity, existingAddress.getAccounts().getId());
+
+	        return ResponseEntity.ok(Map.of("message", "Update successfully"));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.badRequest().body(Map.of("message", "Error occurred", "error", e.getMessage()));
+	    }
+	}
 
 }

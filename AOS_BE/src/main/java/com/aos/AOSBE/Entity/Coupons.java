@@ -44,7 +44,7 @@ public class Coupons {
     private int qty;
 	
     @Column(name = "usage_per_customer")
-    private int usagePerCustomer;
+    private Integer usagePerCustomer;
 	
     @Column(name = "is_allow_voucher")
     private boolean isAllowVoucher;

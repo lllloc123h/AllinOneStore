@@ -1,4 +1,4 @@
-﻿--create database all_in_store;
+﻿ --create database all_in_store;
 --drop database all_in_store
 use all_in_store
 go
@@ -85,13 +85,14 @@ create table
 		gender bit default 0,
 		birthday date ,
 		fullname nvarchar (100) not null,
-		avatar_url varchar(255),
+		avatar_url varchar(1000),
 		phone varchar(15) null,
 		average_order_value decimal(18, 2) default 0,
 		user_rank nvarchar (20) default N'Đồng',
 		total_spent decimal(18, 2) default 0,
 		total_order int default 0,
 		loyalty_point int default 0,
+		is_active bit default 1,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate ()
 	);
@@ -188,6 +189,7 @@ create table
 		sku varchar(100),
 		safety_stock int default 0,
 		qty int default 0,
+		is_active bit default 1,
 		sell_start datetime default getdate (),
 		sell_end datetime default getdate (),
 		created_at datetime default getdate (),
@@ -195,19 +197,7 @@ create table
 		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
 GO
-create table
-	customs (
-		id int identity (1, 1) primary key,
-		product_item_id int not null,
-		account_id int not null, -- kh cần liên kết cũng đc
-		canvas_json nvarchar (max) not null,
-		image_url nvarchar (255) not null,
-		design_name nvarchar (50) not null, -- mặt trước, mặt sau 
-		created_at datetime default getdate (),
-		updated_at datetime default getdate (),
-		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
-	);
-GO
+
 --CREATE TABLE
 --	user_logs (
 --		id INT IDENTITY (1, 1) PRIMARY KEY,
@@ -244,6 +234,7 @@ create table
 		image_url varchar(255) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
+		is_default bit default 0,
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE
 	);
 GO
@@ -281,6 +272,7 @@ CREATE TABLE
 		product_item_id INT NULL,         -- nếu áp dụng cụ thể từng item
 		require_qty int,
 		is_gift bit default 0,
+		gift_option varchar(20) not null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
@@ -316,6 +308,7 @@ create table
 		image_url2 nvarchar (255),
 		image_url3 nvarchar (255),
 		video_url varchar(255),
+		order_id int,
 		created_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
 		foreign key (account_id) references accounts (id) ON DELETE CASCADE
@@ -417,7 +410,6 @@ create table
 		is_gift bit default 0,
 		selling_price decimal(18, 2) not null,
 		total AS (qty * selling_price) PERSISTED,
-		coupon_code nvarchar (50),
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (order_id) references orders (id) ON DELETE CASCADE,
@@ -425,6 +417,21 @@ create table
 		foreign key (promotion_id) references promotions (id) ON DELETE CASCADE
 	);
 
+GO
+create table
+	customs (
+		id int identity (1, 1) primary key,
+		product_item_id int not null,
+		account_id int not null, -- kh cần liên kết cũng đc
+		canvas_json nvarchar (max) not null,
+		image_url nvarchar (255) not null,
+		design_name nvarchar (50) not null, -- mặt trước, mặt sau
+		order_item_id int  null,
+		created_at datetime default getdate (),
+		updated_at datetime default getdate (),
+		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
+		foreign key (order_item_id) references order_items (id)
+	);
 GO
 CREATE TABLE
 	returns (
@@ -635,25 +642,26 @@ VALUES
 
 
 
---	create TRIGGER trgg_auto_insert_history_cost_and_price
---    ON product_items
---    FOR INSERT, UPDATE
---    AS
---    BEGIN
---        SET NOCOUNT ON;
+-- create TRIGGER trgg_auto_insert_history_cost_and_price
+--   ON product_items
+--  FOR INSERT, UPDATE
+--  AS
+--     BEGIN
+--         SET NOCOUNT ON;
 
 --        -- Chỉ chạy khi INSERT hoặc UPDATE cost/price
 --        IF NOT EXISTS (SELECT 1 FROM deleted) OR UPDATE(cost) OR UPDATE(price)
---        BEGIN
+--         BEGIN
 --            INSERT INTO cost_histories(product_item_id, cost)
---            SELECT id, cost FROM inserted;
+--             SELECT id, cost FROM inserted;
 
---            INSERT INTO price_histories(product_item_id, price)
---            SELECT id, price FROM inserted;
+--             INSERT INTO price_histories(product_item_id, price)
+--             SELECT id, price FROM inserted;
 
---            PRINT N'Đã thêm lịch sử thay đổi giá';
---        END
+--             PRINT N'Đã thêm lịch sử thay đổi giá';
+--       END
 --    END
+
 --UPDATE orders
 --SET order_code = 'L3BXXN'
 --WHERE id = 2;

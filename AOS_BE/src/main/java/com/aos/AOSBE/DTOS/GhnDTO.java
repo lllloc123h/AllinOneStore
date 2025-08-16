@@ -1,5 +1,7 @@
 package com.aos.AOSBE.DTOS;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -71,6 +73,20 @@ public class GhnDTO {
     @JsonProperty("Width")
     private int width;
 
+    @JsonProperty("log")
+    private List<StatusHistory> log;
+
+    @Data
+    public static class StatusHistory {
+        @JsonProperty("status")
+        private String status;
+
+        @JsonProperty("payment_type_id")
+        private String paymentTypeId;
+
+        @JsonProperty("updated_date")
+        private String updatedDate;
+    }
     // inner class
     public static class Fee {
 

@@ -28,11 +28,36 @@
             <td v-for="key in columns" :key="key" class="table-cell">
               <span class="cell-content">
                 <!-- {{ formatCell(key, item[key]) }} -->
-                <span v-html="formatCell(key, item[key])"></span>
+                <span v-html="formatCell(key, item[key], item)"></span>
               </span>
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
+                <div v-if="item.shippingStatus === 'Chờ xác nhận' && !item.ghnOrderCode">
+                  <button
+                    type="button"
+                    @click="showForm = true"
+                    class="btn btn-success btn-sm"
+                  >
+                    Xác nhận
+                  </button>
+
+                  <div v-if="showForm" class="mt-2">
+                    <select v-model="selectedNote" class="form-select form-select-sm">
+                      <option value="CHOTHUHANG">Cho thử hàng</option>
+                      <option value="CHOXEMHANGKHONGTHU">Cho xem hàng không thử</option>
+                      <option value="KHONGCHOXEMHANG">Không cho xem hàng</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      @click="approveOrderById(item.id, selectedNote)"
+                      class="btn btn-primary btn-sm mt-2"
+                    >
+                      Gửi đơn
+                    </button>
+                  </div>
+                </div>
                 <button
                   type="button"
                   @click="goToView(item.id)"
@@ -382,6 +407,48 @@
 .table-container .badge.bg-danger.text-white {
   background-color: #dc3545 !important;
 }
+
+/* Auto-calculated UserRank styling */
+.table-container .badge[title] {
+  cursor: help;
+  position: relative;
+}
+
+.table-container .badge[title]:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Auto-calculated indicator styling */
+.table-container .badge small {
+  opacity: 0.8;
+  font-weight: bold;
+}
+
+/* UserRank specific colors to match Form.vue */
+.table-container .badge.bg-warning.text-dark {
+  background-color: #cd7f32 !important; /* Đồng */
+  color: #000 !important;
+}
+
+.table-container .badge.bg-secondary.text-white {
+  background-color: #c0c0c0 !important; /* Bạc */
+}
+
+.table-container .badge.bg-success.text-white {
+  background-color: #ffd700 !important; /* Vàng */
+  color: #000 !important;
+}
+
+.table-container .badge.bg-info.text-white {
+  background-color: #e5e4e2 !important; /* Bạch Kim */
+  color: #000 !important;
+}
+
+.table-container .badge.bg-primary.text-white {
+  background-color: #b9f2ff !important; /* Kim Cương */
+  color: #000 !important;
+}
 </style>
 <script setup>
 import { ref, watch, onMounted, computed, reactive } from "vue";
@@ -390,8 +457,50 @@ import createCrudService from "../../Configs/reusableCRUDService";
 import PageNavigative from "./PageNavigative.vue";
 import FilterDropDown from "./FilterDropDown.vue";
 import dayjs from "dayjs";
+import api from "../../Configs/api";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+
+// User Rank Rules based on Loyalty Points (same as Form.vue)
+const userRankRules = [
+  { min: 0, max: 10000, rank: "Đồng", color: "#CD7F32", description: "0 - 10,000 điểm" },
+  {
+    min: 10000,
+    max: 20000,
+    rank: "Bạc",
+    color: "#C0C0C0",
+    description: "10,000 - 20,000 điểm",
+  },
+  {
+    min: 20000,
+    max: 30000,
+    rank: "Vàng",
+    color: "#FFD700",
+    description: "20,000 - 30,000 điểm",
+  },
+  {
+    min: 30000,
+    max: 50000,
+    rank: "Bạch Kim",
+    color: "#E5E4E2",
+    description: "30,000 - 50,000 điểm",
+  },
+  {
+    min: 50000,
+    max: Infinity,
+    rank: "Kim Cương",
+    color: "#B9F2FF",
+    description: "Trên 50,000 điểm",
+  },
+];
+
+// Function to calculate user rank based on loyalty points
+const calculateUserRank = (loyaltyPoints) => {
+  const points = parseInt(loyaltyPoints) || 0;
+  const rule = userRankRules.find((rule) => points >= rule.min && points < rule.max);
+  return rule ? rule.rank : "Đồng";
+};
+
 const prices = [
   "price",
   "totalSpent",
@@ -399,8 +508,13 @@ const prices = [
   "cost",
   "discountValue",
   "comboPrice",
+  "estimatedShippingFee",
+  "actualShippingFee",
+  "finalTotal",
+  "minOrderAmount",
+  "maxDiscountAmount",
 ];
-function formatCell(key, value) {
+function formatCell(key, value, item = null) {
   if (key.toLowerCase() === "password") return;
   if (key.toLowerCase().includes("gender")) {
     console.log("debug", key, value);
@@ -569,11 +683,10 @@ function formatCell(key, value) {
     // Chỉ format thành ngày tháng nếu field name chứa date/time/at hoặc value có format ngày tháng rõ ràng
     return dayjs(value).format("DD/MM/YYYY HH:mm:ss");
   } else if (prices.includes(key)) {
-    if(value != null){
-      con
+    if (value != null) {
       return `${value.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
     }
-    return '0'
+    return "0";
   } else if (Array.isArray(value)) {
     return value.join(", ");
   } else if (key.toLowerCase().includes("url") && typeof value === "string") {
@@ -600,41 +713,77 @@ function formatCell(key, value) {
     }
     return `<span class="text-warning">${stars}</span>`;
   } else if (key.toLowerCase().includes("userrank") && typeof value === "string") {
-    // Xử lý màu sắc cho userrank
+    // Auto-calculate userrank based on loyaltyPoint if available
+    let displayRank = value; // Default to current value
+    let loyaltyPoints = null;
+
+    // Try to get loyaltyPoint from current item
+    if (item && item.loyaltyPoint !== undefined && item.loyaltyPoint !== null) {
+      loyaltyPoints = item.loyaltyPoint;
+      displayRank = calculateUserRank(loyaltyPoints);
+    }
+
+    // Xử lý màu sắc cho userrank dựa trên calculated rank
     let badgeClass = "";
     let iconClass = "";
+    let tooltipText = "";
 
-    switch (value.toLowerCase()) {
+    switch (displayRank.toLowerCase()) {
       case "đồng":
       case "dong":
       case "bronze":
         badgeClass = "bg-warning text-dark";
         iconClass = "bi-award";
+        tooltipText =
+          loyaltyPoints !== null ? `${loyaltyPoints.toLocaleString("vi-VN")} điểm` : "";
         break;
       case "bạc":
       case "bac":
       case "silver":
         badgeClass = "bg-secondary text-white";
         iconClass = "bi-award-fill";
+        tooltipText =
+          loyaltyPoints !== null ? `${loyaltyPoints.toLocaleString("vi-VN")} điểm` : "";
         break;
       case "vàng":
       case "vang":
       case "gold":
         badgeClass = "bg-success text-white";
         iconClass = "bi-trophy";
+        tooltipText =
+          loyaltyPoints !== null ? `${loyaltyPoints.toLocaleString("vi-VN")} điểm` : "";
         break;
       case "bạch kim":
       case "bach kim":
-      case "platinum":
-        badgeClass = "bg-primary text-white";
+        badgeClass = "bg-info text-white";
         iconClass = "bi-trophy-fill";
+        tooltipText =
+          loyaltyPoints !== null ? `${loyaltyPoints.toLocaleString("vi-VN")} điểm` : "";
+        break;
+      case "kim cương":
+      case "kim cuong":
+      case "diamond":
+        badgeClass = "bg-primary text-white";
+        iconClass = "bi-gem";
+        tooltipText =
+          loyaltyPoints !== null ? `${loyaltyPoints.toLocaleString("vi-VN")} điểm` : "";
         break;
       default:
         badgeClass = "bg-light text-dark";
         iconClass = "bi-person";
+        tooltipText =
+          loyaltyPoints !== null ? `${loyaltyPoints.toLocaleString("vi-VN")} điểm` : "";
     }
 
-    return `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${value}</span>`;
+    const autoCalculatedBadge =
+      loyaltyPoints !== null
+        ? `<span class="badge ${badgeClass}" title="${tooltipText}">
+           <i class="bi ${iconClass} me-1"></i>${displayRank}
+           <small class="ms-1" style="font-size: 0.7em;">⚡</small>
+         </span>`
+        : `<span class="badge ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${displayRank}</span>`;
+
+    return autoCalculatedBadge;
   } else if (key.toLowerCase() === "type" && typeof value === "string") {
     // Xử lý màu sắc cho promotion type
     let badgeClass = "";
@@ -727,6 +876,7 @@ const fetchData = async () => {
     );
     const json = responseIndexTable.data.content;
     totalPage.value = responseIndexTable.data.totalPages;
+    console.log("json load table ", json);
     data.value = Array.isArray(json) ? json : [json];
     columns.value = data.value.length ? Object.keys(data.value[0]) : [];
   } catch (err) {
@@ -753,6 +903,27 @@ watch(
   },
   { deep: true }
 );
+
+const showForm = ref(false);
+const selectedNote = ref("KHONGCHOXEMHANG");
+
+const approveOrderById = async (orderId, requiredNote) => {
+  try {
+    const response = await api.post(`/admin/Orders/approve/${orderId}`, {
+      requiredNote, // gửi lên backend
+    });
+    if (response?.data?.message) {
+      alert(`✅ ${response.data.message}`);
+      console.log("🔢 Mã GHN:", response.data.ghnOrderCode);
+      location.reload();
+      return response.data;
+    }
+  } catch (error) {
+    console.error("❌ Lỗi khi duyệt đơn:", error);
+    alert(error.response?.data?.message || "Không thể duyệt đơn hàng");
+    throw error;
+  }
+};
 </script>
 
 <style scoped>

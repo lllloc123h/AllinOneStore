@@ -27,7 +27,7 @@ export default function createCrudService(resource) {
 
         update(id, data) {
             console.log(`Updating ${resource} with ID ${id}`, { ...data });
-            return api.put(`/admin/${resource}/${id}`, { ...data });
+            return api.put(`/admin/${resource}/${id}`, data);
         },
 
         delete(id) {

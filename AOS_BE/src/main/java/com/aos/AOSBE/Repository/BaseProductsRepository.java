@@ -60,4 +60,5 @@ public interface BaseProductsRepository
 	Page<Object[]> findAllWithListPriceRaw(Pageable pageable, @Param("searchByKeyWord") String searchByKeyWord,
 			@Param("searchByCategoryId") int searchByCategoryId);
 
+	Page<BaseProducts> findAllByNameContaining(String name, Pageable pageable);
 }

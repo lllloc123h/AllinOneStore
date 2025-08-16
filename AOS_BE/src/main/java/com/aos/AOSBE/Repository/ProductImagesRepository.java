@@ -2,9 +2,9 @@ package com.aos.AOSBE.Repository;
 
 import java.util.List;
 
-import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.aos.AOSBE.Entity.ProductImages;
@@ -15,4 +15,7 @@ public interface ProductImagesRepository
 	// Add custom query methods here if needed
 	@Query("SELECT a FROM ProductImages a WHERE a.productItems.id =  ?1 ")
 	List<ProductImages> findByProductItemsId(int productItemId);
+
+	@Query("SELECT a FROM ProductImages a WHERE a.productItems.id = ?1  AND a.isDefault = true")
+	List<ProductImages> checkContainDefaultImagesByProductItemId(int productItemId);
 }

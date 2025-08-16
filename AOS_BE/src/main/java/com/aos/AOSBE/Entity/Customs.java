@@ -19,7 +19,7 @@ public class Customs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	
     @Column(name = "id")
-    private int id;
+    private Integer id;
 	@ManyToOne
     @JoinColumn(name = "account_id")
     private Accounts account;
@@ -41,4 +41,7 @@ public class Customs {
     @ManyToOne
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
+    @ManyToOne
+    @JoinColumn(name = "order_item_id")
+    private OrderItems orderItem;
 }
