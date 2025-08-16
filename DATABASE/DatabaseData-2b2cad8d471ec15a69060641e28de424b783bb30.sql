@@ -1795,7 +1795,8 @@ VALUES
 INSERT INTO payment_methods (name, description, is_active, created_at, updated_at)
 VALUES 
 (N'Thanh toán khi nhận hàng (COD)', N'Thanh toán khi nhận hàng', 1, GETDATE(), GETDATE()),
-(N'Thanh toán qua ví điện tử', N'Sử dụng ví tích hợp trong hệ thống', 1, GETDATE(), GETDATE());
+(N'Thanh toán qua ví điện tử', N'Sử dụng ví tích hợp trong hệ thống', 1, GETDATE(), GETDATE()),
+(N'Thanh toán qua ví điện tử E-wallet', N'Sử dụng ví của của hàng', 1, GETDATE(), GETDATE());
 
 -- INSERT shipping_methods
 INSERT INTO shipping_methods (name, description, is_active, created_at, updated_at)
@@ -1850,6 +1851,17 @@ VALUES
     ),
     N'XAM',
     N'Xám'
+  ), (
+    (
+      SELECT
+        id
+      FROM
+        variants
+      WHERE
+        name = N'Màu sắc'
+    ),
+    N'LX',
+    N'Lam xanh'
   ),
   (
     (

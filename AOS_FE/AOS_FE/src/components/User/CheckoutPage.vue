@@ -556,7 +556,6 @@ const showDiscountModal = ref(false);
 const orderNote = ref("");
 const freeshipCoupons = ref([]);
 const discountCoupons = ref([]);
-
 let timer = null;
 
 const openFreeshipModal = async () => {

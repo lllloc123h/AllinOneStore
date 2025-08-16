@@ -339,7 +339,7 @@ const previewMainImg = ref("");
 const mapVarriants = ref({});
 const selected = ref([]);
 const variantPrevieBeforeSaveBaseProduct = ref({});
-const combinations = ref({});
+const combinations = ref();
 const uploadRef = ref(null);
 const uploadRefProductItems = ref(null);
 
@@ -475,6 +475,9 @@ async function addToListVariantPreview() {
   );
 }
 async function saveProductItems() {
+  combinations.value = generateVariantCombinations(
+    variantPrevieBeforeSaveBaseProduct.value
+  );
   listProductItemsToSave.value = combinations.value.map((item) => {
     return {
       id: null,
@@ -538,6 +541,8 @@ function generateVariantCombinations(groupedVariants) {
     const variants = groupedVariants[groupName];
 
     for (const variant of variants) {
+      // at this point, use condition if the variant == null or undefined skip push method 
+      if (!variant || !variant.signalSku) continue;
       currentCombo.push({ group: groupName, ...variant });
       backtrack(index + 1, currentCombo);
       currentCombo.pop();

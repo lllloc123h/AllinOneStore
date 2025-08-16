@@ -134,7 +134,9 @@ public class MomoPaymentAPI {
 		String notifyUrl = domain + "/api/e-wallet/callback";
 		Orders order = ordersService.ordersFindById(dto.getOrderId()).orElse(null);
 		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
-		if (order == null || eWallets == null) {
+		if (order == null
+//				|| eWallets == null
+		) {
 			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra: Không tìm thấy Order"));
 		}
 
