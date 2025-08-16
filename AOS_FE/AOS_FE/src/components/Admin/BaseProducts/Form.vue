@@ -415,11 +415,20 @@ const formDataUpdateProductIamges = ref({
 });
 
 
-function openPopupToUpdateProductItems(id) {
+async function openPopupToUpdateProductItems(id) {
   showModalToUpdateProductItems.value = true;
   formDataUpdateProductItems.value = list.value.find(
     (condition) => condition.productItemsId === id
   );
+  console.log("formDataUpdateProductItems:", uploadRefProductItems.value);
+  if (uploadRefProductItems.value === null && formDataUpdateProductItems.value.images.length > 0) {
+    console.log("formDataUpdateProductItems:", formDataUpdateProductItems.value.images.map((item) => {
+      return item.imageUrl
+    }));
+    uploadRefProductItems.value.loadFromUrls(formDataUpdateProductItems.value.images.map((item) => {
+      return item.imageUrl
+    }));
+  }
 }
 async function removeVariant(index) {
   try {
