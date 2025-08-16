@@ -12,12 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomsDTOS {
-    private int id;
+    private Integer id;
     private int accountId;
     private String canvasJson;
     private String imageUrl;
     private String designName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private int productItems;
+    private ProductItemsDTOS productItems;
+    private OrderItemsDTOS orderItem;
 }

@@ -55,7 +55,7 @@
               class="info-value status-badge"
               :class="getStatusClass(order.trangThai)"
             >
-              {{ order.trangThai }}
+              {{ getStatusText(order.trangThai) }}
             </span>
           </div>
         </div>
@@ -346,32 +346,73 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../Configs/api";
+import { computed } from "vue";
 
 const order = ref(null);
-const statusIndex = ref(0);
 
 const steps = [
   { label: "Chờ xác nhận", icon: "bi bi-hourglass-split" },
   { label: "Chờ lấy hàng", icon: "bi bi-box-seam" },
   { label: "Chờ giao hàng", icon: "bi bi-truck" },
+  { label: "Đang giao hàng", icon: "bi bi-a" },
   { label: "Đã nhận hàng", icon: "bi bi-check-circle-fill" },
 ];
 
 // GHN trả về nhiều trạng thái, cần map để khớp UI
 const statusMap = {
-  ready_to_pick: 1,
-  picking: 1,
-  picked: 2,
-  delivering: 2,
-  delivered: 3,
-  cancel: 0,
-  return: 0,
-  exception: 0,
+  // GHN Status → UI (Tiếng Việt)
+
+  // Chờ xác nhận (nội bộ, chưa gửi GHN)
+  "Chờ xác nhận": "Chờ xác nhận",
+
+  // Chờ lấy hàng
+  ready_to_pick: "Chờ lấy hàng",
+  picking: "Chờ lấy hàng",
+  money_collect_picking: "Chờ lấy hàng",
+
+  // Chờ giao hàng
+  picked: "Chờ giao hàng",
+  //Đang giao hàng
+  storing: "Đang giao hàng",
+  sorting: "Đang giao hàng",
+  transporting: "Đang giao hàng",
+  delivering: "Đang giao hàng",
+  money_collect_delivering: "Đang giao hàng",
+
+  // Đã nhận hàng
+  delivered: "Đã nhận hàng",
+
+  // Đã hủy (gộp các trường hợp trả, lỗi, hủy, thất bại)
+  cancel: "Đã hủy",
+  return: "Đổi/Trả hàng",
+  returning: "Đổi/Trả hàng",
+  returned: "Đổi/Trả hàng",
+  return_sorting: "Đổi/Trả hàng",
+  return_transporting: "Đổi/Trả hàng",
+  lost: "Đổi/Trả hàng",
+  damage: "Đổi/Trả hàng",
+  delivery_fail: "Đổi/Trả hàng",
+};
+
+function getStatusText(status) {
+  return statusMap[status] || "Không xác định";
+}
+
+const statusToIndex = {
   "Chờ xác nhận": 0,
   "Chờ lấy hàng": 1,
   "Chờ giao hàng": 2,
-  "Đã nhận hàng": 3,
+  "Đang giao hàng": 3,
+  "Đã nhận hàng": 4,
+  "Đã hủy": 5,
 };
+
+// Dùng trạng thái hiện tại để xác định bước hiện tại
+const statusIndex = computed(() => {
+  const rawStatus = order.value?.trangThai;
+  const viStatus = statusMap[rawStatus] || "Không xác định";
+  return statusToIndex[viStatus] ?? -1;
+});
 
 const route = useRoute();
 const maDon = route.params.id;
@@ -380,6 +421,7 @@ const loadOrder = async () => {
   try {
     const res = await api.get(`/Orders/detail/${maDon}`);
     const orderData = res.data;
+    console.log("dữ liệu chi tiết đơn hàng", res.data);
     const [tenKH, sdtKH, diaChiKH] = orderData.order.orderInfor?.split(" - ") || [];
 
     order.value = {
@@ -424,7 +466,27 @@ const loadOrder = async () => {
           : []),
       ],
     };
+    if (order.value.vanChuyen.maVanDon && order.value.vanChuyen.maVanDon !== "Đang cập nhật") {
+  try {
+    const logRes = await api.get(`/log/${order.value.vanChuyen.maVanDon}`);
+    const ghnLogs = logRes.data.map((log) => {
+      console.log("Log từ GHN:", log);
 
+      return {
+        thoiGian: log.updated_date,
+        noiDung: statusDisplayMap[log.status] || `Trạng thái: ${log.status}`,
+      };
+    });
+
+    order.value.lichSu.push(...ghnLogs);
+    order.value.lichSu.sort((a, b) => new Date(a.thoiGian) - new Date(b.thoiGian));
+  } catch (err) {
+    console.warn("Không thể lấy log từ GHN:", err);
+  }
+}
+    if (statusMap[order.value.trangThai] === "Đã nhận hàng") {
+      order.value.thanhToan.trangThai = "Đã thanh toán";
+    }
     statusIndex.value = statusMap[order.value.trangThai] ?? 0;
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết đơn hàng", error);
@@ -545,6 +607,8 @@ const statusDisplayMap = {
   ready_to_pick: "Chờ lấy hàng",
   picking: "Đang lấy hàng",
   picked: "Đã lấy hàng",
+  storing: "Đã bàn giao đơn vị vận chuyển",
+  transporting: "Đang vận chuyển giữa các kho",
   delivering: "Đang giao hàng",
   delivered: "Đã giao hàng thành công",
   cancel: "Đã huỷ",
@@ -596,6 +660,7 @@ const statusDisplayMap = {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  padding-bottom: 2rem;
 }
 
 /* Card Styles */

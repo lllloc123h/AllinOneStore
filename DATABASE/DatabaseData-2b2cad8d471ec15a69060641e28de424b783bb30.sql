@@ -13,6 +13,7 @@ INSERT INTO accounts (
     total_spent,
     total_order,
     loyalty_point,
+	is_active,
     created_at,
     updated_at
 )
@@ -30,6 +31,7 @@ VALUES
     7500000.00,
     5,
     200,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -46,6 +48,7 @@ VALUES
     10000000.00,
     5,
     300,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -62,6 +65,7 @@ VALUES
     6000000.00,
     5,
     150,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -78,6 +82,7 @@ VALUES
     9000000.00,
     5,
     250,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -94,6 +99,7 @@ VALUES
     12500000.00,
     5,
     400,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -110,6 +116,7 @@ VALUES
     5000000.00,
     5,
     100,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -126,6 +133,7 @@ VALUES
     6500000.00,
     5,
     180,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -142,6 +150,7 @@ VALUES
     8000000.00,
     5,
     280,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -158,6 +167,7 @@ VALUES
     7000000.00,
     5,
     160,
+	1,
     GETDATE(),
     GETDATE()
   ),
@@ -174,6 +184,7 @@ VALUES
     11000000.00,
     5,
     350,
+	1,
     GETDATE(),
     GETDATE()
   );
@@ -415,7 +426,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203158/products/tpktrmvmjmohap5adypd.jpg',
     0,
     100,
     4,
@@ -432,7 +443,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752202930/products/hhnomfnhcmute6ff1qfb.webp',
     0,
     75,
     5,
@@ -449,7 +460,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838419/products/gqdzt4vyniiv5nw7sxr7.webp',
     0,
     90,
     4,
@@ -466,7 +477,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838522/products/h3qqeqhkigd90j2jywlt.webp',
     0,
     30,
     5,
@@ -483,7 +494,7 @@ VALUES
       WHERE
         name = N'Áo Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752202930/products/hhnomfnhcmute6ff1qfb.webp',
     0,
     110,
     4,
@@ -501,7 +512,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849618/uwkj22xvyxotdmnaddqc.jpg',
     0,
     85,
     4,
@@ -518,7 +529,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850466/avihrdgblepkfwobilid.webp',
     0,
     130,
     4,
@@ -535,7 +546,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849619/gzocnmsgprbl8f659o17.jpg',
     0,
     60,
     5,
@@ -552,7 +563,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849618/dkcj4tpyigmltfnzmja7.jpg',
     0,
     95,
     4,
@@ -569,7 +580,7 @@ VALUES
       WHERE
         name = N'Quần Nam'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849618/ifeuyabdle9ztwontqno.webp',
     0,
     50,
     3,
@@ -587,7 +598,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754596840/products/m1cjtjzaqrlnmopgiesk.jpg',
     0,
     160,
     4,
@@ -604,7 +615,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754596809/products/pkjixtajigjgsve3hx9b.jpg',
     0,
     70,
     5,
@@ -621,7 +632,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754475778/products/sil2kg70vh2wawhundas.webp',
     0,
     80,
     4,
@@ -638,7 +649,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203877/products/rk4gfkdcetcaykxn3c7x.jpg',
     0,
     105,
     4,
@@ -655,7 +666,7 @@ VALUES
       WHERE
         name = N'Áo Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752198281/products/tb0adwgoge36tgp2kxbj.jpg',
     0,
     45,
     4,
@@ -673,7 +684,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/y6qbtb77x07xikspgtpq.jpg',
     0,
     90,
     4,
@@ -690,7 +701,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/bhpd7txb4moeic4nmvm0.webp',
     0,
     115,
     4,
@@ -707,7 +718,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751964597/qclbaowfuxqfbudyc5fh.jpg',
     0,
     70,
     5,
@@ -741,7 +752,7 @@ VALUES
       WHERE
         name = N'Váy Nữ'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/bhpd7txb4moeic4nmvm0.webp',
     0,
     80,
     4,
@@ -759,7 +770,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850755/mqtmovngedrdwxvjaziz.jpg',
     0,
     120,
     4,
@@ -776,7 +787,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850754/p32b87icsywpjwi7xfua.jpg',
     0,
     140,
     4,
@@ -793,7 +804,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850754/ynfkdff0ahq8mzv1uqlf.jpg',
     0,
     70,
     4,
@@ -810,7 +821,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850755/a7otpjz1yiayhvli1ebh.jpg',
     0,
     60,
     5,
@@ -827,7 +838,7 @@ VALUES
       WHERE
         name = N'Quần áo bé trai'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850755/mqtmovngedrdwxvjaziz.jpg',
     0,
     90,
     4,
@@ -845,7 +856,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     110,
     5,
@@ -862,7 +873,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     130,
     4,
@@ -879,7 +890,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'ao_khoac_jean_be_gai.webp',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     50,
     4,
@@ -913,7 +924,7 @@ VALUES
       WHERE
         name = N'Quần áo bé gái'
     ),
-    'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png',
+    'https://res.cloudinary.com/da2v8uqir/image/upload/v1754850860/u2zdj1aubxavsyav0gkw.webp',
     0,
     150,
     4,
@@ -932,7 +943,8 @@ INSERT INTO
     safety_stock,
     qty,
     sell_start,
-    sell_end
+    sell_end,
+	is_active
   )
 VALUES
   -- Áo Polo Nam Cotton Pha (ID: 151)
@@ -953,7 +965,8 @@ VALUES
     10,
     50,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -972,7 +985,8 @@ VALUES
     10,
     45,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Áo Khoác Bomber Nam (ID: 152)
   (
@@ -992,7 +1006,8 @@ VALUES
     5,
     15,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Thay thế 'Áo Sơ Mi Linen Nam' bằng 'Áo Thun Dài Tay Nam' (ID: 153)
   (
@@ -1012,7 +1027,8 @@ VALUES
     5,
     25,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Quần Kaki Nam Dáng Thẳng (ID: 156)
   (
@@ -1032,7 +1048,8 @@ VALUES
     5,
     30,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -1051,7 +1068,8 @@ VALUES
     5,
     28,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Váy Đầm Suông Caro (ID: 166)
   (
@@ -1071,7 +1089,8 @@ VALUES
     3,
     20,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -1090,7 +1109,8 @@ VALUES
     3,
     18,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Áo Kiểu Sơ Mi Nữ (ID: 164) (Đã thay đổi từ Áo Blouse Nữ Công Sở để khớp với base_products)
   (
@@ -1110,7 +1130,8 @@ VALUES
     8,
     40,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -1129,7 +1150,8 @@ VALUES
     8,
     35,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Váy Chữ A Dáng Ngắn (ID: 167)
   (
@@ -1149,7 +1171,8 @@ VALUES
     5,
     25,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Bộ Quần Áo Bé Trai Năng Động (ID: 171)
   (
@@ -1169,7 +1192,8 @@ VALUES
     10,
     60,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -1188,7 +1212,8 @@ VALUES
     10,
     55,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Váy Bé Gái Xòe Hoa (ID: 176)
   (
@@ -1208,7 +1233,8 @@ VALUES
     5,
     30,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -1227,7 +1253,8 @@ VALUES
     5,
     28,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Quần Jean Phối Rách Bé Trai (ID: 173)
   (
@@ -1247,7 +1274,8 @@ VALUES
     5,
     20,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Bộ Quần Áo Bé Gái Dễ Thương (ID: 177)
   (
@@ -1267,7 +1295,8 @@ VALUES
     8,
     40,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   (
     (
@@ -1286,7 +1315,8 @@ VALUES
     8,
     35,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   ),
   -- Áo Thun Croptop Nữ (ID: 161)
   (
@@ -1306,14 +1336,15 @@ VALUES
     10,
     50,
     GETDATE (),
-    DATEADD (month, 6, GETDATE ())
+    DATEADD (month, 6, GETDATE ()),
+	1
   );
 
 INSERT INTO
   product_images (product_item_id, image_url)
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754337289/products/a4hhumhd6iu0x1cpt7qa.jpg'
 FROM
   product_items
 WHERE
@@ -1321,7 +1352,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203063/products/kz8rcofeawtxaqmtjtgb.jpg'
 FROM
   product_items
 WHERE
@@ -1337,7 +1368,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/aaosozyrjyqgblpqzkmp.jpg'
 FROM
   product_items
 WHERE
@@ -1345,7 +1376,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838479/products/bnsvpwuan5kfslrpqxd7.webp'
 FROM
   product_items
 WHERE
@@ -1361,7 +1392,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/aaosozyrjyqgblpqzkmp.jpg'
 FROM
   product_items
 WHERE
@@ -1369,7 +1400,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752826254/aaosozyrjyqgblpqzkmp.jpg'
 FROM
   product_items
 WHERE
@@ -1385,7 +1416,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849619/to239za16bv9cf2dh72n.jpg'
 FROM
   product_items
 WHERE
@@ -1401,7 +1432,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754849728/cnsqam59ax7a2l9nwqiu.webp'
 FROM
   product_items
 WHERE
@@ -1409,7 +1440,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_kieu_so_mi_nu_trang_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1753888979/products/bs1nrdeo0hu0xpf3fnec.jpg'
 FROM
   product_items
 WHERE
@@ -1417,7 +1448,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1754739803/products/yjxxtwipr5g6kl0clyz4.jpg'
 FROM
   product_items
 WHERE
@@ -1425,7 +1456,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838522/products/h3qqeqhkigd90j2jywlt.webp'
 FROM
   product_items
 WHERE
@@ -1433,7 +1464,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752838522/products/h3qqeqhkigd90j2jywlt.webp'
 FROM
   product_items
 WHERE
@@ -1441,7 +1472,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1753951166/products/iozurikq559erdlfsjkh.webp'
 FROM
   product_items
 WHERE
@@ -1449,7 +1480,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1753978081/products/ofuhoowyllwihxkbrgfm.webp'
 FROM
   product_items
 WHERE
@@ -1457,7 +1488,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'ao_croptop_nu_trang_1.webp'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752211056/products/m3ylkf2xuwrunxxw7prc.jpg'
 FROM
   product_items
 WHERE
@@ -1465,7 +1496,7 @@ WHERE
 UNION ALL
 SELECT
   id,
-  'https://res.cloudinary.com/da2v8uqir/image/upload/v1751960219/nvij8xogfmve5pgzkf2f.png'
+  'https://res.cloudinary.com/da2v8uqir/image/upload/v1752203364/products/ri9et2iceglxd0waflq6.jpg'
 FROM
   product_items
 WHERE
@@ -1764,7 +1795,8 @@ VALUES
 INSERT INTO payment_methods (name, description, is_active, created_at, updated_at)
 VALUES 
 (N'Thanh toán khi nhận hàng (COD)', N'Thanh toán khi nhận hàng', 1, GETDATE(), GETDATE()),
-(N'Thanh toán qua ví điện tử', N'Sử dụng ví tích hợp trong hệ thống', 1, GETDATE(), GETDATE());
+(N'Thanh toán qua ví điện tử', N'Sử dụng ví tích hợp trong hệ thống', 1, GETDATE(), GETDATE()),
+(N'Thanh toán qua ví điện tử E-wallet', N'Sử dụng ví của của hàng', 1, GETDATE(), GETDATE());
 
 -- INSERT shipping_methods
 INSERT INTO shipping_methods (name, description, is_active, created_at, updated_at)
@@ -1819,6 +1851,17 @@ VALUES
     ),
     N'XAM',
     N'Xám'
+  ), (
+    (
+      SELECT
+        id
+      FROM
+        variants
+      WHERE
+        name = N'Màu sắc'
+    ),
+    N'LX',
+    N'Lam xanh'
   ),
   (
     (
@@ -2100,12 +2143,13 @@ INSERT INTO promotion_products (
     product_item_id,
     require_qty,
     is_gift,
+	gift_option,
     created_at,
     updated_at
 ) VALUES
-(1, 1, 1, 0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
-(1, 2, 2, 0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
-(2, 3, 1, 1, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
+(4, 4, 1, 0,0, GETDATE(), GETDATE()), -- Giảm giá cho sản phẩm 1
+(4, 5, 2, 0,0, GETDATE(), GETDATE()), -- Mua 2 sản phẩm 2 mới áp dụng khuyến mãi
+(5, 6, 1, 1,0, GETDATE(), GETDATE()); -- Sản phẩm 3 là quà tặng trong combo
 
 -- Thêm combo khuyến mãi
 INSERT INTO promotion_products (
@@ -2113,14 +2157,15 @@ INSERT INTO promotion_products (
     product_item_id,
     require_qty,
     is_gift,
+	gift_option,
     created_at,
     updated_at
 ) VALUES
-(2, 1, 1, 0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
-(2, 2, 1, 0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
+(2, 1, 1, 0,0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
+(2, 2, 1, 0,0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
 
 -- INSERT 30 orders
-select * from orders where account_id = 2;
+select * from orders where account_id = 1;
 DECLARE @i INT = 1;
 WHILE @i <= 30
 BEGIN
@@ -2212,7 +2257,6 @@ BEGIN
       price_at_buy,
 	  cost_at_buy,
       selling_price,
-      coupon_code,
       created_at,
       updated_at
     )
@@ -2223,7 +2267,6 @@ BEGIN
       (SELECT price FROM product_items WHERE id = @pid),
       (SELECT cost FROM product_items WHERE id = @pid),
       (SELECT price FROM product_items WHERE id = @pid),
-      NULL,
       GETDATE(),
       GETDATE()
     );
@@ -2303,7 +2346,7 @@ BEGIN
         'https://example.com/image3.jpg',
         'https://example.com/video.mp4',
         DATEADD(DAY, -ABS(CHECKSUM(NEWID()) % 30), GETDATE())
-    FROM product_items where id =1 
+    FROM product_items where id = 5
     ORDER BY NEWID();
 
     SET @i = @i + 1;

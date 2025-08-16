@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
@@ -65,9 +67,12 @@ public class OrdersService {
 	private ProductItemsRepository productItemsRepository;
 	@Autowired
 	private GhnService ghnService;
-
 	@Autowired
-	private OrderItemsRepository orderItemsRepository; // nếu cần
+	private OrderItemsRepository orderItemsRepository;
+	@Autowired
+	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private AccountsRepository accountsRepository;
 
 	private final String ghnToken = System.getProperty("GHN_TOKEN");
 	private final String ghnShopId = System.getProperty("GHN_SHOPID");
@@ -80,106 +85,156 @@ public class OrdersService {
 
 	@Transactional
 	public Orders ordersSave(Orders orders) {
-		try {
-			// Xử lý Payment Method
-			if (orders.getPaymentMethods() == null && orders.getPaymentMethodId() != null) {
-				PaymentMethods pm = paymentMethodsRepository.findById(orders.getPaymentMethodId())
-						.orElseThrow(() -> new IllegalArgumentException("Phương thức thanh toán không hợp lệ."));
-				orders.setPaymentMethods(pm);
-			}
+	    try {
+	        // ===============================
+	        // 1. Xử lý Payment & Shipping
+	        // ===============================
+	        if (orders.getPaymentMethods() == null && orders.getPaymentMethodId() != null) {
+	            PaymentMethods pm = paymentMethodsRepository.findById(orders.getPaymentMethodId())
+	                    .orElseThrow(() -> new IllegalArgumentException("Phương thức thanh toán không hợp lệ."));
+	            orders.setPaymentMethods(pm);
+	        }
+	        if (orders.getShippingMethods() == null && orders.getShippingMethodId() != null) {
+	            ShippingMethods sm = shippingMethodsRepository.findById(orders.getShippingMethodId())
+	                    .orElseThrow(() -> new IllegalArgumentException("Phương thức vận chuyển không hợp lệ."));
+	            orders.setShippingMethods(sm);
+	        }
+	        if (orders.getPaymentMethods() == null) {
+	            throw new IllegalArgumentException("Phải chọn phương thức thanh toán.");
+	        }
+	        orders.setPaymentStatus("Chưa thanh toán");
+	        if (orders.getShippingStatus() == null || orders.getShippingStatus().isEmpty()) {
+	            orders.setShippingStatus("Chờ xác nhận");
+	        }
 
-			// Xử lý Shipping Method
-			if (orders.getShippingMethods() == null && orders.getShippingMethodId() != null) {
-				ShippingMethods sm = shippingMethodsRepository.findById(orders.getShippingMethodId())
-						.orElseThrow(() -> new IllegalArgumentException("Phương thức vận chuyển không hợp lệ."));
-				orders.setShippingMethods(sm);
-			}
+	        // ===============================
+	        // 2. Xử lý mã giảm giá
+	        // ===============================
+	        Coupons discountCoupon = null;
+	        if (orders.getDiscountCouponCode() != null && !orders.getDiscountCouponCode().trim().isEmpty()) {
+	            discountCoupon = couponsRepository.findByCode(orders.getDiscountCouponCode())
+	                    .orElseThrow(() -> new IllegalArgumentException("Mã giảm giá không tồn tại."));
+	            if (!discountCoupon.isActive()) {
+	                throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
+	            }
+	            long usageCount = ordersRepository.countCouponUsage(
+	                    (long) orders.getAccounts().getId(), discountCoupon.getCode());
+	            if (discountCoupon.getUsagePerCustomer() != null &&
+	                usageCount >= discountCoupon.getUsagePerCustomer()) {
+	                throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
+	            }
+	            if (discountCoupon.getQty() <= 0) {
+	                throw new IllegalArgumentException("Mã giảm giá đã hết lượt sử dụng.");
+	            }
+	            // Trừ số lượng mã
+	            discountCoupon.setQty(discountCoupon.getQty() - 1);
+	            discountCoupon.setUpdatedAt(LocalDateTime.now());
+	            couponsRepository.save(discountCoupon);
+	        }
 
-			// Kiểm tra đã chọn phương thức thanh toán
-			if (orders.getPaymentMethods() == null) {
-				throw new IllegalArgumentException("Phải chọn phương thức thanh toán.");
-			}
+	        Coupons freeshipCoupon = null;
+	        if (orders.getFreeshipCouponCode() != null && !orders.getFreeshipCouponCode().trim().isEmpty()) {
+	            freeshipCoupon = couponsRepository.findByCode(orders.getFreeshipCouponCode())
+	                    .orElseThrow(() -> new IllegalArgumentException("Mã freeship không tồn tại."));
+	            
+	            if (!freeshipCoupon.isActive()) {
+	                throw new IllegalArgumentException("Mã freeship không còn hiệu lực.");
+	            }
 
-			// Thiết lập trạng thái thanh toán
-			String paymentMethodName = orders.getPaymentMethods().getName();
-			if ("Thanh toán qua ví điện tử".equalsIgnoreCase(paymentMethodName)) {
-				orders.setPaymentStatus("Chưa thanh toán");
-			} else {
-				orders.setPaymentStatus("Chưa thanh toán");
-			}
+	            long usageCount = ordersRepository.countCouponUsage(
+	                    (long) orders.getAccounts().getId(), freeshipCoupon.getCode());
+	            
+	            if (freeshipCoupon.getUsagePerCustomer() != null &&
+	                usageCount >= freeshipCoupon.getUsagePerCustomer()) {
+	                throw new IllegalStateException("Bạn đã sử dụng mã freeship đủ số lần cho phép.");
+	            }
 
-			// Thiết lập trạng thái giao hàng mặc định
-			if (orders.getShippingStatus() == null || orders.getShippingStatus().isEmpty()) {
-				orders.setShippingStatus("Chờ xác nhận");
-			}
+	            if (freeshipCoupon.getQty() <= 0) {
+	                throw new IllegalArgumentException("Mã freeship đã hết lượt sử dụng.");
+	            }
 
-			// Kiểm tra mã giảm giá
-			String couponCode = orders.getDiscountCouponCode();
-			if (couponCode != null && !couponCode.trim().isEmpty()) {
-				Optional<Coupons> optionalCoupon = couponsRepository.findByCode(couponCode);
-				if (optionalCoupon.isEmpty()) {
-					throw new IllegalArgumentException("Mã giảm giá không tồn tại.");
-				}
-				Coupons coupon = optionalCoupon.get();
-				if (!coupon.isActive()) {
-					throw new IllegalArgumentException("Mã giảm giá không còn hiệu lực.");
-				}
+	            // Trừ số lượng mã freeship
+	            freeshipCoupon.setQty(freeshipCoupon.getQty() - 1);
+	            freeshipCoupon.setUpdatedAt(LocalDateTime.now());
+	            couponsRepository.save(freeshipCoupon);
+	        }
 
-				long usageCount = ordersRepository.countCouponUsage((long) orders.getAccounts().getId(), couponCode);
-				if (usageCount >= coupon.getUsagePerCustomer()) {
-					throw new IllegalStateException("Bạn đã sử dụng mã này đủ số lần cho phép.");
-				}
-			}
-			// Lưu đơn hàng trước để có ID (vì OrderItems cần `orders`)
+	        // ===============================
+	        // 3. Lưu đơn hàng trước để có ID
+	        // ===============================
 	        Orders savedOrder = ordersRepository.save(orders);
 
-	        // Kiểm tra và xử lý từng OrderItem
+	        // ===============================
+	        // 4. Phân loại sản phẩm & áp dụng giảm giá
+	        // ===============================
 	        if (orders.getOrderItems() != null && !orders.getOrderItems().isEmpty()) {
+
+	            // Lấy danh sách sản phẩm thường để tính giảm giá
+	            List<OrderItems> normalItems = new ArrayList<>();
+
 	            for (OrderItems item : orders.getOrderItems()) {
-	                // Gắn đơn hàng cho từng item
-	                item.setOrders(savedOrder);
-
-	                // Lấy productItem để cập nhật tồn kho
+	                item.setOrders(savedOrder); // Gắn đơn hàng cho item
 	                ProductItems productItem = item.getProductItems();
-
 	                if (productItem == null) {
 	                    throw new IllegalArgumentException("Không tìm thấy sản phẩm cho đơn hàng.");
 	                }
 
-	                int orderedQty = item.getQty();
-	                int currentStock = productItem.getQty();
+	                // Giá gốc
+	                Double originalPrice = productItem.getPrice();
+	                item.setPriceAtBuy(originalPrice);
+	                item.setCostAtBuy(productItem.getCost());
 
-	                if (orderedQty > currentStock) {
-	                    throw new IllegalStateException("Sản phẩm " + productItem.getId() + " không đủ tồn kho.");
+	                // Phân loại
+	                if (item.getComboGroup() != null) {
+	                    // Sản phẩm combo => selling_price đã tính sẵn ở frontend hoặc service khác
+	                    item.setSellingPrice(item.getSellingPrice());
+	                } else if (item.getPromotions() != null) {
+	                    // Sản phẩm promotion => giữ nguyên selling_price đã giảm từ promotion
+	                    item.setSellingPrice(item.getSellingPrice());
+	                } else {
+	                    // Sản phẩm thường
+	                    item.setSellingPrice(originalPrice);
+	                    normalItems.add(item);
 	                }
 
-	                productItem.setQty(currentStock - orderedQty);
-
-	                // Lưu lại cập nhật tồn kho
+	                // Cập nhật tồn kho
+	                int orderedQty = item.getQty();
+	                if (orderedQty > productItem.getQty()) {
+	                    throw new IllegalStateException("Sản phẩm " + productItem.getId() + " không đủ tồn kho.");
+	                }
+	                productItem.setQty(productItem.getQty() - orderedQty);
 	                productItemsRepository.save(productItem);
 	            }
 
-	            // Lưu tất cả order items
+	            // ===============================
+	            // 5. Áp dụng giảm giá cho sản phẩm thường
+	            // ===============================
+	            if (discountCoupon != null && !normalItems.isEmpty()) {
+	                BigDecimal discountPercent = BigDecimal.valueOf(discountCoupon.getDiscountValue())
+	                                                       .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+	                for (OrderItems normalItem : normalItems) {
+	                    BigDecimal originalPrice = BigDecimal.valueOf(normalItem.getSellingPrice());
+	                    BigDecimal discountAmount = originalPrice.multiply(discountPercent);
+	                    BigDecimal finalPrice = originalPrice.subtract(discountAmount)
+	                                                         .setScale(2, RoundingMode.HALF_UP);
+
+	                    normalItem.setSellingPrice(finalPrice.doubleValue());
+	                }
+	            }
+
+	            // ===============================
+	            // 6. Lưu order_items
+	            // ===============================
 	            orderItemsRepository.saveAll(orders.getOrderItems());
 	        }
-
-			try {
-				// Gọi GHN để tạo vận đơn và lấy order_code
-				String ghnOrderCode = ghnService.createGhnOrderCode();
-				savedOrder.setGhnOrderCode(ghnOrderCode);
-				ordersRepository.save(savedOrder); // Lưu lại order_code vào DB
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-
 	        return savedOrder;
-
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        throw e;
 	    }
 	}
+
 
 	public List<Orders> ordersFindByAccountAndKeyShippingStatus(int account, String key) {
 		return ordersRepository.findAllByAccountAndKeyShippingStatus(account, key);
@@ -207,14 +262,11 @@ public class OrdersService {
 		if (optionalOrder.isEmpty()) {
 			throw new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + id);
 		}
-
 		Orders order = optionalOrder.get();
 		String orderCode = order.getGhnOrderCode();
-
 		if (orderCode == null || orderCode.isEmpty()) {
 			throw new IllegalArgumentException("Đơn hàng chưa có mã vận đơn GHN.");
 		}
-
 		try {
 			String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail";
 
@@ -236,6 +288,23 @@ public class OrdersService {
 
 				order.setShippingStatus(status);
 				ordersRepository.save(order);
+				
+//				Cộng điểm cho rank
+//				if ("delivered".equalsIgnoreCase(status)) {
+//				    // Tính điểm từ tổng tiền đơn hàng
+//				    int points = (int) (order.getFinalTotal() / 10000);
+//
+//				    // Lưu điểm vào đơn hàng
+//				    order.setPoint(points);
+//
+//				    // Cộng điểm vào tài khoản
+//				    Accounts account = order.getAccounts();
+//				    account.setLoyaltyPoint(account.getLoyaltyPoint() + points);
+//
+//				    accountsRepository.save(account);
+//				    ordersRepository.save(order);
+//				}
+
 				return order;
 			} else {
 				throw new RuntimeException("GHN trả về lỗi: " + response.getStatusCode());
@@ -333,5 +402,21 @@ public class OrdersService {
 	        return new ByteArrayInputStream(out.toByteArray());
 	    }
 	}
+
+	@Transactional
+	public List<Orders> getOrdersWithoutGhnCode() {
+		return ordersRepository.findByGhnOrderCodeIsNull();
+	}
+
+	@Transactional
+	public boolean hasUserReceivedProduct(Long accountId, Long productItemId) {
+		System.out.println("Kiểm tra đánh giá:");
+		System.out.println("Account ID: " + accountId);
+		System.out.println("ProductItem ID: " + productItemId);
+		return ordersRepository.existsByAccountIdAndProductItemIdAndShippingStatusIgnoreCase(
+			accountId, productItemId, "DELIVERED"
+		);
+	}
+
 
 }

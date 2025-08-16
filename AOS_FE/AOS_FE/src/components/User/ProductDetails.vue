@@ -54,16 +54,27 @@
               <!-- Product Title & Rating -->
               <div class="product-header">
                 <h1 class="product-title">{{ selectedProduct.baseProducts.name }}</h1>
-
-                <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="variant-group">
-                  <h5 class="mb-2">Select {{ groupName }}</h5>
-                  <div class="variant-options">
-                    <label v-for="item in items" :key="item.id" class="variant-button"
-                      :class="{ active: selected[groupName]?.includes(item.signalSku) }">
-                      <input type="radio" :name="groupName" :value="item.signalSku" :disabled="item.isActive === false"
-                        v-model="selected[groupName]" class="d-none" />
-                      {{ item.description }}
-                    </label>
+                <!-- Variant Selection -->
+                <div class="variant-section" v-if="Object.keys(mapVarriants).length > 0">
+                  <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="variant-group">
+                    <h5 class="variant-label">
+                      <i class="bi bi-palette-fill me-2" v-if="groupName.includes('Màu')"></i>
+                      <i class="bi bi-rulers me-2" v-else></i>
+                      {{ groupName }}
+                    </h5>
+                    <div class="variant-options">
+                      <label v-for="item in items" :key="item.id" :class="[
+                        'variant-button',
+                        {
+                          active: selected[groupName] === item.signalSku,
+                          disabled: item.isActive === false,
+                        },
+                      ]">
+                        <input type="radio" :name="groupName" :value="item.signalSku"
+                          :disabled="item.isActive === false" v-model="selected[groupName]" class="d-none" />
+                        <span class="variant-content">{{ item.description }}</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
@@ -97,7 +108,7 @@
               </div>
 
               <!-- Promotion Banner -->
-              <div class="promotion-banner" v-if="promotion && promotion.promotions">
+              <!-- <div class="promotion-banner" v-if="promotion && promotion.promotions">
                 <div class="promotion-content">
                   <i class="bi bi-gift-fill promotion-icon"></i>
                   <div class="promotion-details">
@@ -108,7 +119,7 @@
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <!-- Product Details -->
               <div class="product-details">
@@ -279,7 +290,7 @@
                 </div>
 
                 <!-- Review Form -->
-                <div class="review-form-card">
+                <!-- <div class="review-form-card">
                   <h5 class="form-title">Viết đánh giá của bạn</h5>
                   <form @submit.prevent="submitReview" class="review-form">
                     <div class="rating-input">
@@ -307,7 +318,7 @@
                       Gửi đánh giá
                     </button>
                   </form>
-                </div>
+                </div> -->
 
                 <!-- Reviews List -->
                 <div class="reviews-list">
@@ -342,6 +353,10 @@
                           class="review-image" />
                         <img v-if="review.imageUrl3" :src="review.imageUrl3" alt="Ảnh đánh giá 3"
                           class="review-image" />
+                      </div>
+                      <div class="review-video" v-if="review.videoUrl">
+                        <video :src="review.videoUrl" controls class="review-video-player"
+                          style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px;"></video>
                       </div>
                     </div>
                   </div>
@@ -447,9 +462,10 @@ const totalPages = ref(0);
 const uploaderKey = ref(Date.now());
 
 const discountedPrice = computed(() => {
-  if (promotion.value?.promotions?.discountPercent) {
+
+  if (selectedProduct.value?.promotions[0]?.discountValue) {
     return Math.round(
-      currentPrice.value * (1 - promotion.value.promotions.discountPercent / 100)
+      currentPrice.value * (1 - selectedProduct.value.promotions[0].discountValue / 100)
     );
   }
   return currentPrice.value;
@@ -461,22 +477,18 @@ const selectedProduct = ref();
 const fetchProductData = async (id) => {
   try {
     const res = await api.get(`/ProductItems/detail/${id}`);
-
     console.log("Product data:", res.data.content);
     product.value = res.data.content;
-
     SkuColorList.value = new Set(product.value.map(e => {
-      return e.sku.split('-')[1]
+      return e.sku.split('-')[e.sku.split('-').length - 2]
     }))
     SkuSizeList.value = new Set(product.value.map(e => {
-      return e.sku.split('-')[2]
+      return e.sku.split('-')[e.sku.split('-').length - 1]
     }))
     listMapIfSelect.value = product.value.map(e => {
       return e.sku.split('-')
     })
-    console.log(listMapIfSelect.value)
     const filteredMap = {};
-
     for (const [groupName, items] of Object.entries(mapVarriants.value)) {
       if (groupName === 'Màu sắc') {
         let filteredItems = items.filter(item => SkuColorList.value.has(item.signalSku));
@@ -501,11 +513,6 @@ const fetchProductData = async (id) => {
     }
     selected.value = defaultSelected;
     selectedProduct.value = product.value[0]
-    // .filter(pro => {
-    //   return pro.sku.includes(selected.value['Màu sắc'] + "-" + selected.value['Kích thước'])
-    // })
-    console.log(selectedProduct.value)
-    console.log(images.value)
   } catch (err) {
     console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
@@ -550,8 +557,8 @@ const listColorBaseOnSelectedSize = ref()
 watch(() => selected.value["Kích thước"], () => {
   selected.value['Màu sắc'] = []
   const filteredMap = {};
-  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selected.value["Kích thước"] === (findColor[2])).map(color => {
-    return color[1]
+  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selected.value["Kích thước"] === (findColor[findColor.length - 1])).map(color => {
+    return color[color.length - 2]
   })
   for (const [groupName, items] of Object.entries(mapVarriants.value)) {
     if (groupName === 'Màu sắc') {
@@ -581,7 +588,10 @@ watch(() => selected.value["Màu sắc"], () => {
     const targetSku = `${color}-${size}`;
     selectedProduct.value = product.value.find(pro => pro.sku.includes(targetSku)) || product.value[0];
   } else {
-    selectedProduct.value = product.value[0];
+    const itemList = Array.isArray(product.value)
+      ? product.value
+      : [product.value];
+    selectedProduct.value = itemList[0];
   }
 });
 function increaseQty() {
@@ -634,38 +644,41 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("vi-VN");
 }
 
-const itemCart = ref({
-  id: "",
-  accounts: "",
-  productItems: "",
-  promotions: "",
-  comboGroup: "",
-  qty: "",
-  createdAt: "",
-  updatedAt: "",
-});
 
 const addToCart = () => {
   if (!product.value || quantity.value <= 0) return;
 
-  const newCartItem = {
-    productItems: product.value.id,
+  const itemUpdate = {
+    id: '',
+    accounts: authService.getUserName(),
+    productItems: selectedProduct.value.id,
     qty: quantity.value,
-    promotions: promotion.value?.promotions?.id || null,
-  };
+    promotions: selectedProduct.value.promotions[0],
+    comboGroup: "",
+    comboQty: "",
+    comboGroupId: "",
+    name: selectedProduct.value.name,
+    mainImageUrl: selectedProduct.value.baseProducts.mainImageUrl,
+    price: selectedProduct.value.price,
+    sku: selectedProduct.value.sku,
+    createdAt: "",
+    updatedAt: "",
+  }
+  console.log(itemUpdate)
   authService.updateCart(quantity.value);
 
-  if (quantity.value <= product.value.qty) {
-    finalHandleCartProgress(newCartItem);
+  if (quantity.value <= selectedProduct.value.qty) {
+    finalHandleCartProgress(itemUpdate);
     notification.success({
       message: "Thành công",
-      description: `Đã thêm ${quantity.value} x ${product.value.name} vào giỏ hàng`,
+      description: `Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`,
       duration: 4.5,
     });
+
   } else {
     notification.error({
       message: "Thất bại",
-      description: `Số lượng tồn kho chỉ còn ${product.value.qty} sản phẩm!`,
+      description: `Số lượng tồn kho chỉ còn ${selectedProduct.value.qty} sản phẩm! ${quantity.value}`,
       duration: 4.5,
     });
   }
@@ -690,6 +703,7 @@ const nextImage = () => {
   currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
   currentImage.value = images.value[currentImageIndex.value].imageUrl;
 };
+
 function selectImage(idx) {
   currentImageIndex.value = idx;
   currentImage.value = images.value[idx].imageUrl;
@@ -703,8 +717,8 @@ const fetchReviews = async () => {
         size: pageSize.value,
       },
     });
-
     reviews.value = res.data.content || [];
+    console.log("Danh sách đánh giá:", res.data.content);
     totalPages.value = res.data.totalPages || 0;
   } catch (err) {
     console.error("Lỗi tải đánh giá:", err);
@@ -834,36 +848,65 @@ const fileInputRef = ref(null);
   font-weight: 500;
 }
 
+.variant-section {
+  margin-bottom: 2rem;
+}
+
 .variant-group {
   margin-bottom: 1.5rem;
 }
 
+.variant-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
 .variant-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .variant-button {
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: black;
-  padding: 10px 0;
-  border: 1px solid #ccc;
-  text-align: center;
-  border-radius: 8px;
-  background-color: #f8f9fa;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease;
   user-select: none;
   font-weight: 500;
+  min-width: 70px;
+  color: black
+}
+
+.variant-button:hover:not(.disabled) {
+  border-color: #667eea;
+  background: #f0f2ff;
 }
 
 .variant-button.active {
-  background-color: black;
+  background: #667eea;
   color: white;
-  border-color: black;
+  border-color: #667eea;
+}
+
+.variant-button.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+.variant-content {
+  position: relative;
 }
 
 /* ==================== PRODUCT GALLERY ==================== */
@@ -895,10 +938,6 @@ const fileInputRef = ref(null);
   height: auto;
   object-fit: cover;
   transition: transform 0.3s ease;
-}
-
-.main-image:hover {
-  transform: scale(1.05);
 }
 
 .gallery-nav {

@@ -37,7 +37,7 @@ public class Accounts {
     @Column(name = "fullname")
     private String fullname;
 	
-    @Column(name = "avatar_url")
+    @Column(name = "avatar_url", length = 1000)
     private String avatarUrl;
 	
     @Column(name = "phone")
@@ -63,4 +63,6 @@ public class Accounts {
 	@UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Column(name = "is_active")
+    private boolean isActive;
 }

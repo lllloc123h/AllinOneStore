@@ -1,213 +1,260 @@
 <template>
-  <div class="container-fluid px-4">
-    <div class="row g-4 mt-4 mb-4">
-      <!-- Canvas wrapper -->
-      <div class="col-6 d-flex align-items-center justify-content-center">
-        <div class="rounded" style="width: 600px; height: 700px">
-          <canvas
-            ref="canvasRef"
-            width="560"
-            height="700"
-            class="w-100 rounded-2"
-            style="display: block; border: 1px dashed #ccc"
-          />
+  <div class="customizer-container">
+    <!-- Header -->
+    <div class="customizer-header">
+      <h2 class="header-title">
+        <i class="bi bi-palette2"></i>
+        Thiết kế sản phẩm
+      </h2>
+      <p class="header-subtitle">Tạo ra thiết kế độc đáo của riêng bạn</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="customizer-content">
+      <!-- Canvas Section -->
+      <div class="canvas-section">
+        <div class="canvas-container">
+          <div class="canvas-wrapper">
+            <canvas ref="canvasRef" width="560" height="700" class="design-canvas" />
+          </div>
         </div>
       </div>
 
-      <!-- Control panel -->
-      <div class="col-6">
-        <div class="d-flex flex-column h-100">
-          <!-- Tabs -->
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link active"
-                id="home-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#home-tab-pane"
-                type="button"
-                role="tab"
-              >
-                Văn bản
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                id="profile-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#profile-tab-pane"
-                type="button"
-                role="tab"
-              >
-                Vẽ
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                id="contact-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#contact-tab-pane"
-                type="button"
-                role="tab"
-              >
-                Hành động
-              </button>
-            </li>
-          </ul>
+      <!-- Control Panel -->
+      <div class="control-panel">
+        <div class="panel-header">
+          <h3>Bảng điều khiển</h3>
+        </div>
 
-          <!-- Tab content -->
-          <div class="tab-content border rounded-bottom p-3 flex-grow-1 overflow-auto">
-            <!-- Tab: Văn bản -->
-            <div
-              class="tab-pane fade show active"
-              id="home-tab-pane"
-              role="tabpanel"
-              tabindex="0"
-            >
-              <button class="btn border" @click="addTextbox">➕ Thêm textbox</button>
-              <div class="form-group mt-2">
-                <label
-                  >Màu chữ:
-                  <input type="color" v-model="textColor" @input="updateActiveTextbox"
-                /></label>
-              </div>
-              <div class="form-group mt-2">
-                <label
-                  >Background:
-                  <input type="color" v-model="bgColor" @input="updateActiveTextbox" />
-                  <input
-                    type="checkbox"
-                    v-model="isTransparent"
-                    @input="updateActiveTextbox"
-                  />
-                  Trong suốt
-                </label>
-              </div>
-              <div class="form-group mt-2">
-                <label>Căn chỉnh:</label><br />
-                <input type="checkbox" v-model="bold" @change="updateActiveTextbox" /> B
-                <input type="checkbox" v-model="italic" @change="updateActiveTextbox" /> I
+        <!-- All Controls in One Panel -->
+        <div class="controls-container">
+          <!-- Text Controls Section -->
+          <div class="control-section">
+            <h4 class="section-title">
+              <i class="bi bi-type"></i>
+              Văn bản
+            </h4>
+
+            <button class="primary-btn" @click="addTextbox">
+              <i class="bi bi-plus-circle"></i>
+              Thêm textbox
+            </button>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label mt-3">Màu chữ</label>
                 <input
-                  type="checkbox"
-                  v-model="underline"
-                  @change="updateActiveTextbox"
+                  type="color"
+                  v-model="textColor"
+                  @input="updateActiveTextbox"
+                  class="color-picker"
                 />
-                U
               </div>
-              <div class="form-group mt-2">
-                <label
-                  >Font:
-                  <select v-model="fontFamily" @change="updateActiveTextbox">
-                    <option>Helvetica</option>
-                    <option>Arial</option>
-                    <option>Courier</option>
-                    <option>Georgia</option>
-                    <option>Verdana</option>
-                    <option>Impact</option>
-                    <option>VT323</option>
-                  </select>
-                </label>
-              </div>
-              <div class="form-group mt-2">
-                <label
-                  >Cỡ chữ:
+
+              <div class="form-group">
+                <label class="form-label">Background</label>
+                <div class="bg-controls">
                   <input
-                    type="number"
-                    v-model.number="fontSize"
-                    min="10"
-                    max="120"
+                    type="color"
+                    v-model="bgColor"
                     @input="updateActiveTextbox"
+                    class="color-picker small"
+                    :disabled="isTransparent"
                   />
-                </label>
+                  <label class="checkbox-wrapper">
+                    <input
+                      type="checkbox"
+                      v-model="isTransparent"
+                      @input="updateActiveTextbox"
+                    />
+                    <span class="checkmark"></span>
+                    Trong suốt
+                  </label>
+                </div>
               </div>
-              <div class="form-group mt-2">
-                <label
-                  >Căn lề:
-                  <select v-model="textAlign" @change="updateActiveTextbox">
-                    <option value="left">Trái</option>
-                    <option value="center">Giữa</option>
-                    <option value="right">Phải</option>
-                    <option value="justify">Canh đều</option>
-                  </select>
-                </label>
+
+              <div class="form-group">
+                <label class="form-label">Định dạng</label>
+                <div class="format-controls">
+                  <button
+                    class="format-btn"
+                    :class="{ active: bold }"
+                    @click="
+                      bold = !bold;
+                      updateActiveTextbox();
+                    "
+                  >
+                    <i class="bi bi-type-bold"></i>
+                  </button>
+                  <button
+                    class="format-btn"
+                    :class="{ active: italic }"
+                    @click="
+                      italic = !italic;
+                      updateActiveTextbox();
+                    "
+                  >
+                    <i class="bi bi-type-italic"></i>
+                  </button>
+                  <button
+                    class="format-btn"
+                    :class="{ active: underline }"
+                    @click="
+                      underline = !underline;
+                      updateActiveTextbox();
+                    "
+                  >
+                    <i class="bi bi-type-underline"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Font chữ</label>
+                <select
+                  v-model="fontFamily"
+                  @change="updateActiveTextbox"
+                  class="form-select"
+                >
+                  <option>Helvetica</option>
+                  <option>Arial</option>
+                  <option>Courier</option>
+                  <option>Georgia</option>
+                  <option>Verdana</option>
+                  <option>Impact</option>
+                  <option>VT323</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Cỡ chữ</label>
+                <input
+                  type="number"
+                  v-model.number="fontSize"
+                  min="10"
+                  max="120"
+                  @input="updateActiveTextbox"
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Căn lề</label>
+                <select
+                  v-model="textAlign"
+                  @change="updateActiveTextbox"
+                  class="form-select"
+                >
+                  <option value="left">Trái</option>
+                  <option value="center">Giữa</option>
+                  <option value="right">Phải</option>
+                  <option value="justify">Canh đều</option>
+                </select>
               </div>
             </div>
+          </div>
 
-            <!-- Tab: Vẽ -->
-            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" tabindex="0">
-              <button class="btn border" @click="startDrawingMode">
-                {{ btnDraw ? "❌ Hủy chế độ vẽ" : "✏️ Bật chế độ vẽ" }}
-              </button>
-              <br />
-              <!-- Thêm vào tab Vẽ, dưới nút bật chế độ vẽ -->
-              <button class="btn border mt-2" @click="toggleEraser">
-                {{ isErasing ? "✏️ Vẽ lại" : "🧹 Gôm" }}
-              </button>
-              <div class="form-group mt-2">
-                <label
-                  >Chế độ vẽ:
-                  <select v-model="drawingMode">
-                    <option value="Circle">Circle</option>
-                    <option value="Pencil">Pencil</option>
-                    <option value="Spray">Spray</option>
-                    <option value="Pattern">Pattern</option>
-                    <option value="hLine">hline</option>
-                    <option value="vLine">vline</option>
-                    <option value="square">Square</option>
-                    <option value="diamond">Diamond</option>
-                    <option value="texture">Texture</option>
-                  </select>
-                </label>
+          <!-- Drawing Controls Section -->
+          <div class="control-section">
+            <h4 class="section-title">
+              <i class="bi bi-brush"></i>
+              Vẽ
+            </h4>
+
+            <button class="primary-btn" @click="startDrawingMode">
+              <i class="bi bi-pencil"></i>
+              {{ btnDraw ? "Hủy chế độ vẽ" : "Bật chế độ vẽ" }}
+            </button>
+
+            <!-- <button class="secondary-btn" @click="toggleEraser">
+              <i class="bi bi-eraser"></i>
+              {{ isErasing ? "Vẽ lại" : "Gôm" }}
+            </button> -->
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label mt-3">Chế độ vẽ</label>
+                <select v-model="drawingMode" class="form-select">
+                  <option value="Circle">Circle</option>
+                  <option value="Pencil">Pencil</option>
+                  <option value="Spray">Spray</option>
+                  <option value="Pattern">Pattern</option>
+                  <option value="hLine">Đường ngang</option>
+                  <option value="vLine">Đường dọc</option>
+                  <option value="square">Vuông</option>
+                  <option value="diamond">Kim cương</option>
+                  <option value="texture">Texture</option>
+                </select>
               </div>
-              <div class="form-group mt-2">
-                <label
-                  >Màu vẽ:
-                  <input type="color" v-model="drawingColor" />
-                </label>
+
+              <div class="form-group">
+                <label class="form-label">Màu vẽ</label>
+                <input type="color" v-model="drawingColor" class="color-picker" />
               </div>
-              <div class="form-group mt-2">
-                <label
-                  >Độ dày:
-                  <input type="number" v-model="drawingLineWidth" min="1" max="50" />
-                </label>
+
+              <div class="form-group">
+                <label class="form-label">Độ dày</label>
+                <input
+                  type="number"
+                  v-model="drawingLineWidth"
+                  min="1"
+                  max="50"
+                  class="form-input"
+                />
               </div>
-              <div class="form-group mt-2">
-                <label
-                  >Đổ bóng:
-                  <input type="number" v-model="drawingShadowWidth" min="0" max="50" />
-                </label>
+
+              <div class="form-group">
+                <label class="form-label">Đổ bóng</label>
+                <input
+                  type="number"
+                  v-model="drawingShadowWidth"
+                  min="0"
+                  max="50"
+                  class="form-input"
+                />
               </div>
-              <div class="form-group mt-2">
-                <label
-                  >Màu bóng:
-                  <input type="color" v-model="drawingShadowColor" />
-                </label>
+
+              <div class="form-group">
+                <label class="form-label">Màu bóng</label>
+                <input type="color" v-model="drawingShadowColor" class="color-picker" />
               </div>
             </div>
+          </div>
 
-            <!-- Tab: Contact -->
-            <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" tabindex="0">
-              <span>Tải ảnh lên: </span>
-              <input type="file" @change="handleImageUpload" />
-              <br />
-              <input type="text" value="custom-1" />
-              <br />
-              <button class="btn border mt-2" @click="exportImage">Xuất ảnh</button>
-              <br />
-              <button class="btn border mt-2" @click="saveCanvas">💾 Lưu tạm</button>
-              <br />
-              <button class="btn border mt-2" @click="loadCanvas">🔁 Tải lại</button>
-              <br />
-              <img
-                v-if="exportedImage"
-                :src="exportedImage"
-                alt="Ảnh xuất"
-                class="mt-3 border"
-                style="width: 300px; height: 350px"
+          <!-- Action Controls Section -->
+          <div class="control-section">
+            <h4 class="section-title">
+              <i class="bi bi-gear"></i>
+              Hành động
+            </h4>
+
+            <div class="upload-section">
+              <label for="image-upload" class="upload-btn">
+                <i class="bi bi-cloud-upload"></i>
+                Tải ảnh lên
+              </label>
+              <input
+                id="image-upload"
+                type="file"
+                @change="handleImageUpload"
+                class="file-input"
               />
             </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label">Tên phác thảo</label>
+              <input
+                type="text"
+                v-model="rawCanvasData.designName"
+                class="form-input"
+                placeholder="Nhập tên phác thảo..."
+              />
+            </div>
+
+            <button class="success-btn mt-3" @click="saveCanvas">
+              <i class="bi bi-save"></i>
+              Lưu thiết kế
+            </button>
           </div>
         </div>
       </div>
@@ -216,10 +263,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed, reactive } from "vue";
 import { fabric } from "fabric";
 import komiImage from "../../assets/imgs/komi.jpg";
 import api from "../../Configs/api";
+import uploadAPI from "../../Configs/upload-api";
+import { notification } from "ant-design-vue";
+import router from "../../router";
+
 const props = defineProps({
   productItemId: {
     type: Number, // For create mode
@@ -231,6 +282,17 @@ const props = defineProps({
     type: String, // For create mode
   }, // 'create' or 'update'
 });
+const rawCanvasData = ref({
+  id: null,
+  accountId: null,
+  canvasJson: "",
+  imageUrl: null,
+  createdAt: null,
+  updatedAt: null,
+  designName: "phác thảo 1",
+  productItems: { id: props.productItemId },
+  orderItem: null,
+});
 if (props.action === "create") {
   console.log("isCreateMode");
 } else if (props.action === "update") {
@@ -238,6 +300,24 @@ if (props.action === "create") {
 } else {
   console.error("Invalid action prop:", props.action);
 }
+
+// Notification helpers
+const showNotification = (type, message, description = "", duration = 4.5) => {
+  notification[type]({
+    message,
+    description,
+    duration,
+    placement: "topRight",
+  });
+};
+
+const showSuccess = (message, description = "") =>
+  showNotification("success", message, description);
+const showError = (message, description = "") =>
+  showNotification("error", message, description);
+const showInfo = (message, description = "") =>
+  showNotification("info", message, description);
+
 // Canvas
 const canvasRef = ref();
 let canvas;
@@ -267,6 +347,8 @@ const drawingShadowColor = ref("#000000");
 const btnDraw = ref(false);
 const exportedImage = ref(null);
 const isErasing = ref(false);
+const isUploading = ref(false);
+const cloudinaryUrl = ref(null);
 
 function startDrawingMode() {
   canvas.isDrawingMode = !canvas.isDrawingMode;
@@ -340,31 +422,44 @@ onMounted(() => {
   canvas = new fabric.Canvas(canvasRef.value);
   canvas.hoverCursor = "pointer";
   if (props.action === "create") {
-    api.get(`/ProductItems/detail/${props.productItemId}`).then((response) => {
+    api.get(`/ProductItems/image/default/${props.productItemId}`).then((response) => {
       const productItem = response.data;
-      console.log("productItem    ", productItem.images[0].imageUrl);
-
+      console.log("productItem", productItem.content);
+      console.log("productItem    ", productItem.content[0].imageUrl);
       if (productItem) {
-        fabric.Image.fromURL(productItem.images[0].imageUrl, (img) => {
-          // Tính scale để không méo ảnh
-          const canvasW = canvas.getWidth();
-          const canvasH = canvas.getHeight();
-          const scale = Math.min(canvasW / img.width, canvasH / img.height);
-          img.scale(scale);
+        fabric.Image.fromURL(
+          productItem.content[0].imageUrl,
+          (img) => {
+            // Tính scale để không méo ảnh
+            const canvasW = canvas.getWidth();
+            const canvasH = canvas.getHeight();
+            const scale = Math.min(canvasW / img.width, canvasH / img.height);
+            img.scale(scale);
 
-          // Căn giữa ảnh trong canvas
-          img.set({
-            left: (canvasW - img.width * scale) / 2,
-            top: (canvasH - img.height * scale) / 2,
-            originX: "left",
-            originY: "top",
-          });
+            // Căn giữa ảnh trong canvas
+            img.set({
+              left: (canvasW - img.width * scale) / 2,
+              top: (canvasH - img.height * scale) / 2,
+              originX: "left",
+              originY: "top",
+            });
 
-          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-        });
+            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+          },
+          { crossOrigin: "anonymous" }
+        );
       }
     });
   } else if (props.action === "update") {
+    api.get(`/customs/${props.customId}`).then((response) => {
+      rawCanvasData.value = response.data;
+      console.log(" load rawCanvasData", rawCanvasData.value);
+      if (rawCanvasData.value.canvasJson) {
+        loadCanvas(rawCanvasData.value.canvasJson);
+      } else {
+        console.error("Không có dữ liệu để tải canvas");
+      }
+    });
   }
 
   // fabric.Image.fromURL("/src/assets/imgs/ao_bomber_nu.webp", (img) => {
@@ -571,25 +666,143 @@ function handleImageUpload(event) {
 }
 // Xuất ảnh từ canvas
 function exportImage() {
-  const dataURL = canvas.toDataURL({
-    format: "png",
-    quality: 1.0, // chất lượng 1.0 là cao nhất
-    multiplier: 2,
+  return new Promise((resolve, reject) => {
+    try {
+      isUploading.value = true;
+
+      const dataURL = canvas.toDataURL({
+        format: "png",
+        quality: 1.0, // chất lượng 1.0 là cao nhất
+        multiplier: 2,
+      });
+      exportedImage.value = dataURL;
+
+      // Chuyển dataURL thành File để upload
+      const canvas2 = document.createElement("canvas");
+      const ctx = canvas2.getContext("2d");
+      const img = new Image();
+
+      img.onload = async () => {
+        canvas2.width = img.width;
+        canvas2.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        canvas2.toBlob(
+          async (blob) => {
+            try {
+              // Tạo File từ blob
+              const file = new File([blob], `canvas-design-${Date.now()}.png`, {
+                type: "image/png",
+              });
+              // Upload lên Cloudinary
+              const uploadResult = await uploadAPI.upload.uploadSingleImageOrVideo(
+                file,
+                "custom-designs" // folder name trên Cloudinary
+              );
+              cloudinaryUrl.value = uploadResult.url;
+              console.log("✅ Đã upload ảnh lên Cloudinary:", uploadResult.url);
+              resolve(uploadResult.url); // Resolve Promise với URL
+            } catch (error) {
+              console.error("❌ Lỗi upload lên Cloudinary:", error);
+              showError(
+                "Upload thất bại",
+                "Không thể upload ảnh lên Cloudinary. Vui lòng thử lại."
+              );
+              reject(error); // Reject Promise nếu lỗi
+            } finally {
+              isUploading.value = false;
+            }
+          },
+          "image/png",
+          0.9
+        );
+      };
+
+      img.onerror = () => {
+        console.error("❌ Lỗi load ảnh từ canvas");
+        showError("Xuất ảnh thất bại", "Không thể xuất ảnh. Vui lòng thử lại.");
+        isUploading.value = false;
+        reject(new Error("Lỗi load ảnh từ canvas"));
+      };
+
+      img.src = dataURL;
+    } catch (error) {
+      console.error("❌ Lỗi xuất ảnh:", error);
+      showError(
+        "Lỗi xuất ảnh",
+        "Không thể xuất ảnh. Vui lòng thử lại hoặc tải lại trang."
+      );
+      isUploading.value = false;
+      reject(error);
+    }
   });
-  exportedImage.value = dataURL;
-
-  // 👉 Nếu muốn tải ảnh về luôn:
-  const link = document.createElement("a");
-  link.href = dataURL;
-  link.download = "canvas-image.png";
-  link.click();
 }
+
+// Copy URL to clipboard
+const copyToClipboard = async (text) => {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      showSuccess("Copy thành công!", "URL đã được copy vào clipboard");
+    } else {
+      // Fallback cho browser cũ
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      showSuccess("Copy thành công!", "URL đã được copy vào clipboard");
+    }
+  } catch (error) {
+    console.error("❌ Lỗi copy clipboard:", error);
+    showError("Copy thất bại", "Không thể copy URL. Vui lòng copy thủ công.");
+  }
+};
+
 function saveCanvas() {
-  const json = canvas.toJSON();
+  try {
+    const json = canvas.toJSON();
+    rawCanvasData.value.canvasJson = JSON.stringify(json);
+
+    // Đợi exportImage() hoàn thành và có URL
+    exportImage()
+      .then((imageUrl) => {
+        if (imageUrl) {
+          rawCanvasData.value.imageUrl = imageUrl;
+          console.log(" dữ liệu tải lên ", props.action, rawCanvasData.value);
+          api
+            .post("/customs/save", rawCanvasData.value)
+            .then((response) => {
+              console.log("Đã lưu canvas thành công:", response.data);
+              if (props.action === "create") {
+                showSuccess("Lưu thành công", "Canvas đã được lưu thành công.");
+              } else if (props.action === "update") {
+                showSuccess("Cập nhật thành công", "Canvas đã được cập nhật thành công.");
+              }
+              router.push({ name: "custom" });
+            })
+            .catch((error) => {
+              console.error("Lỗi lưu canvas:", error);
+              showError("Lỗi lưu canvas", "Không thể lưu canvas. Vui lòng thử lại.");
+            });
+        } else {
+          showError("Lỗi lưu canvas", "Không thể upload ảnh. Vui lòng thử lại.");
+        }
+      })
+      .catch((error) => {
+        console.error("Lỗi export ảnh:", error);
+        showError("Lỗi xuất ảnh", "Không thể xuất ảnh. Vui lòng thử lại.");
+      });
+  } catch (error) {
+    console.error("Lỗi khi lưu canvas:", error);
+    showError("Lỗi lưu canvas", "Không thể lưu canvas. Vui lòng thử lại.");
+  }
+
+  // exportedJson.value = JSON.stringify(json);
 }
 
-function loadCanvas() {
-  canvas.loadFromJSON(JSON.parse(saved), () => {
+function loadCanvas(json) {
+  canvas.loadFromJSON(JSON.parse(json), () => {
     canvas.renderAll();
   });
 }
@@ -762,8 +975,494 @@ function updateFormFromObject() {
 </script>
 
 <style scoped>
-canvas {
-  border: 1px solid #ccc;
-  margin-bottom: 1rem;
+/* Container */
+.customizer-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  padding-bottom: 100px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.customizer-header {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.header-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Main Content */
+.customizer-content {
+  display: grid;
+  grid-template-columns: 1fr 650px;
+  gap: 15px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* Canvas Section */
+.canvas-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 10px;
+}
+
+.canvas-container {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.canvas-wrapper {
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.design-canvas {
+  display: block;
+  border: 2px dashed #e2e8f0;
+  border-radius: 15px;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.design-canvas:hover {
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+}
+
+/* Control Panel */
+.control-panel {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: fit-content;
+  max-height: 85vh;
+}
+
+.panel-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 22px;
+  text-align: center;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+/* Controls Container */
+.controls-container {
+  padding: 25px;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+}
+
+.control-section {
+  background: #f8fafc;
+  border-radius: 15px;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  flex: 1;
+  min-width: 180px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: center;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px 10px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+  cursor: pointer;
+}
+
+.tab-btn i {
+  font-size: 1.2rem;
+}
+
+.tab-btn span {
+  font-size: 0.85rem;
+}
+
+.tab-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 3px 3px 0 0;
+}
+
+/* Tab Contents */
+.tab-contents {
+  flex: 1;
+  position: relative;
+}
+
+.tab-content {
+  display: none;
+  padding: 25px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Buttons */
+.primary-btn,
+.secondary-btn,
+.success-btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.secondary-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 2px solid #e2e8f0;
+}
+
+.secondary-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.success-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.success-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+/* Form Elements */
+.form-grid {
+  display: grid;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.form-input,
+.form-select {
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.color-picker {
+  width: 100%;
+  height: 50px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.color-picker:hover {
+  border-color: #667eea;
+}
+
+.color-picker.small {
+  width: 60px;
+  height: 40px;
+}
+
+/* Background Controls */
+.bg-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #667eea;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Format Controls */
+.format-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.format-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.format-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.format-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #667eea;
+  color: white;
+}
+
+/* Upload Section */
+.upload-section {
+  position: relative;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .customizer-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .control-panel {
+    order: -1;
+  }
+
+  .canvas-section {
+    justify-content: center;
+  }
+
+  .controls-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .control-section {
+    min-width: auto;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .customizer-container {
+    padding: 15px;
+  }
+
+  .header-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .canvas-container {
+    padding: 15px;
+  }
+
+  .controls-container {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .control-section {
+    padding: 12px;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content.active {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Scrollbar Styling */
+.tab-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 </style>

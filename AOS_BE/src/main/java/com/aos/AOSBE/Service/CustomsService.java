@@ -43,6 +43,6 @@ public class CustomsService {
 	}
 
 	public List<Customs> findCustomsByEmail(String email) {
-		return customsRepository.findCustomByEmail(email);
+		return customsRepository.findCustomRawByEmail(email);
 	}
 }

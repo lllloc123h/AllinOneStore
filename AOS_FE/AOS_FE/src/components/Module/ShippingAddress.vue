@@ -54,11 +54,8 @@
 
               <!-- Address Cards -->
               <div v-else class="address-cards">
-                <div
-                  v-for="(address, index) in shippingAddress"
-                  :key="address.id"
-                  :class="['address-card', { 'default-address': address.default }]"
-                >
+                <div v-for="(address, index) in shippingAddress" :key="address.id"
+                  :class="['address-card', { 'default-address': address.default }]">
                   <div class="address-card-header">
                     <div class="address-label">
                       <i :class="getAddressIcon(address.label)" class="label-icon"></i>
@@ -69,21 +66,16 @@
                         <i class="bi bi-star-fill me-1"></i>
                         Mặc định
                       </span>
-                      <button
-                        v-else
-                        class="set-default-btn"
-                        @click="setAddressDefault(address.id)"
-                        title="Đặt làm mặc định"
-                      >
+                      <button v-else class="set-default-btn" @click="setAddressDefault(address.id)"
+                        title="Đặt làm mặc định">
                         <i class="bi bi-star me-1"></i>
                         Chọn mặc định
                       </button>
-                      <button
-                        class="delete-btn"
-                        @click="removeAddress(address.id)"
-                        title="Xóa địa chỉ"
-                      >
+                      <button class="delete-btn" @click="removeAddress(address.id)" title="Xóa địa chỉ">
                         <i class="bi bi-trash"></i>
+                      </button>
+                      <button class="edit-btn" @click="editAddress(address)" title="Sửa địa chỉ">
+                        <i class="bi bi-pencil"></i>
                       </button>
                     </div>
                   </div>
@@ -121,13 +113,13 @@
       </div>
     </div>
 
-    <!-- Add/Edit Address Modal -->
+    <!-- Modal -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-container">
         <div class="modal-header">
           <h3 class="modal-title">
             <i class="bi bi-house-add me-2"></i>
-            Thêm địa chỉ mới
+            {{ editingId === null ? "Thêm địa chỉ mới" : "Cập nhật địa chỉ" }}
           </h3>
           <button class="modal-close-btn" @click="closeModal">
             <i class="bi bi-x-lg"></i>
@@ -135,7 +127,7 @@
         </div>
 
         <div class="modal-content">
-          <form @submit.prevent="addAddress" class="address-form">
+          <form @submit.prevent="saveAddress" class="address-form">
             <!-- Personal Information -->
             <div class="form-section">
               <h4 class="section-title">
@@ -148,26 +140,14 @@
                     <i class="bi bi-person-circle me-1"></i>
                     Họ và tên
                   </label>
-                  <input
-                    type="text"
-                    class="form-input"
-                    placeholder="Nhập họ và tên"
-                    v-model="name"
-                    required
-                  />
+                  <input type="text" class="form-input" placeholder="Nhập họ và tên" v-model="name" required />
                 </div>
                 <div class="form-group">
                   <label class="form-label">
                     <i class="bi bi-telephone me-1"></i>
                     Số điện thoại
                   </label>
-                  <input
-                    type="tel"
-                    class="form-input"
-                    placeholder="Nhập số điện thoại"
-                    v-model="phone"
-                    required
-                  />
+                  <input type="tel" class="form-input" placeholder="Nhập số điện thoại" v-model="phone" required />
                 </div>
               </div>
             </div>
@@ -182,30 +162,20 @@
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Tỉnh/Thành phố</label>
-                  <select
-                    class="form-select"
-                    v-model="selectedProvince"
-                    @change="loadDistricts"
-                    required
-                  >
+                  <select class="form-select" v-model="selectedProvince" @change="loadDistricts" required>
                     <option value="" disabled>Chọn Tỉnh/Thành phố</option>
-                    <option v-for="prov in provinces" :key="prov.code" :value="prov.code">
-                      {{ prov.name }}
+                    <option v-for="prov in provinces" :key="prov.ProvinceID" :value="prov.ProvinceID">
+                      {{ prov.ProvinceName }}
                     </option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Quận/Huyện</label>
-                  <select
-                    class="form-select"
-                    v-model="selectedDistrict"
-                    @change="loadWards"
-                    :disabled="!districts.length"
-                    required
-                  >
+                  <select class="form-select" v-model="selectedDistrict" @change="loadWards"
+                    :disabled="!districts.length" required>
                     <option value="" disabled>Chọn Quận/Huyện</option>
-                    <option v-for="dist in districts" :key="dist.code" :value="dist.code">
-                      {{ dist.name }}
+                    <option v-for="dist in districts" :key="dist.DistrictID" :value="dist.DistrictID">
+                      {{ dist.DistrictName }}
                     </option>
                   </select>
                 </div>
@@ -214,15 +184,10 @@
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Phường/Xã</label>
-                  <select
-                    class="form-select"
-                    v-model="selectedWard"
-                    :disabled="!wards.length"
-                    required
-                  >
+                  <select class="form-select" v-model="selectedWard" :disabled="!wards.length" required>
                     <option value="" disabled>Chọn Phường/Xã</option>
-                    <option v-for="ward in wards" :key="ward.code" :value="ward.code">
-                      {{ ward.name }}
+                    <option v-for="ward in wards" :key="ward.WardCode" :value="ward.WardCode">
+                      {{ ward.WardName }}
                     </option>
                   </select>
                 </div>
@@ -241,13 +206,8 @@
                   <i class="bi bi-house-door me-1"></i>
                   Địa chỉ cụ thể
                 </label>
-                <input
-                  type="text"
-                  class="form-input"
-                  placeholder="Số nhà, tên đường..."
-                  v-model="detailAddress"
-                  required
-                />
+                <input type="text" class="form-input" placeholder="Số nhà, tên đường..." v-model="detailAddress"
+                  required />
               </div>
 
               <div class="form-group">
@@ -255,12 +215,8 @@
                   <i class="bi bi-chat-text me-1"></i>
                   Ghi chú (tùy chọn)
                 </label>
-                <textarea
-                  class="form-textarea"
-                  placeholder="Ghi chú thêm về địa chỉ..."
-                  v-model="note"
-                  rows="3"
-                ></textarea>
+                <textarea class="form-textarea" placeholder="Ghi chú thêm về địa chỉ..." v-model="note"
+                  rows="3"></textarea>
               </div>
             </div>
 
@@ -285,7 +241,7 @@
               </button>
               <button type="submit" class="submit-btn" :disabled="!isFormValid">
                 <i class="bi bi-check-circle me-2"></i>
-                Lưu địa chỉ
+                {{ editingId === null ? "Lưu địa chỉ" : "Cập nhật địa chỉ" }}
               </button>
             </div>
           </form>
@@ -315,6 +271,7 @@ export default {
       selectedWard: "",
       shippingAddress: [],
       fromCheckout: false,
+      editingId: null,
     };
   },
   computed: {
@@ -354,35 +311,55 @@ export default {
       this.showModal = false;
       this.resetForm();
     },
-
     resetForm() {
+      this.editingId = null;
       this.name = "";
       this.phone = "";
+      this.label = "Nhà Riêng";
       this.detailAddress = "";
+      this.note = "";
       this.selectedProvince = "";
       this.selectedDistrict = "";
       this.selectedWard = "";
-      this.districts = [];
-      this.wards = [];
-      this.label = "Nhà Riêng";
-      this.note = "";
     },
     async loadProvinces() {
-      const res = await fetch("https://provinces.open-api.vn/api/p/");
+      const res = await fetch(
+        "https://online-gateway.ghn.vn/shiip/public-api/master-data/province",
+        {
+          headers: {
+            Token: "79736863-63cc-11f0-b8ec-d6282448e823",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       this.provinces = await res.json();
+      this.provinces = this.provinces.data;
     },
     async loadDistricts() {
       this.selectedDistrict = "";
       this.selectedWard = "";
       this.districts = [];
       this.wards = [];
+      console.log("province_id ", this.selectedProvince);
 
       if (this.selectedProvince) {
         const res = await fetch(
-          `https://provinces.open-api.vn/api/p/${this.selectedProvince}?depth=2`
+          "https://online-gateway.ghn.vn/shiip/public-api/master-data/district",
+          {
+            method: "POST",
+            headers: {
+              Token: "79736863-63cc-11f0-b8ec-d6282448e823",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              province_id: this.selectedProvince,
+            }),
+          }
         );
+
         const data = await res.json();
-        this.districts = data.districts;
+        this.districts = data.data;
       }
     },
     async loadWards() {
@@ -390,11 +367,50 @@ export default {
       this.wards = [];
       if (this.selectedDistrict) {
         const res = await fetch(
-          `https://provinces.open-api.vn/api/d/${this.selectedDistrict}?depth=2`
+          "https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id",
+          {
+            method: "POST",
+            headers: {
+              Token: "79736863-63cc-11f0-b8ec-d6282448e823",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              district_id: this.selectedDistrict,
+            }),
+          }
         );
+        console.log("select ward ", this.selectedDistrict);
         const data = await res.json();
-        this.wards = data.wards;
+        this.wards = data.data;
       }
+    },
+    async editAddress(address) {
+      this.editingId = address.id;
+      this.name = address.recipientName;
+      this.phone = address.phone;
+      this.label = address.label;
+      this.detailAddress = address.street;
+      this.note = address.note;
+
+      // Chọn tỉnh
+      const provinceObj = this.provinces.find(p => p.ProvinceName === address.province);
+      this.selectedProvince = provinceObj?.ProvinceID || null;
+
+      // Load quận/huyện
+      if (this.selectedProvince) {
+        await this.loadDistricts();
+        const districtObj = this.districts.find(d => d.DistrictName === address.district);
+        this.selectedDistrict = districtObj?.DistrictID || null;
+
+        // Load phường/xã
+        if (this.selectedDistrict) {
+          await this.loadWards();
+          const wardObj = this.wards.find(w => w.WardName === address.ward);
+          this.selectedWard = wardObj?.WardCode || null;
+        }
+      }
+
+      this.showModal = true;
     },
     async fetchData() {
       try {
@@ -429,57 +445,46 @@ export default {
         });
       }
     },
-    async addAddress() {
+    async saveAddress() {
       try {
-        const provinceObj = this.provinces.find((p) => p.code === this.selectedProvince);
-        const districtObj = this.districts.find((d) => d.code === this.selectedDistrict);
-        const wardObj = this.wards.find((w) => w.code === this.selectedWard);
+        const provinceObj = this.provinces.find(p => p.ProvinceID === this.selectedProvince);
+        const districtObj = this.districts.find(d => d.DistrictID === this.selectedDistrict);
+        const wardObj = this.wards.find(w => w.WardCode === this.selectedWard);
 
         const formData = {
           recipientName: this.name,
           phone: this.phone,
-          province: provinceObj?.name || "",
-          district: districtObj?.name || "",
-          ward: wardObj?.name || "",
+          province: provinceObj?.ProvinceName || "",
+          district: districtObj?.DistrictName || "",
+          ward: wardObj?.WardName || "",
           street: this.detailAddress,
           label: this.label,
           isDefault: false,
           note: this.note,
-          districtId: districtObj?.code || null,
-          wardCode: wardObj?.code || null,
+          ghnProvinceId: provinceObj?.ProvinceID || null,
+          ghnDistrictId: districtObj?.DistrictID || null,
+          ghnWardCode: wardObj?.WardCode || null,
           accounts: "",
         };
 
-        const isContainAddress = this.shippingAddress.some(
-          (item) =>
-            item.province === formData.province &&
-            item.district === formData.district &&
-            item.ward === formData.ward &&
-            item.street === formData.street
-        );
-        if (isContainAddress) {
-          notification.error({
-            message: "Địa chỉ đã tồn tại",
-            description: "Vui lòng kiểm tra lại địa chỉ bạn vừa nhập.",
-          });
-          return;
+        if (this.editingId === null) {
+          // Thêm mới
+          formData.isDefault = true;
+          await api.post(`/UserAddresses`, formData);
+          notification.success({ message: "Thành công", description: "Đã thêm địa chỉ mới." });
+        } else {
+          // Cập nhật
+          formData.isDefault = true;
+          await api.put(`/UserAddresses/edit/${this.editingId}`, formData);
+          notification.success({ message: "Thành công", description: "Đã cập nhật địa chỉ." });
         }
-
-        await api.post(`/UserAddresses`, formData);
 
         this.resetForm();
         this.fetchData();
         this.showModal = false;
-        notification.success({
-          message: "Thành công",
-          description: "Đã thêm địa chỉ mới.",
-        });
       } catch (err) {
         console.error(err);
-        notification.error({
-          message: "Lỗi khi thêm địa chỉ",
-          description: err.message,
-        });
+        notification.error({ message: "Lỗi", description: err.message });
       }
     },
     goBackToCheckout() {
@@ -513,8 +518,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
-    repeat-x;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>') repeat-x;
   background-size: 1000px 100px;
   animation: wave 10s infinite linear;
 }
@@ -523,6 +527,7 @@ export default {
   0% {
     background-position-x: 0;
   }
+
   100% {
     background-position-x: 1000px;
   }
@@ -892,6 +897,7 @@ export default {
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1098,6 +1104,27 @@ export default {
   transform: none;
   box-shadow: none;
 }
+
+.edit-btn {
+  background: transparent;
+  color: #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.edit-btn:hover {
+  background: #0d6efd;
+  color: white;
+  transform: scale(1.1);
+}
+
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {

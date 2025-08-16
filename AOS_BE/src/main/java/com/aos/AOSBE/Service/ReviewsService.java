@@ -54,7 +54,7 @@ public class ReviewsService {
 	}
 
 	@Transactional
-	public Double getAverageRatingByProductItemId(Long productItemId) {
+	public Double getAverageRatingByProductItemId(Integer productItemId) {
     Double avg = reviewsRepository.findAverageRatingByProductItemId(productItemId);
     return avg != null ? Math.round(avg * 10.0) / 10.0 : 0.0;
 	}
@@ -62,5 +62,14 @@ public class ReviewsService {
 	@Transactional
 	public Long countReviewsByProductItemId(Long productItemId) {
     return reviewsRepository.countByProductItemId(productItemId);
+	}
+	@Transactional
+	public boolean hasReviewed(Long accountId, Long productItemId, Long orderId) {
+		return reviewsRepository.existsByAccountAndProductAndOrder(accountId, productItemId, orderId);
+	}
+
+	@Transactional
+	public Optional<Reviews> findByAccountAndProductItemAndOrder(Long accountId, Long productItemId, Long orderId) {
+		return reviewsRepository.findByAccountsIdAndProductItemsIdAndOrdersId(accountId, productItemId, orderId);
 	}
 }

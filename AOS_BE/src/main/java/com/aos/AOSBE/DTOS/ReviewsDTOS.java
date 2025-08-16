@@ -26,4 +26,5 @@ public class ReviewsDTOS {
     private int accountId;
     private String accountName;
     private int productItems;
+    private Integer orderId;
 }

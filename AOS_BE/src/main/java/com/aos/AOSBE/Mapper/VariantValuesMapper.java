@@ -14,12 +14,12 @@ public class VariantValuesMapper {
 
 	public VariantValuesDTOS mapper(VariantValues entity) {
 		return new VariantValuesDTOS(entity.getId(), entity.getVariants().getName(), entity.getSignalSku(),
-				entity.getDescription(), entity.getCreatedAt(), entity.getUpdatedAt(), entity.getVariants().getId());
+				entity.getDescription(), entity.getCreatedAt(), entity.getUpdatedAt());
 	}
 
 	public VariantValues mapperToObject(VariantValuesDTOS entity) {
 		return new VariantValues(entity.getId(), entity.getSignalSku(), entity.getDescription(), entity.getCreatedAt(),
-				entity.getUpdatedAt(), variantsService.variantsFindById(entity.getVariants()).orElse(null));
+				entity.getUpdatedAt(), variantsService.variantsFindByName(entity.getName()).orElse(null));
 	}
 
 }

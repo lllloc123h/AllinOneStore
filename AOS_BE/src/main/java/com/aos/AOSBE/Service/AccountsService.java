@@ -108,6 +108,8 @@ public class AccountsService {
 		accounts.setPassword(new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword()));
 		accounts.setPhone(registerRequestDTO.getPhone());
 		accounts.setFullname(registerRequestDTO.getFullname());
+		accounts.setActive(true);
+		accounts.setGender(registerRequestDTO.getGender());
 		Authorities authority = new Authorities();
 		accounts = accountsRepository.save(accounts);
 		authority.setAccounts(accounts);
@@ -141,6 +143,7 @@ public class AccountsService {
 		Accounts account = accountsRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 		account.setFullname(dto.getFullname());
+		account.setAvatarUrl(dto.getAvatarUrl());
 		account.setPhone(dto.getPhone());
 		account.setBirthday(dto.getBirthday());
 		account.setGender(dto.isGender());

@@ -39,10 +39,7 @@ public class OrderItems {
 	
     @Column(name = "total", insertable = false, updatable = false)
     private double total;
-	
-    @Column(name = "coupon_code")
-    private String couponCode;
-    
+
 	@CreationTimestamp
     @Column(name = "created_at",updatable = false)
     private LocalDateTime createdAt;
@@ -63,12 +60,13 @@ public class OrderItems {
     @JoinColumn(name = "promotion_id")
     private Promotions promotions;
     
-    @JoinColumn(name = "combo_group")
+    @Column(name = "combo_group")
     private String comboGroup;
-    
-    @JoinColumn(name = "combo_group_id")
+
+    @Column(name = "combo_group_id")
     private UUID comboGroupId;
     
-    @JoinColumn(name="combo_qty")
+    @Column(name = "combo_qty")
     private Integer comboQty;
+
 }

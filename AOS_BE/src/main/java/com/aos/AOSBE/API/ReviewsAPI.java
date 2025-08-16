@@ -3,6 +3,7 @@ package com.aos.AOSBE.API;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Reviews;
 import com.aos.AOSBE.Mapper.ReviewsMapper;
 import com.aos.AOSBE.Service.AccountsService;
+import com.aos.AOSBE.Service.OrdersService;
 import com.aos.AOSBE.Service.ReviewsService;
 
 @RestController
@@ -41,6 +43,9 @@ public class ReviewsAPI {
 
 	@Autowired
 	private AccountsService accountsService;
+
+	@Autowired
+	private OrdersService ordersService;
 
 	@GetMapping("/admin/Reviews")
 	public ResponseEntity<?> getAllReviewsApi(@RequestParam(defaultValue = "0") int page,
@@ -106,6 +111,25 @@ public class ReviewsAPI {
 				return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản không tồn tại"));
 			}
 
+			int productItemId = entity.getProductItems();
+			int orderId = entity.getOrderId();
+
+			boolean hasReceived = ordersService.hasUserReceivedProduct((long) account.getId(),(long) productItemId
+			);
+			if (!hasReceived) {
+				return ResponseEntity.badRequest().body(
+					Map.of("message", "Bạn chỉ có thể đánh giá khi đã mua và nhận sản phẩm.")
+				);
+			}
+
+			boolean hasReviewed = reviewsService.hasReviewed((long) account.getId(),(long) productItemId,(long) orderId);
+			if (hasReviewed) {
+				return ResponseEntity.badRequest().body(
+					Map.of("message", "Bạn đã đánh giá sản phẩm này trong đơn hàng này.")
+				);
+			}
+
+
 			// Set lại accountId để mapper dùng được
 			entity.setAccountId(account.getId());
 
@@ -159,7 +183,7 @@ public class ReviewsAPI {
 	}
 
 	@GetMapping("/reviews/product/average-rating/{productItemId}")
-	public ResponseEntity<?> getAverageRating(@PathVariable Long productItemId) {
+	public ResponseEntity<?> getAverageRating(@PathVariable int productItemId) {
 		Double average = reviewsService.getAverageRatingByProductItemId(productItemId);
 		return ResponseEntity.ok(Map.of("averageRating", average));
 	}
@@ -170,4 +194,63 @@ public class ReviewsAPI {
 		return ResponseEntity.ok(Map.of("total", count));
 	}
 
+	@GetMapping("/user/reviews/check")
+	public ResponseEntity<?> checkReviewed(
+		@RequestParam Long productItemId,
+		@RequestParam Long orderId
+	) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
+
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.badRequest().body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			boolean hasReviewed = reviewsService.hasReviewed(
+				(long) account.getId(),
+				productItemId,
+				orderId
+			);
+
+			return ResponseEntity.ok(Map.of("hasReviewed", hasReviewed));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi kiểm tra đánh giá", "error", e.getMessage()));
+		}
+	}
+
+	@GetMapping("/user/reviews/detail")
+	public ResponseEntity<?> getReviewDetail(
+		@RequestParam Long productItemId,
+		@RequestParam Long orderId
+	) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			String email = userDetails.getUsername();
+
+			Accounts account = accountsService.accountsFindByEmail(email).orElse(null);
+			if (account == null) {
+				return ResponseEntity.status(401).body(Map.of("message", "Tài khoản không tồn tại"));
+			}
+
+			Optional<Reviews> reviewOpt = reviewsService.findByAccountAndProductItemAndOrder(
+				(long) account.getId(), productItemId, orderId
+			);
+
+			if (reviewOpt.isEmpty()) {
+				return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy đánh giá"));
+			}
+
+			ReviewsDTOS dto = reviewsMapper.mapper(reviewOpt.get());
+			return ResponseEntity.ok(dto);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of("message", "Lỗi khi lấy chi tiết đánh giá", "error", e.getMessage()));
+		}
+	}
 }

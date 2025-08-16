@@ -6,7 +6,7 @@ import UserInfo from '../../components/User/UserInfo.vue'
 import Cart from '../../components/User/Cart.vue'
 import OrderStatus from '../../components/User/OrderStatus.vue'
 import ImageUpload from '../../components/Module/ImageUpload.vue'
-import uploadProducts from '../../components/Module/upload-products.vue'
+import uploadProducts from '../../components/Module/upload-images.vue'
 export default [
     {
         path: '',
@@ -65,8 +65,10 @@ export default [
     {
         path: 'cart',
         name: 'cart',
-        component: Cart
-    }, {
+        component: Cart,
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
+    },
+     {
         path: '/load',
         name: 'load',
         component: () => import('../../components/Module/ImageUpload.vue')
@@ -74,60 +76,76 @@ export default [
     {
         path: '/UserInfo',
         name: 'UserInfo',
-        component: UserInfo
+        component: UserInfo,
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
-
+    {
+        path: '/custom',
+        name: 'custom',
+        component: () => import('../../components/User/CustomView.vue'),
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
+    },
     {
         path: '/OrderStatus/:id?',
         name: 'OrderStatus',
-        component: OrderStatus
+        component: OrderStatus,
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/Customizer/create/:id',
         name: 'CustomizerCreate',
         component: () => import('../../components/User/CustomizerView.vue'),
-        props: route => ({ productItemId: route.params.id, action: 'create' })
+        props: route => ({ productItemId: route.params.id, action: 'create' }),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/Customizer/update/:id',
         name: 'CustomizerUpdate',
         component: () => import('../../components/User/CustomizerView.vue'),
-        props: route => ({ customId: route.params.id, action: 'update' })
+        props: route => ({ customId: route.params.id, action: 'update' }),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/Checkoutpage',
         name: 'CheckoutPage',
-        component: () => import('../../components/User/CheckoutPage.vue')
+        component: () => import('../../components/User/CheckoutPage.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/shippingaddress',
         name: 'shippingaddress',
-        component: () => import('../../components/Module/ShippingAddress.vue')
+        component: () => import('../../components/Module/ShippingAddress.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/momotopup',
         name: 'momotopup',
-        component: () => import('../../components/User/MomoTopUp.vue')
+        component: () => import('../../components/User/MomoTopUp.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/wallet',
         name: 'wallet',
-        component: () => import('../../components/User/WalletInfor.vue')
+        component: () => import('../../components/User/WalletInfor.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/momo/return',
         name: 'momo-return',
-        component: () => import('../../components/User/WalletInfor.vue')
+        component: () => import('../../components/User/WalletInfor.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/user-orders',
         name: 'user-orders',
-        component: () => import('../../components/User/UserOrders.vue')
+        component: () => import('../../components/User/UserOrders.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/order-list',
         name: 'order-list',
-        component: ()=> import('../../components/User/OrderList.vue')
+        component: ()=> import('../../components/User/OrderList.vue'),
+        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
     }, 
     
 ]

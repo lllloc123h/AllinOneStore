@@ -47,36 +47,55 @@ public class ProductImagesAPI {
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/ProductItems/image/default/{productItemId}")
+	public ResponseEntity<?> getAllProductImagesApi(@PathVariable int productItemId) {
+		List<ProductImages> productImages = productImagesService.checkContainDefaultImagesByProductItemId(productItemId);
+		List<ProductImagesDTOS> productImagesDTOS = productImages.stream().map(productImagesMapper::mapper).collect(Collectors.toList());
+		Map<String, Object> response = new HashMap<>();
+		response.put("content", productImagesDTOS);
+		return ResponseEntity.ok(response);
+	}
 
 	@GetMapping("/admin/ProductImages/{id}")
 	public ResponseEntity<ProductImages> getProductImagesByIdApi(@PathVariable int id) {
-		// try{
-		// }catch(Exception e){
-		// }
-
 		ProductImages productImages = (ProductImages) productImagesService.productImagesFindById(id)
 				.orElse(new ProductImages());
 		return ResponseEntity.ok(productImages);
 	}
 
 	@PostMapping("/admin/ProductImages")
-	public ResponseEntity<ProductImages> addNewProductImages(@RequestBody ProductImagesDTOS entity) {
+	public ResponseEntity<?> addNewProductImages(@RequestBody ProductImagesDTOS entity) {
 
-		ProductImages saved = productImagesService.productImagesSave(productImagesMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+		try {
+			List<ProductImages> isExist = productImagesService
+					.checkContainDefaultImagesByProductItemId(entity.getProductItems());
+			ProductImages mapped = productImagesMapper.mapperToObject(entity);
+			if (isExist.size() <= 0) {
+				mapped.setDefault(true);
+			} else {
+				mapped.setDefault(false);
+			}
+			mapped.setId(null);
+			ProductImages saved = productImagesService.productImagesSave(mapped);
+			return ResponseEntity.ok(saved);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+		}
 	}
 
 	@PutMapping("/admin/ProductImages/{id}")
-	public ResponseEntity<?> updateProductImages(@PathVariable int id, @RequestBody ProductImagesDTOS entity) {
+	public ResponseEntity<?> updateProductImages(@PathVariable int id) {
 		try {
-			ProductImages isExist = productImagesService.productImagesFindById(id).orElse(null);
-			if (isExist != null) {
-				ProductImages update = productImagesMapper.mapperToObject(entity);
-				productImagesService.productImagesSave(update);
-				return ResponseEntity.badRequest().body(Map.of("measage", "Update successfuly", "update", update));
+			ProductImages address = productImagesService.productImagesFindById(id).orElse(null);
+
+			if (address != null) {
+				ProductImages updated = productImagesService.productImagesSetDefaultAddress(id, address);
+				return ResponseEntity.ok().body(Map.of("message", "Set as default successfully"));
 			} else {
-				return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));
+				return ResponseEntity.badRequest().body(Map.of("message", "Address not found"));
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("measage", "Đã có lỗi xảy ra"));

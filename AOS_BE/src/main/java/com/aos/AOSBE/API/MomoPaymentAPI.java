@@ -117,73 +117,81 @@ public class MomoPaymentAPI {
 
 	@PostMapping("/api/e-wallet/orderpay")
 	public ResponseEntity<?> createOrderPayRequest(@RequestBody MOMOPAYRequestDTO dto) throws Exception {
-		EWalletTransactionsDTOS transaction = new EWalletTransactionsDTOS();
 
-		String domain = System.getProperty("BE_PAKE_DOMAIN_ORIGIN");
-		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-		Accounts user = accountsService.accountsFindByEmail(userEmail).orElse(null);
-		// MoMo credentials and URLs
-		String endpoint = "https://payment.momo.vn/v2/gateway/api/create";
+		try {
+			EWalletTransactionsDTOS transaction = new EWalletTransactionsDTOS();
 
-		String partnerCode = System.getProperty("MOMO_PARTNER");
-		String accessKey = System.getProperty("MOMO_ACCESS_KEY");
-		String secretKey = System.getProperty("MOMO_SECRECT_KEY");
+			String domain = System.getProperty("BE_PAKE_DOMAIN_ORIGIN");
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Accounts user = accountsService.accountsFindByEmail(userEmail).orElse(null);
+			// MoMo credentials and URLs
+			String endpoint = "https://payment.momo.vn/v2/gateway/api/create";
 
-		String requestId = UUID.randomUUID().toString();
-		String returnUrl = "http://localhost:5173/momo/return";
-		String notifyUrl = domain + "/api/e-wallet/callback";
-		Orders order = ordersService.ordersFindById(dto.getOrderId()).orElse(null);
-		EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
-		if (order == null || eWallets == null) {
-			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra: Không tìm thấy Order"));
+			String partnerCode = System.getProperty("MOMO_PARTNER");
+			String accessKey = System.getProperty("MOMO_ACCESS_KEY");
+			String secretKey = System.getProperty("MOMO_SECRECT_KEY");
+
+			String requestId = UUID.randomUUID().toString();
+			String returnUrl = "http://localhost:5173/momo/return";
+			String notifyUrl = domain + "/api/e-wallet/callback";
+			Orders order = ordersService.ordersFindById(dto.getOrderId()).orElse(null);
+			EWallets eWallets = eWalletsService.eWalletsFindByAccountEmail(userEmail).orElse(null);
+			if (order == null
+//					|| eWallets == null
+			) {
+				return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra: Không tìm thấy Order"));
+			}
+
+			order.setPaymentStatus("PENDING");
+			Orders updated = ordersService.ordersSave(order);
+			transaction.setEWallets(eWallets.getId());
+			transaction.setAmount(dto.getFinalToTal().doubleValue());
+			transaction.setTransactionType("MOMOPAY");
+			transaction.setRelatedWalletId(user.getId());
+			transaction.setOrderId("" + dto.getOrderId());
+			transaction.setStatus("PENDING");
+			String total = dto.getFinalToTal().toString();
+			if (total.endsWith("0")) {
+				total = total.substring(0, total.length() - 1);
+			}
+			// Create payment data
+			Map<String, String> rawData = new LinkedHashMap<>();
+			rawData.put("accessKey", accessKey);
+			rawData.put("amount", total);
+			rawData.put("extraData", "");
+			rawData.put("ipnUrl", notifyUrl);
+			rawData.put("orderId", dto.getOrderId() + "");
+			rawData.put("orderInfo", "Thanh toán đơn hàng có mã " + dto.getOrderId());
+			rawData.put("partnerCode", partnerCode);
+			rawData.put("redirectUrl", returnUrl);
+			rawData.put("requestId", requestId);
+			rawData.put("requestType", "captureWallet");
+
+			// Signature
+			String rawSignature = rawData.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+					.collect(Collectors.joining("&"));
+
+			String signature = hmacSHA256(rawSignature, secretKey);
+			rawData.put("signature", signature);
+
+			// Save to DB
+			eWalletTransactionsRepository.save(eWalletTransactionsMapper.mapperToObject(transaction));
+
+			// Send to MoMo
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<Map<String, String>> request = new HttpEntity<>(rawData, headers);
+
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<Map> response = restTemplate.postForEntity(endpoint, request, Map.class);
+
+			String payUrl = response.getBody().get("payUrl").toString();
+
+			return ResponseEntity.ok(Map.of("payUrl", payUrl));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("message", "đã xảy ra lỗi: " + e.getMessage()));
 		}
 
-		order.setPaymentStatus("PENDING");
-		Orders updated = ordersService.ordersSave(order);
-		transaction.setEWallets(eWallets.getId());
-		transaction.setAmount(dto.getFinalToTal().doubleValue());
-		transaction.setTransactionType("MOMOPAY");
-		transaction.setRelatedWalletId(user.getId());
-		transaction.setOrderId("" + dto.getOrderId());
-		transaction.setStatus("PENDING");
-		String total = dto.getFinalToTal().toString();
-		if (total.endsWith("0")) {
-			total = total.substring(0, total.length() - 1);
-		}
-		// Create payment data
-		Map<String, String> rawData = new LinkedHashMap<>();
-		rawData.put("accessKey", accessKey);
-		rawData.put("amount", total);
-		rawData.put("extraData", "");
-		rawData.put("ipnUrl", notifyUrl);
-		rawData.put("orderId", dto.getOrderId() + "");
-		rawData.put("orderInfo", "Thanh toán đơn hàng có mã " + dto.getOrderId());
-		rawData.put("partnerCode", partnerCode);
-		rawData.put("redirectUrl", returnUrl);
-		rawData.put("requestId", requestId);
-		rawData.put("requestType", "captureWallet");
-
-		// Signature
-		String rawSignature = rawData.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-				.collect(Collectors.joining("&"));
-
-		String signature = hmacSHA256(rawSignature, secretKey);
-		rawData.put("signature", signature);
-
-		// Save to DB
-		eWalletTransactionsRepository.save(eWalletTransactionsMapper.mapperToObject(transaction));
-
-		// Send to MoMo
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<Map<String, String>> request = new HttpEntity<>(rawData, headers);
-
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Map> response = restTemplate.postForEntity(endpoint, request, Map.class);
-
-		String payUrl = response.getBody().get("payUrl").toString();
-
-		return ResponseEntity.ok(Map.of("payUrl", payUrl));
 	}
 
 	@PostMapping("/api/e-wallet/callback")

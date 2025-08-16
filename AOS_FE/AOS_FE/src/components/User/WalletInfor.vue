@@ -250,6 +250,73 @@
         </div>
       </div>
     </div>
+    <div v-if="showSuccess" class="success-modal">
+      <div class="success-modal-backdrop" @click="showSuccess = false"></div>
+      <div class="success-modal-content">
+        <div class="success-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h3 class="success-title">Thanh toán thành công!</h3>
+        <p class="success-message">
+          Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ xử lý đơn hàng và giao đến bạn sớm nhất có
+          thể.
+        </p>
+        <div class="success-actions">
+          <button class="continue-shopping-btn" @click="router.push('/')">
+            <i class="bi bi-house me-2"></i>
+            Về trang chủ
+          </button>
+          <button class="view-orders-btn" @click="router.push('/orders')">
+            <i class="bi bi-list-check me-2"></i>
+            Xem đơn hàng
+          </button>
+        </div>
+      </div>
+    </div>
+    <div v-if="showFailure" class="success-modal">
+      <div class="success-modal-backdrop" @click="showFailure = false"></div>
+      <div class="success-modal-content">
+        <div class="failure-icon text-danger">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <h3 class="success-title">Thanh toán thất bại!</h3>
+        <p class="success-message">
+          Rất tiếc, giao dịch của bạn không thành công. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.
+        </p>
+        <div class="success-actions">
+          <button class="continue-shopping-btn" @click="router.push('/')">
+            <i class="bi bi-house me-2"></i>
+            Về trang chủ
+          </button>
+          <button class="view-orders-btn" @click="router.push('/orders')">
+            <i class="bi bi-list-check me-2"></i>
+            Xem đơn hàng
+          </button>
+        </div>
+      </div>
+    </div>
+    <div v-if="showTimeout" class="success-modal">
+      <div class="success-modal-backdrop" @click="showFailure = false"></div>
+      <div class="success-modal-content">
+        <div class="timeout-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="success-title">Thanh toán hết hạn!</h3>
+        <p class="success-message">
+          Rất tiếc, giao dịch của bạn không thành công. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.
+        </p>
+        <div class="success-actions">
+          <button class="continue-shopping-btn" @click="router.push('/')">
+            <i class="bi bi-house me-2"></i>
+            Về trang chủ
+          </button>
+          <button class="view-orders-btn" @click="router.push('/orders')">
+            <i class="bi bi-list-check me-2"></i>
+            Xem đơn hàng
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Verify Modal -->
     <div v-if="showVerifyModal" class="custom-modal">
@@ -296,7 +363,7 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import api from "../../Configs/api";
 import { notification } from "ant-design-vue";
 const wallet = ref({});
@@ -307,11 +374,16 @@ const topupUpdated = ref("");
 const spentUpdated = ref("");
 const walletNotFound = ref(false);
 const router = useRouter();
+const route = useRoute();
 const showModal = ref(false);
 const showVerifyModal = ref(false);
 const verifyCode = ref("");
 const timeLineOTP = ref(0);
 let otpTimer = null;
+const showSuccess = ref(false);
+const showFailure = ref(false);
+const showTimeout = ref(false);
+
 const formDataWallet = ref({
   id: "",
   createdAt: "",
@@ -438,7 +510,29 @@ function MomoTopUp() {
   router.push({ name: "momotopup" });
 }
 
-onMounted(fetchInfor);
+onMounted(() => {
+  fetchInfor();
+  console.log("WalletInfor component mounted", route.query);
+  const resultCode = route.query?.resultCode;
+  if (resultCode !== undefined) {
+    switch (resultCode) {
+      case "0": // Success
+        showSuccess.value = true;
+        break;
+      case "9000": // Timeout
+        showTimeout.value = true;
+        break;
+      case "1006": // Failure (Canceled)
+        showFailure.value = true;
+        break;
+      default:
+        console.log("Unknown payment result code:", resultCode);
+    }
+  } else {
+    console.log("No payment result parameter found in the route.");
+  }
+
+});
 </script>
 
 <style scoped>
@@ -1098,5 +1192,110 @@ onMounted(fetchInfor);
     margin-left: 0;
     text-align: left;
   }
+}
+
+.success-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.success-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.success-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.success-icon {
+  font-size: 4rem;
+  color: #10b981;
+  margin-bottom: 1.5rem;
+}
+
+.success-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.continue-shopping-btn,
+.view-orders-btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.continue-shopping-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.view-orders-btn {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.continue-shopping-btn:hover,
+.view-orders-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
 }
 </style>

@@ -1,10 +1,17 @@
 package com.aos.AOSBE.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import com.aos.AOSBE.DTOS.ForeCastDTO;
+import com.aos.AOSBE.DTOS.CheckComboDTO;
+import com.aos.AOSBE.DTOS.CheckToCreateComboDTO;
+import com.aos.AOSBE.DTOS.PromotionProductsDTOS;
+import com.aos.AOSBE.Mapper.PromotionProductsMapper;
+import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.PromotionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +31,18 @@ public class PromotionProductsService {
 
 	@Autowired
 	private PromotionProductsRepository promotionProductsRepository;
+	@Autowired
+	private PromotionProductsMapper promotionProductsMapper;
+	@Autowired
+	private PromotionsRepository promotionsRepository;
+	@Autowired
+	private PromotionsMapper promotionsMapper;
 
 	public Optional<PromotionProducts> findById(int id) {
 		return promotionProductsRepository.findById(id);
+	}
+	public List<Map<String, Object>> findDiscountedProductsNative(){
+		return promotionProductsRepository.findDiscountedProductsNative();
 	}
 
 	@Transactional
@@ -58,9 +74,105 @@ public class PromotionProductsService {
 		Specification<PromotionProducts> spec = specBuilder.buildFilter(filters);
 		return promotionProductsRepository.findAll(spec, pageable);
 	}
+
 	public List<PromotionProducts> findPromotionProductsByPromotionsId(int promotionsId) {
 		return promotionProductsRepository.findPromotionProductsByPromotions_Id(promotionsId);
 	}
 
+	public List<PromotionProducts> findAll() {
+		return promotionProductsRepository.findAll();
+	}
+	public String existCombo(CheckToCreateComboDTO checkToCreateComboDTO) {
+		//nhóm lại theo promotion ID
+		Map<Integer, List<PromotionProducts>> map = promotionProductsRepository.findActivePromotionProducts().stream()
+				.collect(Collectors.groupingBy(p -> p.getPromotions().getId()));
+// loại ra promotion ID của bản thân ( nếu có )
+		if (checkToCreateComboDTO.getListToAdd().get(0).getPromotionId() != null) {
+			map.remove(checkToCreateComboDTO.getListToAdd().get(0).getPromotionId()); // Lọc nếu có truyền promotionId vào
+		}
+		// Lọc các mục trong map mà kích thước của danh sách bằng kích thước của list
+		Map<Integer, List<PromotionProducts>> map2 = map.entrySet().stream()
+				.filter(e -> e.getValue().size() == checkToCreateComboDTO.getListToAdd().size())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+		LocalDateTime endDate = checkToCreateComboDTO.getPromotion().getEndAt();
+		LocalDateTime startDate = checkToCreateComboDTO.getPromotion().getStartAt();
+
+		// Kiểm tra combo trùng lặp
+		for (Map.Entry<Integer, List<PromotionProducts>> entry : map2.entrySet()) {
+			List<PromotionProducts> promotionProducts = entry.getValue();
+
+			boolean isDuplicate = promotionProducts.size() == checkToCreateComboDTO.getListToAdd().size() &&
+					checkToCreateComboDTO.getListToAdd().stream().allMatch(
+							item1 -> promotionProducts.stream().anyMatch(
+									item2 -> item1.getProductItem().getId() == item2.getProductItems().getId() &&
+											item1.getRequireQty() == item2.getRequireQty()
+							)
+					);
+
+			if (isDuplicate) {
+				LocalDateTime existingStart = promotionProducts.get(0).getPromotions().getStartAt();
+				LocalDateTime existingEnd = promotionProducts.get(0).getPromotions().getEndAt();
+				if (startDate.isBefore(existingEnd) && existingStart.isBefore(endDate)) {
+					// Kiểm tra chồng chéo thời gian
+					System.err.println("DUPLICATE_COMBO:" + entry.getKey());
+					return "Không được tạo cùng sản phẩm và khoảng thời gian chồng chéo nhau với ID: " + entry.getKey();
+				}
+
+			}
+		}
+
+		// Kiểm tra chồng chéo thời gian
+//		for (Map.Entry<Integer, List<PromotionProducts>> entry : map2.entrySet()) {
+//			List<PromotionProducts> promotionProducts = entry.getValue();
+//			if (!promotionProducts.isEmpty()) {
+
+//
+//				// Kiểm tra chồng chéo thời gian
+//				boolean isTimeOverlap = !(endDate.isBefore(existingStart) || startDate.isAfter(existingEnd));
+//				if (isTimeOverlap) {
+//					System.err.println("TIME_OVERLAP: " + entry.getKey());
+//					return "Khuyến mãi bị chồng chéo thời gian: " + entry.getKey();
+//				}
+//			}
+//		}
+		System.out.println("NO_CONFLICT");
+		return "NO_CONFLICT";
+	}
+//	@Transactional
+//	public Boolean existComboForUpdate(List<PromotionProductsDTOS> list ){
+//		for (PromotionProductsDTOS dto : list) {
+//			promotionProductsRepository.save(promotionProductsMapper.mapperToObject(dto));
+//		}
+//		Boolean isExist = existCombo(list);
+//		if (isExist) {
+//			throw new RuntimeException("Combo already exists, rolling back transaction.");
+//		}
+//		return false;
+//	}
+	@Transactional
+	public String existComboForUpdate(CheckComboDTO checkComboDTO) {
+		// nếu list có thì xóa
+		List<PromotionProductsDTOS> listToDelete = checkComboDTO.getListToDelete();
+		List<PromotionProductsDTOS> listToAdd = checkComboDTO.getListToAdd();
+		promotionsRepository.save(promotionsMapper.mapperToObject(checkComboDTO.getPromotion()));
+		if ( listToDelete != null && !listToDelete.isEmpty() ) {
+		for (PromotionProductsDTOS dto : listToDelete) {
+		promotionProductsRepository.deleteById(dto.getId());
+		}
+		}
+// list to add luôn có
+		for (PromotionProductsDTOS dto : listToAdd) {
+			promotionProductsRepository.save(promotionProductsMapper.mapperToObject(dto));
+		}
+		CheckToCreateComboDTO checkToCreateComboDTO = new CheckToCreateComboDTO();
+		checkToCreateComboDTO.setListToAdd(listToAdd);
+		checkToCreateComboDTO.setPromotion(promotionsMapper.mapper(promotionsRepository.findById(listToAdd.get(0).getPromotionId()).get()));
+		String isExist = existCombo(checkToCreateComboDTO);
+		if (isExist != "NO_CONFLICT") {
+			throw new RuntimeException(isExist);
+		}
+
+		return isExist;
+	}
 }

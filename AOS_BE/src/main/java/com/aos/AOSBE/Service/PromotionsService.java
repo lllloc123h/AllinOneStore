@@ -52,5 +52,8 @@ public class PromotionsService {
 	public List<Promotions> findPromotionByProductItemAndDuration(int productItemId, LocalDateTime startAt, LocalDateTime endAt) {
 		return promotionsRepository.findPromotionsByDuration(productItemId, startAt, endAt);
 	}
+	public List<Promotions> findActivePromotionsByBaseProductId(int baseId) {
+		return promotionsRepository.findActivePromotionsByBaseProductId(baseId);
+	}
 
 }

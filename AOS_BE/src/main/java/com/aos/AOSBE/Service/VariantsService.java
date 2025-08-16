@@ -36,6 +36,10 @@ public class VariantsService {
 		return variantsRepository.findById(id);
 	}
 
+	public Optional<Variants> variantsFindByName(String name) {
+		return variantsRepository.findByName(name);
+	}
+
 	@Transactional
 	public void variantsDeleteById(int id) {
 		variantsRepository.deleteById(id);
