@@ -184,7 +184,11 @@ public class MomoPaymentAPI {
 
 			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<Map> response = restTemplate.postForEntity(endpoint, request, Map.class);
-
+			Map<String, Object> body = response.getBody();
+			if (body == null || !body.containsKey("payUrl")) {
+				return ResponseEntity.badRequest()
+						.body(Map.of("message", "MoMo response does not contain payUrl", "response", body));
+			}
 			String payUrl = response.getBody().get("payUrl").toString();
 
 			return ResponseEntity.ok(Map.of("payUrl", payUrl));

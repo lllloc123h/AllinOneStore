@@ -817,7 +817,7 @@ const fetchData = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   fetchData(),
     api
       .get("/VariantValues")
@@ -830,6 +830,7 @@ onMounted(() => {
         }
       })
       .catch((error) => console.log(error));
+  await nextTick();
 });
 watch(() => props.id, fetchData);
 </script>

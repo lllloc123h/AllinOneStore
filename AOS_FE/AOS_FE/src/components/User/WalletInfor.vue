@@ -485,7 +485,7 @@ async function fetchInfor() {
       .reduce((sum, txn) => sum + txn.amount, 0);
     topupUpdated.value = formatDate(new Date());
     totalSpent.value = transactions
-      .filter((txn) => txn.transactionType === "MOMOPAY")
+      .filter((txn) => txn.transactionType === "MOMOPAY" && txn.status === "SUCCESS")
       .reduce((sum, txn) => sum + txn.amount, 0);
     spentUpdated.value = formatDate(new Date());
 

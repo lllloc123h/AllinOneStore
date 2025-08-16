@@ -37,9 +37,6 @@ import jakarta.servlet.http.HttpSession;
 public class EWalletsAPI {
 
 	@Autowired
-	private EWalletsService eWalletsService;
-
-	@Autowired
 	private HttpSession session;
 
 	@Autowired
@@ -47,6 +44,8 @@ public class EWalletsAPI {
 
 	@Autowired
 	private EWalletsMapper eWalletsMapper;
+	@Autowired
+	private EWalletsService eWalletsService;
 
 	@Autowired
 	private EmailService emailService;

@@ -22,15 +22,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aos.AOSBE.CommonFunctions.CommonFunctions;
 import com.aos.AOSBE.DTOS.ChangePasswordDTOS;
+import com.aos.AOSBE.DTOS.EWalletsDTOS;
 import com.aos.AOSBE.DTOS.RegisterRequestDTO;
 import com.aos.AOSBE.DTOS.UpdateProfileDTO;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Authorities;
+import com.aos.AOSBE.Entity.EWallets;
+import com.aos.AOSBE.Mapper.EWalletsMapper;
 import com.aos.AOSBE.Repository.AccountsRepository;
 import com.aos.AOSBE.Repository.AuthoritiesRepository;
 import com.aos.AOSBE.Repository.RolesRepository;
 import com.aos.AOSBE.Repository.UserAddressesRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AccountsService {
@@ -46,6 +52,15 @@ public class AccountsService {
 	private GenericSpecificationBuilder specBuilder;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private EWalletsMapper eWalletsMapper;
+	@Autowired
+	private EWalletsService eWalletsService;
+
+	@Autowired
+	private EmailService emailService;
+	@Autowired
+	private HttpSession session;
 
 	public Page<Accounts> accountsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -62,6 +77,7 @@ public class AccountsService {
 	public Accounts accountsSave(Accounts accounts) {
 		return accountsRepository.save(accounts);
 	}
+
 	public Accounts updateAccount(Accounts accounts) {
 		Optional<Accounts> existingAccount = accountsRepository.findById(accounts.getId());
 		if (existingAccount.isPresent()) {
@@ -70,7 +86,7 @@ public class AccountsService {
 			updatedAccount.setFullname(accounts.getFullname());
 			updatedAccount.setPhone(accounts.getPhone());
 			updatedAccount.setAvatarUrl(accounts.getAvatarUrl());
-			if(accounts.getPassword() != existingAccount.get().getPassword()){
+			if (accounts.getPassword() != existingAccount.get().getPassword()) {
 				// Do not change password if it is the same as the existing one
 				updatedAccount.setPassword(new BCryptPasswordEncoder().encode(accounts.getPassword()));
 			}
@@ -115,28 +131,44 @@ public class AccountsService {
 		authority.setAccounts(accounts);
 		authority.setRoles(rolesRepository.findByName("USER").get());
 		authorityRepository.save(authority);
+
+		EWalletsDTOS entity = new EWalletsDTOS();
+		CommonFunctions commonFunctions = new CommonFunctions();
+		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+		String CodeActice = commonFunctions.generateVerificationCode();
+		entity.setAccounts(userEmail);
+		entity.setActive(false);
+		entity.setBalance(0);
+		entity.setCodeActivce(CodeActice);
+		entity.setWalletType("REAL");
+
+		session.setAttribute("otp_" + userEmail, CodeActice);
+		session.setAttribute("otp_time_" + userEmail, System.currentTimeMillis());
+		EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
+		emailService.sendVerificationEWallet("nkha79323@gmail.com", CodeActice);
 		return accountsRepository.save(accounts);
 	}
 
 	@Transactional
 	public void changePassword(ChangePasswordDTOS dto) {
-	    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-	    
-	    Accounts account = accountsRepository.findByEmail(email)
-	        .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	    if (!passwordEncoder.matches(dto.getCurrentPassword(), account.getPassword())) {
-	        throw new RuntimeException("Mật khẩu hiện tại không đúng");
-	    }
+		Accounts account = accountsRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
-	    if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
-	        throw new RuntimeException("Mật khẩu mới và xác nhận mật khẩu không khớp");
-	    }
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		if (!passwordEncoder.matches(dto.getCurrentPassword(), account.getPassword())) {
+			throw new RuntimeException("Mật khẩu hiện tại không đúng");
+		}
 
-	    account.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-	    accountsRepository.save(account);
+		if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+			throw new RuntimeException("Mật khẩu mới và xác nhận mật khẩu không khớp");
+		}
+
+		account.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+		accountsRepository.save(account);
 	}
+
 	@Transactional
 	public Accounts updateProfile(UpdateProfileDTO dto) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
