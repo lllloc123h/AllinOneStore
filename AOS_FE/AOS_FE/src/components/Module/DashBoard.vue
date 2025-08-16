@@ -63,6 +63,15 @@ const menuItems = [
     ],
   },
   {
+    title: "QUẢN LÝ TIN TỨC",
+    children: [
+      {
+        name: "Quản lí tin tức",
+        path: "/Admin/News",
+      },
+    ],
+  },
+  {
     title: "QUẢN LÝ SẢN PHẨM",
     children: [
       {
@@ -147,7 +156,7 @@ const menuItems = [
       {
         name: "Quản lý COUPONS",
         path: "/Admin/Coupons",
-      }
+      },
     ],
   },
   {
@@ -156,7 +165,7 @@ const menuItems = [
       {
         name: "Quản lý CUSTOMS",
         path: "/Admin/Customs",
-      }
+      },
     ],
   },
   {

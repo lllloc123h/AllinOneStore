@@ -45,6 +45,11 @@
               <i class="bi bi-list-check me-2"></i>Đơn hàng của bạn
             </RouterLink>
           </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link modern-nav-link" aria-current="page" to="/news">
+              <i class="bi bi-newspaper me-2"></i>Tin tức khuyến mãi
+            </RouterLink>
+          </li>
         </ul>
         <ul class="navbar-nav ms-auto align-items-center">
           <!-- Cart Icon -->

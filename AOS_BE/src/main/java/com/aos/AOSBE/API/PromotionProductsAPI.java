@@ -52,6 +52,8 @@ public class PromotionProductsAPI {
 	private PromotionsMapper promotionsMapper;
 	@Autowired
 	private OrderItemsService orderItemsService;
+	@Autowired
+	private CartItemsService cartItemsService;
 
 	@GetMapping("/admin/PromotionProducts")
 	public ResponseEntity<?> getAllPromotionProductsApi(@RequestParam(defaultValue = "0") int page,
@@ -169,6 +171,7 @@ public class PromotionProductsAPI {
 		System.out.println("Checking combo for update with listToAdd: " + checkComboDTO.getListToAdd() + " and listToDelete: " + checkComboDTO.getListToDelete());
 		try {
 			String isExist = promotionProductsService.existComboForUpdate(checkComboDTO);
+			// update lại cart
 			return ResponseEntity.ok(isExist);
 		} catch (Exception e) {
 			e.printStackTrace();

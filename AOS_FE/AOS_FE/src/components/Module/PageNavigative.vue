@@ -32,7 +32,7 @@
         <!-- Current Page -->
         <li class="page-item active">
           <button class="page-link active" disabled>
-            {{ currentPage+1 }} 
+            {{ currentPage + 1 }}
           </button>
         </li>
         <!-- Page +1 -->

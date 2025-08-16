@@ -27,8 +27,16 @@
           <tr v-for="(item, index) in data" :key="index" class="table-row">
             <td v-for="key in columns" :key="key" class="table-cell">
               <span class="cell-content">
-                <!-- {{ formatCell(key, item[key]) }} -->
-                <span v-html="formatCell(key, item[key], item)"></span>
+                <template v-if="key === 'description'">
+                  <span
+                    v-html="truncateHtml(item[key], 50)"
+                    class="description-preview"
+                    style="cursor: pointer"
+                  ></span>
+                </template>
+                <template v-else>
+                  <span v-html="formatCell(key, item[key], item)"></span>
+                </template>
               </span>
             </td>
             <td class="table-cell action-cell">
@@ -451,6 +459,19 @@
 }
 </style>
 <script setup>
+// Hàm rút gọn HTML, giữ nguyên thẻ, cắt text và thêm ... nếu quá dài
+function truncateHtml(html, maxLength) {
+  if (!html) return "";
+  // Loại bỏ thẻ HTML để lấy plain text
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  const text = div.textContent || div.innerText || "";
+  if (text.length <= maxLength) return html;
+  // Cắt text và thêm ...
+  const shortText = text.slice(0, maxLength) + "...";
+  // Trả về text đã cắt, không giữ thẻ để tránh lỗi hiển thị
+  return shortText;
+}
 import { ref, watch, onMounted, computed, reactive } from "vue";
 import { useRouter } from "vue-router";
 import createCrudService from "../../Configs/reusableCRUDService";
@@ -460,7 +481,8 @@ import dayjs from "dayjs";
 import api from "../../Configs/api";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { notification } from "ant-design-vue";
+const emit = defineEmits(["confirmOrder"]);
 // User Rank Rules based on Loyalty Points (same as Form.vue)
 const userRankRules = [
   { min: 0, max: 10000, rank: "Đồng", color: "#CD7F32", description: "0 - 10,000 điểm" },
@@ -821,7 +843,6 @@ function formatCell(key, value, item = null) {
 }
 
 const router = useRouter();
-
 const currentPage = ref(0);
 const currentSize = ref(5);
 const totalPage = ref(0);
@@ -854,9 +875,17 @@ function deleteById(id) {
     .delete(id)
     .then(() => {
       console.log("Delete successful");
+      notification.success({
+        message: "Xóa thành công",
+        description: `Đã xóa ${props.TableName} với ID: ${id}`,
+      });
       fetchData(); // Refresh data after deletion
     })
     .catch((error) => {
+      notification.error({
+        message: "Xóa thất bại",
+        description: error.response?.data?.message || "Không thể xóa",
+      });
       console.error("Delete failed:", error);
     });
 }
@@ -913,15 +942,22 @@ const approveOrderById = async (orderId, requiredNote) => {
       requiredNote, // gửi lên backend
     });
     if (response?.data?.message) {
-      alert(`✅ ${response.data.message}`);
-      console.log("🔢 Mã GHN:", response.data.ghnOrderCode);
-      location.reload();
-      return response.data;
+      notification.success({
+        message: "Duyệt đơn hàng thành công",
+        description: response.data.message,
+      });
+      // Nếu muốn lấy mã GHN để hiển thị
+      const ghnCode = response.data.ghnOrderCode;
+      data.value.find((item) => item.id === orderId).ghnOrderCode = ghnCode;
+      return response.data; // nếu bạn muốn dùng lại trong component
     }
   } catch (error) {
     console.error("❌ Lỗi khi duyệt đơn:", error);
-    alert(error.response?.data?.message || "Không thể duyệt đơn hàng");
-    throw error;
+    notification.error({
+      message: "Lỗi khi duyệt đơn hàng",
+      description: error.response?.data?.message || "Không thể duyệt đơn hàng",
+    });
+    throw error; // nếu muốn bắt lại từ nơi gọi
   }
 };
 </script>

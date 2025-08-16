@@ -124,9 +124,14 @@ public class ProductItemsAPI {
 	}
 
 	@DeleteMapping("/admin/ProductItems/{id}")
-	public ResponseEntity<Void> deleteProductItems(@PathVariable int id) {
-		productItemsService.productItemsDeleteById(id);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<?> deleteProductItems(@PathVariable int id) {
+	try {
+			productItemsService.productItemsDeleteById(id);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
 	}
 
 	// PromotionProductController.java

@@ -11,6 +11,7 @@ import com.aos.AOSBE.DTOS.CheckToCreateComboDTO;
 import com.aos.AOSBE.DTOS.PromotionProductsDTOS;
 import com.aos.AOSBE.Mapper.PromotionProductsMapper;
 import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.OrderItemsRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,8 @@ public class PromotionProductsService {
 	private PromotionsRepository promotionsRepository;
 	@Autowired
 	private PromotionsMapper promotionsMapper;
+	@Autowired
+	private OrderItemsRepository orderItemsRepository;
 
 	public Optional<PromotionProducts> findById(int id) {
 		return promotionProductsRepository.findById(id);
@@ -47,6 +50,7 @@ public class PromotionProductsService {
 
 	@Transactional
 	public PromotionProducts save(PromotionProducts entity) {
+
 		return promotionProductsRepository.save(entity);
 	}
 
@@ -121,40 +125,20 @@ public class PromotionProductsService {
 
 			}
 		}
-
-		// Kiểm tra chồng chéo thời gian
-//		for (Map.Entry<Integer, List<PromotionProducts>> entry : map2.entrySet()) {
-//			List<PromotionProducts> promotionProducts = entry.getValue();
-//			if (!promotionProducts.isEmpty()) {
-
-//
-//				// Kiểm tra chồng chéo thời gian
-//				boolean isTimeOverlap = !(endDate.isBefore(existingStart) || startDate.isAfter(existingEnd));
-//				if (isTimeOverlap) {
-//					System.err.println("TIME_OVERLAP: " + entry.getKey());
-//					return "Khuyến mãi bị chồng chéo thời gian: " + entry.getKey();
-//				}
-//			}
-//		}
 		System.out.println("NO_CONFLICT");
 		return "NO_CONFLICT";
 	}
-//	@Transactional
-//	public Boolean existComboForUpdate(List<PromotionProductsDTOS> list ){
-//		for (PromotionProductsDTOS dto : list) {
-//			promotionProductsRepository.save(promotionProductsMapper.mapperToObject(dto));
-//		}
-//		Boolean isExist = existCombo(list);
-//		if (isExist) {
-//			throw new RuntimeException("Combo already exists, rolling back transaction.");
-//		}
-//		return false;
-//	}
+
 	@Transactional
 	public String existComboForUpdate(CheckComboDTO checkComboDTO) {
 		// nếu list có thì xóa
 		List<PromotionProductsDTOS> listToDelete = checkComboDTO.getListToDelete();
 		List<PromotionProductsDTOS> listToAdd = checkComboDTO.getListToAdd();
+		if (orderItemsRepository.findByPromotionId(checkComboDTO.getPromotion().getId()).size() > 0) {
+			promotionsRepository.save(promotionsMapper.mapperToObject(checkComboDTO.getPromotion()));
+			return "Đã cập nhật thông tin ưu đãi, nhưng không thể cập nhật sản phẩm trong combo vì đã có đơn hàng sử dụng ưu đãi này.";
+		}
+		// kiểm tra xem có tồn tại promotion không
 		promotionsRepository.save(promotionsMapper.mapperToObject(checkComboDTO.getPromotion()));
 		if ( listToDelete != null && !listToDelete.isEmpty() ) {
 		for (PromotionProductsDTOS dto : listToDelete) {
@@ -170,6 +154,7 @@ public class PromotionProductsService {
 		checkToCreateComboDTO.setPromotion(promotionsMapper.mapper(promotionsRepository.findById(listToAdd.get(0).getPromotionId()).get()));
 		String isExist = existCombo(checkToCreateComboDTO);
 		if (isExist != "NO_CONFLICT") {
+
 			throw new RuntimeException(isExist);
 		}
 

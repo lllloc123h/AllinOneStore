@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,5 +40,9 @@ public class VariantValuesService {
 	@Transactional
 	public void variantValuesDeleteById(int id) {
 		variantValuesRepository.deleteById(id);
+	}
+
+	public List<VariantValues> findByName(String name) {
+		return variantValuesRepository.findByNameVariant(name);
 	}
 }

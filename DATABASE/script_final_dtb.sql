@@ -242,6 +242,7 @@ create table
 	news (
 		id int identity (1, 1) primary key,
 		image_url varchar(255) not null,
+		title nvarchar(500),
 		is_home bit default 1,
 		description nvarchar (max) not null,
 		created_at datetime default getdate (),

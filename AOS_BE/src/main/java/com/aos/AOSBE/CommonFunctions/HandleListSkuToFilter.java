@@ -46,4 +46,24 @@ public class HandleListSkuToFilter {
 		}
 		return String.join("-", result);
 	}
+	public String getSingleDescriptionColorOfSku(String sku){
+		String[] signalSku = sku.split("-");
+		if (signalSku.length > 1) {
+			VariantValues var = variantValuesRepository.findBySignalSku(signalSku[1].trim());
+			if (var != null) {
+				return var.getDescription();
+			}
+		}
+		return "";
+	}
+	public String getSingleDescriptionSizeOfSku(String sku){
+		String[] signalSku = sku.split("-");
+		if (signalSku.length > 2) {
+			VariantValues var = variantValuesRepository.findBySignalSku(signalSku[2].trim());
+			if (var != null) {
+				return var.getDescription();
+			}
+		}
+		return "";
+	}
 }

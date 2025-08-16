@@ -330,7 +330,12 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:images", "primary-changed", "delete-image", "uploaded"]);
+const emit = defineEmits([
+  "update:images",
+  "primary-changed",
+  "delete-image",
+  "uploaded",
+]);
 
 // Reactive Data
 const images = ref([]);

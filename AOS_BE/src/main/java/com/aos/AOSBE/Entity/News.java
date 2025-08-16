@@ -21,7 +21,8 @@ public class News {
 	
     @Column(name = "id")
     private int id;
-	
+    @Column(name = "title")
+    private String title;
     @Column(name = "image_url")
     private String imageUrl;
 	

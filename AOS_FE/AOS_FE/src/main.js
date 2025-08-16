@@ -13,7 +13,6 @@ import Antd from 'ant-design-vue';
 import { notification } from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.css';
 import VueApexCharts from "vue3-apexcharts"
-
 // Cấu hình notification global
 notification.config({
   placement: 'top', // Vị trí: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'top' | 'bottom'
@@ -24,7 +23,6 @@ notification.config({
 });
 
 const app = createApp(App)
-
 app.use(router)
 app.use(authJWTPlugins)
 app.use(Vue3Toastify, {
