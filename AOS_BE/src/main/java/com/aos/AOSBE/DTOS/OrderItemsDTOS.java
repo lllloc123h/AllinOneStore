@@ -19,7 +19,8 @@ public class OrderItemsDTOS {
     private int qty;
     private double priceAtBuy;
     private double costAtBuy;
-    private boolean isGift;
+    @JsonProperty("isGift")
+    private Boolean isGift;
     private double sellingPrice;
     private double total;
     private LocalDateTime createdAt;

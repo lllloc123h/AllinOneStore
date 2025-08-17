@@ -32,7 +32,7 @@ public class OrderItems {
     private double costAtBuy;
 	
     @Column(name = "is_gift")
-    private boolean isGift;
+    private Boolean isGift;
 	
     @Column(name = "selling_price")
     private double sellingPrice;

@@ -20,7 +20,7 @@ public class OrderItemsMapper {
 	        entity.getQty(),
 	        entity.getPriceAtBuy(),
 			entity.getCostAtBuy(),
-	        entity.isGift(),
+	        entity.getIsGift(),
 	        entity.getSellingPrice(),
 	        entity.getTotal(),
 	        entity.getCreatedAt(),
@@ -44,22 +44,23 @@ public class OrderItemsMapper {
 	    }
 
 	    return new OrderItems(
-	        entity.getId(),
-	        entity.getQty(),
-	        entity.getPriceAtBuy(),
-				entity.getCostAtBuy(),
-	        entity.isGift(),
-	        entity.getSellingPrice(),
-	        entity.getTotal(),
-	        entity.getCreatedAt(),
-	        entity.getUpdatedAt(),
-	        ordersService.ordersFindById(entity.getOrders()).orElse(null),
-	        productItemsService.productItemsFindById(entity.getProductItemId()).orElse(null),
-	        promotionsService.promotionsFindById(entity.getPromotions()).orElse(null),
-	        entity.getComboGroup(),
-	        entity.getComboGroupId(),
-	        entity.getComboQty()
-	    );
+	    	    entity.getId(),
+	    	    entity.getQty(),
+	    	    entity.getPriceAtBuy(),
+	    	    entity.getCostAtBuy(),
+	    	    entity.getIsGift() != null ? entity.getIsGift() : false,  // ✅ map an toàn
+	    	    entity.getSellingPrice(),
+	    	    entity.getTotal(),
+	    	    entity.getCreatedAt(),
+	    	    entity.getUpdatedAt(),
+	    	    ordersService.ordersFindById(entity.getOrders()).orElse(null),
+	    	    productItemsService.productItemsFindById(entity.getProductItemId()).orElse(null),
+	    	    promotionsService.promotionsFindById(entity.getPromotions()).orElse(null),
+	    	    entity.getComboGroup(),
+	    	    entity.getComboGroupId(),
+	    	    entity.getComboQty()
+	    	);
+
 	}
 
 
