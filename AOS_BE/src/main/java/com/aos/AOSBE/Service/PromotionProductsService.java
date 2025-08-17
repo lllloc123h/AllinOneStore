@@ -154,10 +154,8 @@ public class PromotionProductsService {
 		checkToCreateComboDTO.setPromotion(promotionsMapper.mapper(promotionsRepository.findById(listToAdd.get(0).getPromotionId()).get()));
 		String isExist = existCombo(checkToCreateComboDTO);
 		if (isExist != "NO_CONFLICT") {
-
 			throw new RuntimeException(isExist);
 		}
-
 		return isExist;
 	}
 }

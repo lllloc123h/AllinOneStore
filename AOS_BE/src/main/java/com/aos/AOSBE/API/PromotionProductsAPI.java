@@ -172,6 +172,9 @@ public class PromotionProductsAPI {
 		try {
 			String isExist = promotionProductsService.existComboForUpdate(checkComboDTO);
 			// update lại cart
+			if (isExist == "NO_CONFLICT") {
+				cartItemsService.updateCartItemsWherePromotionIsNotExist(checkComboDTO.getPromotion().getId());
+			}
 			return ResponseEntity.ok(isExist);
 		} catch (Exception e) {
 			e.printStackTrace();

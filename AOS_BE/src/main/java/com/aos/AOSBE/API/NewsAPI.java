@@ -110,7 +110,8 @@ public class NewsAPI {
 	@GetMapping("/News")
 	public ResponseEntity<?> getAllNewsApiUser(
 			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "0") Map<String, Object> filters) {
 		filters.remove("page");
 		filters.remove("size");
 		Page<News> pageResult = newsService.newsFindAll(page, size, filters); // Truyền trực tiếp FilterNews DTO
@@ -122,5 +123,20 @@ public class NewsAPI {
 		response.put("totalElements", pageResult.getTotalElements());
 		response.put("currentPage", pageResult.getNumber());
 		return ResponseEntity.ok(response);
+	}
+	@GetMapping("/News/{id}")
+	public ResponseEntity<?> getNewsByIdApiUser(@PathVariable int id) {
+		News news = newsService.newsFindById(id).orElse(null);
+		if (news == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(newsMapper.mapper(news));
+	}
+	@GetMapping("/News/home")
+	public ResponseEntity<?> getHomeNews(
+		) {
+		List<News> newsList = newsService.findLastedNews();
+		List<NewsDTOS> news = newsList.stream().map(newsMapper::mapper).collect(Collectors.toList());
+		return ResponseEntity.ok(news);
 	}
 }

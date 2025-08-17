@@ -50,11 +50,13 @@ export default [
     },
         {
         path: 'news',
-        // route level code-splitting
-        // this generates a separate chunk (About.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         name: 'news',
         component: () => import('../../components/User/NewsView.vue')
+    },
+     {
+        path: 'news/:id',
+        name: 'newsDetail',
+        component: () => import('../../components/User/NewsDetailView.vue')
     },
     {
         path: 'login',

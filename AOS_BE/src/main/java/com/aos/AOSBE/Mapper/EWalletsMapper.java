@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Mapper;
 
+import com.aos.AOSBE.Repository.AccountsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import com.aos.AOSBE.Service.AccountsService;
 @Component
 public class EWalletsMapper {
 	@Autowired
-	private AccountsService accountsService;
+	private AccountsRepository accountsRepository;
 
 	public EWalletsDTOS mapper(EWallets entity) {
 		return new EWalletsDTOS(entity.getId(), entity.getBalance(), entity.getWalletType(), entity.isActive(),
@@ -20,7 +21,7 @@ public class EWalletsMapper {
 	public EWallets mapperToObject(EWalletsDTOS entity) {
 		return new EWallets(entity.getId(), entity.getBalance(), entity.getWalletType(), entity.isActive(),
 				entity.getCodeActivce(), entity.getCreatedAt(),
-				accountsService.accountsFindByEmail(entity.getAccounts()).orElse(null));
+				accountsRepository.findByEmail(entity.getAccounts()).orElse(null));
 	}
 
 }

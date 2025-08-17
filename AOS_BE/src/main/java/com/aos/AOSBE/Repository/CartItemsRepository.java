@@ -24,7 +24,7 @@ public interface CartItemsRepository extends JpaRepository<CartItems, Integer>, 
 
 	List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroupId);
 	@Modifying
-	@Query("UPDATE CartItems c SET c.promotions.id = NULL WHERE c.promotions.id = ?1 AND c.accounts.email = ?2")
-	void updaetCartItemsWherePromotionIsNotExist(int promotionId, String email);
+	@Query("UPDATE CartItems c SET c.promotions.id = NULL WHERE c.promotions.id = ?1")
+	void updateCartItemsWherePromotionIsNotExist(int promotionId);
 
 }

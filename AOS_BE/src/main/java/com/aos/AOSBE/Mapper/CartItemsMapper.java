@@ -29,7 +29,7 @@ public class CartItemsMapper {
 	private ProductImagesRepository productImagesRepository;
 
 	public CartItemsDTOS mapper(CartItems entity) {
-		if ((entity.getPromotions()) == null) {
+		if ((entity.getPromotions()) == null && entity.getComboGroupId() == null && entity.getComboGroup() == null) {
 			List<Promotions> pro = promotionsService
 					.promotionsFindByIsActiveTrueByPromotionItemId(entity.getProductItems().getId());
 			if (pro.size() > 0) {
@@ -39,7 +39,7 @@ public class CartItemsMapper {
 		List<ProductImages> list = productImagesRepository
 				.checkContainDefaultImagesByProductItemId(entity.getProductItems().getId());
 		String imgUr = "";
-		if (list.size() < 0) {
+		if (list.size() > 0) {
 			imgUr = list.get(0).getImageUrl();
 		} else {
 			imgUr = entity.getProductItems().getBaseProducts().getMainImageUrl();

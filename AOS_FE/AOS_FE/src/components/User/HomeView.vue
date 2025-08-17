@@ -523,14 +523,43 @@
         </div>
       </div>
     </section>
+    <!-- filepath: d:\AllInStore_Customize_T-shirt\AllinOneStore\AOS_FE\AOS_FE\src\components\User\HomeView.vue -->
+    <!-- filepath: d:\AllInStore_Customize_T-shirt\AllinOneStore\AOS_FE\AOS_FE\src\components\User\HomeView.vue -->
+    <transition
+      name="modal-fade"
+      v-if="imageHome.length > 0"
+      v-for="(image, index) in imageHome"
+      :key="index"
+    >
+      <div
+        v-if="modalIndex === index"
+        class="modern-modal-overlay"
+        @click.self="closeModal"
+      >
+        <transition name="modal-zoom">
+          <div class="modal-body">
+            <button class="modal-close-btn" @click="closeModal(index)" aria-label="Đóng">
+              <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="modal-image-wrapper">
+              <img :src="image.imageUrl" alt="" />
+            </div>
+          </div>
+        </transition>
+      </div>
+    </transition>
     <!-- thong tin -->
   </main>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { homeService } from "../../Configs/api";
+import api, { homeService } from "../../Configs/api";
 import { useRouter } from "vue-router";
-
+const modalIndex = ref(null);
+const closeModal = (index) => {
+  modalIndex.value = index + 1;
+};
 const router = useRouter();
 
 function goToDetail(id) {
@@ -554,10 +583,31 @@ const formatPrice = (price) => {
 const handleImageError = (event) => {
   event.target.src = "../../assets/imgs/no-image.png";
 };
-
+const imageHome = ref({
+  id: "",
+  title: "",
+  imageUrl: "",
+  isHome: false,
+  description: "",
+  createdAt: "",
+  updatedAt: "",
+});
 // Gọi API khi component mount
 onMounted(async () => {
   try {
+    api
+      .get("/News/home")
+      .then((response) => {
+        imageHome.value = response.data; // Lưu ảnh từ API vào biến
+        // Xử lý dữ liệu từ API
+        console.log("Dữ liệu từ API:", response.data);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi tải ảnh:", error);
+      });
+    setTimeout(() => {
+      modalIndex.value = 0; // Hiện modal sau 300ms
+    }, 300);
     // Tạm thời bỏ load dữ liệu
     // discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
     // bestSellers.value = await homeService.getBestSellers(); // ✅ gọi từ homeService
@@ -568,6 +618,98 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* Overlay fade */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+.modal-fade-enter-to,
+.modal-fade-leave-from {
+  opacity: 1;
+}
+
+/* Modal zoom */
+.modal-zoom-enter-active,
+.modal-zoom-leave-active {
+  transition: transform 0.3s, opacity 0.3s;
+}
+.modal-zoom-enter-from,
+.modal-zoom-leave-to {
+  transform: scale(0.85);
+  opacity: 0;
+}
+.modal-zoom-enter-to,
+.modal-zoom-leave-from {
+  transform: scale(1);
+  opacity: 1;
+}
+.modal-body {
+  position: relative;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  max-width: 380px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-image-wrapper {
+  width: 380px;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modal-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(0, 0, 0, 0.08);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s;
+  z-index: 2;
+}
+.modal-close-btn:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+.modern-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+}
 /* Section styles */
 .section-title {
   font-weight: 700;

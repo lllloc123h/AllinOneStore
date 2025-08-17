@@ -1056,11 +1056,14 @@ async function submitUpdateForm() {
     });
     console.log("Check combo update response:", checkResponse.data);
 
-    const response = await formTableService.update(props.id, formData);
-    console.log("Update successful:", response.data);
+    // const response = await formTableService.update(props.id, formData);
+    console.log("Update successful:", checkResponse.data);
     notification.success({
       message: "Cập nhật thành công",
-      description: "Khuyến mãi đã được cập nhật thành công.",
+      description:
+        checkResponse.data == "NO_CONFLICT"
+          ? "Khuyến mãi đã được cập nhật thành công."
+          : checkResponse.data,
       duration: 3,
     });
     router.push(`/Admin/${props.TableName}`);

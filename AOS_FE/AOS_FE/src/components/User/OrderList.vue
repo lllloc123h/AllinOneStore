@@ -6,13 +6,17 @@
       <p class="page-subtitle">THEO DÕI TRẠNG THÁI ĐƠN HÀNG CỦA BẠN</p>
     </div>
   </div>
-
+  <Loading :loading="loading" />
   <!-- Main Container -->
-  <div class="main-container my-5">
+  <div v-if="!loading" class="main-container my-5">
     <!-- Order Tabs -->
     <div class="order-tabs mb-4" v-if="orders.length > 0">
-      <button v-for="tab in tabs" :key="tab" :class="['tab-button', { active: selectedTab === tab }]"
-        @click="selectedTab = tab">
+      <button
+        v-for="tab in tabs"
+        :key="tab"
+        :class="['tab-button', { active: selectedTab === tab }]"
+        @click="selectedTab = tab"
+      >
         {{ tab }}
       </button>
     </div>
@@ -54,7 +58,11 @@
               <span class="total-amount">{{ formatMoney(order.tongTien) }}</span>
             </div>
             <div class="order-actions">
-              <button v-if="order.paymentStatus === 'Chưa thanh toán'" class="btn-pay" @click="pay(order)">
+              <button
+                v-if="order.paymentStatus === 'Chưa thanh toán'"
+                class="btn-pay"
+                @click="pay(order)"
+              >
                 <i class="bi bi-credit-card me-2"></i>Thanh toán
               </button>
             </div>
@@ -80,60 +88,97 @@
                     Thành tiền: <strong>{{ formatMoney(sp.gia * sp.soLuong) }}</strong>
                   </div>
                   <!-- Nút đánh giá -->
-                  <button v-if="
-                    !sp.daDanhGia &&
-                    order.trangThai === 'Đã nhận hàng' &&
-                    selectedTab === 'Đã nhận hàng'
-                  " class="btn btn-outline-primary mt-2" @click="toggleReviewForm(order.id, sp.productItemId, sp)">
+                  <button
+                    v-if="
+                      !sp.daDanhGia &&
+                      order.trangThai === 'Đã nhận hàng' &&
+                      selectedTab === 'Đã nhận hàng'
+                    "
+                    class="btn btn-outline-primary mt-2"
+                    @click="toggleReviewForm(order.id, sp.productItemId, sp)"
+                  >
                     Đánh giá
                   </button>
 
                   <!-- Dòng đã đánh giá -->
-                  <span v-else-if="
-                    sp.daDanhGia &&
-                    order.trangThai === 'Đã nhận hàng' &&
-                    selectedTab === 'Đã nhận hàng'
-                  " class="text-success mt-2 d-block">
+                  <span
+                    v-else-if="
+                      sp.daDanhGia &&
+                      order.trangThai === 'Đã nhận hàng' &&
+                      selectedTab === 'Đã nhận hàng'
+                    "
+                    class="text-success mt-2 d-block"
+                  >
                     Đã đánh giá
                   </span>
-                  <button v-if="sp.daDanhGia" class="btn btn-link text-primary p-0 mt-1"
-                    @click="toggleViewReview(order.id, sp.productItemId)">
+                  <button
+                    v-if="sp.daDanhGia"
+                    class="btn btn-link text-primary p-0 mt-1"
+                    @click="toggleViewReview(order.id, sp.productItemId)"
+                  >
                     Xem đánh giá
                   </button>
                   <!-- Form đánh giá -->
                   <transition name="tab-panel">
-                    <div v-if="activeReviewKey === `${order.id}_${sp.productItemId}`" class="review-form-card">
+                    <div
+                      v-if="activeReviewKey === `${order.id}_${sp.productItemId}`"
+                      class="review-form-card"
+                    >
                       <h5 class="form-title">Viết đánh giá của bạn</h5>
-                      <form @submit.prevent="submitReview(sp, order.id)" class="review-form">
+                      <form
+                        @submit.prevent="submitReview(sp, order.id)"
+                        class="review-form"
+                      >
                         <div class="rating-input">
                           <label class="form-label">Đánh giá của bạn:</label>
                           <div class="star-rating">
-                            <i v-for="star in 5" :key="star" @click="newReview.rating = star" :class="[
-                              'bi',
-                              star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
-                              'star-button',
-                            ]"></i>
+                            <i
+                              v-for="star in 5"
+                              :key="star"
+                              @click="newReview.rating = star"
+                              :class="[
+                                'bi',
+                                star <= newReview.rating ? 'bi-star-fill' : 'bi-star',
+                                'star-button',
+                              ]"
+                            ></i>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="form-label">Nội dung đánh giá:</label>
-                          <textarea class="form-textarea" rows="4" v-model="newReview.text"
-                            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." required></textarea>
+                          <textarea
+                            class="form-textarea"
+                            rows="4"
+                            v-model="newReview.text"
+                            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+                            required
+                          ></textarea>
                         </div>
                         <div class="form-group">
-                          <UploadImages :maxFiles="5" :aspectRatio="'4:5'" :titleUpload="'đánh giá sản phẩm'"
-                            @uploaded="handleImageUploaded" />
+                          <UploadImages
+                            :maxFiles="5"
+                            :aspectRatio="'4:5'"
+                            :titleUpload="'đánh giá sản phẩm'"
+                            @uploaded="handleImageUploaded"
+                          />
                           <!-- Nút thêm video -->
-                          <button type="button" class="btn btn-outline-secondary mt-2"
-                            @click="showVideoUpload = !showVideoUpload">
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary mt-2"
+                            @click="showVideoUpload = !showVideoUpload"
+                          >
                             <i class="bi bi-camera-video me-1"></i>
-                            {{ showVideoUpload ? 'Ẩn video' : 'Thêm video' }}
+                            {{ showVideoUpload ? "Ẩn video" : "Thêm video" }}
                           </button>
 
                           <!-- Form upload video -->
                           <div v-if="showVideoUpload" class="form-group mt-2">
-                            <UploadVideos type="video" folderName="reviews" @uploaded="handleVideoUploaded" />
+                            <UploadVideos
+                              type="video"
+                              folderName="reviews"
+                              @uploaded="handleVideoUploaded"
+                            />
                           </div>
                         </div>
                         <button type="submit" class="submit-review-btn">
@@ -144,17 +189,26 @@
                     </div>
                   </transition>
                   <transition name="fade">
-                    <div v-if="activeViewReviewKey === `${order.id}_${sp.productItemId}` && sp.review"
-                      class="review-view-card mt-3">
+                    <div
+                      v-if="
+                        activeViewReviewKey === `${order.id}_${sp.productItemId}` &&
+                        sp.review
+                      "
+                      class="review-view-card mt-3"
+                    >
                       <h6 class="mb-2">Đánh giá đã gửi</h6>
 
                       <!-- Số sao -->
                       <div class="rating-display mb-2">
-                        <i v-for="star in 5" :key="star" :class="[
-                          'bi',
-                          star <= sp.review.rating ? 'bi-star-fill' : 'bi-star',
-                          'text-warning',
-                        ]"></i>
+                        <i
+                          v-for="star in 5"
+                          :key="star"
+                          :class="[
+                            'bi',
+                            star <= sp.review.rating ? 'bi-star-fill' : 'bi-star',
+                            'text-warning',
+                          ]"
+                        ></i>
                       </div>
 
                       <!-- Nội dung -->
@@ -162,14 +216,23 @@
 
                       <!-- Ảnh -->
                       <div v-if="sp.review.images?.length" class="review-images mt-2">
-                        <img v-for="(img, index) in sp.review.images" :key="index" :src="img" class="review-img"
-                          alt="Ảnh đánh giá" style="max-width: 120px; margin-right: 8px; border-radius: 6px;" />
+                        <img
+                          v-for="(img, index) in sp.review.images"
+                          :key="index"
+                          :src="img"
+                          class="review-img"
+                          alt="Ảnh đánh giá"
+                          style="max-width: 120px; margin-right: 8px; border-radius: 6px"
+                        />
                       </div>
 
                       <!-- Video -->
                       <div v-if="sp.review.video" class="review-video mt-2">
-                        <video controls :src="sp.review.video"
-                          style="width: 100%; max-width: 400px; border-radius: 8px;"></video>
+                        <video
+                          controls
+                          :src="sp.review.video"
+                          style="width: 100%; max-width: 400px; border-radius: 8px"
+                        ></video>
                       </div>
                     </div>
                   </transition>
@@ -219,13 +282,15 @@ import { ref, onMounted, computed } from "vue";
 import { notification } from "ant-design-vue";
 import UploadImages from "../Module/upload-images.vue";
 import UploadVideos from "../Module/upload-single-img-video.vue";
-
+import Loading from "../Module/Loading.vue";
+const loading = ref(false);
 const orders = ref([]);
 const router = useRouter();
 const showPopUp = ref(false);
 const payURL = ref("");
 // Gọi API lấy danh sách đơn hàng người dùng
 const loadOrders = async () => {
+  loading.value = true;
   try {
     const res = await api.get("/user/Orders");
     console.log("Orders response:", res.data);
@@ -298,6 +363,8 @@ const loadOrders = async () => {
     orders.value = result;
   } catch (err) {
     console.error("Lỗi khi tải đơn hàng:", err);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -350,15 +417,20 @@ const filteredOrders = computed(() => {
     "Đã hủy": "Đã hủy",
   };
   const status = tabMap[selectedTab.value];
-  console.log(orders.value)
+  console.log(orders.value);
   console.log("Filtering orders for status:", status, selectedTab.value);
-
 
   if (selectedTab.value === "Chờ thanh toán") {
     console.log("Filtering for unpaid orders");
-    return orders.value.filter((o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2);
+    return orders.value.filter(
+      (o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2
+    );
   } else {
-    if (orders.value.filter((o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2).length > 0) {
+    if (
+      orders.value.filter(
+        (o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2
+      ).length > 0
+    ) {
       console.warn("Có đơn hàng chưa thanh toán, nhưng đang lọc theo trạng thái khác");
       return [];
     }
@@ -506,12 +578,10 @@ function handleVideoUploaded(files) {
 const activeViewReviewKey = ref(null);
 function toggleViewReview(orderId, productItemId) {
   const key = `${orderId}_${productItemId}`;
-  activeViewReviewKey.value =
-    activeViewReviewKey.value === key ? null : key;
+  activeViewReviewKey.value = activeViewReviewKey.value === key ? null : key;
 }
 
 const showVideoUpload = ref(false);
-
 </script>
 
 <style scoped>

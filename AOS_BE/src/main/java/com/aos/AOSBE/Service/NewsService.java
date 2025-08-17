@@ -1,5 +1,6 @@
 package com.aos.AOSBE.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,6 +43,10 @@ public class NewsService {
 //        Specification<News> spec = NewsSpecification.byCriteria(filterNews);
 
         return newsRepository.findAll(spec, pageable);
+    }
+
+    public List<News> findLastedNews() {
+        return newsRepository.findTopByHomeTrueOrderByCreatedAtDesc();
     }
 
     @Transactional

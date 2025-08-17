@@ -9,6 +9,16 @@
 
   <!-- Main Container -->
   <div class="main-container my-5">
+    <!-- Loading State -->
+    <!-- <div v-if="loading" class="loading-section">
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status">
+          <span class="visually-hidden">Đang tải...</span>
+        </div>
+        <p class="text-muted">Đang tải danh sách tin tức...</p>
+      </div>
+    </div> -->
+    <Loading :loading="loading" />
     <div v-if="newsList.length === 0" class="empty-state">
       <div class="empty-icon">
         <i class="bi bi-newspaper"></i>
@@ -20,46 +30,46 @@
     <div class="news-list" v-else>
       <div class="news-card" v-for="item in newsList" :key="item.id">
         <div
-          class="news-image"
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 0;
-          "
+          class="news-row"
+          style="display: flex; justify-content: center; align-items: center; width: 100%"
         >
-          <img
-            :src="item.imageUrl"
-            :alt="item.title"
-            style="
-              aspect-ratio: 1/1;
-              object-fit: cover;
-              border-radius: 20px;
-              max-width: 80%;
-              max-height: 250px;
-            "
-          />
-        </div>
-        <div class="news-content">
-          <h3 class="news-title">{{ item.title }}</h3>
-          <div class="news-meta">
-            <span class="news-date">
-              <i class="bi bi-calendar3 me-1"></i>{{ formatDateTime(item.createdAt) }}
-            </span>
-          </div>
-          <div class="news-description">
-            <span
-              v-if="
-                getShortText(item.description).length <
-                getPlainText(item.description).length
+          <div
+            class="news-image"
+            style="flex: 0 0 160px; display: flex; align-items: center; padding: 15px"
+          >
+            <img
+              :src="item.imageUrl"
+              :alt="item.title"
+              style="
+                aspect-ratio: 4/5;
+                object-fit: cover;
+                border-radius: 20px;
+                width: 160px;
+                height: auto;
               "
-              v-html="getShortText(item.description) + '...'"
             />
-            <span v-else v-html="item.description" />
           </div>
-          <button class="btn-detail" @click="goToDetail(item.id)">
-            <i class="bi bi-eye me-2"></i>Xem chi tiết
-          </button>
+          <div class="news-content" style="flex: 1; padding-left: 20px">
+            <a
+              class="news-title"
+              :href="`/news/${item.id}`"
+              style="text-decoration: none"
+              >{{ item.title }}</a
+            >
+            <div class="news-description">
+              <span
+                v-if="
+                  getShortText(item.description).length <
+                  getPlainText(item.description).length
+                "
+                v-html="getShortText(item.description) + '...'"
+              />
+              <span v-else v-html="item.description" />
+            </div>
+            <div class="news-time">
+              {{ formatDateTime(item.createdAt) }}
+            </div>
+          </div>
         </div>
       </div>
       <PageNavigative
@@ -76,12 +86,15 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import api from "../../Configs/api";
 import PageNavigative from "../Module/PageNavigative.vue";
+import Loading from "../Module/Loading.vue";
 const newsList = ref([]);
 const router = useRouter();
 const totalPages = ref(0);
 const pageIndex = ref(0);
 const pageSize = ref(5);
+const loading = ref(false);
 const loadNews = async () => {
+  loading.value = true;
   try {
     const res = await api.get("/News", {
       params: {
@@ -90,10 +103,11 @@ const loadNews = async () => {
       },
     });
     totalPages.value = res.data.totalPages || 0;
-
     newsList.value = Array.isArray(res.data) ? res.data : res.data.content || [];
   } catch (err) {
     console.error("Lỗi khi tải tin tức:", err);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -140,6 +154,12 @@ watch(() => pageSize.value, loadNews);
 </script>
 
 <style scoped>
+.loading-section {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 3rem 1rem;
@@ -191,7 +211,7 @@ watch(() => pageSize.value, loadNews);
   background: white;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+
   transition: box-shadow 0.3s;
 }
 .news-card:hover {
@@ -199,9 +219,8 @@ watch(() => pageSize.value, loadNews);
 }
 .news-image {
   flex-shrink: 0;
-  width: 220px;
-  height: 180px;
-  background: #f8f9fa;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -214,7 +233,7 @@ watch(() => pageSize.value, loadNews);
 }
 .news-content {
   flex: 1;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -224,6 +243,10 @@ watch(() => pageSize.value, loadNews);
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+.news-title:hover {
+  color: #1976d2;
 }
 .news-meta {
   color: #7f8c8d;

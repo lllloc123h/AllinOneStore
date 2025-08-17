@@ -219,10 +219,15 @@
                                 <i class="bi bi-gift-fill me-1"></i>
                                 Quà tặng
                               </span>
-                              <span v-if="item.custom" class="custom-badge">
+                              <a
+                                v-if="item.custom"
+                                class="custom-badge"
+                                :href="`/Customizer/create/${item.productItemId}`"
+                                style="text-decoration: none"
+                              >
                                 <i class="bi bi-palette me-1"></i>
                                 Có thể tùy chỉnh
-                              </span>
+                              </a>
                             </div>
                             <p class="item-sku text-muted mb-0">{{ item.sku }}</p>
                           </div>

@@ -152,5 +152,9 @@ public class CartItemsService {
 			}
 		}
 	}
+	@Transactional
+	public void updateCartItemsWherePromotionIsNotExist(int promotionId) {
+		cartItemsRepository.updateCartItemsWherePromotionIsNotExist(promotionId);
+	}
 
 }

@@ -39,7 +39,7 @@
           <uploadImages
             ref="uploadRef"
             :maxFiles="1"
-            :aspectRatio="'1:1'"
+            :aspectRatio="'4:5'"
             :titleUpload="'ảnh tin tức'"
             :folderName="'news'"
             @update:images="handleImagesUpdate"
@@ -407,6 +407,11 @@ async function submitForm() {
     const response = await formTableService.create(formData);
     console.log("Insert successful:", response.data);
     router.push(`/Admin/${props.TableName}`);
+    notification.success({
+      message: "Thêm thành công",
+      description: `Dữ liệu đã được thêm thành công.`,
+      duration: 3,
+    });
   } catch (error) {
     console.error("Insert failed:", error);
   }
