@@ -11,16 +11,16 @@ import java.util.*;
 @Service
 public class GhnShippingService {
 
-    @Value("${GHN_TOKEN_AD}")
+    @Value("${GHN_TOKEN}")
     private String ghnToken;
 
-    @Value("${GHN_SHOPID_AD}")
+    @Value("${GHN_SHOPID}")
     private String ghnShopId;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     public Map<String, Object> getShopAddressFromGHN() {
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shop/all";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shop/all";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", ghnToken);
@@ -57,7 +57,7 @@ public class GhnShippingService {
 
         Integer serviceId = (Integer) services.get(0).get("service_id");
 
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", ghnToken);
@@ -97,7 +97,7 @@ public class GhnShippingService {
         Map<String, Object> shop = getShopAddressFromGHN();
         Integer fromDistrictId = (Integer) shop.get("district_id");
 
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", ghnToken);
@@ -131,7 +131,7 @@ public class GhnShippingService {
 
         Integer serviceId = (Integer) services.get(0).get("service_id");
 
-        String url = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime";
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Token", ghnToken);
