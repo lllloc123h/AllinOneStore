@@ -792,7 +792,7 @@ function buildOrderPayload() {
     discountValue: discountAmount.value || 0,
     finalTotal: finalPrice.value,
     note: orderNote.value,
-    orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value} - ${defaultAddressData.value.note}`,
+    orderInfor: `${defaultAddressData.value.recipientName} - ${defaultAddressData.value.phone} - ${fullAddress.value}`,
     products: selectedProducts.value.map((item) => {
       const sellingPrice = calculateSellingPrice(item, groupedProducts.value);
       const total = sellingPrice * item.quantity;

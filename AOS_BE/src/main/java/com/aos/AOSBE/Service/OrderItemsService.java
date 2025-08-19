@@ -55,4 +55,10 @@ public class OrderItemsService {
 	public Long sumQuantityByProductId(Integer productItemId, LocalDateTime createdAt) {
 		return orderItemsRepository.sumQuantityByProductId(productItemId, createdAt);
 	}
+	public Double sumTotalByProductId(Integer productItemId) {
+		return orderItemsRepository.sumTotalByProductItemId(productItemId);
+	}
+	public Double sumCostAtBuyTime(Integer productItemId) {
+		return orderItemsRepository.sumCostAtBuyByProductItemId(productItemId);
+	}
 }

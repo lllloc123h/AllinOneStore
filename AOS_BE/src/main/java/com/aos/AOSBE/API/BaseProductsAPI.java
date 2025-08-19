@@ -66,7 +66,6 @@ public class BaseProductsAPI {
 	}
 
 	@GetMapping("/admin/BaseProducts")
-
 	public ResponseEntity<?> getAllBaseProductsAdminRoleApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "") String search,
 			@RequestParam(defaultValue = "0") Map<String, Object> filters) {

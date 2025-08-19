@@ -41,7 +41,7 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <div v-if="item.shippingStatus === 'Chờ xác nhận' && !item.ghnOrderCode">
+                <div v-if="item.shippingStatus === 'pending' && !item.orderCode">
                   <button
                     type="button"
                     @click="showForm = true"
@@ -835,6 +835,8 @@ function formatCell(key, value, item = null) {
         }
                
               </span>`;
+  } else if (key.toLowerCase() === "ordercode" && value != null) {
+    return `<a href=https://5sao.ghn.dev/order/edit/${value} target="_blank">${value}</a>`;
   } else if (value === null || value === undefined) {
     return "N/A";
   }
@@ -948,7 +950,7 @@ const approveOrderById = async (orderId, requiredNote) => {
       });
       // Nếu muốn lấy mã GHN để hiển thị
       const ghnCode = response.data.ghnOrderCode;
-      data.value.find((item) => item.id === orderId).ghnOrderCode = ghnCode;
+      data.value.find((item) => item.id === orderId).orderCode = ghnCode;
       return response.data; // nếu bạn muốn dùng lại trong component
     }
   } catch (error) {

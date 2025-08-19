@@ -21,13 +21,14 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer>
 	@Query("SELECT sum(orderItems.qty) FROM OrderItems orderItems WHERE orderItems.productItems.id = ?1" +
 			" AND orderItems.createdAt BETWEEN ?2 AND ?3")
 	Long sumQuantityByProductIdAndDateRange(Integer productItemId, LocalDateTime startAt, LocalDateTime endAt);
-
 	@Query("SELECT o FROM OrderItems o WHERE o.promotions.id =?1")
 	List<OrderItems> findByPromotionId(int promotionId);
-
 	@Query("SELECT o FROM OrderItems o WHERE o.productItems.id = ?1")
 	List<OrderItems> findAllByProductItemId(int productItemId);
-
 	@Query("SELECT o FROM OrderItems o WHERE  o.productItems.baseProducts.id = ?1")
 	List<OrderItems> findAllByBaseId(int orderId);
+	@Query("SELECT SUM(o.total) FROM OrderItems o WHERE o.productItems.id = ?1 AND o.orders.shippingStatus= 'delivered' AND o.orders.paymentStatus LIKE 'paid'")
+	Double sumTotalByProductItemId(int productItemId);
+	@Query("SELECT SUM(o.costAtBuy) FROM OrderItems o WHERE o.productItems.id = ?1 AND o.orders.shippingStatus= 'delivered' AND o.orders.paymentStatus LIKE 'paid'")
+	Double sumCostAtBuyByProductItemId(int productItemId);
 }

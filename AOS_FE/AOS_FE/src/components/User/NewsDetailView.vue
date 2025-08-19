@@ -50,7 +50,7 @@ const formatDateTime = (d) => {
 };
 
 const goBack = () => {
-  router.go(-1);
+  router.push({ name: "news" });
 };
 
 onMounted(async () => {

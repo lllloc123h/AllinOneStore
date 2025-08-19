@@ -466,24 +466,27 @@ const loadOrder = async () => {
           : []),
       ],
     };
-    if (order.value.vanChuyen.maVanDon && order.value.vanChuyen.maVanDon !== "Đang cập nhật") {
-  try {
-    const logRes = await api.get(`/log/${order.value.vanChuyen.maVanDon}`);
-    const ghnLogs = logRes.data.map((log) => {
-      console.log("Log từ GHN:", log);
+    if (
+      order.value.vanChuyen.maVanDon &&
+      order.value.vanChuyen.maVanDon !== "Đang cập nhật"
+    ) {
+      try {
+        const logRes = await api.get(`/log/${order.value.vanChuyen.maVanDon}`);
+        const ghnLogs = logRes.data.map((log) => {
+          console.log("Log từ GHN:", log);
 
-      return {
-        thoiGian: log.updated_date,
-        noiDung: statusDisplayMap[log.status] || `Trạng thái: ${log.status}`,
-      };
-    });
+          return {
+            thoiGian: log.updated_date,
+            noiDung: statusDisplayMap[log.status] || `Trạng thái: ${log.status}`,
+          };
+        });
 
-    order.value.lichSu.push(...ghnLogs);
-    order.value.lichSu.sort((a, b) => new Date(a.thoiGian) - new Date(b.thoiGian));
-  } catch (err) {
-    console.warn("Không thể lấy log từ GHN:", err);
-  }
-}
+        order.value.lichSu.push(...ghnLogs);
+        order.value.lichSu.sort((a, b) => new Date(a.thoiGian) - new Date(b.thoiGian));
+      } catch (err) {
+        console.warn("Không thể lấy log từ GHN:", err);
+      }
+    }
     if (statusMap[order.value.trangThai] === "Đã nhận hàng") {
       order.value.thanhToan.trangThai = "Đã thanh toán";
     }
@@ -594,9 +597,9 @@ const getStatusClass = (status) => {
 
 const getPaymentStatusClass = (status) => {
   switch (status) {
-    case "Đã thanh toán":
+    case "paid":
       return "payment-paid";
-    case "Chưa thanh toán":
+    case "unpaid":
       return "payment-pending";
     default:
       return "payment-default";
