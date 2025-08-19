@@ -457,7 +457,7 @@ public class OrdersAPI {
 			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(order, requiredNote);
 
 			order.setGhnOrderCode(ghnOrderCode);
-			order.setShippingStatus("Chờ lấy hàng");
+			order.setShippingStatus("ready_to_pick");
 
 //			ordersService.ordersSave(order);
 	        ordersRepository.save(order);

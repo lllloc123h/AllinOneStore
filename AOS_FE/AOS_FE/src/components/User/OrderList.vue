@@ -456,6 +456,7 @@ async function pay(orderID) {
 }
 const translateStatus = (status) => {
   const map = {
+    pending: "Chờ xác nhận",
     // GHN: Chờ lấy hàng
     ready_to_pick: "Chờ lấy hàng",
     picking: "Chờ lấy hàng",

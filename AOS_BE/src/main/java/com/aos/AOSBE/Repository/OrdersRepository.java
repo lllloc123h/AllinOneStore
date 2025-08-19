@@ -46,13 +46,13 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 	@Query("SELECT SUM(o.finalTotal) FROM Orders o WHERE o.shippingStatus != 'cancel'")
 	Double grossRevenue();
 //	doanh thu khi nhận đc hàng
-	@Query("SELECT SUM(o.finalTotal) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'Đã thanh toán'")
+	@Query("SELECT SUM(o.finalTotal) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'paid'")
 	Double rawNetRevenue();
 	// tổng chiết trừ giả giá, vận chuyển
-	@Query("SELECT SUM(o.discountValue)+(SUM(o.estimatedShippingFee)-SUM(o.actualShippingFee)) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'Đã thanh toán'")
+	@Query("SELECT SUM(o.discountValue)+(SUM(o.estimatedShippingFee)-SUM(o.actualShippingFee)) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'paid'")
 	Double totalCostForDiscount();
 	// số đơn bán thực tế
-	@Query("SELECT COUNT(o) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'Đã thanh toán'")
+	@Query("SELECT COUNT(o) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'paid'")
 	Long countDeliveredOrders();
 
 
@@ -72,17 +72,17 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 	@Query("SELECT SUM(o.estimatedShippingFee) FROM Orders o WHERE o.shippingStatus != 'cancel'")
 	Double totalEstimatedShippingFee();
 	// giảm giá thực tế
-	@Query("SELECT SUM(o.estimatedShippingFee)-SUM(o.actualShippingFee) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'Đã thanh toán'")
+	@Query("SELECT SUM(o.estimatedShippingFee)-SUM(o.actualShippingFee) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'paid'")
 	Double totalActualShippingFeeDelivered();
 
 	// tổng chiết trừ giảm giá ước tính
 	@Query("SELECT SUM(o.discountValue) FROM Orders o WHERE o.shippingStatus != 'cancel'")
 	Double totalEstimatedDiscountValue();
 	// Tổng chiết trừ khi đã giao
-	@Query("SELECT SUM(o.discountValue) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'Đã thanh toán'")
+	@Query("SELECT SUM(o.discountValue) FROM Orders o WHERE o.shippingStatus = 'delivered' AND o.paymentStatus like 'paid'")
 	Double totalDiscountValueDelivered();
 
-	@Query("SELECT SUM(oi.costAtBuy*oi.qty) FROM OrderItems oi WHERE oi.orders.shippingStatus = 'delivered' AND oi.orders.paymentStatus like 'Đã thanh toán'")
+	@Query("SELECT SUM(oi.costAtBuy*oi.qty) FROM OrderItems oi WHERE oi.orders.shippingStatus = 'delivered' AND oi.orders.paymentStatus like 'paid'")
 	Double totalCostProducts();
 
 	List<Orders> findAllByAccountsId(int accountId);

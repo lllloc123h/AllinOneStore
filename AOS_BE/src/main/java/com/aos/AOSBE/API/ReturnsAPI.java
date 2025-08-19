@@ -87,5 +87,10 @@ public class ReturnsAPI {
 		returnsService.returnsDeleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	@GetMapping("/admin/returns")
+	public ResponseEntity<?> getReturnsByOrderId(@RequestParam("productItemId") int productItemId) {
+		Double returns = returnsService.findTotalRefundAmountByProductItemId(productItemId);
+		return ResponseEntity.ok(returns);
+	}
 
 }

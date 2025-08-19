@@ -40,4 +40,8 @@ public class ReturnsService {
 	public void returnsDeleteById(int id) {
 		returnsRepository.deleteById(id);
 	}
+	public Double findTotalRefundAmountByProductItemId(Integer productItemId) {
+		return returnsRepository.findTotalRefundAmountByProductItemId(productItemId);
+	}
+
 }

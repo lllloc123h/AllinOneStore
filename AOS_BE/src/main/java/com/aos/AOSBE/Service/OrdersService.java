@@ -102,9 +102,9 @@ public class OrdersService {
 	        if (orders.getPaymentMethods() == null) {
 	            throw new IllegalArgumentException("Phải chọn phương thức thanh toán.");
 	        }
-	        orders.setPaymentStatus("Chưa thanh toán");
+	        orders.setPaymentStatus("unpaid");
 	        if (orders.getShippingStatus() == null || orders.getShippingStatus().isEmpty()) {
-	            orders.setShippingStatus("Chờ xác nhận");
+	            orders.setShippingStatus("pending");
 	        }
 
 	        // ===============================
@@ -285,7 +285,9 @@ public class OrdersService {
 				Map<String, Object> responseBody = response.getBody();
 				Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
 				String status = (String) data.get("status");
-
+				if(status.equals("delivered")) {
+					order.setPaymentStatus("paid");
+				}
 				order.setShippingStatus(status);
 				ordersRepository.save(order);
 				

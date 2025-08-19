@@ -123,6 +123,7 @@ public class GhnService {
         dto.setFrom_ward_name((String) shop.get("ward_name"));
         dto.setFrom_district_name((String) shop.get("district_name"));
         dto.setFrom_province_name((String) shop.get("province_name"));
+        dto.setNote(order.getNote());
         // 5. Người nhận
 
         // dto.setTo_name(account.getFullname());
@@ -136,17 +137,13 @@ public class GhnService {
 
         if (orderInfor != null && !orderInfor.isBlank()) {
             String[] parts = orderInfor.split(" - ");
-            if (parts.length == 4) {
+            if (parts.length >= 3) {
                 String toName = parts[0].trim();
                 String toPhone = parts[1].trim();
                 String toAddressFull = parts[2].trim();
-                String note = parts[3].trim();
-
                 dto.setTo_name(toName);
                 dto.setTo_phone(toPhone);
                 dto.setTo_address(toAddressFull);
-                dto.setNote(note);
-
                 // Tách tỉnh/thành, quận, phường từ địa chỉ
                 String[] addressParts = toAddressFull.split(",");
                 if (addressParts.length >= 3) {

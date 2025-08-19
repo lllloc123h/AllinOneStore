@@ -12,64 +12,100 @@
         <p class="stats-subtitle">Thống kê và quản lý sản phẩm</p>
       </div>
 
-      <!-- Base Product Selection -->
-      <div class="selection-section">
-        <h3 class="section-title">
-          <i class="bi bi-box me-2"></i>
-          Chọn Base Product
-        </h3>
-        <div class="dropdown mb-4">
-          <button
-            class="btn btn-outline-primary dropdown-toggle w-100 selection-btn"
-            type="button"
-            data-bs-toggle="dropdown"
-          >
-            <span v-if="selectedBaseProduct">
-              <img
-                :src="selectedBaseProduct.mainImage"
-                alt=""
-                width="40"
-                height="40"
-                class="me-3 rounded"
-              />
-              <div class="product-info">
-                <strong>{{ selectedBaseProduct.name }}</strong>
-                <br />
-                <small class="text-muted">{{ selectedBaseProduct.material }}</small>
-              </div>
-            </span>
-            <span v-else class="select-placeholder">
-              <i class="bi bi-search me-2"></i>
-              Chọn một sản phẩm cơ sở
-            </span>
-          </button>
-          <ul class="dropdown-menu w-100" style="max-height: 400px; overflow-y: auto">
-            <li
-              v-for="product in dropDownListBaseProduct"
-              :key="product.id"
-              @click="selectBaseProduct(product)"
-              class="dropdown-item d-flex align-items-center product-item"
-              style="cursor: pointer"
+      <!-- new search  -->
+      <!-- Base Product Search -->
+      <div class="mb-3">
+        <label class="form-label">Tìm kiếm sản phẩm gốc</label>
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control"
+              v-model="searchQuery"
+              @keyup.enter="performSearch"
+              placeholder="Nhập tên sản phẩm để tìm kiếm..."
+            />
+            <button
+              type="button"
+              class="btn-search"
+              @click="performSearch"
+              :disabled="isSearching || searchQuery.trim().length < 2"
             >
-              <img
-                :src="product.mainImage"
-                alt=""
-                width="50"
-                height="50"
-                class="me-3 rounded"
-              />
-              <div class="flex-grow-1">
-                <strong>{{ product.name }}</strong>
-                <br />
-                <small class="text-muted">{{ product.material }}</small>
-                <br />
-                <small class="badge bg-info">Qty: {{ product.qty }}</small>
+              <i v-if="!isSearching" class="bi bi-search"></i>
+              <div v-else class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Đang tìm kiếm...</span>
               </div>
-            </li>
-          </ul>
+            </button>
+          </div>
         </div>
       </div>
+      <!-- Search Results - Now displayed as separate component below -->
+      <div v-if="searchResults.length > 0" class="search-results-section">
+        <div class="results-header">
+          <span>Kết quả tìm kiếm ({{ searchResults.length }})</span>
+          <button type="button" class="btn-close-search" @click="clearSearch">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="results-list">
+          <div
+            v-for="product in searchResults"
+            :key="product.id"
+            class="result-item"
+            :class="{ 'already-selected': isProductAlreadySelected(product.id) }"
+            @click="selectBaseProduct2(product)"
+          >
+            <img :src="product.mainImageUrl" alt="Product" class="result-image" />
+            <div class="result-content">
+              <h6 class="result-name">{{ product.name }}</h6>
+              <small class="result-material">{{ product.material }}</small>
+              <small class="result-category">{{
+                product.categories?.name || "Chưa phân loại"
+              }}</small>
+              <div class="result-stats">
+                <small class="result-rating">⭐ {{ product.rating }}/5</small>
+                <small class="result-turnbuy">🔥 {{ product.turnBuy }} lượt mua</small>
+              </div>
+            </div>
+            <div v-if="isProductAlreadySelected(product.id)" class="selected-indicator">
+              <i class="bi bi-check-circle-fill"></i>
+              <small>Đã chọn</small>
+            </div>
+          </div>
+        </div>
 
+        <!-- Pagination -->
+        <div v-if="totalPages > 1" class="pagination-container">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :disabled="currentPage === 0 || isSearching"
+            @click="loadPreviousPage"
+          >
+            <span v-if="!isSearching">Trước</span>
+            <div v-else class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Đang tải...</span>
+            </div>
+          </button>
+          <span class="page-info">
+            {{ currentPage + 1 }} / {{ totalPages }}
+            <small v-if="searchResults.length > 0" class="text-muted">
+              ({{ searchResults.length }} sản phẩm)
+            </small>
+          </span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :disabled="currentPage >= totalPages - 1 || isSearching"
+            @click="loadNextPage"
+          >
+            <span v-if="!isSearching">Sau</span>
+            <div v-else class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Đang tải...</span>
+            </div>
+          </button>
+        </div>
+      </div>
       <!-- Base Product Information Display -->
       <div v-if="selectedBaseProduct" class="info-section">
         <div class="card shadow-sm border-0 rounded-4">
@@ -83,7 +119,7 @@
             <div class="row">
               <div class="col-md-3 text-center">
                 <img
-                  :src="selectedBaseProduct.mainImage"
+                  :src="selectedBaseProduct.mainImageUrl"
                   alt="Product Image"
                   class="img-fluid rounded-3 shadow-sm"
                   style="max-height: 200px; object-fit: cover"
@@ -103,24 +139,41 @@
                     <label class="info-label">Số lượng:</label>
                     <div class="info-value">
                       <span class="badge bg-success fs-6">{{
-                        selectedBaseProduct.qty
+                        sumQuantityProductItemList()
                       }}</span>
                     </div>
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="info-label">Danh mục:</label>
                     <div class="info-value">
+                      {{ selectedBaseProduct.categories?.name || "Chưa phân loại" }}
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="info-label">Lượt mua:</label>
+                    <div class="info-value">
+                      {{ selectedBaseProduct.turnBuy || "Không có mô tả" }}
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="info-label">Rating:</label>
+                    <div class="info-value">
+                      {{ selectedBaseProduct.rating || "Không có mô tả" }}/5
+                      <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="info-label">Hoạt động:</label>
+                    <div class="info-value">
                       {{
-                        categoriesDropDownList.find(
-                          (c) => c.id === selectedBaseProduct.categoryId
-                        )?.name || "Chưa xác định"
+                        selectedBaseProduct.active ? "Đang hoạt động" : "Ngừng hoạt động"
                       }}
                     </div>
                   </div>
-                  <div class="col-12">
-                    <label class="info-label">Mô tả:</label>
+                  <div class="col-md-6 mb-3">
+                    <label class="info-label">Có thể custom:</label>
                     <div class="info-value">
-                      {{ selectedBaseProduct.description || "Không có mô tả" }}
+                      {{ selectedBaseProduct.custom ? "Có" : "Không" }}
                     </div>
                   </div>
                 </div>
@@ -154,7 +207,7 @@
             <div class="row mb-4">
               <div class="col-md-3 text-center">
                 <img
-                  :src="selectedProductItem.imageUrl || selectedBaseProduct.mainImage"
+                  :src="selectedProductItem.imageUrl || selectedBaseProduct.mainImageUrl"
                   alt="Product Item Image"
                   class="img-fluid rounded-3 shadow-sm"
                   style="max-height: 200px; object-fit: cover"
@@ -198,6 +251,15 @@
                     </div>
                   </div>
                   <div class="col-md-6 mb-3">
+                    <label class="info-label">Đánh giá</label>
+                    <div class="info-value">
+                      <span
+                        >{{ selectedProductItem.rating || 0 }}/5
+                        <i class="bi bi-star-fill" style="color: gold"></i
+                      ></span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
                     <label class="info-label">Lợi nhuận:</label>
                     <div class="info-value">
                       <span class="badge bg-warning text-dark fs-6">{{
@@ -227,18 +289,11 @@
                   <div class="stat-icon bg-success">
                     <i class="bi bi-cash-coin"></i>
                   </div>
-                  <h6 class="stat-title">
-                    Doanh thu ước tính <br />
-                    <strong>(Chưa trừ giảm giá, chiết khấu, hoàn tiền)</strong>
-                  </h6>
+                  <h6 class="stat-title">Doanh thu gộp <br /></h6>
                   <div class="stat-value">
-                    {{
-                      formatPrice(
-                        (selectedProductItem.turnBuy || 0) * selectedProductItem.price
-                      )
-                    }}
+                    {{ formatPrice(selectedProductItem.sumTotal) }}
                   </div>
-                  <small class="text-muted">Turnbuy × Giá bán</small>
+                  <small class="text-muted">Lượt mua × Giá bán</small>
                 </div>
               </div>
 
@@ -247,16 +302,18 @@
                   <div class="stat-icon bg-warning">
                     <i class="bi bi-graph-up"></i>
                   </div>
-                  <h6 class="stat-title">Lợi nhuận ước tính</h6>
+                  <h6 class="stat-title">Lợi nhuận gộp</h6>
                   <div class="stat-value">
                     {{
                       formatPrice(
-                        (selectedProductItem.turnBuy || 0) *
-                          (selectedProductItem.price - selectedProductItem.cost)
+                        selectedProductItem.sumTotal -
+                          (selectedProductItem.sumCost + selectedProductItem.returnAmount)
                       )
                     }}
                   </div>
-                  <small class="text-muted">Turnbuy × Lợi nhuận</small>
+                  <small class="text-muted"
+                    >Lợi nhuận thuần - (Chi phí + hoàn tiền)</small
+                  >
                 </div>
               </div>
 
@@ -274,7 +331,7 @@
                       )
                     }}%
                   </div>
-                  <small class="text-muted">Margin</small>
+                  <small class="text-muted">Lợi nhuận / giá bán</small>
                 </div>
               </div>
             </div>
@@ -761,23 +818,18 @@
                       <span :class="getQuantityBadgeClass(item.qty)">{{ item.qty }}</span>
                     </span>
                   </div>
-
-                  <div class="detail-row" v-if="item.description">
+                  <!-- <div class="detail-row" v-if="item.description">
                     <span class="detail-label">
                       <i class="bi bi-text-left me-1"></i>
                       Mô tả:
                     </span>
                     <span class="detail-value">{{ item.description }}</span>
-                  </div>
+                  </div> -->
                 </div>
               </div>
 
               <div class="card-footer bg-transparent border-0">
                 <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline-warning">
-                    <i class="bi bi-pencil me-1"></i>
-                    Sửa
-                  </button>
                   <button
                     class="btn btn-sm btn-outline-info"
                     @click="selectProductItem(item)"
@@ -791,7 +843,6 @@
           </div>
         </div>
       </div>
-
       <!-- Empty State -->
       <div
         v-else-if="selectedBaseProduct && productItemsList.length === 0"
@@ -850,6 +901,131 @@ import { formatDateTimeLocal } from "../../Module/CommonsFunctions.js";
 const startAt = ref("21-07-2025");
 const endAt = ref();
 const chartKey = ref(0); // For force re-render
+const searchQuery = ref("");
+const searchResults = ref([]);
+const selectedBaseProducts = ref([]);
+const currentPage = ref(0);
+const totalPages = ref(0);
+const isSearching = ref(false);
+
+async function performSearch() {
+  if (searchQuery.value.trim().length < 2) {
+    searchResults.value = [];
+    totalPages.value = 0;
+    currentPage.value = 0;
+    return;
+  }
+
+  try {
+    isSearching.value = true;
+    currentPage.value = 0; // Reset to first page when searching
+
+    const response = await api.get("/admin/BaseProducts/search", {
+      params: {
+        search: searchQuery.value.trim(),
+        page: currentPage.value,
+        size: 10,
+      },
+    });
+
+    console.log("Initial search response:", response.data);
+
+    // The API returns a Page object with content array
+    if (response.data && response.data.content) {
+      searchResults.value = response.data.content;
+      totalPages.value = response.data.totalPages || 1;
+    } else {
+      searchResults.value = [];
+      totalPages.value = 0;
+    }
+
+    console.log("Initial search results:", searchResults.value.length, "items");
+    console.log("Total pages available:", totalPages.value);
+  } catch (error) {
+    console.error("Initial search failed:", error);
+    searchResults.value = [];
+    totalPages.value = 0;
+    currentPage.value = 0;
+  } finally {
+    isSearching.value = false;
+  }
+}
+function clearSearch() {
+  searchQuery.value = "";
+  searchResults.value = [];
+  currentPage.value = 0;
+  totalPages.value = 0;
+} // Check if product is already selected
+function isProductAlreadySelected(productId) {
+  return selectedBaseProducts.value.id == productId;
+}
+
+function selectBaseProduct2(product) {
+  // Check if product is already selected
+  const isAlreadySelected = selectedBaseProducts.value.id === product.id;
+  console.log("Product selection:", product, "already selected?", isAlreadySelected);
+
+  if (!isAlreadySelected) {
+    selectedBaseProducts.value = product;
+    selectBaseProduct(product);
+    // Load variants for this base product
+  }
+
+  // Don't clear search - keep results visible for multiple selections
+  clearSearch();
+}
+
+async function loadPreviousPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--;
+    await searchWithCurrentPage();
+  }
+}
+
+async function loadNextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++;
+    await searchWithCurrentPage();
+  }
+}
+async function searchWithCurrentPage() {
+  if (searchQuery.value.trim().length < 2) {
+    searchResults.value = [];
+    return;
+  }
+
+  try {
+    isSearching.value = true;
+
+    const response = await api.get("/admin/BaseProducts/search", {
+      params: {
+        search: searchQuery.value.trim(),
+        page: currentPage.value,
+        size: 10,
+      },
+    });
+
+    console.log("Pagination search response:", JSON.stringify(response.data, null, 2));
+
+    // The API returns a Page object with content array
+    if (response.data && response.data.content) {
+      searchResults.value = response.data.content;
+      totalPages.value = response.data.totalPages || 1;
+    } else {
+      searchResults.value = [];
+      totalPages.value = 0;
+    }
+
+    console.log("Pagination results:", searchResults.value.length, "items");
+    console.log("Current page:", currentPage.value + 1, "of", totalPages.value);
+  } catch (error) {
+    console.error("Pagination search failed:", error);
+    searchResults.value = [];
+    totalPages.value = 0;
+  } finally {
+    isSearching.value = false;
+  }
+}
 
 // Event details
 const filteredEvents = ref({
@@ -1151,6 +1327,11 @@ const selectedProductItem = ref(null);
 const dropDownListBaseProduct = ref([]);
 const productItemsList = ref([]);
 const categoriesDropDownList = ref([]);
+function sumQuantityProductItemList() {
+  return productItemsList.value.reduce((total, item) => {
+    return total + (item.qty || 0);
+  }, 0);
+}
 
 // Services
 const categoriesService = createCrudService("Categories");
@@ -1305,6 +1486,7 @@ async function selectBaseProduct(product) {
 
 function selectProductItem(item) {
   selectedProductItem.value = item;
+  console.log("Selected product item:", item, "ID:", item.id);
 
   // Reset date filters when selecting new item
   startAt.value = null;
@@ -1339,7 +1521,7 @@ function selectProductItem(item) {
 async function getProductItems(baseProductId) {
   try {
     const response = await api.get(
-      `/admin/ProductItems/ByBaseProductId/${baseProductId}`
+      `/admin/Stats/BaseProducts/ProductItems?baseId=${baseProductId}`
     );
     console.log("Product items response:", response.data);
 
@@ -1347,7 +1529,11 @@ async function getProductItems(baseProductId) {
     const items = response.data.content || response.data || [];
 
     productItemsList.value = items.map((item) => ({
-      ...item,
+      ...item.productItem,
+      rating: item.rating,
+      returnAmount: item.returnAmount,
+      sumTotal: item.sumTotal,
+      sumCost: item.sumCost,
       name: item.baseProducts?.name || selectedBaseProduct.value?.name,
     }));
   } catch (error) {
@@ -1459,6 +1645,311 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.info-section .card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e3e6ff 100%);
+  border: 2px solid #764ba2;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.12);
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.info-section .card-header {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.12);
+  border-radius: 24px 24px 0 0;
+  padding: 1.5rem 2rem;
+}
+
+.info-section .card-body {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem 1.5rem;
+}
+
+.info-section .row {
+  align-items: center;
+}
+
+.info-section img {
+  max-width: 180px;
+  max-height: 220px;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(102, 126, 234, 0.18);
+  background: #fff;
+  margin-bottom: 1rem;
+  transition: transform 0.2s;
+}
+
+.info-section .info-label {
+  font-weight: 700;
+  color: black;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.2px;
+}
+
+.info-section .info-value {
+  color: #2c3e50;
+  font-size: 1.08rem;
+  font-weight: 600;
+  background: #f4f7ff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.06);
+  border-left: 4px solid #667eea;
+}
+
+.info-section .badge.bg-success {
+  background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%);
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 195, 0, 0.12);
+}
+
+.info-section .badge.bg-secondary {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.info-section .info-value .bi-star-fill {
+  color: #f7b731;
+  margin-left: 4px;
+  font-size: 1.1rem;
+}
+
+.info-section .info-value .badge {
+  margin-left: 6px;
+}
+
+@media (max-width: 992px) {
+  .info-section .card-body {
+    padding: 1.2rem 0.5rem;
+  }
+  .info-section img {
+    max-width: 120px;
+    max-height: 140px;
+  }
+  .info-section .info-label,
+  .info-section .info-value {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.7rem;
+  }
+}
+.form-control {
+  border-radius: 0.75rem;
+  border: 1px solid #dee2e6;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.btn-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0d6efd;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+}
+.search-container {
+  position: relative;
+}
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow: hidden;
+}
+/* Search Results Section - Separate component below search input */
+.search-results-section {
+  margin-top: 1rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 600;
+}
+.search-results-section .results-header {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-bottom: 1px solid #bbdefb;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+}
+.results-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.search-results-section .results-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.result-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.result-item:hover {
+  background-color: #f8f9fa;
+}
+
+.result-item.already-selected {
+  background-color: #e8f5e8;
+  border-left: 4px solid #28a745;
+}
+
+.result-item.already-selected:hover {
+  background-color: #d4edda;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+.search-results-section .result-item {
+  padding: 1.25rem 1.5rem;
+}
+
+.search-results-section .pagination-container {
+  background: #e3f2fd;
+  border-top: 1px solid #bbdefb;
+  padding: 1rem 1.25rem;
+}
+
+.btn-close-search {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close-search:hover {
+  color: #dc3545;
+}
+
+.search-results-section .pagination-container {
+  background: #e3f2fd;
+  border-top: 1px solid #bbdefb;
+  padding: 1rem 1.25rem;
+}
+.result-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+.result-content {
+  flex-grow: 1;
+}
+.result-name {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.result-material {
+  display: block;
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-bottom: 0.1rem;
+}
+
+.result-category {
+  display: block;
+  color: #0d6efd;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.result-stats {
+  margin-top: 0.25rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.result-rating,
+.result-turnbuy {
+  font-size: 0.7rem;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+.selected-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 1rem;
+  color: #28a745;
+}
+
+.selected-indicator i {
+  font-size: 1.2rem;
+}
+
+.selected-indicator small {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
 /* Header Styles */
 .stats-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1577,8 +2068,9 @@ onMounted(async () => {
 }
 
 .item-image {
-  width: 100%;
-  height: 150px;
+  width: 70%;
+  aspect-ratio: 4/5;
+  height: auto;
   object-fit: cover;
   border: 2px solid #e9ecef;
 }

@@ -61,7 +61,12 @@ public class ProductItemsAPI {
 	private PromotionProductsService promotionProductsService;
 	@Autowired
 	private PromotionProductFillterMapper promotionProductFillterMapper;
-
+	@Autowired
+	private ReviewsService reviewsService;
+	@Autowired
+	private OrderItemsService orderItemsService;
+	@Autowired
+	private ReturnsService returnsService;
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -94,6 +99,26 @@ public class ProductItemsAPI {
 			}
 			Map<String, Object> response = new HashMap();
 			response.put("content", content);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra" + e.getMessage()));
+		}
+	}
+	@GetMapping("/admin/Stats/BaseProducts/ProductItems")
+public ResponseEntity<?> getProductItemsStatsByBaseProducts(@RequestParam("baseId") int baseId) {
+		try {
+			List<ProductItems> productItems = productItemsService.productItemsFindByBaseProductId(baseId);
+			List<ProductItemStatsDTO> response = new ArrayList<>();
+			for (ProductItems item : productItems) {
+				response.add(
+						new ProductItemStatsDTO(
+						productItemsMapper.mapper(item),
+						reviewsService.getAverageRatingByProductItemId(item.getId()),
+						returnsService.findTotalRefundAmountByProductItemId(item.getId()),
+						orderItemsService.sumTotalByProductId(item.getId()),
+						orderItemsService.sumCostAtBuyTime(item.getId()))
+				);
+			}
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra" + e.getMessage()));

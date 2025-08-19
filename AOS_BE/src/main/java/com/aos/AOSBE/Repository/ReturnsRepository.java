@@ -16,4 +16,7 @@ public interface ReturnsRepository extends JpaRepository<Returns, Integer>, JpaS
     Integer findReturnsByProductItemIdAndCreateAtBetween(Integer productItemId, LocalDateTime startDate, LocalDateTime endDate);
     @Query("SELECT SUM(r.refundAmount) FROM Returns r WHERE r.refundType = 'REFUND' AND r.status = 'COMPLETED' AND r.isReturnedMoney = true ")
     Double findTotalRefundAmount();
+    @Query("SELECT SUM(r.refundAmount) FROM Returns r " +
+            "WHERE r.refundType = 'REFUND' AND r.status = 'COMPLETED' AND r.isReturnedMoney = true AND r.orderItems.productItems.id = ?1")
+    Double findTotalRefundAmountByProductItemId(Integer productItemId);
 }
