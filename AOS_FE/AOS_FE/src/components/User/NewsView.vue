@@ -6,9 +6,10 @@
       <p class="page-subtitle">CẬP NHẬT ƯU ĐÃI MỚI NHẤT TỪ ALL IN ONE STORE</p>
     </div>
   </div>
+  <Loading :loading="loading" />
 
   <!-- Main Container -->
-  <div class="main-container my-5">
+  <div v-if="!loading" class="main-container my-5">
     <!-- Loading State -->
     <!-- <div v-if="loading" class="loading-section">
       <div class="text-center py-5">
@@ -18,7 +19,6 @@
         <p class="text-muted">Đang tải danh sách tin tức...</p>
       </div>
     </div> -->
-    <Loading :loading="loading" />
     <div v-if="newsList.length === 0" class="empty-state">
       <div class="empty-icon">
         <i class="bi bi-newspaper"></i>
@@ -165,6 +165,43 @@ watch(() => pageSize.value, loadNews);
   padding: 3rem 1rem;
   text-align: center;
   margin-bottom: 2rem;
+}
+/* Thêm vào cuối file CSS của ProductsView.vue hoặc trong phần .page-header */
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 0 2rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hiệu ứng sóng động */
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
+    repeat-x;
+  background-size: 1000px 100px;
+  animation: wave 10s infinite linear;
+  z-index: 0;
+}
+
+@keyframes wave {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1000px;
+  }
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
 }
 .header-content {
   max-width: 600px;

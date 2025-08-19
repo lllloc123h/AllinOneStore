@@ -17,7 +17,7 @@ public class CustomsMapper {
 		return new CustomsDTOS(
 				    entity.getId(),
 				    entity.getAccount().getId(),
-				    "---",
+				    entity.getCanvasJson(),
 				    entity.getImageUrl(),
 				    entity.getDesignName(),
 				    entity.getCreatedAt(),

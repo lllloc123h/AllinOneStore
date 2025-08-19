@@ -921,7 +921,43 @@ watch(images, (newImages) => {
   margin-bottom: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
+/* Thêm vào cuối file CSS của ProductsView.vue hoặc trong phần .page-header */
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 0 2rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
 
+/* Hiệu ứng sóng động */
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
+    repeat-x;
+  background-size: 1000px 100px;
+  animation: wave 10s infinite linear;
+  z-index: 0;
+}
+
+@keyframes wave {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1000px;
+  }
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
 .header-content {
   max-width: 800px;
   margin: 0 auto;

@@ -224,6 +224,7 @@
                                 class="custom-badge"
                                 :href="`/Customizer/create/${item.productItemId}`"
                                 style="text-decoration: none"
+                                target="_blank"
                               >
                                 <i class="bi bi-palette me-1"></i>
                                 Có thể tùy chỉnh
@@ -338,10 +339,16 @@
                       <div class="product-info">
                         <div class="d-flex align-items-center flex-wrap mb-1 gap-2">
                           <h6 class="product-name mb-0">{{ item.name }}</h6>
-                          <span v-if="item.custom" class="custom-badge">
+                          <a
+                            v-if="item.custom"
+                            class="custom-badge"
+                            :href="`/Customizer/create/${item.productItemId}`"
+                            style="text-decoration: none"
+                            target="_blank"
+                          >
                             <i class="bi bi-palette me-1"></i>
                             Có thể tùy chỉnh
-                          </span>
+                          </a>
                         </div>
                         <p class="product-sku text-muted mb-2">{{ item.sku }}</p>
 
@@ -477,7 +484,7 @@
                   <button
                     class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm"
                     :disabled="validSelectedItemsCount === 0"
-                    @click="checkout"
+                    @click="showModal = true"
                   >
                     <i class="bi bi-credit-card me-2"></i>
                     Thanh toán
@@ -542,10 +549,16 @@
                                 <i class="bi bi-gift-fill me-1"></i> Ưu đãi
                               </span>
                               <h6 class="fw-bold mb-0">{{ item.name }}</h6>
-                              <span v-if="item.custom" class="custom-badge">
+                              <a
+                                v-if="item.custom"
+                                class="custom-badge"
+                                :href="`/Customizer/create/${item.productItemId}`"
+                                style="text-decoration: none"
+                                target="_blank"
+                              >
                                 <i class="bi bi-palette me-1"></i>
                                 Có thể tùy chỉnh
-                              </span>
+                              </a>
                             </div>
                           </div>
                           <div class="promotion-price fw-bold text-danger fs-5">
@@ -921,6 +934,13 @@
       </div>
     </div>
   </div>
+  <!-- Modal chọn phác thảo -->
+  <ModalCustom
+    v-if="showModal"
+    :showDraftModal="showModal"
+    @close="showModal = false"
+    :customProductIds="[4]"
+  />
 </template>
 
 <script setup>
@@ -931,6 +951,8 @@ import {
   finalHandleCartProgress,
   handleUpdateQuantityCartWhileLogin,
 } from "../../Configs/cart";
+import ModalCustom from "../Module/ModalCustom.vue";
+const showModal = ref(false);
 const router = useRouter();
 const cart = ref([]);
 const selectedItems = ref([]);
@@ -1293,33 +1315,33 @@ const isComboSelectionComplete = computed(() => {
 });
 const selectedComboItems = ref({}); // { [itemId]: số lượng đã chọn }
 
-function getBaseProductTotalQty(group) {
-  // Tính tổng số lượng đã chọn của tất cả item trong baseProduct này
-  return group.items.reduce(
-    (sum, item) => sum + (selectedComboItems.value[item.id] || 0),
-    0
-  );
-}
+// function getBaseProductTotalQty(group) {
+//   // Tính tổng số lượng đã chọn của tất cả item trong baseProduct này
+//   return group.items.reduce(
+//     (sum, item) => sum + (selectedComboItems.value[item.id] || 0),
+//     0
+//   );
+// }
 
-function increaseComboQty(item, group) {
-  if (!selectedComboItems.value[item.id]) selectedComboItems.value[item.id] = 0;
+// function increaseComboQty(item, group) {
+//   if (!selectedComboItems.value[item.id]) selectedComboItems.value[item.id] = 0;
 
-  if (item.isGift) {
-    // Cho gift product, kiểm tra tổng gift đã chọn trong group
-    const currentGiftTotal = calculateCurrentGiftTotal(group);
-    const maxGiftAllowed = getMaxGiftAllowed(group);
+//   if (item.isGift) {
+//     // Cho gift product, kiểm tra tổng gift đã chọn trong group
+//     const currentGiftTotal = calculateCurrentGiftTotal(group);
+//     const maxGiftAllowed = getMaxGiftAllowed(group);
 
-    if (
-      currentGiftTotal < maxGiftAllowed &&
-      selectedComboItems.value[item.id] < item.qty
-    ) {
-      selectedComboItems.value[item.id]++;
-    }
-  } else {
-    // Cho regular product, không cho phép tăng (đã set cố định ở require qty)
-    return;
-  }
-}
+//     if (
+//       currentGiftTotal < maxGiftAllowed &&
+//       selectedComboItems.value[item.id] < item.qty
+//     ) {
+//       selectedComboItems.value[item.id]++;
+//     }
+//   } else {
+//     // Cho regular product, không cho phép tăng (đã set cố định ở require qty)
+//     return;
+//   }
+// }
 
 // Helper functions cho gift options
 function formatGiftOptionDisplay(option) {
@@ -1442,6 +1464,7 @@ function handleProcessCombo() {
     items: selectedList,
   };
   console.log("Dữ liệu combo:", finalData);
+  console.log("dữ liệu selectedList", selectedList);
 
   api
     .post("/cart/addCombo", finalData)
@@ -1467,24 +1490,24 @@ function calculateCurrentGiftTotal(group) {
   return total;
 }
 
-function getMaxGiftAllowed(group) {
-  // Tìm giftOption trong group
-  const giftItem = group.items.find((item) => item.giftOption);
-  if (giftItem && giftItem.giftOption) {
-    // Parse format "2_trong_3" để lấy số 2
-    const match = giftItem.giftOption.match(/(\d+)_trong_\d+/);
-    return match ? parseInt(match[1]) : 1;
-  }
-  return 1;
-}
+// function getMaxGiftAllowed(group) {
+//   // Tìm giftOption trong group
+//   const giftItem = group.items.find((item) => item.giftOption);
+//   if (giftItem && giftItem.giftOption) {
+//     // Parse format "2_trong_3" để lấy số 2
+//     const match = giftItem.giftOption.match(/(\d+)_trong_\d+/);
+//     return match ? parseInt(match[1]) : 1;
+//   }
+//   return 1;
+// }
 
-function hasGiftInGroup(group) {
-  return group.items.some((item) => item.isGift);
-}
+// function hasGiftInGroup(group) {
+//   return group.items.some((item) => item.isGift);
+// }
 
-function getCurrentGiftSelection(group) {
-  return calculateCurrentGiftTotal(group);
-}
+// function getCurrentGiftSelection(group) {
+//   return calculateCurrentGiftTotal(group);
+// }
 
 // ...existing code...
 
@@ -1541,6 +1564,23 @@ function toggleSelectAll(e) {
     selectedItems.value = [];
   }
 }
+// nhóm các sản phẩm cùng id có custom
+const customGroups = ref([]);
+function setCustomGroups() {
+  const customFilter = ref([]);
+  customFilter.value = cart.value.filter((item) => item.custom == true);
+  customGroups.value = customFilter.value.reduce((acc, item) => {
+    const productItemId = item.productItemId;
+    if (!acc[productItemId]) {
+      acc[productItemId] = {
+        productItemId: productItemId,
+        quantity: 0,
+      };
+    }
+    acc[productItemId].quantity += item.quantity;
+    return acc;
+  }, {});
+}
 async function loadCart() {
   try {
     const response = await cartService.getCart();
@@ -1562,8 +1602,9 @@ async function loadCart() {
         isGift: item.isGift || false, // Thêm isGift nếu có
         custom: item.custom || false, // Thêm custom nếu có
       }));
-      authService.setCart(0);
-      authService.updateCart(cart.value.reduce((sum, item) => sum + item.quantity, 0));
+      authService.setCart(cart.value.reduce((sum, item) => sum + item.quantity, 0));
+      setCustomGroups();
+      console.log("Custom groups set:", customGroups.value);
 
       // Chỉ chọn những item có thể chọn được (không phải combo null hoặc combo không hợp lệ)
       const selectableItems = cart.value.filter((item) => {

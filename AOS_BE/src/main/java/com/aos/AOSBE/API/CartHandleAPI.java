@@ -238,5 +238,16 @@ public class CartHandleAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
+@GetMapping("/customs/productItems")
+public ResponseEntity<?> getAllCustomByProductItemIds(@RequestParam("productItemIds") List<Integer> productItemIds) {
+	System.out.println(">> productItemIds: " + productItemIds);
+	String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+	List<Customs> customsList = customsService.findCustomByEmailAndProductItems(userEmail,productItemIds);
+	customsList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+	List<CustomsDTOS> customsDTOSList = customsList.stream()
+			.map(customsMapper::mapper)
+			.collect(Collectors.toList());
+	return ResponseEntity.ok(customsDTOSList);
+}
 
 }

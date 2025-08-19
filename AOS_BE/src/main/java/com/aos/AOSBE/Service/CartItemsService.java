@@ -131,7 +131,7 @@ public class CartItemsService {
 				cartItem.setComboGroupId(uuid);
 				cartItem.setComboQty(1);
 				cartItem.setIsGift(
-						promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
+						promotionProductsRepository.findByProductItemsIdAndPromotionsId(item.getItemId(),item.getPromotionId()).isGift());
 				cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 				cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
 				cartItemsRepository.save(cartItem);
