@@ -1,14 +1,12 @@
 package com.aos.AOSBE.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.aos.AOSBE.Entity.ProductImages;
-import com.aos.AOSBE.Repository.*;
-import jakarta.annotation.PostConstruct;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +24,14 @@ import com.aos.AOSBE.Mapper.PriceHistoriesMapper;
 import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Mapper.PromotionProductsMapper;
 import com.aos.AOSBE.Mapper.PromotionsMapper;
+import com.aos.AOSBE.Repository.CostHistoriesRepository;
+import com.aos.AOSBE.Repository.OrderItemsRepository;
+import com.aos.AOSBE.Repository.PriceHistoriesRepository;
+import com.aos.AOSBE.Repository.ProductItemsRepository;
+import com.aos.AOSBE.Repository.PromotionProductsRepository;
+import com.aos.AOSBE.Repository.PromotionsRepository;
+import com.aos.AOSBE.Repository.ReturnsRepository;
+import com.aos.AOSBE.Repository.ReviewsRepository;
 
 @Service
 public class ProductItemsService {
@@ -78,10 +84,10 @@ public class ProductItemsService {
 		return productItemsRepository.findAll(spec, pageable);
 	}
 
-
 	public List<ProductItems> productItemsFindByBaseProductId(int id) {
 		return productItemsRepository.findByBaseProductsId(id);
 	}
+
 	public List<ProductItems> productItemsByActiveIsTrue(int id) {
 		return productItemsRepository.findByBaseProductsId(id);
 	}
@@ -119,7 +125,7 @@ public class ProductItemsService {
 		maxPrice = (maxPrice == null) ? "" : maxPrice;
 		HandleListSkuToFilter buildKey = new HandleListSkuToFilter();
 		String skuList = buildKey.buildKeyFilter(skuColorLike, skuSizeLike);
-		int isSkuLikeListEmpty = (skuList == null || skuColorLike.isEmpty()) ? 1 : 0;
+		int isSkuLikeListEmpty = (skuList == null || skuList.isEmpty()) ? 1 : 0;
 
 		try {
 			return productItemsRepository.newFilterItems(pageable, isSkuLikeListEmpty, skuList, isMinPriceEmpty,

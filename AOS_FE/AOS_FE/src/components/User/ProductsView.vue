@@ -672,6 +672,15 @@ const fetchData = async () => {
   try {
     skuColorLike.value = selected.value["Màu sắc"].join("-");
     skuSizeLike.value = selected.value["Kích thước"].join("-");
+    console.log(
+      "Fetching data with filters:",
+      skuColorLike.value,
+      skuSizeLike.value,
+      minPriceReq.value,
+      maxPriceReq.value,
+      categoriesFilter.value,
+      keyWord.value
+    );
     categoriesFilter.value = "";
     for (const groupName in selectedCatalogCategory.value) {
       if (selectedCatalogCategory.value[groupName].length > 0) {
