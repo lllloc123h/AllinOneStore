@@ -42,12 +42,17 @@ public class OrderItemsMapper {
 	    if (entity.getProductItemId() == null) {
 	        throw new RuntimeException("Thiếu productItemId khi tạo OrderItems");
 	    }
+	    ProductItems productItem = productItemsService.productItemsFindById(entity.getProductItemId())
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy ProductItem với id " + entity.getProductItemId()));
+
+	    // ✅ Lấy costAtBuy từ productItem trong DB
+	    Double costAtBuy = productItem.getCost();
 
 	    return new OrderItems(
 	    	    entity.getId(),
 	    	    entity.getQty(),
 	    	    entity.getPriceAtBuy(),
-	    	    entity.getCostAtBuy(),
+	    	    costAtBuy,
 	    	    entity.getIsGift() != null ? entity.getIsGift() : false,  // ✅ map an toàn
 	    	    entity.getSellingPrice(),
 	    	    entity.getTotal(),
