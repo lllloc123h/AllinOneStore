@@ -879,8 +879,8 @@ const formData = reactive({
   comboPrice: "150000",
   qty: "200",
   startAt: "2025-07-01T04:23:00",
-  endAt: "2025-07-20T19:22:00",
-  active: false,
+  endAt: "2025-10-20T19:22:00",
+  active: true,
   createdAt: "",
   updatedAt: "",
 });

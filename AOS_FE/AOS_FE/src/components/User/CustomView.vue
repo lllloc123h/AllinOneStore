@@ -573,7 +573,7 @@ onMounted(() => {
 /* ==================== HERO SECTION ==================== */
 .hero-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 3rem 0 2rem;
+  padding: 4rem 0 2rem;
   color: white;
   position: relative;
   overflow: hidden;
