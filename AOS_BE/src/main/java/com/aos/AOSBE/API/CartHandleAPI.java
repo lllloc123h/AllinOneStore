@@ -1,18 +1,14 @@
 package com.aos.AOSBE.API;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.aos.AOSBE.DTOS.CreateComboDTO;
 import com.aos.AOSBE.DTOS.CustomsDTOS;
 import com.aos.AOSBE.DTOS.UpdateComboDTO;
-import com.aos.AOSBE.Entity.Accounts;
-import com.aos.AOSBE.Entity.Customs;
-import com.aos.AOSBE.Entity.Promotions;
+import com.aos.AOSBE.Entity.*;
 import com.aos.AOSBE.Mapper.CustomsMapper;
+import com.aos.AOSBE.Mapper.ProductItemsMapper;
 import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.DTOS.CartItemsDTOS;
-import com.aos.AOSBE.Entity.CartItems;
 import com.aos.AOSBE.Mapper.CartItemsMapper;
 
 @RestController
@@ -50,6 +45,12 @@ public class CartHandleAPI {
 	private CustomsService customsService;
 	@Autowired
 	private CustomsMapper customsMapper;
+	@Autowired
+	private ProductItemsService productItemsService;
+	@Autowired
+	private ProductItemsMapper productItemsMapper;
+	@Autowired
+	private OrderItemsService orderItemsService;
 
 	@PostMapping("/addToCart")
 	public ResponseEntity<?> addToCart(@RequestBody CartItemsDTOS entity) {
@@ -240,14 +241,24 @@ public class CartHandleAPI {
 	}
 @GetMapping("/customs/productItems")
 public ResponseEntity<?> getAllCustomByProductItemIds(@RequestParam("productItemIds") List<Integer> productItemIds) {
-	System.out.println(">> productItemIds: " + productItemIds);
+		// get uesrname
 	String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-	List<Customs> customsList = customsService.findCustomByEmailAndProductItems(userEmail,productItemIds);
-	customsList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
-	List<CustomsDTOS> customsDTOSList = customsList.stream()
-			.map(customsMapper::mapper)
-			.collect(Collectors.toList());
-	return ResponseEntity.ok(customsDTOSList);
+	List<CustomsDTOS> response = new ArrayList<>();
+	// truy xuất productItem
+for (int productItemId : productItemIds) {
+	List<Customs> customs = customsService.findCustomByEmailAndProductItems(userEmail, productItemId);
+	// nếu kh có custom nào thì thêm thông tin productItem
+	if (customs.isEmpty()) {
+		CustomsDTOS custom = new CustomsDTOS();
+		ProductItems productItem = productItemsService.productItemsFindById(productItemId).orElse(null);
+		custom.setProductItems(productItemsMapper.mapper2(productItem));
+		response.add(custom);
+		continue;
+	}else{
+		response.addAll(customs.stream().map(customsMapper::mapper).collect(Collectors.toList()));
+	}
+}
+	return ResponseEntity.ok(response);
 }
 
 }

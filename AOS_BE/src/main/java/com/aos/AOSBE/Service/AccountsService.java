@@ -132,20 +132,20 @@ public class AccountsService {
 		authority.setRoles(rolesRepository.findByName("USER").get());
 		authorityRepository.save(authority);
 
-		EWalletsDTOS entity = new EWalletsDTOS();
-		CommonFunctions commonFunctions = new CommonFunctions();
-		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-		String CodeActice = commonFunctions.generateVerificationCode();
-		entity.setAccounts(userEmail);
-		entity.setActive(false);
-		entity.setBalance(0);
-		entity.setCodeActivce(CodeActice);
-		entity.setWalletType("REAL");
-
-		session.setAttribute("otp_" + userEmail, CodeActice);
-		session.setAttribute("otp_time_" + userEmail, System.currentTimeMillis());
-		EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
-		emailService.sendVerificationEWallet("nkha79323@gmail.com", CodeActice);
+//		EWalletsDTOS entity = new EWalletsDTOS();
+//		CommonFunctions commonFunctions = new CommonFunctions();
+//		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//		String CodeActice = commonFunctions.generateVerificationCode();
+//		entity.setAccounts(userEmail);
+//		entity.setActive(false);
+//		entity.setBalance(0);
+//		entity.setCodeActivce(CodeActice);
+//		entity.setWalletType("REAL");
+//
+//		session.setAttribute("otp_" + userEmail, CodeActice);
+//		session.setAttribute("otp_time_" + userEmail, System.currentTimeMillis());
+//		EWallets saved = eWalletsService.eWalletsSave(eWalletsMapper.mapperToObject(entity));
+//		emailService.sendVerificationEWallet("nkha79323@gmail.com", CodeActice);
 		return accountsRepository.save(accounts);
 	}
 

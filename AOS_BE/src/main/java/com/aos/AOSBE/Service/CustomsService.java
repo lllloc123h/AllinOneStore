@@ -45,7 +45,7 @@ public class CustomsService {
 	public List<Customs> findCustomsByEmail(String email) {
 		return customsRepository.findCustomRawByEmail(email);
 	}
-	public List<Customs> findCustomByEmailAndProductItems(String email, List<Integer> productItemIds) {
+	public List<Customs> findCustomByEmailAndProductItems(String email,Integer productItemIds) {
 		return customsRepository.findCustomByEmailAndProductItems(email, productItemIds);
 	}
 }

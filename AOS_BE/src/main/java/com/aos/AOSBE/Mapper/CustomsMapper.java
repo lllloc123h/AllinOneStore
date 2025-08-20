@@ -22,9 +22,22 @@ public class CustomsMapper {
 				    entity.getDesignName(),
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
-				    productItemsMapper.mapper2(entity.getProductItems()),
+				    productItemsMapper.mapper2(productItemsService.productItemsFindById(entity.getProductItems().getId()).get()) ,
 				    entity.getOrderItem() != null ? orderItemsMapper.mapper(entity.getOrderItem()) : null
 			);
+	}
+	public CustomsDTOS mapperToViewCart(Customs entity) {
+		return new CustomsDTOS(
+				entity.getId(),
+				entity.getAccount().getId(),
+				entity.getCanvasJson(),
+				entity.getImageUrl(),
+				entity.getDesignName(),
+				entity.getCreatedAt(),
+				entity.getUpdatedAt(),
+				productItemsMapper.mapper2(entity.getProductItems()),
+				entity.getOrderItem() != null ? orderItemsMapper.mapper(entity.getOrderItem()) : null
+		);
 	}
 	public Customs mapperToObject(CustomsDTOS entity) {
 		Accounts account = new Accounts();

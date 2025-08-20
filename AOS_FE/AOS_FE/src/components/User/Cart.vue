@@ -484,7 +484,7 @@
                   <button
                     class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm"
                     :disabled="validSelectedItemsCount === 0"
-                    @click="showModal = true"
+                    @click="finalCheckout"
                   >
                     <i class="bi bi-credit-card me-2"></i>
                     Thanh toán
@@ -518,7 +518,7 @@
         >
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg">
-              <div class="modal-header bg-primary text-white rounded-top-4">
+              <div class="modal-header text-white rounded-top-4" style="background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)">
                 <h1 class="modal-title fs-4" id="exampleModalToggleLabel">
                   <i class="bi bi-gift-fill me-2"></i>
                   Ưu đãi hiện có
@@ -594,10 +594,14 @@
                     <!-- Nút chuyển tab -->
                     <div class="col-2 d-flex align-items-center">
                       <button
-                        class="btn btn-outline-primary h-100 w-100 rounded-0 rounded-end-3"
+                        class="btn h-100 w-100 rounded-0 rounded-end-3 promotion-view-btn"
                         @click="openSpecificPromotionModal(item.id)"
                         data-bs-target="#exampleModalToggle2"
                         data-bs-toggle="modal"
+                        style="
+                        border-left: 1px solid #dee2e6;
+                        background-color: #f8f9fa;"
+
                       >
                         <i class="bi bi-arrow-right"></i>
                         <div class="small">Xem thêm</div>
@@ -620,7 +624,7 @@
         >
           <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg">
-              <div class="modal-header bg-primary text-white rounded-top-4">
+              <div class="modal-header text-white rounded-top-4" style="background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)">
                 <h1 class="modal-title fs-4" id="exampleModalToggleLabel2">
                   <i class="bi bi-box-seam me-2"></i>
                   Chi tiết combo
@@ -883,7 +887,7 @@
       </div>
 
       <!-- Sản phẩm gợi ý -->
-      <div class="suggestions-section mt-5">
+      <!-- <div class="suggestions-section mt-5">
         <div class="row">
           <div class="col-12">
             <div class="suggestions-header text-center mb-5">
@@ -931,15 +935,15 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <!-- Modal chọn phác thảo -->
   <ModalCustom
-    v-if="showModal"
     :showDraftModal="showModal"
     @close="showModal = false"
-    :customProductIds="[4]"
+    @select="getResultCustomsSelected"
+    :customProductIds="customGroups"
   />
 </template>
 
@@ -1480,15 +1484,15 @@ function handleProcessCombo() {
 }
 
 // Helper functions cho gift selection
-function calculateCurrentGiftTotal(group) {
-  let total = 0;
-  group.items.forEach((item) => {
-    if (item.isGift) {
-      total += selectedComboItems.value[item.id] || 0;
-    }
-  });
-  return total;
-}
+// function calculateCurrentGiftTotal(group) {
+//   let total = 0;
+//   group.items.forEach((item) => {
+//     if (item.isGift) {
+//       total += selectedComboItems.value[item.id] || 0;
+//     }
+//   });
+//   return total;
+// }
 
 // function getMaxGiftAllowed(group) {
 //   // Tìm giftOption trong group
@@ -1567,19 +1571,33 @@ function toggleSelectAll(e) {
 // nhóm các sản phẩm cùng id có custom
 const customGroups = ref([]);
 function setCustomGroups() {
+  customGroups.value = [];
   const customFilter = ref([]);
   customFilter.value = cart.value.filter((item) => item.custom == true);
-  customGroups.value = customFilter.value.reduce((acc, item) => {
-    const productItemId = item.productItemId;
-    if (!acc[productItemId]) {
-      acc[productItemId] = {
-        productItemId: productItemId,
-        quantity: 0,
-      };
+  customFilter.value.forEach((item) => {
+    if (customGroups.value.find((group) => group.productItemId === item.productItemId)) {
+      // Nếu đã tồn tại nhóm cho productItemId này, cập nhật maxQuantity
+      console.log("Updating custom group:", item.productItemId);
+      const existingGroup = customGroups.value.find(
+        (group) => group.productItemId === item.productItemId
+      );
+      existingGroup.maxQuantity += item.quantity;
+    } else {
+      console.log("Chưa có group ", item.productItemId);
+      // Nếu chưa tồn tại nhóm, tạo mới
+      customGroups.value.push({
+        productItemId: item.productItemId,
+        maxQuantity: item.quantity,
+      });
     }
-    acc[productItemId].quantity += item.quantity;
-    return acc;
-  }, {});
+  });
+  if (customGroups.value.length > 0) {
+    showModal.value = true; // Hiển thị modal nếu có sản phẩm custom
+  } else {
+    console.log("Không có sản phẩm custom nào trong giỏ hàng");
+    const nullArray = [];
+    checkout(nullArray);
+  }
 }
 async function loadCart() {
   try {
@@ -1603,9 +1621,6 @@ async function loadCart() {
         custom: item.custom || false, // Thêm custom nếu có
       }));
       authService.setCart(cart.value.reduce((sum, item) => sum + item.quantity, 0));
-      setCustomGroups();
-      console.log("Custom groups set:", customGroups.value);
-
       // Chỉ chọn những item có thể chọn được (không phải combo null hoặc combo không hợp lệ)
       const selectableItems = cart.value.filter((item) => {
         // Nếu không có comboGroupId thì có thể chọn
@@ -1822,7 +1837,13 @@ const selectedTotal = computed(() => {
   return sum;
 });
 // Gửi dữ liệu thanh toán
-function checkout() {
+function getResultCustomsSelected(result) {
+  checkout(result);
+}
+function finalCheckout() {
+  setCustomGroups();
+}
+function checkout(result) {
   // Chỉ lấy những sản phẩm hợp lệ được chọn
   const selectedProducts = cart.value.filter((item) => {
     if (!selectedItems.value.includes(item.id)) return false;
@@ -1835,13 +1856,22 @@ function checkout() {
 
     return true;
   });
-
-  router.push({
-    name: "CheckoutPage",
-    query: {
-      products: JSON.stringify(selectedProducts),
-    },
-  });
+  if (result.length === 0) {
+    router.push({
+      name: "CheckoutPage",
+      query: {
+        products: JSON.stringify(selectedProducts),
+      },
+    });
+  } else {
+    router.push({
+      name: "CheckoutPage",
+      query: {
+        products: JSON.stringify(selectedProducts),
+        customs: JSON.stringify(result),
+      },
+    });
+  }
 }
 
 // Tải giỏ hàng khi trang được mount
@@ -2056,7 +2086,12 @@ onMounted(() => {
     left: 100%;
   }
 }
-
+.promotion-view-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #fff !important;
+  border-left: 1px solid #764ba2 !important;
+  transition: background 0.3s, color 0.3s;
+}
 @keyframes pulse-danger {
   0%,
   100% {
@@ -2577,7 +2612,7 @@ onMounted(() => {
 /* Checkout Section */
 .checkout-sticky {
   position: sticky;
-  top: 2rem;
+  top: 6rem;
 }
 
 .checkout-summary {
@@ -2771,11 +2806,7 @@ onMounted(() => {
     height: 100px; /* Tỷ lệ 4:5 cho mobile */
   }
 
-  .checkout-sticky {
-    position: relative;
-    top: 0;
-    margin-top: 2rem;
-  }
+
 
   .suggestions-section {
     padding: 2rem 1rem;
