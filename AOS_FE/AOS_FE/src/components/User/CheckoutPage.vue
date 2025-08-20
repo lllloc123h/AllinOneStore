@@ -807,7 +807,6 @@ function buildOrderPayload() {
         couponCode: item.couponCode || null,
         promotions: item.promotions?.id || null,
         priceAtBuy: item.originalPrice || item.price,
-        costAtBuy: item.cost || 0,
         sellingPrice,
         total,
       };
