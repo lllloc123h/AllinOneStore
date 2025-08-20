@@ -262,7 +262,7 @@ const formTableService = createCrudService(props.TableName);
 const uploadRef = ref();
 const formData = reactive({
   id: "",
-  imageUrl: "",
+  imageUrl: null,
   title: "",
   home: "true",
   description:
@@ -395,7 +395,7 @@ async function submitUpdateForm() {
 
 async function submitForm() {
   console.log(formData);
-  if (formData.imageUrl === null) {
+  if (formData.imageUrl == null) {
     notification.error({
       message: "Thêm thất bại",
       description: `Vui lòng tải lên ảnh trước khi thêm.`,

@@ -17,19 +17,32 @@
     <div class="main-content">
       <div class="container">
         <!-- Filter & Search -->
+        <!-- Filter & Search -->
         <div class="filter-section">
           <div class="row g-3 mb-4">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
                 <input
-                  type="text"
-                  class="form-control search-input"
-                  placeholder="Tìm kiếm theo tên thiết kế..."
-                  v-model="searchQuery"
-                  @input="filterDrafts"
+                    type="text"
+                    class="form-control search-input"
+                    placeholder="Tìm kiếm theo tên thiết kế..."
+                    v-model="searchQuery"
+                    @input="filterDrafts"
                 />
               </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" v-model="selectedProduct" @change="filterDrafts">
+                <option value="">Tất cả sản phẩm</option>
+                <option
+                    v-for="product in uniqueProducts"
+                    :key="product"
+                    :value="product"
+                >
+                  {{ product }}
+                </option>
+              </select>
             </div>
             <div class="col-md-3">
               <select class="form-select" v-model="sortBy" @change="sortDrafts">
@@ -39,9 +52,14 @@
                 <option value="name-desc">Tên Z-A</option>
               </select>
             </div>
+            <div class="col-md-2">
+              <button class="btn btn-outline-danger w-100" @click="clearFilters">
+                <i class="bi bi-x-circle me-1"></i>
+                Xóa lọc
+              </button>
+            </div>
           </div>
         </div>
-
         <!-- Loading State -->
         <div v-if="loading" class="loading-section">
           <div class="text-center py-5">
@@ -60,10 +78,6 @@
             <p class="empty-description">
               Bắt đầu tạo thiết kế đầu tiên của bạn để thấy chúng hiển thị ở đây
             </p>
-            <button class="btn btn-primary btn-lg" @click="createNewDraft">
-              <i class="bi bi-plus-circle me-2"></i>
-              Tạo thiết kế đầu tiên
-            </button>
           </div>
         </div>
 
@@ -374,7 +388,44 @@ import { useRouter } from "vue-router";
 import api from "../../Configs/api";
 
 const router = useRouter();
+// Thêm vào phần data
+const selectedProduct = ref("");
 
+// Thêm computed property để lấy danh sách sản phẩm unique
+const uniqueProducts = computed(() => {
+  const products = new Set();
+  drafts.value.forEach(draft => {
+    if (draft.productItems) {
+      const productName = draft.productItems.baseProducts?.name ||
+          draft.productItems.name ||
+          "Sản phẩm";
+      products.add(productName);
+    }
+  });
+  return Array.from(products).sort();
+});
+
+// Thêm computed để kiểm tra có filter không
+const hasFilters = computed(() => {
+  return searchQuery.value.trim() !== "" || selectedProduct.value !== "";
+});
+
+// Thêm function để lấy tên sản phẩm
+const getProductName = (draft) => {
+  if (!draft.productItems) return "";
+  return draft.productItems.baseProducts?.name ||
+      draft.productItems.name ||
+      "Sản phẩm";
+};
+
+// Thêm function clear filters
+const clearFilters = () => {
+  searchQuery.value = "";
+  selectedProduct.value = "";
+  filteredDrafts.value = [...drafts.value];
+  currentPage.value = 1;
+  sortDrafts();
+};
 // Data
 const drafts = ref([]);
 const filteredDrafts = ref([]);
@@ -428,14 +479,25 @@ const fetchDrafts = async () => {
 };
 
 const filterDrafts = () => {
-  if (!searchQuery.value.trim()) {
-    filteredDrafts.value = [...drafts.value];
-  } else {
+  let filtered = [...drafts.value];
+
+  // Filter by search query
+  if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase();
-    filteredDrafts.value = drafts.value.filter((draft) =>
-      (draft.designName || "").toLowerCase().includes(query)
+    filtered = filtered.filter((draft) =>
+        (draft.designName || "").toLowerCase().includes(query)
     );
   }
+
+  // Filter by selected product - THÊM PHẦN NÀY
+  if (selectedProduct.value) {
+    filtered = filtered.filter((draft) => {
+      const productName = getProductName(draft);
+      return productName === selectedProduct.value;
+    });
+  }
+
+  filteredDrafts.value = filtered;
   currentPage.value = 1;
   sortDrafts();
 };
