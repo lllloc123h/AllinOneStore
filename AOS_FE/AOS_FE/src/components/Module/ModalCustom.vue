@@ -280,10 +280,7 @@ function confirmDrafts() {
     const validDrafts = [];
     Object.keys(drafts).forEach((draftId) => {
       if (drafts[draftId] > 0) {
-        const tempDraft = customProducts.value.find((p) => p.id == productId)
-            .drafts.find(d => d.id == draftId);
-        validDrafts.push({ customId: draftId, quantity: drafts[draftId],
-        imageUrl: tempDraft.imageUrl, name: tempDraft.designName });
+        validDrafts.push({ customId: draftId, quantity: drafts[draftId] });
       }
     });
     if (validDrafts.length > 0) {

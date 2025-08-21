@@ -104,5 +104,12 @@ public class VariantValuesAPI {
 		variantValuesForList = variantValues.stream().collect(Collectors.groupingBy(VariantValuesDTOS::getName));
 		return ResponseEntity.ok(variantValuesForList);
 	}
+	@GetMapping("/VariantValues/values")
+	public  ResponseEntity<?> getAllByVariantsName(@RequestParam("name") String variantsName) {
+		List<VariantValues> variantValues = variantValuesService.findByVariantsName(variantsName);
+		List<VariantValuesDTOS> variantValuesDTOS = variantValues.stream()
+				.map(variantValuesMapper::mapper).collect(Collectors.toList());
+		return ResponseEntity.ok(variantValuesDTOS);
+	}
 
 }
