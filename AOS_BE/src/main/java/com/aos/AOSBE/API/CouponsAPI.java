@@ -150,69 +150,102 @@ public class CouponsAPI {
 	}
 
 	private boolean filterValidCoupon(
-		    Coupons coupon,
-		    Accounts user,
-		    int userLevel,
-		    boolean hasCombo,
-		    boolean hasPromotionItems,
-		    double normalTotal,
-		    double totalPrice
-		) {
-		    if (!coupon.isActive() || coupon.getEndAt().isBefore(LocalDateTime.now()))
-		        return false;
+	        Coupons coupon,
+	        Accounts user,
+	        int userLevel,
+	        boolean hasCombo,
+	        boolean hasPromotionItems,
+	        double normalTotal,
+	        double totalPrice
+	) {
+	    // 1. Active / expiry
+	    if (!coupon.isActive() || coupon.getEndAt().isBefore(LocalDateTime.now())) {
+	        System.out.println("[" + coupon.getCode() + "] Loại: inactive/expired");
+	        return false;
+	    }
 
-		    if (coupon.getQty() <= 0)
-		        return false;
+	    // 2. Qty
+	    if (coupon.getQty() <= 0) {
+	        System.out.println("[" + coupon.getCode() + "] Loại: qty <= 0");
+	        return false;
+	    }
 
-		    int couponLevel = switch (coupon.getCustomerGroup()) {
-		        case "Đồng" -> 1;
-		        case "Bạc" -> 2;
-		        case "Vàng" -> 3;
-		        case "Platinum" -> 4;
-		        case "Kim cương" -> 5;
-		        case "VIP" -> 6;
-		        default -> 0;
-		    };
+	    // 3. Customer rank
+	    int couponLevel = switch (coupon.getCustomerGroup()) {
+	        case "Đồng" -> 1;
+	        case "Bạc" -> 2;
+	        case "Vàng" -> 3;
+	        case "Platinum" -> 4;
+	        case "Kim cương" -> 5;
+	        case "VIP" -> 6;
+	        default -> 0;
+	    };
+	    if (userLevel < couponLevel) {
+	        System.out.println("[" + coupon.getCode() + "] Loại: rank không đủ");
+	        return false;
+	    }
 
-		    if (userLevel < couponLevel)
-		        return false;
+	    // 4. Usage per customer
+	    if (coupon.getUsagePerCustomer() != null && coupon.getUsagePerCustomer() > 0) {
+	        long usageCount;
+	        if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
+	            usageCount = ordersRepository.countFreeshipCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+	        } else {
+	            usageCount = ordersRepository.countCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
+	        }
+	        if (usageCount >= coupon.getUsagePerCustomer()) {
+	            System.out.println("[" + coupon.getCode() + "] Loại: vượt usagePerCustomer");
+	            return false;
+	        }
+	    }
 
-		    if (coupon.getUsagePerCustomer() != null && coupon.getUsagePerCustomer() > 0) {
-		        long usageCount;
+	    // 5. Xử lý theo loại coupon
+	    String type = coupon.getDiscountType() == null ? "" : coupon.getDiscountType().trim().toUpperCase();
 
-		        if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
-		            usageCount = ordersRepository.countFreeshipCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
-		        } else {
-		            usageCount = ordersRepository.countCouponUsage(Long.valueOf(user.getId()), coupon.getCode());
-		        }
+	    if ("FREESHIP".equals(type)) {
+	        // freeship: check minOrderAmount trên tổng đơn
+	        if (coupon.getMinOrderAmount() != null && totalPrice < coupon.getMinOrderAmount()) {
+	            System.out.println("[" + coupon.getCode() + "] Loại: freeship minOrderAmount not met. totalPrice=" 
+	                + totalPrice + " min=" + coupon.getMinOrderAmount());
+	            return false;
+	        }
+	    } else {
+	        // discount (G-DISCOUNT or others)
+	        if ("G-DISCOUNT".equals(type) || !type.isEmpty()) {
+	            // Nếu coupon không cho phép voucher stacking -> chỉ tính normalTotal và không cho có combo/promotion
+	        	if (!coupon.isAllowVoucher()) {
+	        	    // 1) kiểm tra có sản phẩm bình thường
+	        	    if (normalTotal <= 0) {
+	        	        System.out.println("[" + coupon.getCode() + "] Loại: không có sản phẩm bình thường (normalTotal=" + normalTotal + ")");
+	        	        return false;
+	        	    }
 
-		        if (usageCount >= coupon.getUsagePerCustomer()) {
-		            return false;
-		        }
-		    }
+	        	    // 2) kiểm tra min trên normalTotal trước
+	        	    if (coupon.getMinOrderAmount() != null && normalTotal < coupon.getMinOrderAmount()) {
+	        	        System.out.println("[" + coupon.getCode() + "] Loại: minOrderAmount (normal) not met. normalTotal="
+	        	            + normalTotal + " min=" + coupon.getMinOrderAmount());
+	        	        return false;
+	        	    }
 
-		    // G-DISCOUNT không áp dụng cho sản phẩm có voucher
-		    if ("G-DISCOUNT".equalsIgnoreCase(coupon.getDiscountType())) {
-		        if (!coupon.isAllowVoucher()) {
-		            // Chỉ áp dụng nếu có sản phẩm bình thường
-		            boolean hasNormalItems = normalTotal > 0;
-		            if (!hasNormalItems)
-		                return false;
+	        	    // 3) (tuỳ chọn) nếu bạn vẫn muốn cấm khi có promotionItems thì kiểm tra sau
+	        	    if (hasPromotionItems) {
+	        	        System.out.println("[" + coupon.getCode() + "] Loại: không cho phép khi có promotion items");
+	        	        return false;
+	        	    }
+	        	} else {
+	                // Nếu cho phép voucher stacking -> min tính trên tổng đơn
+	                if (coupon.getMinOrderAmount() != null && totalPrice < coupon.getMinOrderAmount()) {
+	                    System.out.println("[" + coupon.getCode() + "] Loại: minOrderAmount (total) not met. totalPrice="
+	                        + totalPrice + " min=" + coupon.getMinOrderAmount());
+	                    return false;
+	                }
+	            }
+	        }
+	    }
 
-		            // Kiểm tra giá trị tối thiểu của sản phẩm bình thường
-		            if (coupon.getMinOrderAmount() != null &&
-		                normalTotal < coupon.getMinOrderAmount())
-		                return false;
-		        }
-		    }
-
-		    if ("FREESHIP".equalsIgnoreCase(coupon.getDiscountType())) {
-		        if (coupon.getMinOrderAmount() != null &&
-		            totalPrice < coupon.getMinOrderAmount())
-		            return false;
-		    }
-
-		    return true;
-		}
+	    // Nếu qua hết thì hợp lệ
+	    System.out.println("[" + coupon.getCode() + "] Hợp lệ để hiển thị");
+	    return true;
+	}
 
 }
