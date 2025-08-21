@@ -291,7 +291,7 @@ const rawCanvasData = ref({
   updatedAt: null,
   designName: "phác thảo 1",
   productItems: { id: props.productItemId },
-  orderItem: null,
+  order: null,
 });
 if (props.action === "create") {
   console.log("isCreateMode");

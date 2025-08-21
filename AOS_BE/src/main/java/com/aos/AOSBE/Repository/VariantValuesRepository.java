@@ -14,6 +14,5 @@ public interface VariantValuesRepository
 		extends JpaRepository<VariantValues, Integer>, JpaSpecificationExecutor<VariantValues> {
 	@Query(" select VarVal from VariantValues VarVal where VarVal.signalSku= ?1")
 	VariantValues findBySignalSku(String signalSku);
-	@Query(" select VarVal from VariantValues VarVal where VarVal.variants.name=?1")
-	List<VariantValues> findByNameVariant(String description);
+	List<VariantValues> findAllByVariants_NameContaining(String description);
 }

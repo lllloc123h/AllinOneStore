@@ -88,7 +88,7 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions" v-if="!loading">
-          <div class="quick-action-chips">
+          <!-- <div class="quick-action-chips">
             <button
               v-for="action in quickActions"
               :key="action.id"
@@ -98,6 +98,24 @@
               <i :class="action.icon"></i>
               {{ action.text }}
             </button>
+          </div> -->
+          <div class="quick-action-divider">
+            <select name="" id="" v-model="selectedColor">
+              <option value="">Chọn màu sắc</option>
+              <option
+                v-for="color in listColor"
+                :key="color.id"
+                :value="color.description"
+              >
+                {{ color.description }}
+              </option>
+            </select>
+            <select style="margin-left: 10px" v-model="selectedSize">
+              <option value="">Chọn size</option>
+              <option v-for="size in listSize" :key="size.id" :value="size.description">
+                {{ size.description }}
+              </option>
+            </select>
           </div>
         </div>
 
@@ -128,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, watch } from "vue";
 import api from "../../Configs/api";
 
 const open = ref(false);
@@ -137,7 +155,24 @@ const loading = ref(false);
 const hasNewMessage = ref(false);
 const messages = ref([]);
 const chatContainer = ref(null);
-
+const COLOR = "Màu sắc";
+const SIZE = "Kích thước";
+const listColor = ref([]);
+const listSize = ref([]);
+const selectedColor = ref("");
+const selectedSize = ref("");
+onMounted(async () => {
+  try {
+    const colorData = await api.get("/VariantValues/values?name=" + COLOR);
+    const sizeData = await api.get("/VariantValues/values?name=" + SIZE);
+    console.log(colorData);
+    console.log(sizeData);
+    listColor.value = colorData.data;
+    listSize.value = sizeData.data;
+  } catch (error) {
+    console.error("Error fetching variant values:", error);
+  }
+});
 // Quick action buttons
 const quickActions = ref([
   {
@@ -223,6 +258,8 @@ const sendQuickMessage = (message) => {
 };
 
 const toggleOpen = () => {
+  selectedColor.value = "";
+  selectedSize.value = "";
   open.value = !open.value;
   hasNewMessage.value = false;
 
@@ -243,6 +280,47 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Select Box đồng bộ giao diện chatbot */
+.quick-action-divider {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 0; /* bỏ padding */
+}
+
+.quick-action-divider select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 20px;
+  padding: 8px 32px 8px 12px;
+
+  font-size: 13px;
+  color: #2c3e50;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  outline: none;
+
+  /* Custom arrow */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23667eea' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+}
+
+.quick-action-divider select:hover {
+  border-color: #667eea;
+}
+
+.quick-action-divider select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
 .chatbot-container {
   position: fixed;
   bottom: 20px;
@@ -319,8 +397,8 @@ onMounted(() => {
   position: absolute;
   bottom: 80px;
   right: 0;
-  width: 380px;
-  height: 520px;
+  width: 580px;
+  height: 720px;
   background: white;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);

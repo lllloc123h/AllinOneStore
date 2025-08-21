@@ -42,7 +42,7 @@ public class VariantValuesService {
 		variantValuesRepository.deleteById(id);
 	}
 
-	public List<VariantValues> findByName(String name) {
-		return variantValuesRepository.findByNameVariant(name);
+	public List<VariantValues> findByVariantsName(String name) {
+		return variantValuesRepository.findAllByVariants_NameContaining(name);
 	}
 }

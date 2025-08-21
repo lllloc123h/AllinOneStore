@@ -24,6 +24,10 @@
               <div class="quantity-status" :class="getQuantityStatusClass(product.id)">
                 Đã chọn: {{ getTotalQuantity(product.id) }}/{{ product.maxQuantity }}
               </div>
+              <span class="small"
+                ><i class="bi bi-info-circle"></i> Số lượng tối đa là số lượng sản phẩm
+                này có trong giỏ hàng của bạn</span
+              >
             </div>
           </div>
         </div>
@@ -44,7 +48,11 @@
                   class="form-check-input"
                 />
               </div>
-              <img :src="draft.imageUrl" :alt="draft.designName" />
+              <img
+                :src="draft.imageUrl"
+                :alt="draft.designName"
+                style="width: 160px; aspect-ratio: 4/5"
+              />
               <div class="draft-info flex-grow-1">
                 <div class="draft-name">{{ draft.designName }}</div>
                 <div class="draft-date">Ngày tạo: {{ formatDate(draft.createdAt) }}</div>
@@ -280,10 +288,15 @@ function confirmDrafts() {
     const validDrafts = [];
     Object.keys(drafts).forEach((draftId) => {
       if (drafts[draftId] > 0) {
-        const tempDraft = customProducts.value.find((p) => p.id == productId)
-            .drafts.find(d => d.id == draftId);
-        validDrafts.push({ customId: draftId, quantity: drafts[draftId],
-        imageUrl: tempDraft.imageUrl, name: tempDraft.designName });
+        const tempDraft = customProducts.value
+          .find((p) => p.id == productId)
+          .drafts.find((d) => d.id == draftId);
+        validDrafts.push({
+          customId: draftId,
+          quantity: drafts[draftId],
+          imageUrl: tempDraft.imageUrl,
+          name: tempDraft.designName,
+        });
       }
     });
     if (validDrafts.length > 0) {
@@ -363,14 +376,14 @@ function formatDate(date) {
 }
 
 .custom-product-img {
-  width: 70px;
+  width: 100px;
+  min-height: 125px;
   aspect-ratio: 4/5;
+  height: auto;
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid #dee2e6;
-  height: auto;
-  max-height: 90px;
   margin-right: 12px;
 }
 
@@ -449,7 +462,7 @@ function formatDate(date) {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1.5px solid #dee2e6;
   height: auto;
-  max-height: 145px;
+  max-height: 300px;
   flex-shrink: 0;
 }
 

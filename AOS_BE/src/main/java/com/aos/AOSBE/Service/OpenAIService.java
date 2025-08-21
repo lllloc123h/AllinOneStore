@@ -45,7 +45,7 @@ public class OpenAIService {
 		// dinh dang response dep hon
 		String resp = this.chatClientForCustomer.prompt().user(message)
 				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "size == 'M'"))
+				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "isActive == true"))
 				.call().content();
 		return resp;
 	}

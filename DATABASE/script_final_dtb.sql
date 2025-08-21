@@ -431,11 +431,11 @@ create table
 		canvas_json nvarchar (max) not null,
 		image_url nvarchar (255) not null,
 		design_name nvarchar (50) not null, -- mặt trước, mặt sau
-		order_item_id int  null,
+		order_id int  null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,
-		foreign key (order_item_id) references order_items (id)
+		foreign key (order_id) references orders (id)
 	);
 GO
 CREATE TABLE

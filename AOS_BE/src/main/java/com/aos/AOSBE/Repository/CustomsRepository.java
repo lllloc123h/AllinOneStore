@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface CustomsRepository extends JpaRepository<Customs, Integer>, JpaSpecificationExecutor<Customs> {
 	// Add custom query methods here if needed
-    @Query("SELECT c FROM Customs c Where c.account.email = ?1 AND c.orderItem.id IS NULL")
+    @Query("SELECT c FROM Customs c Where c.account.email = ?1 AND c.order.id IS NULL")
     List<Customs> findCustomRawByEmail(String email);
-    @Query("SELECT c FROM Customs c Where c.account.email = ?1 AND c.orderItem.id IS NULL AND c.productItems.id = ?2")
+    @Query("SELECT c FROM Customs c Where c.account.email = ?1 AND c.order.id IS NULL AND c.productItems.id = ?2")
     List<Customs> findCustomByEmailAndProductItems(String email,Integer productItemIds);
 //    @Query("SELECT c FROM Customs c LEFT JOIN FETCH c.productItems p " +
 //            "WHERE c.account.email = ?1 AND c.orderItem.id IS NULL " +
