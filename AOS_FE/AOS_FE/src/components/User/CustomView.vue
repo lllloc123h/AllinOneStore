@@ -24,22 +24,22 @@
               <div class="search-box">
                 <i class="bi bi-search search-icon"></i>
                 <input
-                    type="text"
-                    class="form-control search-input"
-                    placeholder="Tìm kiếm theo tên thiết kế..."
-                    v-model="searchQuery"
-                    @input="filterDrafts"
+                  type="text"
+                  class="form-control search-input"
+                  placeholder="Tìm kiếm theo tên thiết kế..."
+                  v-model="searchQuery"
+                  @input="filterDrafts"
                 />
               </div>
             </div>
             <div class="col-md-3">
-              <select class="form-select" v-model="selectedProduct" @change="filterDrafts">
+              <select
+                class="form-select"
+                v-model="selectedProduct"
+                @change="filterDrafts"
+              >
                 <option value="">Tất cả sản phẩm</option>
-                <option
-                    v-for="product in uniqueProducts"
-                    :key="product"
-                    :value="product"
-                >
+                <option v-for="product in uniqueProducts" :key="product" :value="product">
                   {{ product }}
                 </option>
               </select>
@@ -165,7 +165,7 @@
                         </div>
 
                         <div class="meta-detail">
-                          <span class="meta-label">Trạng thái:</span>
+                          <span class="meta-label">Trạng thái sản phẩm:</span>
                           <span
                             class="meta-value status"
                             :class="{
@@ -196,12 +196,12 @@
                           }}</span>
                         </div>
 
-                        <div v-if="draft.productItems.price" class="meta-detail">
+                        <!-- <div v-if="draft.productItems.price" class="meta-detail">
                           <span class="meta-label">Giá:</span>
                           <span class="meta-value price">{{
                             formatPrice(draft.productItems.price)
                           }}</span>
-                        </div>
+                        </div> -->
 
                         <div v-if="draft.productItems.sku" class="meta-detail">
                           <span class="meta-label">SKU:</span>
@@ -228,26 +228,26 @@
                           </span>
                         </div>
 
-                        <div v-if="draft.productItems.description" class="meta-detail">
+                        <!-- <div v-if="draft.productItems.description" class="meta-detail">
                           <span class="meta-label">Mô tả:</span>
                           <span
                             class="meta-value description"
                             :title="draft.productItems.description"
                             >{{ draft.productItems.description }}</span
                           >
-                        </div>
+                        </div> -->
                       </div>
                     </div>
 
                     <!-- Order Status -->
-                    <div v-if="draft.orderItem" class="product-badge ordered">
+                    <div v-if="draft.order" class="product-badge ordered">
                       <i class="bi bi-check-circle me-1"></i>
                       Đã đặt hàng
                     </div>
                   </div>
 
                   <!-- Fallback Product Info -->
-                  <div v-else-if="draft.orderItem" class="product-info">
+                  <div v-else-if="draft.order" class="product-info">
                     <div class="product-badge ordered">
                       <i class="bi bi-check-circle me-1"></i>
                       Đã đặt hàng
@@ -394,11 +394,10 @@ const selectedProduct = ref("");
 // Thêm computed property để lấy danh sách sản phẩm unique
 const uniqueProducts = computed(() => {
   const products = new Set();
-  drafts.value.forEach(draft => {
+  drafts.value.forEach((draft) => {
     if (draft.productItems) {
-      const productName = draft.productItems.baseProducts?.name ||
-          draft.productItems.name ||
-          "Sản phẩm";
+      const productName =
+        draft.productItems.baseProducts?.name || draft.productItems.name || "Sản phẩm";
       products.add(productName);
     }
   });
@@ -413,9 +412,7 @@ const hasFilters = computed(() => {
 // Thêm function để lấy tên sản phẩm
 const getProductName = (draft) => {
   if (!draft.productItems) return "";
-  return draft.productItems.baseProducts?.name ||
-      draft.productItems.name ||
-      "Sản phẩm";
+  return draft.productItems.baseProducts?.name || draft.productItems.name || "Sản phẩm";
 };
 
 // Thêm function clear filters
@@ -485,7 +482,7 @@ const filterDrafts = () => {
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter((draft) =>
-        (draft.designName || "").toLowerCase().includes(query)
+      (draft.designName || "").toLowerCase().includes(query)
     );
   }
 

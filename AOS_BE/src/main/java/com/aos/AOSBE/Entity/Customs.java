@@ -42,6 +42,6 @@ public class Customs {
     @JoinColumn(name = "product_item_id")
     private ProductItems productItems;
     @ManyToOne
-    @JoinColumn(name = "order_item_id")
-    private OrderItems orderItem;
+    @JoinColumn(name = "order_id")
+    private Orders order;
 }

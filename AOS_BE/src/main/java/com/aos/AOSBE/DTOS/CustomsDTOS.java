@@ -20,5 +20,5 @@ public class CustomsDTOS {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private ProductItemsDTOS productItems;
-    private OrderItemsDTOS orderItem;
+    private OrdersDTOS order;
 }

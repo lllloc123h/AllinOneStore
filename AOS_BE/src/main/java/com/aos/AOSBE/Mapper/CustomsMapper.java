@@ -10,7 +10,7 @@ public class CustomsMapper {
 	@Autowired
 	private ProductItemsService productItemsService;
 	@Autowired
-	private OrderItemsMapper orderItemsMapper;
+	private OrdersMapper ordersMapper;
 	@Autowired
 	private ProductItemsMapper productItemsMapper;
 	public CustomsDTOS mapper(Customs entity) {
@@ -23,7 +23,7 @@ public class CustomsMapper {
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
 				    productItemsMapper.mapper2(productItemsService.productItemsFindById(entity.getProductItems().getId()).get()) ,
-				    entity.getOrderItem() != null ? orderItemsMapper.mapper(entity.getOrderItem()) : null
+				    entity.getOrder() != null ? ordersMapper.mapper(entity.getOrder()) : null
 			);
 	}
 	public CustomsDTOS mapperToViewCart(Customs entity) {
@@ -36,7 +36,7 @@ public class CustomsMapper {
 				entity.getCreatedAt(),
 				entity.getUpdatedAt(),
 				productItemsMapper.mapper2(entity.getProductItems()),
-				entity.getOrderItem() != null ? orderItemsMapper.mapper(entity.getOrderItem()) : null
+				entity.getOrder() != null ? ordersMapper.mapper(entity.getOrder()) : null
 		);
 	}
 	public Customs mapperToObject(CustomsDTOS entity) {
@@ -51,7 +51,7 @@ public class CustomsMapper {
 					entity.getCreatedAt(),
 					entity.getUpdatedAt(),
 					productItemsService.productItemsFindById(entity.getProductItems().getId()).orElse(null),
-				entity.getOrderItem() != null ? orderItemsMapper.mapperToObject(entity.getOrderItem()) : null
+				entity.getOrder() != null ? ordersMapper.mapperToObject(entity.getOrder()) : null
 		);
 	}
 	
