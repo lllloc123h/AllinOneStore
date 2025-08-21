@@ -40,6 +40,7 @@ import com.aos.AOSBE.DTOS.MessageDTOS;
 import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
 import com.aos.AOSBE.DTOS.OrderExportDto;
 import com.aos.AOSBE.DTOS.OrderItemsDTOS;
+import com.aos.AOSBE.DTOS.OrderSummaryDTOS;
 import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
@@ -50,6 +51,7 @@ import com.aos.AOSBE.Entity.Promotions;
 import com.aos.AOSBE.Mapper.AccountsMapper;
 import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
+import com.aos.AOSBE.Mapper.OrderSummaryMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Repository.OrdersRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
@@ -291,19 +293,18 @@ public class OrdersAPI {
 			}
 
 			Orders order = orderOpt.get();
-			OrdersDTOS orderDTO = ordersMapper.mapper(order); // ✔️ Thông tin đơn hàng
+
+			// ✅ Dùng mapper mới cho Order + Items
+			OrderSummaryDTOS orderDTO = OrderSummaryMapper.toDTO(order);
 
 			// ✔️ Lấy account
 			Accounts account = order.getAccounts();
 			AccountsDTOS accountDTO = accountsMapper.mapper(account);
 
-			// ✔️ Lấy danh sách sản phẩm và dùng OrderItemsMapper
-			List<OrderItems> items = orderItemsService.findByOrderId(id);
-			List<OrderItemsDTOS> itemsDTO = items.stream().map(orderItemsMapper::mapper).toList(); // Hoặc
-																									// .collect(Collectors.toList())
+			Map<String, Object> response = new HashMap<>();
+			response.put("order", orderDTO);
+			response.put("account", accountDTO);
 
-			// ✔️ Trả về response
-			OrderDetailResponseDTO response = new OrderDetailResponseDTO(orderDTO, accountDTO, itemsDTO);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -115,6 +115,13 @@
               <div class="price-row">
                 <span class="price-label">
                   <i class="bi bi-tag me-1"></i>
+                  Mã sản phẩm
+                </span>
+                <span class="price-value unit-price">{{ sp.sku}}</span>
+              </div>
+              <div class="price-row">
+                <span class="price-label">
+                  <i class="bi bi-tag me-1"></i>
                   Đơn giá
                 </span>
                 <span class="price-value unit-price">{{ formatMoney(sp.gia) }}</span>
@@ -242,6 +249,24 @@
             </div>
           </div>
           <div class="detail-item">
+            <div class="detail-icon payment">
+              <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="detail-content">
+              <span class="detail-label">Phí vận chuyển</span>
+              <span class="detail-value">{{ order.vanChuyen.ship }}</span>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-icon payment">
+              <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="detail-content">
+              <span class="detail-label">Phí giảm giá</span>
+              <span class="detail-value">{{ order.giamGia }}</span>
+            </div>
+          </div>
+          <div class="detail-item">
             <div class="detail-icon status">
               <i class="bi bi-check-circle"></i>
             </div>
@@ -356,6 +381,8 @@ const steps = [
   { label: "Chờ giao hàng", icon: "bi bi-truck" },
   { label: "Đang giao hàng", icon: "bi bi-a" },
   { label: "Đã nhận hàng", icon: "bi bi-check-circle-fill" },
+  { label: "Đã hủy", icon: "bi bi-x-circle"},
+  { label: "Đổi/Trả hàng", icon: "bi bi-arrow-return-left"}
 ];
 
 // GHN trả về nhiều trạng thái, cần map để khớp UI
@@ -430,6 +457,7 @@ const loadOrder = async () => {
       trangThai: orderData.order.shippingStatus,
       ghiChu: orderData.order.note,
       tongTien: orderData.order.finalTotal,
+      giamGia: orderData.order.discountValue,
 
       khachHang: {
         ten: tenKH || "N/A",
@@ -440,16 +468,18 @@ const loadOrder = async () => {
       vanChuyen: {
         ten: orderData.order.shippingMethods?.name || "N/A",
         maVanDon: orderData.order.orderCode || "Đang cập nhật",
+        ship: orderData.order.estimatedShippingFee || 0,
       },
       thanhToan: {
         phuongThuc: orderData.order.paymentMethods?.name || "N/A",
         trangThai: orderData.order.paymentStatus,
       },
-      sanPham: orderData.items.map((i) => ({
+      sanPham: orderData.order.items?.map((i) => ({
         anh: i.main_image_url || "no-image.png",
         ten: i.name,
-        soLuong: i.quantity,
+        soLuong: i.quantity,    
         gia: i.price,
+        sku: i.product?.sku,
       })),
       lichSu: [
         {
