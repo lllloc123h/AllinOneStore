@@ -193,7 +193,7 @@
               <li v-if="isAdmin">
                 <RouterLink
                   class="dropdown-item modern-dropdown-item"
-                  to="/admin/Accounts"
+                  to="/Admin/Accounts"
                 >
                   <i class="bi bi-shield-check me-2"></i>Trang quản trị
                 </RouterLink>
