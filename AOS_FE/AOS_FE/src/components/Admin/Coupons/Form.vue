@@ -4,52 +4,34 @@
       <Dashboard :listDashBoard="listDashBoard"></Dashboard>
     </div>
     <div class="article col-9">
-      <form
-        @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()"
-      >
-        <div
-          class="mb-3"
-          :style="
-            props.action === 'view' || props.action === 'create' ? ' display:none;' : ''
-          "
-        >
+      <form @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
+        <div class="mb-3" :style="props.action === 'view' || props.action === 'create' ? ' display:none;' : ''
+          ">
           <label :for="id" class="form-label text-capitalize"></label>
-          <input
-            :id="id"
-            v-model="formData.id"
-            v-if="props.action !== 'create'"
-            :hidden="props.action === 'view'"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter id`"
-          />
+          <input :id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
+            type="number" class="form-control" :placeholder="`Enter id`" />
         </div>
         <div class="mb-3">
-          <label :for="code" class="form-label text-capitalize">code</label>
-          <input
-            :id="code"
-            v-model="formData.code"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter code`"
-          />
+          <label for="code" class="form-label text-capitalize">code</label>
+          <input id="code" v-model="formData.code" type="text" class="form-control"
+            :class="{ 'is-invalid': errors.code }" placeholder="Enter code" />
+          <div v-if="errors.code" class="invalid-feedback">
+            {{ errors.code }}
+          </div>
         </div>
+
 
         <div class="mb-3">
           <label :for="description" class="form-label text-capitalize">description</label>
-          <input
-            :id="description"
-            v-model="formData.description"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter description`"
-          />
+          <input id="description" v-model="formData.description" type="text" class="form-control"
+            :class="{ 'is-invalid': errors.description }" placeholder="Enter description" />
+          <div v-if="errors.description" class="invalid-feedback">
+            {{ errors.description }}
+          </div>
         </div>
 
         <div class="mb-3">
-          <label :for="discountType" class="form-label text-capitalize"
-            >discountType</label
-          >
+          <label :for="discountType" class="form-label text-capitalize">discountType</label>
           <select :id="discountType" v-model="formData.discountType" class="form-control">
             <option value="G-DISCOUNT">Giảm giá trên tổng hóa đơn</option>
             <option value="FREESHIP">Giảm phí vận chuyển</option>
@@ -57,31 +39,23 @@
         </div>
 
         <div class="mb-3">
-          <label :for="discountValue" class="form-label text-capitalize"
-            >discountValue</label
-          >
-          <input
-            :id="discountValue"
-            v-model="formData.discountValue"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter discountType`"
-          />
+          <label :for="discountValue" class="form-label text-capitalize">discountValue</label>
+          <input id="discountValue" v-model="formData.discountValue" type="number" class="form-control"
+            :class="{ 'is-invalid': errors.discountValue }" placeholder="Enter discountValue" />
+          <div v-if="errors.discountValue" class="invalid-feedback">
+            {{ errors.discountValue }}
+          </div>
         </div>
         <div class="mb-3">
-          <label :for="minOrderAmount" class="form-label text-capitalize"
-            >minOrderAmount</label
-          >
-          <input
-            :id="minOrderAmount"
-            v-model="formData.minOrderAmount"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter minOrderAmount`"
-          />
+          <label :for="minOrderAmount" class="form-label text-capitalize">minOrderAmount</label>
+          <input id="minOrderAmount" v-model="formData.minOrderAmount" type="number" class="form-control"
+            :class="{ 'is-invalid': errors.minOrderAmount }" placeholder="Enter minOrderAmount" />
+          <div v-if="errors.minOrderAmount" class="invalid-feedback">
+            {{ errors.minOrderAmount }}
+          </div>
         </div>
 
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label :for="maxDiscountAmount" class="form-label text-capitalize"
             >maxDiscountAmount</label
           >
@@ -92,36 +66,28 @@
             class="form-control"
             :placeholder="`Enter maxDiscountAmount`"
           />
+        </div> -->
+
+        <div class="mb-3">
+          <label for="qty" class="form-label text-capitalize">qty</label>
+          <input id="qty" v-model="formData.qty" type="number" class="form-control" placeholder="Enter qty"
+            :class="{ 'is-invalid': errors.qty }" />
+          <div v-if="errors.qty" class="invalid-feedback">
+            {{ errors.qty }}
+          </div>
         </div>
 
         <div class="mb-3">
-          <label :for="qty" class="form-label text-capitalize">qty</label>
-          <input
-            :id="qty"
-            v-model="formData.qty"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter qty`"
-          />
+          <label for="usagePerCustomer" class="form-label text-capitalize">usagePerCustomer</label>
+          <input id="usagePerCustomer" v-model="formData.usagePerCustomer" type="number" class="form-control"
+            placeholder="Enter usagePerCustomer" :class="{ 'is-invalid': errors.usagePerCustomer }" />
+          <div v-if="errors.usagePerCustomer" class="invalid-feedback">
+            {{ errors.usagePerCustomer }}
+          </div>
         </div>
 
         <div class="mb-3">
-          <label :for="usagePerCustomer" class="form-label text-capitalize"
-            >usagePerCustomer</label
-          >
-          <input
-            :id="usagePerCustomer"
-            v-model="formData.usagePerCustomer"
-            type="number"
-            class="form-control"
-            :placeholder="`Enter usagePerCustomer`"
-          />
-        </div>
-
-        <div class="mb-3">
-          <label :for="formData.active" class="form-label text-capitalize"
-            >is Active</label
-          >
+          <label :for="formData.active" class="form-label text-capitalize">is Active</label>
           <input type="radio" name="active" v-model="formData.active" value="true" />
           Active
           <input type="radio" name="active" v-model="formData.active" value="false" />
@@ -129,36 +95,17 @@
         </div>
 
         <div class="mb-3">
-          <label :for="formData.allowVoucher" class="form-label text-capitalize"
-            >is Voucher</label
-          >
-          <input
-            type="radio"
-            name="vouhcher"
-            v-model="formData.allowVoucher"
-            value="true"
-          />
+          <label :for="formData.allowVoucher" class="form-label text-capitalize">is Voucher</label>
+          <input type="radio" name="vouhcher" v-model="formData.allowVoucher" value="true" />
           Cho phép chồng khuyến mãi
-          <input
-            type="radio"
-            name="voucher"
-            v-model="formData.allowVoucher"
-            value="false"
-          />
+          <input type="radio" name="voucher" v-model="formData.allowVoucher" value="false" />
           Không cho phép chồng khuyến mãi
         </div>
 
         <div class="mb-3">
-          <label :for="customerGroup" class="form-label text-capitalize"
-            >customerGroup</label
-          >
-          <select
-            :id="customerGroup"
-            v-model="formData.customerGroup"
-            type="text"
-            class="form-control"
-            :placeholder="`Enter customerGroup`"
-          >
+          <label :for="customerGroup" class="form-label text-capitalize">customerGroup</label>
+          <select :id="customerGroup" v-model="formData.customerGroup" type="text" class="form-control"
+            :placeholder="`Enter customerGroup`">
             <option value="all">Tất cả nhóm khách hàng</option>
             <option value="Bạc">Từ nhóm khách hàng hạng Bạc trở lên</option>
             <option value="Vàng">Từ nhóm khách hàng hạng Vàng trở lên</option>
@@ -168,26 +115,23 @@
         </div>
 
         <div class="mb-3">
-          <label :for="startAt" class="form-label text-capitalize">startAt</label>
-          <input
-            :id="startAt"
-            v-model="formData.startAt"
-            type="datetime-local"
-            class="form-control"
-            :placeholder="`Enter startAt`"
-          />
+          <label for="startAt" class="form-label text-capitalize">startAt</label>
+          <input id="startAt" v-model="formData.startAt" type="datetime-local" class="form-control"
+            :class="{ 'is-invalid': errors.startAt }" placeholder="Enter startAt" />
+          <div v-if="errors.startAt" class="invalid-feedback">
+            {{ errors.startAt }}
+          </div>
         </div>
 
         <div class="mb-3">
-          <label :for="endAt" class="form-label text-capitalize">endAt</label>
-          <input
-            :id="endAt"
-            v-model="formData.endAt"
-            type="datetime-local"
-            class="form-control"
-            :placeholder="`Enter endAt`"
-          />
+          <label for="endAt" class="form-label text-capitalize">endAt</label>
+          <input id="endAt" v-model="formData.endAt" type="datetime-local" class="form-control"
+            :class="{ 'is-invalid': errors.endAt }" :min="formData.startAt || undefined" placeholder="Enter endAt" />
+          <div v-if="errors.endAt" class="invalid-feedback">
+            {{ errors.endAt }}
+          </div>
         </div>
+
 
         <button type="submit" :disable="props.action == 'view'" class="btn btn-primary">
           <span v-if="props.action === 'create'">Create</span>
@@ -235,7 +179,7 @@ const formData = reactive({
   discountType: "G-DISCOUNT",
   discountValue: "250000",
   minOrderAmount: "1000000",
-  maxDiscountAmount: "",
+  // maxDiscountAmount: "",
   qty: "200",
   usagePerCustomer: "3",
   allowVoucher: true,
@@ -246,6 +190,14 @@ const formData = reactive({
   createdAt: "",
   updatedAt: "",
 });
+
+const errors = reactive({
+  code: "",
+  description: "",
+  discountValue: "",
+  minOrderAmount: "",
+});
+
 
 async function submitUpdateForm() {
   console.log(formData);
@@ -282,19 +234,29 @@ function checkTime() {
   }
   return true;
 }
+
 async function submitForm() {
-  console.log(formData);
-  if (checkTime() == false) {
-    return;
-  }
+  if (!validateForm() || !checkTime()) return;
   try {
     const response = await formTableService.create(formData);
-    console.log("Insert successful:", response.data);
     router.push(`/Admin/${props.TableName}`);
+    notification.success({
+      message: "Tạo thành công",
+      description: "Coupon đã được thêm.",
+    });
   } catch (error) {
-    console.error("Insert failed:", error);
+    if (error.response?.status === 409) {
+      errors.code = "Code đã tồn tại!";
+      document.getElementById("code")?.focus();
+    } else {
+      notification.error({
+        message: "Tạo thất bại",
+        description: error.response?.data?.message || "Có lỗi xảy ra",
+      });
+    }
   }
 }
+
 const fetchData = async () => {
   if (!props.TableName && props.action === "create") return;
   try {
@@ -305,6 +267,67 @@ const fetchData = async () => {
   } catch (err) {
     console.error("Get failed:", err);
   }
+};
+
+const validateForm = () => {
+  let isValid = true;
+
+  // reset tất cả error về ""
+  Object.keys(errors).forEach((key) => {
+    errors[key] = "";
+  });
+
+  // validate code
+  if (!formData.code) {
+    errors.code = "Code không được để trống";
+    isValid = false;
+  }
+
+  if (!formData.description) {
+    errors.description = "Description không được để trống";
+    isValid = false;
+  }
+
+  if (!formData.discountValue || formData.discountValue <= 0) {
+    errors.discountValue = "Discount value phải lớn hơn 0";
+    isValid = false;
+  }
+
+  if (formData.minOrderAmount === "" || formData.minOrderAmount === null) {
+    errors.minOrderAmount = "Min order amount không được để trống";
+    isValid = false;
+  } else if (Number(formData.minOrderAmount) < 0) {
+    errors.minOrderAmount = "Min order amount không được nhỏ hơn 0";
+    isValid = false;
+  }
+
+  if (formData.qty === "" || formData.qty === null) {
+    errors.qty = "Qty không được để trống";
+    isValid = false;
+  } else if (Number(formData.qty) <= 0) {
+    errors.qty = "Qty phải lớn hơn 0";
+    isValid = false;
+  }
+
+  if (formData.usagePerCustomer === "" || formData.usagePerCustomer === null) {
+    errors.usagePerCustomer = "Usage per customer không được để trống";
+    isValid = false;
+  } else if (Number(formData.usagePerCustomer) <= 0) {
+    errors.usagePerCustomer = "Usage per customer phải lớn hơn 0";
+    isValid = false;
+  }
+
+  if (!formData.startAt) {
+    errors.startAt = "StartAt không được để trống";
+    isValid = false;
+  }
+
+  if (!formData.endAt) {
+    errors.endAt = "EndAt không được để trống";
+    isValid = false;
+  }
+
+  return isValid;
 };
 
 onMounted(fetchData);

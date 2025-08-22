@@ -139,7 +139,7 @@
                       <strong class="text-success">{{
                         selectedDiscountCoupon.code
                       }}</strong><br />
-                      <small class="text-muted">Giảm
+                      <small class="text-muted">Giảm tối đa
                         <strong class="text-success">{{
                           formatCurrency(selectedDiscountCoupon.discountValue)
                         }}</strong></small>
@@ -148,10 +148,12 @@
                 </div>
 
                 <CouponModal v-if="showFreeshipModal" title="Chọn mã freeship" :coupons="freeshipCoupons"
-                  @close="closeModals" @select="selectCouponFromModal" />
+                  :selected-coupon="selectedFreeshipCoupon" @close="closeModals" @select="selectCouponFromModal"
+                  @remove="removeFreeshipCoupon" />
 
                 <CouponModal v-if="showDiscountModal" title="Chọn mã giảm giá" :coupons="discountCoupons"
-                  @close="closeModals" @select="selectCouponFromModal" />
+                  :selected-coupon="selectedDiscountCoupon" @close="closeModals" @select="selectCouponFromModal"
+                  @remove="removeDiscountCoupon" />
 
                 <button class="next-step-btn" @click="currentTab = 1">
                   <span>Tiếp tục</span>
@@ -551,7 +553,7 @@
                   </div>
 
                   <div class="price-row discount" v-if="discountAmount > 0">
-                    <span class="price-label">Giảm giá đơn hàng:</span>
+                    <span class="price-label">Giảm giá sản phẩm:</span>
                     <span class="price-value">-{{ discountAmount.toLocaleString() }}₫</span>
                   </div>
                 </div>
@@ -658,6 +660,19 @@ const closeModals = () => {
   showFreeshipModal.value = false;
   showDiscountModal.value = false;
 };
+
+const removeFreeshipCoupon = () => {
+  selectedFreeshipCoupon.value = null;
+  couponCodeInput.value = "";
+  couponError.value = "";
+};
+
+const removeDiscountCoupon = () => {
+  selectedDiscountCoupon.value = null;
+  couponCodeInput.value = "";
+  couponError.value = "";
+};
+
 
 function calculateSellingPrice(item, groupedProducts) {
   // Nếu là quà tặng => sellingPrice = 0
@@ -779,23 +794,47 @@ const totalPrice = computed(() => {
   return comboTotal + discountTotal + normalTotal;
 });
 
+// Helper đọc boolean an toàn từ nhiều kiểu trả về
+function readBool(obj, ...keys) {
+  for (const k of keys) {
+    const v = obj?.[k];
+    if (typeof v === "boolean") return v;
+    if (typeof v === "string") {
+      const s = v.toLowerCase();
+      if (s === "true") return true;
+      if (s === "false") return false;
+    }
+    if (typeof v === "number") return v === 1; // phòng khi BE trả 0/1
+  }
+  return false;
+}
+
 const discountAmount = computed(() => {
   const coupon = selectedDiscountCoupon.value;
+  if (!coupon) return 0;
+
+  // đọc allowVoucher
+  const allowVoucher = readBool(coupon, "isAllowVoucher", "allowVoucher", "is_allow_voucher");
+
+  // chọn baseTotal đúng
+  const normalSum = groupedProducts.value.normalItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const baseTotal = allowVoucher ? totalPrice.value : normalSum;
+
+  if (!allowVoucher && normalSum <= 0) return 0;
+
+  // minOrder check
   const minOrder = coupon?.minOrderAmount ?? 0;
-  if (!coupon || totalPrice.value < minOrder) return 0;
+  const thresholdBase = allowVoucher ? totalPrice.value : normalSum;
+  if (minOrder && thresholdBase < minOrder) return 0;
 
-  if (coupon.discountType === "PERCENT") {
-    const normalPrice = groupedProducts.value.normalItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-    const discount = ((coupon.discountValue ?? 0) / 100) * normalPrice;
-    return coupon.maxDiscountAmount != null
-      ? Math.min(discount, coupon.maxDiscountAmount)
-      : discount;
-  }
+  // ✅ vì dự án chỉ có fixed amount
+  const discount = coupon.discountValue ?? 0;
 
-  return coupon.discountValue ?? 0;
+  // ✅ chặn không cho giảm nhiều hơn baseTotal
+  return Math.min(discount, baseTotal);
 });
 
 const freeshipDiscount = computed(() => {

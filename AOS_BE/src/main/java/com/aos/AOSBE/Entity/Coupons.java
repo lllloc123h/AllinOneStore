@@ -35,10 +35,6 @@ public class Coupons {
 
     @Column(name = "min_order_amount")
     private Double minOrderAmount;
-
-    @Column(name = "max_discount_amount")
-    private Double maxDiscountAmount;
-
 	
     @Column(name = "qty")
     private int qty;

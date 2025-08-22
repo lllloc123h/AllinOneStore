@@ -471,7 +471,7 @@ CREATE TABLE
 		discount_type VARCHAR(20) CHECK (discount_type IN ('FREESHIP', 'G-DISCOUNT')),
 		discount_value DECIMAL(10, 2) NOT NULL,
 		min_order_amount DECIMAL(10, 2),
-		max_discount_amount DECIMAL(10, 2),
+--		max_discount_amount DECIMAL(10, 2),
 		qty INT,
 		usage_per_customer INT, -- số lần sử dụng coupon của khách hàng
 		is_allow_voucher bit default 0,

@@ -77,11 +77,24 @@ public class CouponsAPI {
 	}
 
 	@PostMapping("/admin/Coupons")
-	public ResponseEntity<Coupons> addNewCoupons(@RequestBody CouponsDTOS entity) {
+	public ResponseEntity<?> addNewCoupons(@RequestBody CouponsDTOS entity) {
+	    if (entity.getCode() == null || entity.getCode().trim().isEmpty()) {
+	        return ResponseEntity
+	            .status(HttpStatus.BAD_REQUEST)
+	            .body(Map.of("message", "Code không được bỏ trống"));
+	    }
 
-		Coupons saved = couponsService.couponsSave(couponsMapper.mapperToObject(entity));
-		return ResponseEntity.ok(saved);
+	    Optional<Coupons> existed = couponsRepository.findByCode(entity.getCode());
+	    if (existed.isPresent()) {
+	        return ResponseEntity
+	            .status(HttpStatus.CONFLICT)
+	            .body(Map.of("message", "Code đã tồn tại"));
+	    }
+
+	    Coupons saved = couponsService.couponsSave(couponsMapper.mapperToObject(entity));
+	    return ResponseEntity.ok(saved);
 	}
+
 
 	@PutMapping("/admin/Coupons/{id}")
 	public ResponseEntity<?> updateCoupons(@PathVariable int id, @RequestBody CouponsDTOS entity) {
@@ -211,36 +224,33 @@ public class CouponsAPI {
 	        }
 	    } else {
 	        // discount (G-DISCOUNT or others)
-	        if ("G-DISCOUNT".equals(type) || !type.isEmpty()) {
-	            // Nếu coupon không cho phép voucher stacking -> chỉ tính normalTotal và không cho có combo/promotion
-	        	if (!coupon.isAllowVoucher()) {
-	        	    // 1) kiểm tra có sản phẩm bình thường
-	        	    if (normalTotal <= 0) {
-	        	        System.out.println("[" + coupon.getCode() + "] Loại: không có sản phẩm bình thường (normalTotal=" + normalTotal + ")");
-	        	        return false;
-	        	    }
+	    	if ("G-DISCOUNT".equals(type) || !type.isEmpty()) {
+	    	    if (!coupon.isAllowVoucher()) {
+	    	        // 1) kiểm tra có sản phẩm thường
+	    	        if (normalTotal <= 0) {
+	    	            System.out.println("[" + coupon.getCode() + "] Loại: không có sản phẩm bình thường (normalTotal=" + normalTotal + ")");
+	    	            return false;
+	    	        }
 
-	        	    // 2) kiểm tra min trên normalTotal trước
-	        	    if (coupon.getMinOrderAmount() != null && normalTotal < coupon.getMinOrderAmount()) {
-	        	        System.out.println("[" + coupon.getCode() + "] Loại: minOrderAmount (normal) not met. normalTotal="
-	        	            + normalTotal + " min=" + coupon.getMinOrderAmount());
-	        	        return false;
-	        	    }
+	    	        // 2) kiểm tra minOrderAmount trên normalTotal
+	    	        if (coupon.getMinOrderAmount() != null && normalTotal < coupon.getMinOrderAmount()) {
+	    	            System.out.println("[" + coupon.getCode() + "] Loại: minOrderAmount (normal) not met. normalTotal="
+	    	                + normalTotal + " min=" + coupon.getMinOrderAmount());
+	    	            return false;
+	    	        }
 
-	        	    // 3) (tuỳ chọn) nếu bạn vẫn muốn cấm khi có promotionItems thì kiểm tra sau
-	        	    if (hasPromotionItems) {
-	        	        System.out.println("[" + coupon.getCode() + "] Loại: không cho phép khi có promotion items");
-	        	        return false;
-	        	    }
-	        	} else {
-	                // Nếu cho phép voucher stacking -> min tính trên tổng đơn
-	                if (coupon.getMinOrderAmount() != null && totalPrice < coupon.getMinOrderAmount()) {
-	                    System.out.println("[" + coupon.getCode() + "] Loại: minOrderAmount (total) not met. totalPrice="
-	                        + totalPrice + " min=" + coupon.getMinOrderAmount());
-	                    return false;
-	                }
-	            }
-	        }
+	    	        // ⚡ Bỏ qua việc check promotion/combo ở đây
+	    	        // => Cho phép coupon vẫn áp dụng nếu normalTotal đủ điều kiện,
+	    	        // dù giỏ có chứa promotionItems/comboItems.
+	    	    } else {
+	    	        // Cho phép voucher stacking -> min tính trên tổng đơn
+	    	        if (coupon.getMinOrderAmount() != null && totalPrice < coupon.getMinOrderAmount()) {
+	    	            System.out.println("[" + coupon.getCode() + "] Loại: minOrderAmount (total) not met. totalPrice="
+	    	                + totalPrice + " min=" + coupon.getMinOrderAmount());
+	    	            return false;
+	    	        }
+	    	    }
+	    	}
 	    }
 
 	    // Nếu qua hết thì hợp lệ
