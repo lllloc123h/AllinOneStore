@@ -827,14 +827,20 @@ const discountAmount = computed(() => {
 
   // minOrder check
   const minOrder = coupon?.minOrderAmount ?? 0;
-  const thresholdBase = allowVoucher ? totalPrice.value : normalSum;
-  if (minOrder && thresholdBase < minOrder) return 0;
+  if (!coupon || totalPrice.value < minOrder) return 0;
 
-  // ✅ vì dự án chỉ có fixed amount
-  const discount = coupon.discountValue ?? 0;
+  if (coupon.discountType === "PERCENT") {
+    const normalPrice = groupedProducts.value.normalItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    const discount = ((coupon.discountValue ?? 0) / 100) * normalPrice;
+    return coupon.maxDiscountAmount != null
+      ? Math.min(discount, coupon.maxDiscountAmount)
+      : discount;
+  }
 
-  // ✅ chặn không cho giảm nhiều hơn baseTotal
-  return Math.min(discount, baseTotal);
+  return coupon.discountValue ?? 0;
 });
 
 const freeshipDiscount = computed(() => {
@@ -844,12 +850,9 @@ const freeshipDiscount = computed(() => {
   return Math.min(coupon.discountValue ?? 0, shippingFee.value);
 });
 
-const finalProductPrice = computed(() =>
-  Math.max(0, totalPrice.value - discountAmount.value)
-);
-
-const finalPrice = computed(() =>
-  Math.max(0, finalProductPrice.value + shippingFee.value - freeshipDiscount.value)
+const finalPrice = computed(
+  () =>
+    totalPrice.value - discountAmount.value + shippingFee.value - freeshipDiscount.value
 );
 
 const fullAddress = computed(() => {
@@ -962,6 +965,7 @@ async function confirmOrder() {
 }
 // ==== Lifecycle ====
 const customProductsData = ref([]);
+const requestCustomData = ref([]);
 onMounted(async () => {
   timer = setInterval(() => {
     timeSpent.value++;
@@ -970,10 +974,19 @@ onMounted(async () => {
   if (route.query.customs) {
     try {
       customProductsData.value = JSON.parse(route.query.customs);
+      console.log("Dữ liệu tùy chỉnh:", customProductsData.value);
+      customProductsData.value.forEach((item) => {
+        requestCustomData.value.push(
+          ...item.drafts.map((draft) => ({
+            customId: draft.customId,
+            qty: draft.quantity,
+          }))
+        );
+      });
+      console.log("Dữ liệu yêu cầu:", requestCustomData.value);
     } catch (err) {
       console.error("Lỗi phân tích dữ liệu tùy chỉnh:", err);
     }
-    console.log('result tuwf chonj customm ', route.query.customs);
   }
   if (route.query.products) {
     try {

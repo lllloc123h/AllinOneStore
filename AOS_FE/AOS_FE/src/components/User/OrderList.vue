@@ -391,7 +391,17 @@ const getStatusClass = (status) => {
   return statusMap[status] || "status-default";
 };
 
-const formatDate = (d) => new Date(d).toLocaleDateString("vi-VN");
+const formatDate = (d) => {
+  const date = new Date(d);
+  return date.toLocaleString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
 const formatMoney = (v) => Number(v).toLocaleString("vi-VN") + "đ";
 
 onMounted(loadOrders);

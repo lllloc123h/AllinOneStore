@@ -2,39 +2,41 @@ package com.aos.AOSBE.DTOS;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class GeneralStatsDTO {
-    private Double grossRevenue;
-    // tổng doanh thu khi nhận đc hàng
-    private Double rawNetRevenue;
-    // tổng chiết trừ giả giá, vận chuyển
-    private Double totalCostForDiscount;
-    // đã chiết trừ giảm giá, vận chuyển
-    private Double NetRevenue;
-    // số đơn bán thực tế, đã giao
-    private Long countDeliveredOrders;
+    private Integer countOrders;
+    //es doanh thu
+    private Double estimatedRevenue;
+    // es discount on order
+    private Double estimatedDiscountOnOrder;
+    //es chênh lệch vận chuyển
+    private Double estimatedShippingDifference;
+    //es chênh lệch giá
+    private Double estimatedPriceDifference;
+    //es chi phí
+    private Double estimatedCost;
 
+    // thực tế
+    private Integer countActualOrders;
+    private Double actualRevenue;
+    private Double actualDiscountOnOrder;
+    private Double actualShippingDifference;
+    private Double actualPriceDifference;
+    private Double actualCost;
 
-    //count số đơn đã return
-    private Long countReturnedOrders;
-    // tổng giá trị số đơn hàng đã hoàn trả hoặc kh nhận hàng
-    private Double totalOrderReturned;
-    // các đơn hàng lẻ về return
-    private Double totalReturnedAmount;
+    // returned order
+    private Integer countReturnedOrders;
+    private Double returnedAndRefundOrders;
+    // thiệt hại do phí vận chuyển
+    private Double shippingCostLost;
+    // damage, lost, exception
+    // cancel order;
+    private List<Double> cancelAndPaidOrders;
+    // cancel order unpaid
+    private List<Double> cancelAndRefundOrders;
 
-
-
-    // tổng phí vận chuyển trên hóa đơn ước tính
-    private Double totalActualShippingFee;
-    // tổng phí vận chuyển trên hóa đơn vận chuyển ước tính
-    private Double totalEstimatedShippingFee;
-    // tông giám giá vận chuyển thực tế, đã giao
-    private Double totalActualShippingFeeDelivered;
-
-    // tổng chiết trừ ước tính
-    private Double totalEstimatedDiscountValue;
-    // tổng chiết trừ đã giao
-    private Double totalDiscountValueDilivered;
-
-    private Double totalCostProducts;
+    private Integer countDamageLostException;
+    private Double damageLostException;
 }

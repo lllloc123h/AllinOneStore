@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.beans.factory.annotation.Value;
 
-import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.Coupons;
 import com.aos.AOSBE.Entity.OrderItems;
 import com.aos.AOSBE.Entity.Orders;
@@ -321,28 +314,63 @@ public class OrdersService {
 
 	public GeneralStatsDTO getGeneralStats() {
 		GeneralStatsDTO stats = new GeneralStatsDTO();
-		stats.setGrossRevenue(ordersRepository.grossRevenue());
-		stats.setRawNetRevenue(ordersRepository.rawNetRevenue());
-		stats.setTotalCostForDiscount(ordersRepository.totalCostForDiscount());
-		Double raw = ordersRepository.rawNetRevenue();
-		Double totalCost = ordersRepository.totalCostForDiscount();
+		List<Orders> ordersByAllStatus = ordersRepository.findAll();
+		if (ordersByAllStatus.isEmpty()){
+			return new GeneralStatsDTO();
+		}
+		Double estimatedRevenue = orderItemsRepository.sumPriceAtBuyMultiQuantityByStatus("%%", "%%");
+		//estimated
+		stats.setCountOrders(ordersByAllStatus.size());
+		stats.setEstimatedRevenue(estimatedRevenue);// Lấy danh sách đơn hàng>
+		stats.setEstimatedDiscountOnOrder(ordersByAllStatus.stream().reduce(0.0, (total, order) -> total + order.getDiscountValue() , Double::sum));
+		stats.setEstimatedShippingDifference(ordersByAllStatus.stream().reduce(0.0, (total, order) -> total + (order.getEstimatedShippingFee() - order.getActualShippingFee()), Double::sum));
+		stats.setEstimatedPriceDifference(orderItemsRepository.sumDiscountProductsByStatus("%%", "%%"));
+		stats.setEstimatedCost(orderItemsRepository.sumCostAtBuyMultiQuantityByStatus("%%", "%%"));
+		//actual
+		List<Orders> actualOrders = ordersByAllStatus.stream().filter(orders -> {
+			return orders.getShippingStatus().equalsIgnoreCase("delivered") && orders.getPaymentStatus().equalsIgnoreCase("paid");
+		}).toList();
+		stats.setCountActualOrders(actualOrders.isEmpty() ? 0 : actualOrders.size());
+		stats.setActualRevenue(orderItemsRepository.sumPriceAtBuyMultiQuantityByStatus("delivered", "paid"));
+		stats.setActualDiscountOnOrder(actualOrders.stream().reduce(0.0, (total, order) -> total + order.getDiscountValue(), Double::sum));
+		stats.setActualShippingDifference(actualOrders.stream().reduce(0.0, (total, order) -> total + (order.getEstimatedShippingFee() - order.getActualShippingFee()), Double::sum));
+		stats.setActualPriceDifference(orderItemsRepository.sumDiscountProductsByStatus("delivered", "paid"));
+		stats.setActualCost(orderItemsRepository.sumCostAtBuyMultiQuantityByStatus("delivered", "paid"));
 
-		stats.setNetRevenue((raw == null ? 0.0 : raw) - (totalCost == null ? 0.0 : totalCost));
-		stats.setCountDeliveredOrders(ordersRepository.countDeliveredOrders());
+
+		// returned order
+		List<Orders> returnedOrders = ordersByAllStatus.stream().filter(order -> {
+			return order.getShippingStatus().equalsIgnoreCase("returned");
+		}).toList();
+		stats.setCountReturnedOrders(returnedOrders.size());
+		stats.setReturnedAndRefundOrders(
+				returnedOrders.stream()
+						.filter(orders -> orders.getPaymentStatus().equalsIgnoreCase("refund"))
+						.reduce(0.0, (total, order) -> total + order.getFinalTotal(), Double::sum));
+		stats.setShippingCostLost(returnedOrders.stream().reduce(0.0 , (total, order) -> total + order.getEstimatedShippingFee(), Double::sum));
 
 
-		stats.setCountReturnedOrders(ordersRepository.countReturnedOrders());
-		stats.setTotalOrderReturned(ordersRepository.totalOrderReturned());
-		stats.setTotalActualShippingFee(ordersRepository.totalActualShippingFee());
-		stats.setTotalEstimatedShippingFee(ordersRepository.totalEstimatedShippingFee());
-		stats.setTotalActualShippingFeeDelivered(ordersRepository.totalActualShippingFeeDelivered());
-		stats.setTotalReturnedAmount(returnsRepository.findTotalRefundAmount());
+		// cancel order;
+		List<Orders> cancelAndPaidOrders = ordersByAllStatus.stream().filter(order -> {
+			return order.getShippingStatus().equalsIgnoreCase("cancel") && order.getPaymentStatus().equalsIgnoreCase("paid");
+		}).toList();
 
-		stats.setTotalEstimatedDiscountValue(ordersRepository.totalEstimatedDiscountValue());
-		stats.setTotalDiscountValueDilivered(ordersRepository.totalDiscountValueDelivered());
-
-		stats.setTotalCostProducts(ordersRepository.totalCostProducts());
-		return stats;
+		List<Orders> cancelAndRefundOrders = ordersByAllStatus.stream().filter(order -> {
+			return order.getShippingStatus().equalsIgnoreCase("cancel") && order.getPaymentStatus().equalsIgnoreCase("refund");
+		}).toList();
+		stats.setCancelAndPaidOrders(cancelAndPaidOrders.stream().map(orders -> {return orders.getFinalTotal();}).toList());
+		stats.setCancelAndRefundOrders(cancelAndRefundOrders.stream().map(orders -> {return orders.getFinalTotal();}).toList());
+		double damage = Optional.ofNullable(orderItemsRepository.sumCostAtBuyMultiQuantityByStatus("damge", "%%")).orElse(0.0);
+		double lost = Optional.ofNullable(orderItemsRepository.sumCostAtBuyMultiQuantityByStatus("lost", "%%")).orElse(0.0);
+		double exception = Optional.ofNullable(orderItemsRepository.sumCostAtBuyMultiQuantityByStatus("exception", "%%")).orElse(0.0);
+		stats.setCountDamageLostException((int) ordersByAllStatus.stream().filter(
+				order -> {
+			return order.getShippingStatus().equalsIgnoreCase("damge") ||
+					order.getShippingStatus().equalsIgnoreCase("lost") ||
+					order.getShippingStatus().equalsIgnoreCase("exception");
+				}).count());
+		stats.setDamageLostException(damage + lost + exception);
+	return stats;
 	}
 	@Transactional
 	public List<Orders> ordersFindByAccount(int accountId) {

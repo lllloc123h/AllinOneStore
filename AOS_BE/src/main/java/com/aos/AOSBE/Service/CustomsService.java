@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.aos.AOSBE.DTOS.CheckoutCustomDTO;
+import com.aos.AOSBE.Entity.Orders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +47,26 @@ public class CustomsService {
 	public List<Customs> findCustomsByEmail(String email) {
 		return customsRepository.findCustomRawByEmail(email);
 	}
-	public List<Customs> findCustomByEmailAndProductItems(String email,Integer productItemIds) {
+
+	public List<Customs> findCustomByEmailAndProductItems(String email, Integer productItemIds) {
 		return customsRepository.findCustomByEmailAndProductItems(email, productItemIds);
+	}
+
+	@Transactional
+	public void saveCustomFromCheckout(List<CheckoutCustomDTO> customs, int orderId) {
+		for (CheckoutCustomDTO custom : customs) {
+			Customs entity = customsRepository.findById(custom.getCustomId()).get();
+			Customs customToSave = new Customs();
+			Orders order = new Orders();
+			order.setId(orderId);
+			customToSave.setOrder(order);
+			customToSave.setAccount(entity.getAccount());
+			customToSave.setQty(custom.getQty());
+			customToSave.setCanvasJson(entity.getCanvasJson());
+			customToSave.setImageUrl(entity.getImageUrl());
+			customToSave.setDesignName(entity.getDesignName());
+			customToSave.setProductItems(entity.getProductItems());
+			customsRepository.save(customToSave);
+		}
 	}
 }
