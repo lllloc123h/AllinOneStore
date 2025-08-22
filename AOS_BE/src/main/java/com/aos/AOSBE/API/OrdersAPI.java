@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -33,15 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aos.AOSBE.CommonFunctions.CommonKeyConstant;
-import com.aos.AOSBE.DTOS.AccountsDTOS;
-import com.aos.AOSBE.DTOS.GeneralStatsDTO;
-import com.aos.AOSBE.DTOS.GhnDTO;
-import com.aos.AOSBE.DTOS.MessageDTOS;
-import com.aos.AOSBE.DTOS.OrderDetailResponseDTO;
-import com.aos.AOSBE.DTOS.OrderExportDto;
-import com.aos.AOSBE.DTOS.OrderItemsDTOS;
-import com.aos.AOSBE.DTOS.OrderSummaryDTOS;
-import com.aos.AOSBE.DTOS.OrdersDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWallets;
 import com.aos.AOSBE.Entity.OrderItems;
@@ -55,16 +48,6 @@ import com.aos.AOSBE.Mapper.OrderSummaryMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
 import com.aos.AOSBE.Repository.OrdersRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
-import com.aos.AOSBE.Service.AccountsService;
-import com.aos.AOSBE.Service.BaseProductsService;
-import com.aos.AOSBE.Service.CartItemsService;
-import com.aos.AOSBE.Service.EWalletsService;
-import com.aos.AOSBE.Service.GhnService;
-import com.aos.AOSBE.Service.MessageService;
-import com.aos.AOSBE.Service.OrderItemsService;
-import com.aos.AOSBE.Service.OrdersService;
-import com.aos.AOSBE.Service.ProductItemsService;
-import com.aos.AOSBE.Service.PromotionsService;
 
 @RestController
 @RequestMapping("/api")
@@ -105,6 +88,8 @@ public class OrdersAPI {
 	private PromotionsService promotionsService;
 
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
+    @Autowired
+    private CustomsService customsService;
 
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
@@ -179,10 +164,13 @@ public class OrdersAPI {
 	}
 
 	@PostMapping("/user/Orders")
-	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody OrdersDTOS entity) {
+	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody CreateOrderDTO request) {
+		System.out.println("Received customDTO: " + request.getCustoms());
+		System.out.println("Received entity: " + request.getOrder());
 		try {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
+			OrdersDTOS entity = request.getOrder();
 			entity.setAccounts(user.getId());
 
 			// Xóa giỏ hàng
@@ -244,18 +232,13 @@ public class OrdersAPI {
 	                    }
 	                }
 	            }
-
 	            orderItem.setOrders(saved);
 				return orderItem;
 			}).collect(Collectors.toList());
-
 			orderItemsService.orderItemsSaveAll(orderItems);
-
-//			String ghnOrderCode = ghnService.createGhnOrderCodeFromOrder(saved);
-//			System.out.println("Số lượng sản phẩm gửi GHN: " + saved.getOrderItems().size());
-// 			saved.setGhnOrderCode(ghnOrderCode);
-// 			ordersService.ordersSave(saved);
-
+			if (request.getCustoms() != null) {
+				customsService.saveCustomFromCheckout(request.getCustoms(), saved.getId());
+			}
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
 			e.printStackTrace();

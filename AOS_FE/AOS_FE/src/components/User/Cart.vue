@@ -227,7 +227,7 @@
                                 target="_blank"
                               >
                                 <i class="bi bi-palette me-1"></i>
-                                Có thể tùy chỉnh
+                                Tạo tùy chỉnh
                               </a>
                             </div>
                             <p class="item-sku text-muted mb-0">{{ item.sku }}</p>
@@ -347,7 +347,7 @@
                             target="_blank"
                           >
                             <i class="bi bi-palette me-1"></i>
-                            Có thể tùy chỉnh
+                            Tạo tùy chỉnh
                           </a>
                         </div>
                         <p class="product-sku text-muted mb-2">{{ item.sku }}</p>
@@ -518,7 +518,16 @@
         >
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg">
-              <div class="modal-header text-white rounded-top-4" style="background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)">
+              <div
+                class="modal-header text-white rounded-top-4"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgb(102, 126, 234) 0%,
+                    rgb(118, 75, 162) 100%
+                  );
+                "
+              >
                 <h1 class="modal-title fs-4" id="exampleModalToggleLabel">
                   <i class="bi bi-gift-fill me-2"></i>
                   Ưu đãi hiện có
@@ -557,7 +566,7 @@
                                 target="_blank"
                               >
                                 <i class="bi bi-palette me-1"></i>
-                                Có thể tùy chỉnh
+                                Tạo tùy chỉnh
                               </a>
                             </div>
                           </div>
@@ -598,10 +607,7 @@
                         @click="openSpecificPromotionModal(item.id)"
                         data-bs-target="#exampleModalToggle2"
                         data-bs-toggle="modal"
-                        style="
-                        border-left: 1px solid #dee2e6;
-                        background-color: #f8f9fa;"
-
+                        style="border-left: 1px solid #dee2e6; background-color: #f8f9fa"
                       >
                         <i class="bi bi-arrow-right"></i>
                         <div class="small">Xem thêm</div>
@@ -624,7 +630,16 @@
         >
           <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg">
-              <div class="modal-header text-white rounded-top-4" style="background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)">
+              <div
+                class="modal-header text-white rounded-top-4"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgb(102, 126, 234) 0%,
+                    rgb(118, 75, 162) 100%
+                  );
+                "
+              >
                 <h1 class="modal-title fs-4" id="exampleModalToggleLabel2">
                   <i class="bi bi-box-seam me-2"></i>
                   Chi tiết combo
@@ -2805,8 +2820,6 @@ onMounted(() => {
     width: 80px;
     height: 100px; /* Tỷ lệ 4:5 cho mobile */
   }
-
-
 
   .suggestions-section {
     padding: 2rem 1rem;

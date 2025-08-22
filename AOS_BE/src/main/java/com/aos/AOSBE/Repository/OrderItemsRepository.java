@@ -31,4 +31,17 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer>
 	Double sumTotalByProductItemId(int productItemId);
 	@Query("SELECT SUM(o.costAtBuy) FROM OrderItems o WHERE o.productItems.id = ?1 AND o.orders.shippingStatus= 'delivered' AND o.orders.paymentStatus LIKE 'paid'")
 	Double sumCostAtBuyByProductItemId(int productItemId);
+
+
+	//ước tinh doanh thu
+	// priceAtBuy * qty
+	@Query("SELECT SUM(o.priceAtBuy * o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2")
+	Double sumPriceAtBuyMultiQuantityByStatus(String shippingStatus, String paymentStatus);
+// costAtBuy * qty
+	@Query("SELECT SUM(o.costAtBuy * o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2")
+	Double sumCostAtBuyMultiQuantityByStatus(String shippingStatus, String paymentStatus);
+	//chênh lệch giá sản phẩm phải chịu
+	@Query("SELECT SUM(o.priceAtBuy - o.sellingPrice) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2")
+	Double sumDiscountProductsByStatus(String shippingStatus, String paymentStatus);
+
 }
