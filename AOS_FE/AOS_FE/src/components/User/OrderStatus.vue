@@ -142,6 +142,13 @@
                   formatMoney(sp.gia * sp.soLuong)
                 }}</span>
               </div>
+              <div class="price-row">
+                <span class="price-label">
+                  <i class="bi bi-tag me-1"></i>
+                  Khuyến mãi
+                </span>
+                <span class="price-value unit-price">{{ sp.promotionName}}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -170,6 +177,73 @@
                 order.sanPham.reduce((total, sp) => total + sp.gia * sp.soLuong, 0)
               )
             }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">
+              <i class="bi bi-tag me-1"></i>
+              Phí giảm giá
+              <i
+                class="bi bi-exclamation-circle-fill ms-2 text-warning"
+                v-if="order.thanhToan.couponvalue"
+                :title="`Mã giảm giá: ${order.thanhToan.couponvalue}`"
+              ></i>
+            </span>
+            <span class="summary-value">
+              {{ "-"+formatMoney(order.thanhToan.giamgia || 0) }}
+            </span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">
+              <i class="bi bi-box me-1"></i>
+              Phí vận chuyển
+            </span>
+            <span class="summary-value"
+              >{{ formatMoney(order.vanChuyen.ship) }}</span
+            >
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">
+              <i class="bi bi-truck me-1"></i>
+              Phí vận chuyển được giảm
+              <i
+                class="bi bi-exclamation-circle-fill ms-2 text-info"
+                v-if="order.vanChuyen.couponship"
+                :title="`Mã freeship: ${order.vanChuyen.couponship}`"
+              ></i>
+            </span>
+            <span class="summary-value">
+              {{ "-"+formatMoney(order.vanChuyen.discounShip || 0) }}
+            </span>
+          </div>
+          <div class="summary-item total">
+            <span class="summary-label">
+              <i class="bi bi-currency-dollar me-1"></i>
+              Tổng tiền cần thanh toán
+            </span>
+            <span class="summary-value total-amount">{{
+              formatMoney(order.tongTien)
+            }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">
+              <i class="bi bi-box me-1"></i>
+              Phương thức thanh toán
+            </span>
+            <span class="summary-value"
+              >{{ order.thanhToan.phuongThuc }}</span
+            >
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">
+              <i class="bi bi-box me-1"></i>
+              Trạng thái thanh toán
+            </span>
+            <span
+                class="detail-value"
+                :class="getPaymentStatusClass(order.thanhToan.trangThai)"
+              >
+                {{ order.thanhToan.trangThai }}
+            </span>
           </div>
         </div>
       </div>
@@ -233,7 +307,7 @@
       </div>
 
       <!-- Payment Info -->
-      <div class="detail-card">
+      <!-- <div class="detail-card">
         <div class="card-header">
           <i class="bi bi-credit-card me-2"></i>
           <h3>Thông tin thanh toán</h3>
@@ -246,24 +320,6 @@
             <div class="detail-content">
               <span class="detail-label">Phương thức thanh toán</span>
               <span class="detail-value">{{ order.thanhToan.phuongThuc }}</span>
-            </div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-icon payment">
-              <i class="bi bi-wallet2"></i>
-            </div>
-            <div class="detail-content">
-              <span class="detail-label">Phí vận chuyển</span>
-              <span class="detail-value">{{ order.vanChuyen.ship }}</span>
-            </div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-icon payment">
-              <i class="bi bi-ticket-perforated"></i>
-            </div>
-            <div class="detail-content">
-              <span class="detail-label">Phí giảm giá</span>
-              <span class="detail-value">{{ order.giamGia }}</span>
             </div>
           </div>
           <div class="detail-item">
@@ -292,7 +348,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Notes Section -->
@@ -331,8 +387,8 @@
       <div class="action-buttons">
         <button
           class="btn btn-cancel"
-          @click="cancelOrder"
-          v-if="['Chờ xác nhận', 'Chờ lấy hàng', 'Đang xử lý'].includes(order.trangThai)"
+          @click="cancelOrder(order.id)"
+          v-if="['pending', 'ready_to_pick',].includes(order.trangThai)"
         >
           <i class="bi bi-x-circle me-2"></i>
           Hủy đơn hàng
@@ -468,18 +524,24 @@ const loadOrder = async () => {
       vanChuyen: {
         ten: orderData.order.shippingMethods?.name || "N/A",
         maVanDon: orderData.order.orderCode || "Đang cập nhật",
+        couponship: orderData.order.freeshipCouponCode,
+        discounShip: orderData.order.actualShippingFee,
         ship: orderData.order.estimatedShippingFee || 0,
+        giamPhiShip: (orderData.order.estimatedShippingFee || 0) - (orderData.order.actualShippingFee || 0),
       },
       thanhToan: {
-        phuongThuc: orderData.order.paymentMethods?.name || "N/A",
+        phuongThuc: orderData.order.paymentMethodName || "N/A",
         trangThai: orderData.order.paymentStatus,
+        couponvalue: orderData.order.discountCouponCode,
+        giamgia: orderData.order.discountValue,
       },
       sanPham: orderData.order.items?.map((i) => ({
         anh: i.main_image_url || "no-image.png",
         ten: i.name,
-        soLuong: i.quantity,
-        gia: i.price,
+        soLuong: i.quantity,    
+        gia: i.sellingPrice,
         sku: i.product?.sku,
+        promotionName: i.promotionName || null,
       })),
       lichSu: [
         {
@@ -529,15 +591,21 @@ const cancelOrder = async () => {
   if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) return;
 
   try {
-    const res = await api.put(`/Users/Orders/cancelRefundOrder/${maDon}`);
-    const msg = res.data.MESSAGE;
-    alert(msg);
-
-    if (msg.includes("thành công")) {
-      await loadOrder(); // Tải lại đơn để cập nhật trạng thái
+    if (order.shippingStatus === "Chờ xác nhận" || order.shippingStatus === "Đang xử lý") {
+      // Gọi API hủy nội bộ
+      const res = await api.put(`/Users/Orders/cancelRefundOrder/${order.id}`);
+      alert(res.data.MESSAGE);
+    } else if (order.shippingStatus === "Chờ lấy hàng") {
+      // Gọi API hủy GHN
+      const res = await api.put(`/orders/${order.id}/cancel-ghn`);
+      alert("Đã hủy đơn GHN thành công");
+    } else {
+      alert("Đơn hàng đã được xử lý, không thể hủy");
     }
+
+    await loadOrder(); // Cập nhật lại giao diện
   } catch (error) {
-    alert("Đã xảy ra lỗi khi huỷ đơn hàng: " + error.message);
+    alert("Lỗi khi hủy đơn: " + error.message);
   }
 };
 onMounted(loadOrder);

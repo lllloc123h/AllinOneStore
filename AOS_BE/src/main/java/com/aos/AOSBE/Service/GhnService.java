@@ -160,7 +160,7 @@ public class GhnService {
 
 
         // 6. Chi tiết đơn hàng
-        dto.setCod_amount(totalProductCost);
+        dto.setCod_amount((int) order.getFinalTotal());
         dto.setContent("Theo New York Times"); // hoặc nội dung động tùy bạn
         dto.setLength(12);
         dto.setWidth(12);

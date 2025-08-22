@@ -81,6 +81,7 @@
                 <div class="product-info">
                   <h5 class="product-name">{{ sp.ten }}</h5>
                   <div class="product-details">
+                    <span class="sku">Mã sản phẩm: {{ sp.sku }}</span>
                     <span class="quantity">SL: {{ sp.soLuong }}</span>
                     <span class="price">{{ formatMoney(sp.gia) }}</span>
                   </div>
@@ -302,7 +303,7 @@ const loadOrders = async () => {
     for (const order of data) {
       const sanPham = [];
 
-      for (const i of order.products || []) {
+      for (const i of order.items || []) {
         const sp = {
           productItemId: i.productItemId,
           orderId: order.id,
@@ -310,6 +311,7 @@ const loadOrders = async () => {
           ten: i.name,
           soLuong: i.quantity,
           gia: i.price,
+          sku: i.product?.sku,
           daDanhGia: false, // mặc định
         };
 

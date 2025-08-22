@@ -60,6 +60,7 @@ public class OrderSummaryMapper {
         dto.setOrders(item.getOrders().getId());
         dto.setProductItems(product.getId());
         dto.setPromotions(promotion != null ? promotion.getId() : 0);
+        dto.setPromotionName(promotion != null ? promotion.getName() : null);
         dto.setComboGroup(item.getComboGroup());
         dto.setComboGroupId(item.getComboGroupId());
         dto.setComboQty(item.getComboQty());

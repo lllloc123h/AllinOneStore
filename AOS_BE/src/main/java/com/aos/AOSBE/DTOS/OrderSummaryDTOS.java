@@ -55,6 +55,7 @@ public class OrderSummaryDTOS {
         private int orders;
         private int productItems;
         private int promotions;
+        private String promotionName;
         private String comboGroup;
         private UUID comboGroupId;
         private Integer comboQty;

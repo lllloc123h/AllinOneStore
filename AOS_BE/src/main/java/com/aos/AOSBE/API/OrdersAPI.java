@@ -391,10 +391,12 @@ public class OrdersAPI {
 			if (user == null) {
 				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
 			}
-			List<OrdersDTOS> orders = ordersService.ordersFindByAccount(user.getId()).stream()
-					.map(ordersMapper::mapperForOrderDetail).collect(Collectors.toList());
+			List<OrderSummaryDTOS> orders = ordersService.ordersFindByAccount(user.getId()).stream()
+                .map(OrderSummaryMapper::toDTO)
+                .collect(Collectors.toList());
 
-			return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(orders);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống"));
