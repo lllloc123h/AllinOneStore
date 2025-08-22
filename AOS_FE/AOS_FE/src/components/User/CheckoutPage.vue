@@ -402,7 +402,7 @@
                         <div class="ps-3">
                           <i class="bi bi-check-circle me-2 text-success"></i>Thành tiền:
                           <strong style="color: rgb(102, 126, 234)">{{ (item.price * item.quantity).toLocaleString()
-                            }}₫</strong>
+                          }}₫</strong>
                         </div>
                       </div>
                     </div>
@@ -805,9 +805,12 @@ const freeshipDiscount = computed(() => {
   return Math.min(coupon.discountValue ?? 0, shippingFee.value);
 });
 
-const finalPrice = computed(
-  () =>
-    totalPrice.value - discountAmount.value + shippingFee.value - freeshipDiscount.value
+const finalProductPrice = computed(() =>
+  Math.max(0, totalPrice.value - discountAmount.value)
+);
+
+const finalPrice = computed(() =>
+  Math.max(0, finalProductPrice.value + shippingFee.value - freeshipDiscount.value)
 );
 
 const fullAddress = computed(() => {
