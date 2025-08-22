@@ -289,6 +289,7 @@ const rawCanvasData = ref({
   imageUrl: null,
   createdAt: null,
   updatedAt: null,
+  qty: null,
   designName: "phác thảo 1",
   productItems: { id: props.productItemId },
   order: null,
