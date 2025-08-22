@@ -271,7 +271,7 @@ notification.success({
   }
 };
 const homeService = {
-  getBestSellers(limit = 8) {
+  getBestSellers(limit = 4) {
     return api.get('/homepage/bestsellers', {
       params: { limit }
     })
@@ -283,7 +283,7 @@ const homeService = {
   },
 
   async getDiscountedProducts() {
-    return (await api.get('/discounted-products')).data
+    return (await api.get('/News/home')).data
   },
   getProductsByCategory(categoryId, limit = 12) {
     return api.get('/Product/ByCategory', {

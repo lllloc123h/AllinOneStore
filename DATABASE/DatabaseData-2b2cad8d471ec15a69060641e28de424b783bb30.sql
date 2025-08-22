@@ -2198,10 +2198,10 @@ BEGIN
     (SELECT TOP 1 id FROM accounts ORDER BY NEWID()),
     (SELECT TOP 1 id FROM payment_methods ORDER BY NEWID()),
     (SELECT TOP 1 id FROM shipping_methods ORDER BY NEWID()),
-    N'Đang xử lý',
+    N'pending', -- ✅ Đã thay thế giá trị hợp lệ
     25000.00,
     25000.00,
-    N'Đã thanh toán',
+    N'paid',
     N'Giao trước 6 giờ tối',
     10,
     100000.00 + (@i * 1000),

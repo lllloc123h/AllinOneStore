@@ -94,7 +94,7 @@
       <!--start giảm giá -->
       <div class="row mt-5 g-4">
         <div class="col text-center">
-          <h3 class="section-title">🔥 Sản phẩm đang giảm giá</h3>
+          <h3 class="section-title">🔥 Tin tức nóng hổi</h3>
           <p class="section-subtitle">Những ưu đãi không thể bỏ lỡ</p>
         </div>
       </div>
@@ -106,10 +106,11 @@
           :key="product.productItemId"
           class="col-lg-3 col-md-6 col-sm-6"
         >
-          <div class="product-card" @click="goToDetail(product.productItemId)">
+        <a :href="`/news/${product.id}`" style="text-decoration: none;">
+          <div class="product-card" >
             <div class="product-image-container">
               <img
-                :src="`http://localhost:8080/api/files/${product.image}`"
+                :src="product.imageUrl"
                 :alt="product.name"
                 class="product-image"
                 @error="handleImageError"
@@ -124,21 +125,25 @@
               </div>
             </div>
             <div class="product-info">
-              <h6 class="product-name">{{ product.name }}</h6>
-              <div class="price-section">
+              <a
+              class="news-title"
+              :href="`/news/${product.id}`"
+              style="text-decoration: none; "
+              ><h5 class="product-name" style="font-size: 26px">{{ product.title }}</h5></a
+            >
+              
+              <!-- <div class="price-section">
                 <span class="original-price" v-if="product.originalPrice">
                   {{ formatPrice(product.originalPrice) }}
                 </span>
                 <span class="current-price">{{ formatPrice(product.price) }}</span>
-              </div>
-              <div class="rating-section">
-                <div class="stars">
-                  <i class="bi bi-star-fill" v-for="n in 5" :key="n"></i>
-                </div>
-                <span class="rating-text">(4.8)</span>
+              </div> -->
+              <div class="decsription">
+                <p style="color: black;">{{ extractH2(product.description) }}</p>
               </div>
             </div>
           </div>
+          </a>
         </div>
       </div>
 
@@ -283,14 +288,14 @@
       <!-- Sản phẩm bán chạy -->
       <div class="row g-4" v-if="bestSellers.length > 0">
         <div
-          v-for="product in bestSellers.slice(0, 8)"
-          :key="product.productItemId"
+          v-for="product in bestSellers.slice(0, 4)"
+          :key="product.id"
           class="col-lg-3 col-md-6 col-sm-6"
         >
-          <div class="product-card bestseller" @click="goToDetail(product.productItemId)">
+          <div class="product-card bestseller" @click="goToDetail(product.id)">
             <div class="product-image-container">
               <img
-                :src="`http://localhost:8080/api/files/${product.image}`"
+                :src="product.imageUrl"
                 :alt="product.name"
                 class="product-image"
                 @error="handleImageError"
@@ -564,8 +569,13 @@ const router = useRouter();
 
 function goToDetail(id) {
   router.push(`/product/${id}`);
-}
 
+}
+function extractH2(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  return doc.querySelector('h2')?.textContent || '';
+}
 // Sản phẩm giảm giá
 const discountedProducts = ref([]);
 
@@ -609,8 +619,8 @@ onMounted(async () => {
       modalIndex.value = 0; // Hiện modal sau 300ms
     }, 300);
     // Tạm thời bỏ load dữ liệu
-    // discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
-    // bestSellers.value = await homeService.getBestSellers(); // ✅ gọi từ homeService
+    discountedProducts.value = await homeService.getDiscountedProducts(); // ✅ gọi từ homeService
+    bestSellers.value = await homeService.getBestSellers(); // ✅ gọi từ homeService
   } catch (error) {
     console.error("Lỗi khi tải dữ liệu:", error);
   }
@@ -669,7 +679,14 @@ onMounted(async () => {
   border-radius: 12px;
   overflow: hidden;
 }
+.product-name {
+  color: #000; /* màu mặc định: đen */
+  transition: color 0.3s ease;
+}
 
+.product-card:hover .product-name {
+  color: #007bff; /* xanh dương khi hover */
+}
 .modal-image-wrapper img {
   width: 100%;
   height: 100%;
@@ -721,7 +738,9 @@ onMounted(async () => {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
+a.news-title{
+  min-height: 20px;
+}
 .section-subtitle {
   color: #6c757d;
   font-size: 1.1rem;
@@ -875,7 +894,7 @@ onMounted(async () => {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 2.8em;
+  height: 1.7em;
 }
 
 .price-section {
@@ -982,7 +1001,12 @@ onMounted(async () => {
   object-fit: cover;
   transition: transform 0.3s ease;
 }
-
+.product-image {
+  aspect-ratio: 4 / 5;
+  width: 100%; /* hoặc chiều rộng mong muốn */
+  object-fit: cover; /* hoặc contain tùy mục đích */
+  border-radius: 8px; /* tuỳ chọn để làm đẹp */
+}
 .category-card:hover .category-image {
   transform: scale(1.02);
 }
@@ -1092,7 +1116,19 @@ onMounted(async () => {
   color: #2c3e50;
   margin-bottom: 1rem;
 }
+.product-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%; /* hoặc đặt chiều cao cụ thể nếu cần */
+  overflow: hidden;
+}
 
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ảnh sẽ cắt bớt để vừa khung mà không méo */
+  display: block;
+}
 .features-description {
   font-size: 1.2rem;
   color: #6c757d;
