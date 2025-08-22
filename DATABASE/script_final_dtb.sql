@@ -141,9 +141,6 @@ CREATE TABLE
 		FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
 GO
-
-
-
 create table
 	catalogs (
 		id int identity (1, 1) primary key,
@@ -168,7 +165,7 @@ create table
 		name nvarchar (100) not null,
 		material nvarchar (50) not null,
 		category_id int not null,
-		main_image_url varchar(255) not null,
+		main_image_url varchar(255) ,
 		is_custom bit default 0,
 		turn_buy int default 0,
 		rating int default 0,
@@ -197,7 +194,6 @@ create table
 		foreign key (base_id) references base_products (id) ON DELETE CASCADE
 	);
 GO
-
 --CREATE TABLE
 --	user_logs (
 --		id INT IDENTITY (1, 1) PRIMARY KEY,
