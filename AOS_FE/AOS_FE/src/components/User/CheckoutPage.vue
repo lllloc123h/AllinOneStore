@@ -17,13 +17,18 @@
         <!-- Progress Steps -->
         <div class="progress-container">
           <div class="progress-steps">
-            <div v-for="(step, index) in steps" :key="index" :class="[
-              'step-item',
-              {
-                active: currentTab === index,
-                completed: currentTab > index,
-              },
-            ]" @click="navigateToStep(index)">
+            <div
+              v-for="(step, index) in steps"
+              :key="index"
+              :class="[
+                'step-item',
+                {
+                  active: currentTab === index,
+                  completed: currentTab > index,
+                },
+              ]"
+              @click="navigateToStep(index)"
+            >
               <div class="step-circle">
                 <i v-if="currentTab > index" class="bi bi-check-lg"></i>
                 <span v-else>{{ index + 1 }}</span>
@@ -104,56 +109,87 @@
 
                   <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                      <button @click="openFreeshipModal" class="btn btn-outline-primary w-100 shadow-sm"
-                        style="border-width: 2px; font-weight: 600">
+                      <button
+                        @click="openFreeshipModal"
+                        class="btn btn-outline-primary w-100 shadow-sm"
+                        style="border-width: 2px; font-weight: 600"
+                      >
                         <i class="bi bi-truck me-2"></i>Chọn mã miễn phí vận chuyển
                       </button>
                     </div>
                     <div class="col-md-6">
-                      <button @click="openDiscountModal" class="btn btn-outline-success w-100 shadow-sm"
-                        style="border-width: 2px; font-weight: 600">
+                      <button
+                        @click="openDiscountModal"
+                        class="btn btn-outline-success w-100 shadow-sm"
+                        style="border-width: 2px; font-weight: 600"
+                      >
                         <i class="bi bi-percent me-2"></i>Chọn mã giảm giá đơn hàng
                       </button>
                     </div>
                   </div>
 
-                  <div v-if="selectedFreeshipCoupon || selectedDiscountCoupon"
-                    class="alert alert-info border-0 shadow-sm mt-3" style="
+                  <div
+                    v-if="selectedFreeshipCoupon || selectedDiscountCoupon"
+                    class="alert alert-info border-0 shadow-sm mt-3"
+                    style="
                       font-size: 0.95rem;
                       background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-                    ">
+                    "
+                  >
                     <div v-if="selectedFreeshipCoupon" class="mb-2">
                       <i class="bi bi-truck text-primary me-2"></i>
-                      <span class="text-primary fw-semibold">Đã áp dụng mã freeship:</span>
+                      <span class="text-primary fw-semibold"
+                        >Đã áp dụng mã freeship:</span
+                      >
                       <strong class="text-primary">{{
                         selectedFreeshipCoupon.code
-                      }}</strong><br />
-                      <small class="text-muted">Miễn phí vận chuyển lên đến
+                      }}</strong
+                      ><br />
+                      <small class="text-muted"
+                        >Miễn phí vận chuyển lên đến
                         <strong class="text-success">{{
                           formatCurrency(selectedFreeshipCoupon.discountValue)
-                        }}</strong></small>
+                        }}</strong></small
+                      >
                     </div>
                     <div v-if="selectedDiscountCoupon">
                       <i class="bi bi-percent text-success me-2"></i>
-                      <span class="text-success fw-semibold">Đã áp dụng mã giảm giá:</span>
+                      <span class="text-success fw-semibold"
+                        >Đã áp dụng mã giảm giá:</span
+                      >
                       <strong class="text-success">{{
                         selectedDiscountCoupon.code
-                      }}</strong><br />
-                      <small class="text-muted">Giảm tối đa
+                      }}</strong
+                      ><br />
+                      <small class="text-muted"
+                        >Giảm tối đa
                         <strong class="text-success">{{
                           formatCurrency(selectedDiscountCoupon.discountValue)
-                        }}</strong></small>
+                        }}</strong></small
+                      >
                     </div>
                   </div>
                 </div>
 
-                <CouponModal v-if="showFreeshipModal" title="Chọn mã freeship" :coupons="freeshipCoupons"
-                  :selected-coupon="selectedFreeshipCoupon" @close="closeModals" @select="selectCouponFromModal"
-                  @remove="removeFreeshipCoupon" />
+                <CouponModal
+                  v-if="showFreeshipModal"
+                  title="Chọn mã freeship"
+                  :coupons="freeshipCoupons"
+                  :selected-coupon="selectedFreeshipCoupon"
+                  @close="closeModals"
+                  @select="selectCouponFromModal"
+                  @remove="removeFreeshipCoupon"
+                />
 
-                <CouponModal v-if="showDiscountModal" title="Chọn mã giảm giá" :coupons="discountCoupons"
-                  :selected-coupon="selectedDiscountCoupon" @close="closeModals" @select="selectCouponFromModal"
-                  @remove="removeDiscountCoupon" />
+                <CouponModal
+                  v-if="showDiscountModal"
+                  title="Chọn mã giảm giá"
+                  :coupons="discountCoupons"
+                  :selected-coupon="selectedDiscountCoupon"
+                  @close="closeModals"
+                  @select="selectCouponFromModal"
+                  @remove="removeDiscountCoupon"
+                />
 
                 <button class="next-step-btn" @click="currentTab = 1">
                   <span>Tiếp tục</span>
@@ -174,10 +210,15 @@
                 </div>
 
                 <div class="payment-methods">
-                  <div v-for="method in dropdownPaymentMethods" :key="method.id" :class="[
-                    'payment-method-card',
-                    { selected: paymentMethod?.id === method.id },
-                  ]" @click="paymentMethod = method">
+                  <div
+                    v-for="method in dropdownPaymentMethods"
+                    :key="method.id"
+                    :class="[
+                      'payment-method-card',
+                      { selected: paymentMethod?.id === method.id },
+                    ]"
+                    @click="paymentMethod = method"
+                  >
                     <div class="payment-method-content">
                       <div class="payment-method-info">
                         <div class="payment-icon">
@@ -191,7 +232,12 @@
                         </div>
                       </div>
                       <div class="payment-radio">
-                        <input type="radio" :value="method" v-model="paymentMethod" :id="`payment-${method.id}`" />
+                        <input
+                          type="radio"
+                          :value="method"
+                          v-model="paymentMethod"
+                          :id="`payment-${method.id}`"
+                        />
                         <label :for="`payment-${method.id}`" class="radio-label"></label>
                       </div>
                     </div>
@@ -262,9 +308,13 @@
                           <i class="bi bi-chat-left-text me-1"></i>
                           Ghi chú cho cửa hàng
                         </label>
-                        <textarea id="note" class="form-control" rows="3"
+                        <textarea
+                          id="note"
+                          class="form-control"
+                          rows="3"
                           placeholder="Nhập ghi chú (ví dụ: giao buổi sáng, không gọi điện)..."
-                          v-model="orderNote"></textarea>
+                          v-model="orderNote"
+                        ></textarea>
                       </div>
                     </div>
                   </div>
@@ -276,8 +326,11 @@
                       Sản phẩm đã chọn
                     </h1>
                     <!-- COMBO -->
-                    <div v-for="(group, groupId) in groupedProducts.comboGroups" :key="groupId"
-                      class="mb-4 border border-primary border-2 p-4 rounded-3 shadow-sm bg-light">
+                    <div
+                      v-for="(group, groupId) in groupedProducts.comboGroups"
+                      :key="groupId"
+                      class="mb-4 border border-primary border-2 p-4 rounded-3 shadow-sm bg-light"
+                    >
                       <div class="fw-bold text-white bg-primary rounded px-3 py-2 mb-3">
                         <i class="bi bi-gift me-2"></i>Combo:
                         <span>{{ group.items[0].promotions.name }}</span>
@@ -285,13 +338,21 @@
 
                       <!-- Sản phẩm trong combo -->
                       <ul class="list-unstyled ps-3 small">
-                        <li v-for="item in group.items.filter((i) => !i.isGift)" :key="item.id"
-                          class="d-flex align-items-start mb-2">
-                          <img :src="item.image" alt="ảnh sản phẩm" class="me-3 rounded"
-                            style="width: 80px; height: 100px; object-fit: cover" />
+                        <li
+                          v-for="item in group.items.filter((i) => !i.isGift)"
+                          :key="item.id"
+                          class="d-flex align-items-start mb-2"
+                        >
+                          <img
+                            :src="item.image"
+                            alt="ảnh sản phẩm"
+                            class="me-3 rounded"
+                            style="width: 80px; height: 100px; object-fit: cover"
+                          />
                           <div>
                             {{ item.name }} <br />
-                            <span class="text-muted small">{{ item.sku }}</span><br />
+                            <span class="text-muted small">{{ item.sku }}</span
+                            ><br />
                             <div>
                               {{ item.price.toLocaleString() }}₫
                               <span class="ms-3">× {{ item.quantity }}</span>
@@ -306,13 +367,21 @@
                           <i class="bi bi-stars me-2"></i>Sản phẩm tặng kèm
                         </div>
                         <ul class="list-unstyled ps-3 small">
-                          <li v-for="gift in group.items.filter((i) => i.isGift)" :key="gift.id"
-                            class="d-flex align-items-start mb-2">
-                            <img :src="gift.image" alt="ảnh quà tặng" class="me-3 rounded"
-                              style="width: 70px; height: 90px; object-fit: cover" />
+                          <li
+                            v-for="gift in group.items.filter((i) => i.isGift)"
+                            :key="gift.id"
+                            class="d-flex align-items-start mb-2"
+                          >
+                            <img
+                              :src="gift.image"
+                              alt="ảnh quà tặng"
+                              class="me-3 rounded"
+                              style="width: 70px; height: 90px; object-fit: cover"
+                            />
                             <div>
                               {{ gift.name }} <br />
-                              <span class="text-muted small">{{ gift.sku }}</span><br />
+                              <span class="text-muted small">{{ gift.sku }}</span
+                              ><br />
                               <span class="badge bg-success">Tặng kèm</span>
                             </div>
                           </li>
@@ -321,7 +390,8 @@
 
                       <div class="ps-3 mt-2">
                         <i class="bi bi-box me-2"></i>Số lượng combo:
-                        <strong>{{ group.comboQty }}</strong><br />
+                        <strong>{{ group.comboQty }}</strong
+                        ><br />
                         <i class="bi bi-currency-dollar me-2"></i>Giá gốc:
                         <s>{{ group.originalTotal.toLocaleString() }}₫</s><br />
                         <i class="bi bi-tag me-2"></i>Tiết kiệm:
@@ -331,7 +401,8 @@
                               group.originalTotal -
                               group.comboPrice * group.comboQty
                             ).toLocaleString()
-                          }}₫ </span><br />
+                          }}₫ </span
+                        ><br />
                         <i class="bi bi-check-circle me-2"></i>Tổng :
                         <strong class="text-success">
                           {{ (group.comboPrice * group.comboQty).toLocaleString() }}₫
@@ -341,19 +412,27 @@
 
                     <!-- DISCOUNT -->
                     <div v-if="groupedProducts.discountItems.length" class="mt-3">
-                      <div v-for="item in groupedProducts.discountItems" :key="item.id"
-                        class="mb-4 border border-warning border-2 p-4 rounded-3 shadow-sm bg-light">
+                      <div
+                        v-for="item in groupedProducts.discountItems"
+                        :key="item.id"
+                        class="mb-4 border border-warning border-2 p-4 rounded-3 shadow-sm bg-light"
+                      >
                         <div class="fw-bold text-white bg-warning rounded px-3 py-2 mb-3">
                           <i class="bi bi-lightning-fill me-2"></i>Khuyến mãi:
                           {{ item.promotions.name }}
                         </div>
                         <ul class="list-unstyled ps-3 small">
                           <li class="d-flex align-items-start mb-2">
-                            <img :src="item.image" alt="ảnh sản phẩm" class="me-3 rounded"
-                              style="width: 80px; height: 100px; object-fit: cover" />
+                            <img
+                              :src="item.image"
+                              alt="ảnh sản phẩm"
+                              class="me-3 rounded"
+                              style="width: 80px; height: 100px; object-fit: cover"
+                            />
                             <div>
                               {{ item.name }} <br />
-                              <span class="text-muted small">{{ item.sku }}</span><br />
+                              <span class="text-muted small">{{ item.sku }}</span
+                              ><br />
                               <div>
                                 {{ item.price.toLocaleString() }}₫
                                 <span class="ms-3">× {{ item.quantity }}</span>
@@ -363,14 +442,16 @@
                         </ul>
                         <div class="ps-3">
                           <i class="bi bi-currency-dollar me-2"></i>Giá gốc:
-                          <s>{{ (item.price * item.quantity).toLocaleString() }}₫</s><br />
+                          <s>{{ (item.price * item.quantity).toLocaleString() }}₫</s
+                          ><br />
                           <i class="bi bi-tag me-2"></i>Tiết kiệm:
                           <span class="fw-semibold text-success">
                             {{
                               (
                                 item.promotions.discountValue * item.quantity
                               ).toLocaleString()
-                            }}₫ </span><br />
+                            }}₫ </span
+                          ><br />
                           <i class="bi bi-check-circle me-2"></i>Tổng:
                           <strong class="text-success">
                             {{
@@ -386,14 +467,24 @@
 
                     <!-- NORMAL ITEMS -->
                     <div v-if="groupedProducts.normalItems.length" class="mt-3">
-                      <div v-for="item in groupedProducts.normalItems" :key="item.id" class="mb-3 border p-3 rounded ">
+                      <div
+                        v-for="item in groupedProducts.normalItems"
+                        :key="item.id"
+                        class="mb-3 border p-3 rounded"
+                      >
                         <ul class="list-unstyled ps-3 small">
                           <li class="d-flex align-items-start mb-2">
-                            <img :src="item.image" alt="ảnh sản phẩm" class="me-3 rounded"
-                              style="width: 80px; height: 100px; object-fit: cover" />
+                            <img
+                              :src="item.image"
+                              alt="ảnh sản phẩm"
+                              class="me-3 rounded"
+                              style="width: 80px; height: 100px; object-fit: cover"
+                            />
                             <div>
-                              <strong style="font-size: larger">{{ item.name }} </strong> <br />
-                              <span class="text-muted large">{{ item.sku }}</span><br />
+                              <strong style="font-size: larger">{{ item.name }} </strong>
+                              <br />
+                              <span class="text-muted large">{{ item.sku }}</span
+                              ><br />
                               <div>
                                 {{ item.price.toLocaleString() }}₫
                                 <span class="ms-3">× {{ item.quantity }}</span>
@@ -403,28 +494,41 @@
                         </ul>
                         <div class="ps-3">
                           <i class="bi bi-check-circle me-2 text-success"></i>Thành tiền:
-                          <strong style="color: rgb(102, 126, 234)">{{ (item.price * item.quantity).toLocaleString()
-                          }}₫</strong>
+                          <strong style="color: rgb(102, 126, 234)"
+                            >{{ (item.price * item.quantity).toLocaleString() }}₫</strong
+                          >
                         </div>
                       </div>
                     </div>
                     <!-- CUSTOM PRODUCTS -->
 
-                    <div v-if="customProductsData && customProductsData.length" class="mt-4">
-                      <hr>
+                    <div
+                      v-if="customProductsData && customProductsData.length"
+                      class="mt-4"
+                    >
+                      <hr />
                       <div class="fw-bold mb-3" style="font-size: 24px">
                         <i class="bi bi-palette me-2"></i>
                         Sản phẩm tùy chỉnh
                       </div>
 
-                      <div v-for="customProduct in customProductsData" :key="customProduct.id"
-                        class="mb-4 border p-4 rounded-3 shadow-sm bg-light">
+                      <div
+                        v-for="customProduct in customProductsData"
+                        :key="customProduct.id"
+                        class="mb-4 border p-4 rounded-3 shadow-sm bg-light"
+                      >
                         <!-- Thông tin sản phẩm gốc -->
                         <div class="d-flex align-items-start mb-3">
-                          <img :src="customProduct.image" :alt="customProduct.name" class="product-img me-3 rounded" />
+                          <img
+                            :src="customProduct.image"
+                            :alt="customProduct.name"
+                            class="product-img me-3 rounded"
+                          />
                           <div>
-                            <strong>{{ customProduct.name }}</strong><br />
-                            <span class="text-muted large">{{ customProduct.sku }}</span><br />
+                            <strong>{{ customProduct.name }}</strong
+                            ><br />
+                            <span class="text-muted large">{{ customProduct.sku }}</span
+                            ><br />
                           </div>
                         </div>
 
@@ -436,12 +540,28 @@
                           </div>
 
                           <div class="row g-3">
-                            <div v-for="draft in customProduct.drafts" :key="draft.customId" class="col-md-6 col-lg-4">
+                            <div
+                              v-for="draft in customProduct.drafts"
+                              :key="draft.customId"
+                              class="col-md-6 col-lg-4"
+                            >
                               <div class="draft-card border rounded p-2 bg-white">
                                 <div class="position-relative">
-                                  <img :src="draft.imageUrl" :alt="draft.name" class="draft-img w-100 rounded" />
-                                  <span class="badge position-absolute top-0 end-0 m-2"
-                                    style="background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)">
+                                  <img
+                                    :src="draft.imageUrl"
+                                    :alt="draft.name"
+                                    class="draft-img w-100 rounded"
+                                  />
+                                  <span
+                                    class="badge position-absolute top-0 end-0 m-2"
+                                    style="
+                                      background: linear-gradient(
+                                        135deg,
+                                        rgb(102, 126, 234) 0%,
+                                        rgb(118, 75, 162) 100%
+                                      );
+                                    "
+                                  >
                                     {{ draft.quantity }}
                                   </span>
                                 </div>
@@ -459,8 +579,16 @@
                             <div>
                               <i class="bi bi-palette me-2"></i>
                               Tổng số phác thảo:
-                              <strong class="text-primary" style="color:rgb(102, 126, 234)">
-                                {{customProduct.drafts.reduce((sum, draft) => sum + draft.quantity, 0)}}
+                              <strong
+                                class="text-primary"
+                                style="color: rgb(102, 126, 234)"
+                              >
+                                {{
+                                  customProduct.drafts.reduce(
+                                    (sum, draft) => sum + draft.quantity,
+                                    0
+                                  )
+                                }}
                               </strong>
                             </div>
                             <div class="fw-bold" style="color: rgb(102, 126, 234)">
@@ -503,33 +631,52 @@
                 <div class="summary-section">
                   <h6 class="section-title">Sản phẩm đã chọn</h6>
                   <!-- Combo -->
-                  <div v-for="(group, groupId) in groupedProducts.comboGroups" :key="groupId" class="mb-2 small">
+                  <div
+                    v-for="(group, groupId) in groupedProducts.comboGroups"
+                    :key="groupId"
+                    class="mb-2 small"
+                  >
                     <ul class="list-unstyled mb-1">
-                      <li v-for="item in group.items.filter((i) => !i.isGift)" :key="item.id">
+                      <li
+                        v-for="item in group.items.filter((i) => !i.isGift)"
+                        :key="item.id"
+                      >
                         <span>{{ item.name }} x{{ item.quantity }}</span>
                       </li>
                     </ul>
                     <div class="d-flex justify-content-between ps-3">
                       <span><i class="bi bi-gift-fill"></i> Combo:</span>
-                      <span>{{ (group.comboPrice * group.comboQty).toLocaleString() }}₫</span>
+                      <span
+                        >{{ (group.comboPrice * group.comboQty).toLocaleString() }}₫</span
+                      >
                     </div>
                   </div>
 
                   <!-- Discount -->
-                  <div v-for="item in groupedProducts.discountItems" :key="item.id" class="mb-2 small">
+                  <div
+                    v-for="item in groupedProducts.discountItems"
+                    :key="item.id"
+                    class="mb-2 small"
+                  >
                     <div class="d-flex justify-content-between">
                       <span>{{ item.name }} x{{ item.quantity }}</span>
-                      <span>{{
-                        (
-                          (item.price - item.promotions.discountValue) *
-                          item.quantity
-                        ).toLocaleString()
-                      }}₫</span>
+                      <span
+                        >{{
+                          (
+                            (item.price - item.promotions.discountValue) *
+                            item.quantity
+                          ).toLocaleString()
+                        }}₫</span
+                      >
                     </div>
                   </div>
 
                   <!-- Sản phẩm thường -->
-                  <div v-for="item in groupedProducts.normalItems" :key="item.id" class="mb-2 small">
+                  <div
+                    v-for="item in groupedProducts.normalItems"
+                    :key="item.id"
+                    class="mb-2 small"
+                  >
                     <div class="d-flex justify-content-between">
                       <span>{{ item.name }} x{{ item.quantity }}</span>
                       <span>{{ (item.price * item.quantity).toLocaleString() }}₫</span>
@@ -549,12 +696,16 @@
                   </div>
                   <div class="price-row discount" v-if="freeshipDiscount > 0">
                     <span class="price-label">Giảm phí vận chuyển:</span>
-                    <span class="price-value">-{{ freeshipDiscount.toLocaleString() }}₫</span>
+                    <span class="price-value"
+                      >-{{ freeshipDiscount.toLocaleString() }}₫</span
+                    >
                   </div>
 
                   <div class="price-row discount" v-if="discountAmount > 0">
                     <span class="price-label">Giảm giá sản phẩm:</span>
-                    <span class="price-value">-{{ discountAmount.toLocaleString() }}₫</span>
+                    <span class="price-value"
+                      >-{{ discountAmount.toLocaleString() }}₫</span
+                    >
                   </div>
                 </div>
 
@@ -672,7 +823,6 @@ const removeDiscountCoupon = () => {
   couponCodeInput.value = "";
   couponError.value = "";
 };
-
 
 function calculateSellingPrice(item, groupedProducts) {
   // Nếu là quà tặng => sellingPrice = 0
@@ -814,7 +964,12 @@ const discountAmount = computed(() => {
   if (!coupon) return 0;
 
   // đọc allowVoucher
-  const allowVoucher = readBool(coupon, "isAllowVoucher", "allowVoucher", "is_allow_voucher");
+  const allowVoucher = readBool(
+    coupon,
+    "isAllowVoucher",
+    "allowVoucher",
+    "is_allow_voucher"
+  );
 
   // chọn baseTotal đúng
   const normalSum = groupedProducts.value.normalItems.reduce(
@@ -952,7 +1107,10 @@ async function confirmOrder() {
 
     console.log("📦 Payload gửi lên:", payload);
 
-    const response = await api.post("/user/Orders", payload);
+    const response = await api.post("/user/Orders", {
+      customs: requestCustomData.value,
+      order: payload,
+    });
     // 🧹 Dọn dẹp sau khi đặt hàng
     localStorage.removeItem("selectedCoupon");
     localStorage.removeItem("checkoutProducts");
@@ -1219,7 +1377,8 @@ watch(
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>') repeat-x;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
+    repeat-x;
   background-size: 1000px 100px;
   animation: wave 10s infinite linear;
 }
@@ -1583,9 +1742,11 @@ watch(
 
 .payment-method-card.selected {
   border-color: #667eea;
-  background: linear-gradient(135deg,
-      rgba(102, 126, 234, 0.05) 0%,
-      rgba(118, 75, 162, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.05) 0%,
+    rgba(118, 75, 162, 0.05) 100%
+  );
 }
 
 .payment-method-content {
@@ -1903,9 +2064,11 @@ watch(
 }
 
 .summary-total {
-  background: linear-gradient(135deg,
-      rgba(102, 126, 234, 0.1) 0%,
-      rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
   border-radius: 12px;
   padding: 1rem;
   margin: 1.5rem 0;
