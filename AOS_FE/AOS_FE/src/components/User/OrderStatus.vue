@@ -117,7 +117,7 @@
                   <i class="bi bi-tag me-1"></i>
                   Mã sản phẩm
                 </span>
-                <span class="price-value unit-price">{{ sp.sku}}</span>
+                <span class="price-value unit-price">{{ sp.sku }}</span>
               </div>
               <div class="price-row">
                 <span class="price-label">
@@ -259,7 +259,7 @@
           </div>
           <div class="detail-item">
             <div class="detail-icon payment">
-              <i class="bi bi-wallet2"></i>
+              <i class="bi bi-ticket-perforated"></i>
             </div>
             <div class="detail-content">
               <span class="detail-label">Phí giảm giá</span>
@@ -268,7 +268,7 @@
           </div>
           <div class="detail-item">
             <div class="detail-icon status">
-              <i class="bi bi-check-circle"></i>
+              <i class="bi bi-check-circle text-success large"></i>
             </div>
             <div class="detail-content">
               <span class="detail-label">Trạng thái thanh toán</span>
@@ -378,11 +378,11 @@ const order = ref(null);
 const steps = [
   { label: "Chờ xác nhận", icon: "bi bi-hourglass-split" },
   { label: "Chờ lấy hàng", icon: "bi bi-box-seam" },
-  { label: "Chờ giao hàng", icon: "bi bi-truck" },
-  { label: "Đang giao hàng", icon: "bi bi-a" },
+  { label: "Chờ giao hàng", icon: "bi bi-truck-front" },
+  { label: "Đang giao hàng", icon: "bi bi-truck" },
   { label: "Đã nhận hàng", icon: "bi bi-check-circle-fill" },
-  { label: "Đã hủy", icon: "bi bi-x-circle"},
-  { label: "Đổi/Trả hàng", icon: "bi bi-arrow-return-left"}
+  { label: "Đã hủy", icon: "bi bi-x-circle" },
+  { label: "Đổi/Trả hàng", icon: "bi bi-arrow-return-left" },
 ];
 
 // GHN trả về nhiều trạng thái, cần map để khớp UI
@@ -477,7 +477,7 @@ const loadOrder = async () => {
       sanPham: orderData.order.items?.map((i) => ({
         anh: i.main_image_url || "no-image.png",
         ten: i.name,
-        soLuong: i.quantity,    
+        soLuong: i.quantity,
         gia: i.price,
         sku: i.product?.sku,
       })),

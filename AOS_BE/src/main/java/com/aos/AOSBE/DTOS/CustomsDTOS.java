@@ -21,4 +21,5 @@ public class CustomsDTOS {
     private LocalDateTime updatedAt;
     private ProductItemsDTOS productItems;
     private OrdersDTOS order;
+    private Integer qty;
 }

@@ -287,6 +287,8 @@ public class OrdersService {
 				String status = (String) data.get("status");
 				if(status.equals("delivered")) {
 					order.setPaymentStatus("paid");
+				}else if(status.equals("waiting_to_return")) {
+					//hàm hoàn tiền, kiểm tra lại tổng hóa đơn bao gồm phí vận chuyển
 				}
 				order.setShippingStatus(status);
 				ordersRepository.save(order);

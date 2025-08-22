@@ -44,4 +44,6 @@ public class Customs {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders order;
+    @Column(name ="qty")
+    private Integer qty;
 }

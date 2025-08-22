@@ -432,6 +432,7 @@ create table
 		image_url nvarchar (255) not null,
 		design_name nvarchar (50) not null, -- mặt trước, mặt sau
 		order_id int  null,
+		qty int null,
 		created_at datetime default getdate (),
 		updated_at datetime default getdate (),
 		foreign key (product_item_id) references product_items (id) ON DELETE CASCADE,

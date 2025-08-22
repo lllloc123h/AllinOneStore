@@ -23,7 +23,8 @@ public class CustomsMapper {
 				    entity.getCreatedAt(),
 				    entity.getUpdatedAt(),
 				    productItemsMapper.mapper2(productItemsService.productItemsFindById(entity.getProductItems().getId()).get()) ,
-				    entity.getOrder() != null ? ordersMapper.mapper(entity.getOrder()) : null
+				    entity.getOrder() != null ? ordersMapper.mapper(entity.getOrder()) : null,
+				entity.getQty()
 			);
 	}
 	public CustomsDTOS mapperToViewCart(Customs entity) {
@@ -36,7 +37,8 @@ public class CustomsMapper {
 				entity.getCreatedAt(),
 				entity.getUpdatedAt(),
 				productItemsMapper.mapper2(entity.getProductItems()),
-				entity.getOrder() != null ? ordersMapper.mapper(entity.getOrder()) : null
+				entity.getOrder() != null ? ordersMapper.mapper(entity.getOrder()) : null,
+				entity.getQty()
 		);
 	}
 	public Customs mapperToObject(CustomsDTOS entity) {
@@ -51,7 +53,8 @@ public class CustomsMapper {
 					entity.getCreatedAt(),
 					entity.getUpdatedAt(),
 					productItemsService.productItemsFindById(entity.getProductItems().getId()).orElse(null),
-				entity.getOrder() != null ? ordersMapper.mapperToObject(entity.getOrder()) : null
+				entity.getOrder() != null ? ordersMapper.mapperToObject(entity.getOrder()) : null,
+				entity.getQty()
 		);
 	}
 	
