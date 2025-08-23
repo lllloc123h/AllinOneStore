@@ -91,7 +91,8 @@ public class OrdersAPI {
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
     @Autowired
     private CustomsService customsService;
-
+@Autowired
+private OrderSummaryMapper orderSummaryMapper;
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -104,7 +105,6 @@ public class OrdersAPI {
 		response.put("content", orders);
 		response.put("totalPages", pageResult.getTotalPages());
 		return ResponseEntity.ok(response);
-
 	}
 //	@GetMapping("/admin/Orders/items")
 //	public ResponseEntity<?> getAllItemByOrderId(@RequestParam("orderId") int orderId) {
@@ -212,13 +212,11 @@ public class OrdersAPI {
 
 	            if (promo != null) {
 	                boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
-
 	                if (!isComboProcessed) {
 	                    // Nếu có comboQty thì dùng comboQty, ngược lại dùng số lượng sản phẩm
 	                    int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
 	                            ? orderItem.getComboQty()
 	                            : orderItem.getQty();
-
 	                    if (promo.getQty() >= qtyToReduce) {
 	                        promo.setQty(promo.getQty() - qtyToReduce);
 	                        promo.setUpdatedAt(LocalDateTime.now());
@@ -279,7 +277,7 @@ public class OrdersAPI {
 			Orders order = orderOpt.get();
 
 			// ✅ Dùng mapper mới cho Order + Items
-			OrderSummaryDTOS orderDTO = OrderSummaryMapper.toDTO(order);
+			OrderSummaryDTOS orderDTO =  orderSummaryMapper.toDTO(order);
 
 			// ✔️ Lấy account
 			Accounts account = order.getAccounts();
@@ -373,7 +371,7 @@ public class OrdersAPI {
 				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
 			}
 			List<OrderSummaryDTOS> orders = ordersService.ordersFindByAccount(user.getId()).stream()
-                .map(OrderSummaryMapper::toDTO)
+                .map(orderSummaryMapper::toDTO)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(orders);

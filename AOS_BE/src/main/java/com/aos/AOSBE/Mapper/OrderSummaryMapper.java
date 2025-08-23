@@ -1,13 +1,25 @@
 package com.aos.AOSBE.Mapper;
 
+import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
+import com.aos.AOSBE.DTOS.CustomDTOS;
+import com.aos.AOSBE.DTOS.CustomsDTOS;
 import com.aos.AOSBE.DTOS.OrderSummaryDTOS;
 import com.aos.AOSBE.Entity.*;
+import com.aos.AOSBE.Repository.CustomsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Component
 public class OrderSummaryMapper {
-
-    public static OrderSummaryDTOS toDTO(Orders order) {
+@Autowired
+private HandleListSkuToFilter handleListSkuToFilter;
+@Autowired
+private CustomsRepository customsRepository;
+@Autowired
+private CustomsMapper customsMapper;
+    public OrderSummaryDTOS toDTO(Orders order) {
         OrderSummaryDTOS dto = new OrderSummaryDTOS();
 
         dto.setId(order.getId());
@@ -33,16 +45,18 @@ public class OrderSummaryMapper {
         dto.setOrderCode(order.getGhnOrderCode());
 
         List<OrderSummaryDTOS.OrderItemDTO> itemDTOs = order.getOrderItems().stream()
-            .map(OrderSummaryMapper::toItemDTO)
+            .map(this::toItemDTO)
             .collect(Collectors.toList());
-
+List<CustomsDTOS> customs = customsRepository.findCustomByOrderId(order.getId()).stream()
+        .map(customsMapper::mapper)
+        .collect(Collectors.toList());
+        dto.setCustoms(customs);
         // Nếu DTO có field items, bạn cần thêm:
         dto.setItems(itemDTOs);
-
         return dto;
     }
 
-    private static OrderSummaryDTOS.OrderItemDTO toItemDTO(OrderItems item) {
+    public OrderSummaryDTOS.OrderItemDTO toItemDTO(OrderItems item) {
         ProductItems product = item.getProductItems();
         Promotions promotion = item.getPromotions();
 
@@ -72,10 +86,9 @@ public class OrderSummaryMapper {
         // Thêm ProductDTO
         OrderSummaryDTOS.ProductDTO productDTO = new OrderSummaryDTOS.ProductDTO();
         productDTO.setProductId(product.getId());
-        productDTO.setSku(product.getSku());
+        productDTO.setSku(handleListSkuToFilter.getDescriptionOfSku(product.getSku()));
         productDTO.setProductName(product.getBaseProducts().getName());
         productDTO.setImageUrl(product.getBaseProducts().getMainImageUrl());
-
         dto.setProduct(productDTO);
 
         return dto;

@@ -254,6 +254,7 @@ CREATE TABLE
 		discount_value DECIMAL(10, 2),
 		combo_price decimal(18, 2),
 		qty int not null,
+		turnbuy int not null,
 		start_at datetime default getdate (),
 		end_at datetime default getdate (),
 		is_active bit default 1,

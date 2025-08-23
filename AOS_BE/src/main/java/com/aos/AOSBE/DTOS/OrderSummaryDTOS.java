@@ -36,7 +36,7 @@ public class OrderSummaryDTOS {
 	private String shippingMethodName;
 	private String orderCode;
     private List<OrderItemDTO> items;
-
+    private List<CustomsDTOS> customs;
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

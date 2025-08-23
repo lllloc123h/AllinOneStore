@@ -1108,6 +1108,7 @@ async function filterByDate() {
       }?startAt=${formatDateTimeLocal(startTime)}&endAt=${formatDateTimeLocal(endTime)}`
     )
     .then(async (response) => {
+      console.log("Filtered API response:", response.data);
       const apiData = response.data?.data || [];
       filteredSeries.value.data = apiData.map((item) => [
         new Date(item.date).getTime(),

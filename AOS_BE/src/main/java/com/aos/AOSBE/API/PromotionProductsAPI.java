@@ -136,7 +136,9 @@ public class PromotionProductsAPI {
 	@GetMapping("/admin/products/details/{id}")
 	public ResponseEntity<?> getPromotionProductsByProductItemsId(@PathVariable int id, @RequestParam("startAt") LocalDateTime startAt, @RequestParam("endAt") LocalDateTime endAt) {
 		System.out.println("Fetching details for product item ID: " + id + " from " + startAt + " to " + endAt);
+		System.err.println(promotionsService.findPromotionByProductItemAndDuration(id, startAt, endAt));
 		List<PromotionsDTOS> promotions = promotionsService.findPromotionByProductItemAndDuration(id, startAt, endAt).stream().map(promotionsMapper::mapper).toList();
+
 		List<CostHistoriesDTOS> costHistories = costHistoriesService.findCostHistoriesByProductItemsIdBetween(id, startAt, endAt)
 				.stream().map(costHistoriesMapper::mapper).toList();
 		List<PriceHistoriesDTOS> priceHistories = priceHistoriesService.findPriceHistoriesByProductItemsIdAndCreatedAtBetween(id, startAt, endAt)
