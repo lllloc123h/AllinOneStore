@@ -47,6 +47,7 @@ import com.aos.AOSBE.Mapper.MessageMapper;
 import com.aos.AOSBE.Mapper.OrderItemsMapper;
 import com.aos.AOSBE.Mapper.OrderSummaryMapper;
 import com.aos.AOSBE.Mapper.OrdersMapper;
+import com.aos.AOSBE.Repository.EWalletsRepository;
 import com.aos.AOSBE.Repository.OrdersRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
 
@@ -91,7 +92,8 @@ public class OrdersAPI {
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
     @Autowired
     private CustomsService customsService;
-
+    @Autowired
+    private EWalletsRepository EWalletsrepository;
 	@GetMapping("/admin/Orders")
 	public ResponseEntity<?> getAllOrdersApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -464,7 +466,7 @@ public class OrdersAPI {
 
         return ResponseEntity.ok(orderDetail.getLog());
     }
-	@PatchMapping("/admin/{id}/updateStatus")
+	@PutMapping("/admin/{id}/updateStatus")
 	public ResponseEntity<?> updateStatusOrders(@PathVariable int id,@RequestBody Map<String, String> updates){
 		String newStatus = updates.get("status");
 		Optional<Orders>  optionalOrders = ordersService.ordersFindById(id);
@@ -477,15 +479,36 @@ public class OrdersAPI {
 				,"money_collect_delivering","delivered","delivery_fail","waiting_to_return",
 				"return","return_transporting","return_storing",
 				"returning","return_fail","returned","exception","damage","lost");
+		List<String> StatusReturnMoney = List.of("waiting_to_return",
+				"return","return_transporting","return_storing",
+				"returning","return_fail","returned");
 		if (!validStatuses.contains(newStatus)) {
 		    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 		                         .body("Trạng thái không hợp lệ");
 		}
+		
 		Orders order = optionalOrders.get();
 	    order.setShippingStatus(newStatus);
+	    if(StatusReturnMoney.contains(newStatus)) {
+			
+			Optional<EWallets> EwalletUserOptional = EWalletsservice.eWalletsFindByAccountEmail(order.getAccounts().getEmail());
+			if(EwalletUserOptional.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("chưa tạo tài khoản Ewallet");
+			}
+			if(!order.getPaymentStatus().equals("paid")) {
+				ordersRepository.save(order);
+
+			    return ResponseEntity.ok(order.getShippingStatus());
+			}
+			EWallets EwalletUser = EwalletUserOptional.get();
+			double total = order.getFinalTotal();
+			EwalletUser.setBalance(EwalletUser.getBalance()+total);
+			EWalletsrepository.save(EwalletUser);
+			
+		}
 	    ordersRepository.save(order);
 
-	    return ResponseEntity.ok(order);
+	    return ResponseEntity.ok(order.getShippingStatus());
 	}
 
 	@PostMapping("/cancel/{orderCode}")

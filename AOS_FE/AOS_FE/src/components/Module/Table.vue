@@ -82,6 +82,14 @@
                 >
                   <i class="bi bi-pencil-square"></i>
                 </button>
+                <button v-if="item.shippingStatus != null"
+                  type="button"
+                  @click="openPopup(item.id)"
+                  class="btn btn-primary btn-sm action-btn"
+                  title="Chỉnh sửa trạng thái"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
                 <button
                   type="button"
                   @click="deleteById(item.id)"
@@ -103,6 +111,43 @@
       v-model:currentSize="currentSize"
     >
     </PageNavigative>
+    <div v-if="showPopup" class="popup">
+  <div class="popup-content">
+    <span class="close" @click="closePopup">&times;</span>
+    <h5>Cập nhật trạng thái đơn hàng</h5>
+
+    <select v-model="selectedStatus" class="form-select">
+      <option value="pending">pending</option>
+      <option value="ready_to_pick">ready_to_pick</option>
+      <option value="picking">picking</option>
+      <option value="cancel">cancel</option>
+      <option value="money_collect_picking">money_collect_picking</option>
+      <option value="picked">picked</option>
+      <option value="storing">storing</option>
+      <option value="transporting">transporting</option>
+      <option value="sorting">sorting</option>
+      <option value="delivering">delivering</option>
+      <option value="money_collect_delivering">money_collect_delivering</option>
+      <option value="delivered">delivered</option>
+      <option value="delivery_fail">delivery_fail</option>
+      <option value="waiting_to_return">waiting_to_return</option>
+      <option value="return">return</option>
+      <option value="return_transporting">return_transporting</option>
+      <option value="return_storing">return_storing</option>
+      <option value="returning">returning</option>
+      <option value="return_fail">return_fail</option>
+      <option value="returned">returned</option>
+      <option value="exception">exception</option>
+      <option value="damage">damage</option>
+      <option value="lost">lost</option>
+    </select>
+
+    <div class="mt-3 d-flex justify-content-between">
+      <button class="btn btn-secondary" @click="closePopup">Hủy</button>
+      <button class="btn btn-primary" @click="submitStatus">Gửi</button>
+    </div>
+  </div>
+</div>
   </div>
 </template>
 <style scoped>
@@ -457,6 +502,34 @@
   background-color: #b9f2ff !important; /* Kim Cương */
   color: #000 !important;
 }
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
 </style>
 <script setup>
 // Hàm rút gọn HTML, giữ nguyên thẻ, cắt text và thêm ... nếu quá dài
@@ -515,6 +588,60 @@ const userRankRules = [
     description: "Trên 50,000 điểm",
   },
 ];
+//funtion update shipping status
+const showPopup = ref(false);
+const selectedStatus = ref('');
+const selectedOrderId = ref(null);
+
+
+function openPopup(orderId) {
+  selectedOrderId.value = orderId;
+  showPopup.value = true;
+}
+
+function closePopup() {
+  showPopup.value = false;
+  selectedStatus.value = '';
+  selectedOrderId.value = null;
+}
+
+async function submitStatus() {
+  if (!selectedOrderId.value || !selectedStatus.value) {
+    notification.warning({
+      message: 'Thiếu thông tin',
+      description: 'Vui lòng chọn trạng thái đơn hàng.',
+      placement: 'topRight',
+      duration: 3
+    });
+    return;
+  }
+
+  try {
+    const response = await api.put(`/admin/${selectedOrderId.value}/updateStatus`, 
+       { status: selectedStatus.value }
+
+    );
+
+    const resultText =  response.data;
+
+      notification.success({
+        message: 'Thành công',
+        description: `✅ Trạng thái mới: ${resultText}`,
+        placement: 'topRight',
+        duration: 3
+      });
+      closePopup();
+    
+  } catch (err) {
+    console.error('Lỗi hệ thống:', err);
+    notification.error({
+      message: 'Lỗi hệ thống',
+      description: 'Đã xảy ra lỗi khi gửi yêu cầu đến máy chủ.',
+      placement: 'topRight',
+      duration: 4
+    });
+  }
+}
 
 // Function to calculate user rank based on loyalty points
 const calculateUserRank = (loyaltyPoints) => {
@@ -839,7 +966,7 @@ function formatCell(key, value, item = null) {
     return `<a href=https://5sao.ghn.dev/order/edit/${value} target="_blank">${value}</a>`;
   } else if (value === null || value === undefined) {
     return "N/A";
-  }
+  } 
 
   return value;
 }
