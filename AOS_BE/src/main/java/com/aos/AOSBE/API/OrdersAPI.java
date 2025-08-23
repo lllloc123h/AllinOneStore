@@ -325,13 +325,13 @@ public class OrdersAPI {
 					EWalletsservice.eWalletsSave(adminWallet);
 				}
 
-				order.setShippingStatus("Cancel");
+				order.setShippingStatus("cancel");
 				ordersService.ordersSave(order);
 				return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn và hoàn tiền thành công"));
 			}
 
 			// ✅ Nếu chưa thanh toán thì chỉ cập nhật trạng thái
-			order.setShippingStatus("Cancel");
+			order.setShippingStatus("cancel");
 			ordersService.ordersSave(order);
 			return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn thành công"));
 
