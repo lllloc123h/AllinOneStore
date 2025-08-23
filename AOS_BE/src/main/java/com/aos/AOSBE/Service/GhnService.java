@@ -212,4 +212,32 @@ public class GhnService {
         // Gọi phiên bản đầy đủ với giá trị mặc định
         return createGhnOrderCodeFromOrder(order, "KHONGCHOXEMHANG");
 }
+
+    @Transactional
+    public boolean cancelGhnOrder(String orderCode) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Token", ghnToken);
+        headers.set("ShopId", ghnShopId);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("order_codes", List.of(orderCode));
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        String url = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/cancel";
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+
+        System.out.println("Cancel GHN Response: " + response.getBody());
+
+        if (response.getBody() != null && ((Integer) response.getBody().get("code")) == 200) {
+            return true; // hủy thành công
+        } else {
+            throw new RuntimeException("GHN order cancel failed: " + response.getBody());
+        }
+    }
+
 }

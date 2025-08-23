@@ -98,61 +98,68 @@
           <span class="count-badge">{{ order.sanPham.length }} sản phẩm</span>
         </div>
       </div>
-      <div class="products-grid">
-        <div v-for="(sp, i) in order.sanPham" :key="i" class="product-row">
-          <div class="product-image-container">
-            <img :src="sp.anh" :alt="sp.ten" class="product-image" />
-            <div class="quantity-badge">{{ sp.soLuong }}x</div>
+<div class="products-grid">
+  <div v-for="(group, index) in groupedCombos" :key="index" class="combo-box">
+    <div class="combo-header" v-if="group.comboGroupId">
+      🎁 Combo: {{ group.promotionName || "Combo đặc biệt" }}
+    </div>
+    <div class="combo-header" v-else>
+      🛍️ Sản phẩm đơn
+    </div>
+
+    <div v-for="(sp, i) in group.items" :key="i" class="product-row">
+      <div class="product-image-container">
+        <img :src="sp.anh" :alt="sp.ten" class="product-image" />
+        <div class="quantity-badge">{{ sp.soLuong }}x</div>
+      </div>
+      <div class="product-content">
+        <div class="product-header">
+          <h4 class="product-title">{{ sp.ten }}</h4>
+          <div class="product-status">
+            <i class="bi bi-check-circle-fill"></i>
           </div>
-          <div class="product-content">
-            <div class="product-header">
-              <h4 class="product-title">{{ sp.ten }}</h4>
-              <div class="product-status">
-                <i class="bi bi-check-circle-fill"></i>
-              </div>
-            </div>
-            <div class="product-pricing">
-              <div class="price-row">
-                <span class="price-label">
-                  <i class="bi bi-tag me-1"></i>
-                  Mã sản phẩm
-                </span>
-                <span class="price-value unit-price">{{ sp.sku }}</span>
-              </div>
-              <div class="price-row">
-                <span class="price-label">
-                  <i class="bi bi-tag me-1"></i>
-                  Đơn giá
-                </span>
-                <span class="price-value unit-price">{{ formatMoney(sp.gia) }}</span>
-              </div>
-              <div class="price-row">
-                <span class="price-label">
-                  <i class="bi bi-x-lg me-1"></i>
-                  Số lượng
-                </span>
-                <span class="price-value quantity">{{ sp.soLuong }}</span>
-              </div>
-              <div class="price-row total-row">
-                <span class="price-label">
-                  <i class="bi bi-calculator me-1"></i>
-                  Thành tiền
-                </span>
-                <span class="price-value total-price">{{
-                  formatMoney(sp.gia * sp.soLuong)
-                }}</span>
-              </div>
-              <div class="price-row">
-                <span class="price-label">
-                  <i class="bi bi-tag me-1"></i>
-                  Khuyến mãi
-                </span>
-                <span class="price-value unit-price">{{ sp.promotionName }}</span>
-              </div>
-            </div>
+        </div>
+        <div class="product-pricing">
+          <div class="price-row">
+            <span class="price-label">
+              <i class="bi bi-tag me-1"></i>
+              Mã sản phẩm
+            </span>
+            <span class="price-value unit-price">{{ sp.sku }}</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">
+              <i class="bi bi-tag me-1"></i>
+              Đơn giá
+            </span>
+            <span class="price-value unit-price">{{ formatMoney(sp.gia) }}</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">
+              <i class="bi bi-x-lg me-1"></i>
+              Số lượng
+            </span>
+            <span class="price-value quantity">{{ sp.soLuong }}</span>
+          </div>
+          <div class="price-row total-row">
+            <span class="price-label">
+              <i class="bi bi-calculator me-1"></i>
+              Thành tiền
+            </span>
+            <span class="price-value total-price">{{ formatMoney(sp.gia * sp.soLuong) }}</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">
+              <i class="bi bi-tag me-1"></i>
+              Khuyến mãi
+            </span>
+            <span class="price-value unit-price">{{ sp.promotionName }}</span>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       <!-- Order Summary -->
       <div class="order-summary">
@@ -189,7 +196,7 @@
               ></i>
             </span>
             <span class="summary-value">
-              {{ "-" + formatMoney(order.thanhToan.giamgia || 0) }}
+              {{ "-"+formatMoney(order.thanhToan.giamgia || 0) }}
             </span>
           </div>
           <div class="summary-item">
@@ -197,7 +204,9 @@
               <i class="bi bi-box me-1"></i>
               Phí vận chuyển
             </span>
-            <span class="summary-value">{{ formatMoney(order.vanChuyen.ship) }}</span>
+            <span class="summary-value"
+              >{{ formatMoney(order.vanChuyen.ship) }}</span
+            >
           </div>
           <div class="summary-item">
             <span class="summary-label">
@@ -210,7 +219,7 @@
               ></i>
             </span>
             <span class="summary-value">
-              {{ "-" + formatMoney(order.vanChuyen.discounShip || 0) }}
+              {{ "-"+formatMoney(order.vanChuyen.discounShip || 0) }}
             </span>
           </div>
           <div class="summary-item total">
@@ -227,7 +236,9 @@
               <i class="bi bi-box me-1"></i>
               Phương thức thanh toán
             </span>
-            <span class="summary-value">{{ order.thanhToan.phuongThuc }}</span>
+            <span class="summary-value"
+              >{{ order.thanhToan.phuongThuc }}</span
+            >
           </div>
           <div class="summary-item">
             <span class="summary-label">
@@ -235,10 +246,10 @@
               Trạng thái thanh toán
             </span>
             <span
-              class="detail-value"
-              :class="getPaymentStatusClass(order.thanhToan.trangThai)"
-            >
-              {{ order.thanhToan.trangThai }}
+                class="detail-value"
+                :class="getPaymentStatusClass(order.thanhToan.trangThai)"
+              >
+                {{ order.thanhToan.trangThai }}
             </span>
           </div>
         </div>
@@ -383,8 +394,8 @@
       <div class="action-buttons">
         <button
           class="btn btn-cancel"
-          @click="cancelOrder(order.id)"
-          v-if="['pending', 'ready_to_pick'].includes(order.trangThai)"
+          @click="cancelOrder(order)"
+          v-if="['pending', 'ready_to_pick', 'picking'].includes(order.trangThai)"
         >
           <i class="bi bi-x-circle me-2"></i>
           Hủy đơn hàng
@@ -510,6 +521,8 @@ const loadOrder = async () => {
       ghiChu: orderData.order.note,
       tongTien: orderData.order.finalTotal,
       giamGia: orderData.order.discountValue,
+      ghnOrderCode: orderData.order.orderCode || null,
+
 
       khachHang: {
         ten: tenKH || "N/A",
@@ -523,9 +536,7 @@ const loadOrder = async () => {
         couponship: orderData.order.freeshipCouponCode,
         discounShip: orderData.order.actualShippingFee,
         ship: orderData.order.estimatedShippingFee || 0,
-        giamPhiShip:
-          (orderData.order.estimatedShippingFee || 0) -
-          (orderData.order.actualShippingFee || 0),
+        giamPhiShip: (orderData.order.estimatedShippingFee || 0) - (orderData.order.actualShippingFee || 0),
       },
       thanhToan: {
         phuongThuc: orderData.order.paymentMethodName || "N/A",
@@ -536,10 +547,11 @@ const loadOrder = async () => {
       sanPham: orderData.order.items?.map((i) => ({
         anh: i.main_image_url || "no-image.png",
         ten: i.name,
-        soLuong: i.quantity,
+        soLuong: i.quantity,    
         gia: i.sellingPrice,
         sku: i.product?.sku,
         promotionName: i.promotionName || null,
+        comboGroupId: i.comboGroupId || null,
       })),
       lichSu: [
         {
@@ -585,26 +597,42 @@ const loadOrder = async () => {
     console.error("Lỗi khi lấy chi tiết đơn hàng", error);
   }
 };
-const cancelOrder = async () => {
+
+const groupedCombos = computed(() => {
+  if (!order.value?.sanPham) return [];
+
+  const groups = {};
+
+  order.value.sanPham.forEach((sp) => {
+    const key = sp.comboGroupId || `single-${sp.sku}`;
+    if (!groups[key]) {
+      groups[key] = {
+        comboGroupId: sp.comboGroupId,
+        promotionName: sp.promotionName,
+        items: [],
+      };
+    }
+    groups[key].items.push(sp);
+  });
+
+  return Object.values(groups);
+});
+
+const cancelOrder = async (order) => {
   if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) return;
 
   try {
-    if (
-      order.shippingStatus === "Chờ xác nhận" ||
-      order.shippingStatus === "Đang xử lý"
-    ) {
-      // Gọi API hủy nội bộ
-      const res = await api.put(`/Users/Orders/cancelRefundOrder/${order.id}`);
+    if (order.trangThai === "pending") {
+      const res = await api.put(`/Users/Orders/cancelRefundOrder/${order.maDon}`);
       alert(res.data.MESSAGE);
-    } else if (order.shippingStatus === "Chờ lấy hàng") {
-      // Gọi API hủy GHN
-      const res = await api.put(`/orders/${order.id}/cancel-ghn`);
-      alert("Đã hủy đơn GHN thành công");
+    } else if (["ready_to_pick", "picking"].includes(order.trangThai)) {
+      const res = await api.post(`/cancel/${order.ghnOrderCode}`);
+      alert(res.data);
     } else {
       alert("Đơn hàng đã được xử lý, không thể hủy");
     }
 
-    await loadOrder(); // Cập nhật lại giao diện
+    await loadOrder(); // Cập nhật lại danh sách đơn hàng
   } catch (error) {
     alert("Lỗi khi hủy đơn: " + error.message);
   }
