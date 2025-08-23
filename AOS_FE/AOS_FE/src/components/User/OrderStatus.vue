@@ -219,7 +219,7 @@
               ></i>
             </span>
             <span class="summary-value">
-              {{ "-"+formatMoney(order.vanChuyen.discounShip || 0) }}
+              {{ "-"+formatMoney(order.vanChuyen.giamPhiShip || 0) }}
             </span>
           </div>
           <div class="summary-item total">
