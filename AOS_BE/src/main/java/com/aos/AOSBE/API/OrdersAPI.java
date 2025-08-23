@@ -298,48 +298,45 @@ public class OrdersAPI {
 	@PutMapping("/Users/Orders/cancelRefundOrder/{id}")
 	public ResponseEntity<?> cancelRefundOrder(@PathVariable int id) {
 		try {
-			Orders OrderCancel = ordersService.ordersFindById(id).orElse(null);
-			if (OrderCancel != null) {
-				if (OrderCancel.getShippingStatus().equals("Đang xử lý")
-						|| OrderCancel.getShippingStatus().equals("Chờ lấy hàng")
-						|| OrderCancel.getShippingStatus().equals("Chờ xác nhận")) {
-					if (OrderCancel.getPaymentStatus().equals("Đã thanh toán")) {
-						Accounts ac = OrderCancel.getAccounts();
-						EWallets ew = EWalletsservice.eWalletsFindByAccountEmail(ac.getEmail()).orElse(null);
-						if (ew != null) {
-							ew.setBalance(ew.getBalance() + OrderCancel.getFinalTotal());
-							EWalletsservice.eWalletsSave(ew);
-							Accounts admin = accountService.accountsFindById(1).orElse(null);
-							if (admin != null) {
-								EWallets ewadmin = EWalletsservice.eWalletsFindByAccountEmail(admin.getEmail())
-										.orElse(null);
-								ewadmin.setBalance(ewadmin.getBalance() - OrderCancel.getFinalTotal());
-								EWalletsservice.eWalletsSave(ewadmin);
-								OrderCancel.setShippingStatus("Cancel");
-								ordersService.ordersSave(OrderCancel);
-							} else {
-								return ResponseEntity.ok(Map.of("MESSAGE", "admin không tồn tại"));
-							}
-							return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn hoàn tiền thành công"));
-						} else {
-							return ResponseEntity.ok(
-									Map.of("MESSAGE", "người dùng chưa có tài khoản Ewallet, vui lòng tạo tài khoản"));
-						}
-
-					} else {
-						OrderCancel.setShippingStatus("Cancel");
-						ordersService.ordersSave(OrderCancel);
-						return ResponseEntity.ok(Map.of("MESSAGE", "hủy thành công"));
-					}
-				} else {
-					return ResponseEntity.ok()
-							.body(Map.of("MESSAGE", "Đơn hàng đã được vân chuyển, không thể hủy đơn"));
-				}
-			} else {
-				return ResponseEntity.ok().body(Map.of("MESSAGE", "không tìm thấy đơn hàng "));
+			Orders order = ordersService.ordersFindById(id).orElse(null);
+			if (order == null) {
+				return ResponseEntity.status(404).body(Map.of("MESSAGE", "Không tìm thấy đơn hàng"));
 			}
+
+			// ✅ Nếu đã thanh toán thì hoàn tiền
+			if ("Đã thanh toán".equals(order.getPaymentStatus())) {
+				Accounts user = order.getAccounts();
+				EWallets userWallet = EWalletsservice.eWalletsFindByAccountEmail(user.getEmail()).orElse(null);
+				if (userWallet == null) {
+					return ResponseEntity.badRequest().body(Map.of("MESSAGE", "Người dùng chưa có tài khoản Ewallet"));
+				}
+
+				userWallet.setBalance(userWallet.getBalance() + order.getFinalTotal());
+				EWalletsservice.eWalletsSave(userWallet);
+
+				Accounts admin = accountService.accountsFindById(1).orElse(null);
+				if (admin == null) {
+					return ResponseEntity.status(500).body(Map.of("MESSAGE", "Admin không tồn tại"));
+				}
+
+				EWallets adminWallet = EWalletsservice.eWalletsFindByAccountEmail(admin.getEmail()).orElse(null);
+				if (adminWallet != null) {
+					adminWallet.setBalance(adminWallet.getBalance() - order.getFinalTotal());
+					EWalletsservice.eWalletsSave(adminWallet);
+				}
+
+				order.setShippingStatus("Cancel");
+				ordersService.ordersSave(order);
+				return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn và hoàn tiền thành công"));
+			}
+
+			// ✅ Nếu chưa thanh toán thì chỉ cập nhật trạng thái
+			order.setShippingStatus("Cancel");
+			ordersService.ordersSave(order);
+			return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn thành công"));
+
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(Map.of("MESSAGE", "ĐÃ CÓ LỖI XẢY RA " + e.getMessage()));
+			return ResponseEntity.status(500).body(Map.of("MESSAGE", "Đã có lỗi xảy ra: " + e.getMessage()));
 		}
 	}
 
@@ -467,4 +464,17 @@ public class OrdersAPI {
         return ResponseEntity.ok(orderDetail.getLog());
     }
 
+	@PostMapping("/cancel/{orderCode}")
+	public ResponseEntity<?> cancelOrder(@PathVariable String orderCode) {
+		try {
+			boolean success = ghnService.cancelGhnOrder(orderCode);
+			if (success) {
+				return ResponseEntity.ok("Đã hủy đơn thành công: " + orderCode);
+			} else {
+				return ResponseEntity.status(500).body("Không thể hủy đơn: " + orderCode);
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Lỗi khi hủy đơn: " + e.getMessage());
+		}
+	}
 }
