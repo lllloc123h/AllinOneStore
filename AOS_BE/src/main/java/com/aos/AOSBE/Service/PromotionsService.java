@@ -63,4 +63,5 @@ public class PromotionsService {
 		return promotionsRepository.findActivePromotionsByBaseProductId(baseId);
 	}
 
+
 }

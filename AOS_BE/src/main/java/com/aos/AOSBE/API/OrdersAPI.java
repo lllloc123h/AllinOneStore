@@ -92,6 +92,8 @@ public class OrdersAPI {
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
     @Autowired
     private CustomsService customsService;
+@Autowired
+private OrderSummaryMapper orderSummaryMapper;
     @Autowired
     private EWalletsRepository EWalletsrepository;
 	@GetMapping("/admin/Orders")
@@ -214,13 +216,11 @@ public class OrdersAPI {
 
 	            if (promo != null) {
 	                boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
-
 	                if (!isComboProcessed) {
 	                    // Nếu có comboQty thì dùng comboQty, ngược lại dùng số lượng sản phẩm
 	                    int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
 	                            ? orderItem.getComboQty()
 	                            : orderItem.getQty();
-
 	                    if (promo.getQty() >= qtyToReduce) {
 	                        promo.setQty(promo.getQty() - qtyToReduce);
 	                        promo.setUpdatedAt(LocalDateTime.now());
@@ -281,7 +281,7 @@ public class OrdersAPI {
 			Orders order = orderOpt.get();
 
 			// ✅ Dùng mapper mới cho Order + Items
-			OrderSummaryDTOS orderDTO = OrderSummaryMapper.toDTO(order);
+			OrderSummaryDTOS orderDTO =  orderSummaryMapper.toDTO(order);
 
 			// ✔️ Lấy account
 			Accounts account = order.getAccounts();
@@ -375,7 +375,7 @@ public class OrdersAPI {
 				return ResponseEntity.badRequest().body(Map.of("message", "Không tìm thấy người dùng"));
 			}
 			List<OrderSummaryDTOS> orders = ordersService.ordersFindByAccount(user.getId()).stream()
-                .map(OrderSummaryMapper::toDTO)
+                .map(orderSummaryMapper::toDTO)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(orders);
@@ -486,11 +486,11 @@ public class OrdersAPI {
 		    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 		                         .body("Trạng thái không hợp lệ");
 		}
-		
+
 		Orders order = optionalOrders.get();
 	    order.setShippingStatus(newStatus);
 	    if(StatusReturnMoney.contains(newStatus)) {
-			
+
 			Optional<EWallets> EwalletUserOptional = EWalletsservice.eWalletsFindByAccountEmail(order.getAccounts().getEmail());
 			if(EwalletUserOptional.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("chưa tạo tài khoản Ewallet");
@@ -504,7 +504,7 @@ public class OrdersAPI {
 			double total = order.getFinalTotal();
 			EwalletUser.setBalance(EwalletUser.getBalance()+total);
 			EWalletsrepository.save(EwalletUser);
-			
+
 		}
 	    ordersRepository.save(order);
 

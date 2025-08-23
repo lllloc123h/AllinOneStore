@@ -60,4 +60,6 @@ public class Promotions {
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+	@Column(name ="turn_buy")
+	private int turnBuy;
 }

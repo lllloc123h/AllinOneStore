@@ -98,68 +98,68 @@
           <span class="count-badge">{{ order.sanPham.length }} sản phẩm</span>
         </div>
       </div>
-<div class="products-grid">
-  <div v-for="(group, index) in groupedCombos" :key="index" class="combo-box">
-    <div class="combo-header" v-if="group.comboGroupId">
-      🎁 Combo: {{ group.promotionName || "Combo đặc biệt" }}
-    </div>
-    <div class="combo-header" v-else>
-      🛍️ Sản phẩm đơn
-    </div>
+      <div class="products-grid">
+        <div v-for="(group, index) in groupedCombos" :key="index" class="combo-box">
+          <div class="combo-header" v-if="group.comboGroupId">
+            🎁 Combo: {{ group.promotionName || "Combo đặc biệt" }}
+          </div>
+          <div class="combo-header" v-else>🛍️ Sản phẩm đơn</div>
 
-    <div v-for="(sp, i) in group.items" :key="i" class="product-row">
-      <div class="product-image-container">
-        <img :src="sp.anh" :alt="sp.ten" class="product-image" />
-        <div class="quantity-badge">{{ sp.soLuong }}x</div>
-      </div>
-      <div class="product-content">
-        <div class="product-header">
-          <h4 class="product-title">{{ sp.ten }}</h4>
-          <div class="product-status">
-            <i class="bi bi-check-circle-fill"></i>
+          <div v-for="(sp, i) in group.items" :key="i" class="product-row">
+            <div class="product-image-container">
+              <img :src="sp.anh" :alt="sp.ten" class="product-image" />
+              <div class="quantity-badge">{{ sp.soLuong }}x</div>
+            </div>
+            <div class="product-content">
+              <div class="product-header">
+                <h4 class="product-title">{{ sp.ten }}</h4>
+                <div class="product-status">
+                  <i class="bi bi-check-circle-fill"></i>
+                </div>
+              </div>
+              <div class="product-pricing">
+                <div class="price-row">
+                  <span class="price-label">
+                    <i class="bi bi-tag me-1"></i>
+                    Mã sản phẩm
+                  </span>
+                  <span class="price-value unit-price">{{ sp.sku }}</span>
+                </div>
+                <div class="price-row">
+                  <span class="price-label">
+                    <i class="bi bi-tag me-1"></i>
+                    Đơn giá
+                  </span>
+                  <span class="price-value unit-price">{{ formatMoney(sp.gia) }}</span>
+                </div>
+                <div class="price-row">
+                  <span class="price-label">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Số lượng
+                  </span>
+                  <span class="price-value quantity">{{ sp.soLuong }}</span>
+                </div>
+                <div class="price-row total-row">
+                  <span class="price-label">
+                    <i class="bi bi-calculator me-1"></i>
+                    Thành tiền
+                  </span>
+                  <span class="price-value total-price">{{
+                    formatMoney(sp.gia * sp.soLuong)
+                  }}</span>
+                </div>
+                <div class="price-row">
+                  <span class="price-label">
+                    <i class="bi bi-tag me-1"></i>
+                    Khuyến mãi
+                  </span>
+                  <span class="price-value unit-price">{{ sp.promotionName }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="product-pricing">
-          <div class="price-row">
-            <span class="price-label">
-              <i class="bi bi-tag me-1"></i>
-              Mã sản phẩm
-            </span>
-            <span class="price-value unit-price">{{ sp.sku }}</span>
-          </div>
-          <div class="price-row">
-            <span class="price-label">
-              <i class="bi bi-tag me-1"></i>
-              Đơn giá
-            </span>
-            <span class="price-value unit-price">{{ formatMoney(sp.gia) }}</span>
-          </div>
-          <div class="price-row">
-            <span class="price-label">
-              <i class="bi bi-x-lg me-1"></i>
-              Số lượng
-            </span>
-            <span class="price-value quantity">{{ sp.soLuong }}</span>
-          </div>
-          <div class="price-row total-row">
-            <span class="price-label">
-              <i class="bi bi-calculator me-1"></i>
-              Thành tiền
-            </span>
-            <span class="price-value total-price">{{ formatMoney(sp.gia * sp.soLuong) }}</span>
-          </div>
-          <div class="price-row">
-            <span class="price-label">
-              <i class="bi bi-tag me-1"></i>
-              Khuyến mãi
-            </span>
-            <span class="price-value unit-price">{{ sp.promotionName }}</span>
-          </div>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
 
       <!-- Order Summary -->
       <div class="order-summary">
@@ -196,7 +196,7 @@
               ></i>
             </span>
             <span class="summary-value">
-              {{ "-"+formatMoney(order.thanhToan.giamgia || 0) }}
+              {{ "-" + formatMoney(order.thanhToan.giamgia || 0) }}
             </span>
           </div>
           <div class="summary-item">
@@ -204,9 +204,7 @@
               <i class="bi bi-box me-1"></i>
               Phí vận chuyển
             </span>
-            <span class="summary-value"
-              >{{ formatMoney(order.vanChuyen.ship) }}</span
-            >
+            <span class="summary-value">{{ formatMoney(order.vanChuyen.ship) }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">
@@ -236,9 +234,7 @@
               <i class="bi bi-box me-1"></i>
               Phương thức thanh toán
             </span>
-            <span class="summary-value"
-              >{{ order.thanhToan.phuongThuc }}</span
-            >
+            <span class="summary-value">{{ order.thanhToan.phuongThuc }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">
@@ -246,10 +242,10 @@
               Trạng thái thanh toán
             </span>
             <span
-                class="detail-value"
-                :class="getPaymentStatusClass(order.thanhToan.trangThai)"
-              >
-                {{ order.thanhToan.trangThai }}
+              class="detail-value"
+              :class="getPaymentStatusClass(order.thanhToan.trangThai)"
+            >
+              {{ order.thanhToan.trangThai }}
             </span>
           </div>
         </div>
@@ -371,6 +367,27 @@
         <div class="note-text">{{ order.ghiChu }}</div>
       </div>
     </div>
+    <div v-if="order.customs.length > 0" class="notes-card">
+      <div class="card-header">
+        <i class="bi bi-brush me-2"></i>
+        <h3>Phác thảo đã gửi</h3>
+      </div>
+      <div class="draft-content">
+        <!-- filepath: d:\AllInStore_Customize_T-shirt\AllinOneStore\AOS_FE\AOS_FE\src\components\User\OrderStatus.vue -->
+        <div class="draft-list">
+          <div class="draft-custom" v-for="item in order.customs" :key="item.id">
+            <div class="draft-name-above">
+              <i class="bi bi-brush me-1"></i>
+              {{ item.designName }}
+            </div>
+            <div class="draft-img-container">
+              <img :src="item.imageUrl" :alt="item.designName" class="draft-img" />
+              <span class="draft-qty-badge">{{ item.qty }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- History Section -->
     <div class="history-card">
@@ -399,18 +416,6 @@
         >
           <i class="bi bi-x-circle me-2"></i>
           Hủy đơn hàng
-        </button>
-        <button class="btn btn-review">
-          <i class="bi bi-star me-2"></i>
-          Đánh giá sản phẩm
-        </button>
-        <button class="btn btn-reorder">
-          <i class="bi bi-arrow-repeat me-2"></i>
-          Mua lại
-        </button>
-        <button class="btn btn-print">
-          <i class="bi bi-printer me-2"></i>
-          In hóa đơn
         </button>
         <button class="btn btn-sync" @click="syncStatus">
           <i class="bi bi-arrow-clockwise me-2"></i>
@@ -523,6 +528,7 @@ const loadOrder = async () => {
       giamGia: orderData.order.discountValue,
       ghnOrderCode: orderData.order.orderCode || null,
 
+      customs: orderData.order.customs || null,
 
       khachHang: {
         ten: tenKH || "N/A",
@@ -536,7 +542,9 @@ const loadOrder = async () => {
         couponship: orderData.order.freeshipCouponCode,
         discounShip: orderData.order.actualShippingFee,
         ship: orderData.order.estimatedShippingFee || 0,
-        giamPhiShip: (orderData.order.estimatedShippingFee || 0) - (orderData.order.actualShippingFee || 0),
+        giamPhiShip:
+          (orderData.order.estimatedShippingFee || 0) -
+          (orderData.order.actualShippingFee || 0),
       },
       thanhToan: {
         phuongThuc: orderData.order.paymentMethodName || "N/A",
@@ -547,7 +555,7 @@ const loadOrder = async () => {
       sanPham: orderData.order.items?.map((i) => ({
         anh: i.main_image_url || "no-image.png",
         ten: i.name,
-        soLuong: i.quantity,    
+        soLuong: i.quantity,
         gia: i.sellingPrice,
         sku: i.product?.sku,
         promotionName: i.promotionName || null,
@@ -1331,6 +1339,14 @@ const statusDisplayMap = {
   border-radius: 15px;
   padding: 2rem;
 }
+.draft-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  padding: 2rem;
+}
 
 .note-icon {
   width: 50px;
@@ -1344,7 +1360,81 @@ const statusDisplayMap = {
   color: white;
   flex-shrink: 0;
 }
+.draft-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #eef3f5 0%, #fee140 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  flex-shrink: 0;
+}
+.draft-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 8px;
+}
 
+.draft-custom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.08);
+  padding: 16px 12px;
+  min-width: 200px;
+  max-width: 220px;
+}
+.draft-img-container {
+  position: relative;
+  width: 200px;
+  height: auto; /* 4:5 ratio */
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8f9fa;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.draft-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+  display: block;
+}
+
+.draft-name-above {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.draft-qty-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.18);
+  z-index: 3;
+}
 .note-text {
   flex: 1;
   color: #2c3e50;

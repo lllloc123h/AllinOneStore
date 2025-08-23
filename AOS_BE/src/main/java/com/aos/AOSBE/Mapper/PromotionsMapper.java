@@ -17,7 +17,7 @@ public class PromotionsMapper {
 				entity.getDiscountValue() != null ? entity.getDiscountValue() : 0.0,
 				entity.getComboPrice() != null ? entity.getComboPrice() : 0.0, entity.getQty(),
 				entity.getStartAt(), entity.getEndAt(), entity.isActive(), entity.getCreatedAt(),
-				entity.getUpdatedAt());
+				entity.getUpdatedAt(), entity.getTurnBuy());
 	}
 
 	public Promotions mapperToObject(PromotionsDTOS entity) {
@@ -33,7 +33,8 @@ public class PromotionsMapper {
 				entity.getEndAt(),
 				entity.isActive(),
 				entity.getCreatedAt(),
-				entity.getUpdatedAt());
+				entity.getUpdatedAt(),
+				entity.getTurnBuy());
 	}
 
 }

@@ -260,6 +260,25 @@
               </div>
             </div>
           </div>
+          <!-- HTML: Hiển thị danh sách thiết kế -->
+          <div v-if="order.customs && order.customs.length" class="designs-section">
+            <h4 class="section-title">
+              <i class="bi bi-palette me-2"></i>Thiết kế đã chọn
+            </h4>
+            <div class="design-list">
+              <div v-for="item in order.customs" :key="item.id" class="design-card">
+                <div class="design-img">
+                  <img :src="item?.imageUrl" :alt="item?.designName" />
+                </div>
+                <div class="design-info">
+                  <div class="design-name">{{ item?.designName }}</div>
+                  <div class="design-qty">
+                    Số lượng: <strong>{{ item?.qty }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- Order Actions -->
           <div class="order-actions">
             <button class="btn-detail" @click="goToOrder(order.id)">
@@ -294,10 +313,9 @@ const loadOrders = async () => {
   loading.value = true;
   try {
     const res = await api.get("/user/Orders");
-    console.log("Orders response:", res.data);
 
     const data = Array.isArray(res.data) ? res.data : res.data.content || [];
-
+    console.log("Orders response:", data);
     const result = [];
 
     for (const order of data) {
@@ -348,6 +366,7 @@ const loadOrders = async () => {
 
         sanPham.push(sp);
       }
+      console.log("customs: ", order.customs);
 
       result.push({
         id: order.id,
@@ -359,6 +378,7 @@ const loadOrders = async () => {
         maVanDon: order.orderCode || "Đang cập nhật",
         tongTien: order.finalTotal,
         sanPham: sanPham,
+        customs: order.customs || [],
       });
     }
 
@@ -450,6 +470,9 @@ const filteredOrders = computed(() => {
     return orders.value.filter((o) => o.trangThai === status);
   }
 });
+
+console.log("Filtered orders:", filteredOrders);
+
 async function pay(orderID) {
   try {
     console.log("Order ID:", orderID);
@@ -598,6 +621,54 @@ const showVideoUpload = ref(false);
 </script>
 
 <style scoped>
+/* CSS: Đặt vào cuối file hoặc trong <style scoped> */
+.design-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.design-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  min-width: 260px;
+  max-width: 320px;
+  gap: 18px;
+  transition: box-shadow 0.2s;
+}
+
+.design-img img {
+  width: 80px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #f1f1f1;
+  background: #f8f9fa;
+}
+
+.design-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.design-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 2px;
+}
+
+.design-qty {
+  font-size: 1rem;
+  color: #667eea;
+}
 /* Page Header */
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

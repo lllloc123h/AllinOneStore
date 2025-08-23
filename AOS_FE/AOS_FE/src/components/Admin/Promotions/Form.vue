@@ -75,7 +75,7 @@
             </option>
           </select>
           <small v-if="props.action === 'update'" class="form-text text-muted">
-            💡 Không thể thay đổi loại khuyến mãi khi cập nhật
+            Không thể thay đổi loại khuyến mãi khi cập nhật
           </small>
         </div>
 
@@ -87,7 +87,7 @@
             id="discountValue"
             v-model="formData.discountValue"
             type="number"
-            :disabled="formData.type === 'COMBO'"
+            :disabled="formData.type === 'COMBO' || formData.turnBuy > 0"
             :max="minimumVariantPrice || undefined"
             class="form-control"
             :class="{ 'is-invalid': !discountValidation.isValid }"
@@ -118,7 +118,7 @@
             id="comboPrice"
             v-model="formData.comboPrice"
             type="number"
-            :disabled="formData.type === 'DISCOUNT'"
+            :disabled="formData.type === 'DISCOUNT' || formData.turnBuy > 0"
             class="form-control"
             placeholder="Nhập giá combo"
           />
@@ -149,6 +149,17 @@
             placeholder="Nhập số lượng sử dụng"
           />
         </div>
+        <div class="mb-3">
+          <label for="usageLimit" class="form-label text-capitalize">Lượt mua</label>
+          <input
+            id="usageLimit"
+            v-model="formData.turnBuy"
+            type="number"
+            class="form-control"
+            placeholder="Nhập số lượt mua"
+            disabled
+          />
+        </div>
 
         <div class="mb-3">
           <label for="startAt" class="form-label text-capitalize">Ngày bắt đầu</label>
@@ -158,6 +169,7 @@
             type="datetime-local"
             class="form-control"
             placeholder="Chọn ngày bắt đầu"
+            :disabled="formData.turnBuy > 0"
           />
         </div>
 
@@ -169,6 +181,7 @@
             type="datetime-local"
             class="form-control"
             placeholder="Chọn ngày kết thúc"
+            :disabled="formData.turnBuy > 0"
           />
           <div v-if="formData.startAt && formData.endAt" class="form-text">
             <small
@@ -201,379 +214,172 @@
           />
           <label class="form-check-label" for="isActiveFalse">Không hoạt động</label>
         </div>
+        <div
+          class="container-fluid row"
+          :class="{ 'no-pointer-events': formData.turnBuy > 0 }"
+        >
+          <!-- Base Product Search -->
+          <div class="mb-3">
+            <label class="form-label">Tìm kiếm sản phẩm gốc</label>
+            <div class="search-container">
+              <div class="search-input-wrapper">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="searchQuery"
+                  @keyup.enter="performSearch"
+                  placeholder="Nhập tên sản phẩm để tìm kiếm..."
+                />
+                <button
+                  type="button"
+                  class="btn-search"
+                  @click="performSearch"
+                  :disabled="isSearching || searchQuery.trim().length < 2"
+                >
+                  <i v-if="!isSearching" class="bi bi-search"></i>
+                  <div v-else class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Đang tìm kiếm...</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
 
-        <!-- Base Product Search -->
-        <div class="mb-3">
-          <label class="form-label">Tìm kiếm sản phẩm gốc</label>
-          <div class="search-container">
-            <div class="search-input-wrapper">
-              <input
-                type="text"
-                class="form-control"
-                v-model="searchQuery"
-                @keyup.enter="performSearch"
-                placeholder="Nhập tên sản phẩm để tìm kiếm..."
-              />
+          <!-- Search Results - Now displayed as separate component below -->
+          <div v-if="searchResults.length > 0" class="search-results-section">
+            <div class="results-header">
+              <span>Kết quả tìm kiếm ({{ searchResults.length }})</span>
+              <button type="button" class="btn-close-search" @click="clearSearch">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+            <div class="results-list">
+              <div
+                v-for="product in searchResults"
+                :key="product.id"
+                class="result-item"
+                :class="{ 'already-selected': isProductAlreadySelected(product.id) }"
+                @click="selectBaseProduct(product)"
+              >
+                <img :src="product.mainImageUrl" alt="Product" class="result-image" />
+                <div class="result-content">
+                  <h6 class="result-name">{{ product.name }}</h6>
+                  <small class="result-material">{{ product.material }}</small>
+                  <small class="result-category">{{
+                    product.categories?.name || "Chưa phân loại"
+                  }}</small>
+                  <div class="result-stats">
+                    <small class="result-rating">⭐ {{ product.rating }}/5</small>
+                    <small class="result-turnbuy"
+                      >🔥 {{ product.turnBuy }} lượt mua</small
+                    >
+                  </div>
+                </div>
+                <div
+                  v-if="isProductAlreadySelected(product.id)"
+                  class="selected-indicator"
+                >
+                  <i class="bi bi-check-circle-fill"></i>
+                  <small>Đã chọn</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div v-if="totalPages > 1" class="pagination-container">
               <button
                 type="button"
-                class="btn-search"
-                @click="performSearch"
-                :disabled="isSearching || searchQuery.trim().length < 2"
+                class="btn btn-sm btn-outline-primary"
+                :disabled="currentPage === 0 || isSearching"
+                @click="loadPreviousPage"
               >
-                <i v-if="!isSearching" class="bi bi-search"></i>
+                <span v-if="!isSearching">Trước</span>
                 <div v-else class="spinner-border spinner-border-sm" role="status">
-                  <span class="visually-hidden">Đang tìm kiếm...</span>
+                  <span class="visually-hidden">Đang tải...</span>
+                </div>
+              </button>
+              <span class="page-info">
+                {{ currentPage + 1 }} / {{ totalPages }}
+                <small v-if="searchResults.length > 0" class="text-muted">
+                  ({{ searchResults.length }} sản phẩm)
+                </small>
+              </span>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-primary"
+                :disabled="currentPage >= totalPages - 1 || isSearching"
+                @click="loadNextPage"
+              >
+                <span v-if="!isSearching">Sau</span>
+                <div v-else class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Đang tải...</span>
                 </div>
               </button>
             </div>
           </div>
-        </div>
 
-        <!-- Search Results - Now displayed as separate component below -->
-        <div v-if="searchResults.length > 0" class="search-results-section">
-          <div class="results-header">
-            <span>Kết quả tìm kiếm ({{ searchResults.length }})</span>
-            <button type="button" class="btn-close-search" @click="clearSearch">
-              <i class="bi bi-x"></i>
-            </button>
-          </div>
-          <div class="results-list">
-            <div
-              v-for="product in searchResults"
-              :key="product.id"
-              class="result-item"
-              :class="{ 'already-selected': isProductAlreadySelected(product.id) }"
-              @click="selectBaseProduct(product)"
-            >
-              <img :src="product.mainImageUrl" alt="Product" class="result-image" />
-              <div class="result-content">
-                <h6 class="result-name">{{ product.name }}</h6>
-                <small class="result-material">{{ product.material }}</small>
-                <small class="result-category">{{
-                  product.categories?.name || "Chưa phân loại"
-                }}</small>
-                <div class="result-stats">
-                  <small class="result-rating">⭐ {{ product.rating }}/5</small>
-                  <small class="result-turnbuy">🔥 {{ product.turnBuy }} lượt mua</small>
-                </div>
-              </div>
-              <div v-if="isProductAlreadySelected(product.id)" class="selected-indicator">
-                <i class="bi bi-check-circle-fill"></i>
-                <small>Đã chọn</small>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pagination -->
-          <div v-if="totalPages > 1" class="pagination-container">
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-primary"
-              :disabled="currentPage === 0 || isSearching"
-              @click="loadPreviousPage"
-            >
-              <span v-if="!isSearching">Trước</span>
-              <div v-else class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden">Đang tải...</span>
-              </div>
-            </button>
-            <span class="page-info">
-              {{ currentPage + 1 }} / {{ totalPages }}
-              <small v-if="searchResults.length > 0" class="text-muted">
-                ({{ searchResults.length }} sản phẩm)
-              </small>
-            </span>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-primary"
-              :disabled="currentPage >= totalPages - 1 || isSearching"
-              @click="loadNextPage"
-            >
-              <span v-if="!isSearching">Sau</span>
-              <div v-else class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden">Đang tải...</span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Selected Base Products Display -->
-        <div v-if="selectedBaseProducts.length > 0" class="mb-3">
-          <label class="form-label">Sản phẩm gốc đã chọn</label>
-          <div class="selected-products">
-            <div
-              v-for="product in selectedBaseProducts"
-              :key="product.id"
-              class="selected-product-item"
-            >
-              <img
-                :src="product.mainImageUrl"
-                alt="Selected Product"
-                class="selected-image"
-              />
-              <div class="selected-content">
-                <h6 class="selected-name">{{ product.name }}</h6>
-                <div class="selected-details">
-                  <small class="selected-material"
-                    >Chất liệu: {{ product.material }}</small
-                  >
-                  <small class="selected-category"
-                    >Danh mục:
-                    {{
-                      product.categories.name || product.categories || "Chưa phân loại"
-                    }}</small
-                  >
-                </div>
-                <div class="selected-stats">
-                  <small class="selected-rating">⭐ {{ product.rating }}/5</small>
-                  <small class="selected-turnbuy"
-                    >🔥 {{ product.turnBuy }} lượt mua</small
-                  >
-                </div>
-                <div class="selected-product-status">
-                  <span
-                    class="product-status-badge"
-                    :class="{ active: product.active, inactive: !product.active }"
-                  >
-                    {{ product.active ? "Hoạt động" : "Không hoạt động" }}
-                  </span>
-                  <small class="selected-product-id">ID: {{ product.id }}</small>
-                </div>
-                <div class="variant-info">
-                  <small class="text-info">
-                    {{ getSelectedVariantsCount(product.id) }} biến thể đã chọn
-                  </small>
-                </div>
-              </div>
-              <div class="product-actions">
-                <button
-                  type="button"
-                  class="btn-select-variants"
-                  @click="openVariantsSelection(product)"
-                  :disabled="isLoadingVariants"
-                >
-                  <i class="bi bi-list-ul"></i>
-                  <span>Chọn biến thể</span>
-                </button>
-                <button
-                  type="button"
-                  class="btn-remove-product"
-                  @click="removeBaseProduct(product.id)"
-                >
-                  <i class="bi bi-x"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Selected Product Variants with Options - Grouped by Base Product -->
-        <div v-if="selectedProductVariants.length > 0" class="mb-3">
-          <label class="form-label">Biến thể sản phẩm và tùy chọn</label>
-
-          <!-- Loop through each base product group -->
-          <div
-            v-for="(group, baseProductId) in groupedVariantsByBaseProduct"
-            :key="baseProductId"
-            class="base-product-group"
-          >
-            <!-- Base Product Header -->
-            <div class="base-product-header">
-              <img
-                v-if="group.baseProduct?.mainImageUrl"
-                :src="group.baseProduct.mainImageUrl"
-                alt="Base Product"
-                class="base-product-image"
-              />
-              <div class="base-product-info">
-                <h6 class="base-product-name">{{ group.baseProduct?.name }}</h6>
-                <small class="base-product-material">{{
-                  group.baseProduct?.material
-                }}</small>
-                <small class="base-product-variants-count"
-                  >{{ group.variants.length }} biến thể đã chọn</small
-                >
-              </div>
-            </div>
-
-            <!-- Variants under this base product -->
-            <div class="selected-variants">
+          <!-- Selected Base Products Display -->
+          <div v-if="selectedBaseProducts.length > 0" class="mb-3">
+            <label class="form-label">Sản phẩm gốc đã chọn</label>
+            <div class="selected-products">
               <div
-                v-for="variant in group.variants"
-                :key="variant.idProductItem || variant.id"
-                class="variant-option-card"
+                v-for="product in selectedBaseProducts"
+                :key="product.id"
+                class="selected-product-item"
               >
-                <div class="variant-info-section">
-                  <img
-                    v-if="variant.imageUrl"
-                    :src="variant.imageUrl"
-                    alt="Variant"
-                    class="variant-option-image"
-                  />
-                  <div class="variant-info-content">
-                    <h6 class="variant-option-name">{{ variant.name || variant.sku }}</h6>
-                    <div class="variant-details">
-                      <small class="variant-option-sku">SKU: {{ variant.sku }}</small>
-                      <small class="variant-option-price">{{
-                        formatPrice(variant.price)
-                      }}</small>
-                      <small class="variant-option-cost" v-if="variant.cost"
-                        >Cost: {{ formatPrice(variant.cost) }}</small
-                      >
-                    </div>
-                    <div class="variant-stock-info" v-if="variant.qty !== undefined">
-                      <small class="variant-qty">Tồn kho: {{ variant.qty }}</small>
-                      <small
-                        class="variant-safety"
-                        v-if="variant.safetyStock !== undefined"
-                        >An toàn: {{ variant.safetyStock }}</small
-                      >
-                      <small class="variant-rating" v-if="variant.rating !== undefined"
-                        >⭐ {{ variant.rating }}/5</small
-                      >
-                      <small class="variant-turnbuy" v-if="variant.turnBuy !== undefined"
-                        >🔥 {{ variant.turnBuy }} lượt mua</small
-                      >
-                      <div
-                        class="variant-promotions-info"
-                        v-if="variant.inPromotions && variant.inPromotions.length > 0"
-                      >
-                        <small class="promotions-label"
-                          >Đang tham gia các khuyến mãi:</small
-                        >
-                        <div class="promotions-list">
-                          <div
-                            v-for="promotion in variant.inPromotions"
-                            :key="promotion.id"
-                            class="promotion-tag"
-                            :class="{
-                              active: promotion.isActive,
-                              inactive: !promotion.isActive,
-                            }"
-                          >
-                            <div class="promotion-header">
-                              <span class="promotion-name">{{ promotion.name }}</span>
-                              <span class="promotion-id">ID: {{ promotion.id }}</span>
-                            </div>
-                            <div class="promotion-details">
-                              <small class="promotion-type">{{ promotion.type }}</small>
-                              <small class="promotion-dates">
-                                {{ formatPromotionDate(promotion.startAt) }} -
-                                {{ formatPromotionDate(promotion.endAt) }}
-                              </small>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <small
-                        class="variant-no-promotions"
-                        v-else-if="
-                          variant.inPromotions && variant.inPromotions.length === 0
-                        "
-                      >
-                        Chưa tham gia khuyến mãi nào
-                      </small>
-                    </div>
-                    <div class="variant-status" v-if="variant.active !== undefined">
-                      <span
-                        class="status-badge"
-                        :class="{
-                          active: variant.active === true || variant.active === 'true',
-                          inactive:
-                            variant.active === false || variant.active === 'false',
-                        }"
-                      >
-                        {{
-                          variant.active === true || variant.active === "true"
-                            ? "Hoạt động"
-                            : "Không hoạt động"
-                        }}
-                      </span>
-                      <small class="variant-id">ID: {{ variant.idProductItem }}</small>
-                    </div>
-                    <div
-                      class="variant-attributes"
-                      v-if="
-                        variant.attributes && Object.keys(variant.attributes).length > 0
-                      "
+                <img
+                  :src="product.mainImageUrl"
+                  alt="Selected Product"
+                  class="selected-image"
+                />
+                <div class="selected-content">
+                  <h6 class="selected-name">{{ product.name }}</h6>
+                  <div class="selected-details">
+                    <small class="selected-material"
+                      >Chất liệu: {{ product.material }}</small
                     >
-                      <span
-                        v-for="(value, key) in variant.attributes"
-                        :key="key"
-                        class="attribute-tag"
-                      >
-                        {{ key }}: {{ value }}
-                      </span>
-                    </div>
+                    <small class="selected-category"
+                      >Danh mục:
+                      {{
+                        product.categories.name || product.categories || "Chưa phân loại"
+                      }}</small
+                    >
+                  </div>
+                  <div class="selected-stats">
+                    <small class="selected-rating">⭐ {{ product.rating }}/5</small>
+                    <small class="selected-turnbuy"
+                      >🔥 {{ product.turnBuy }} lượt mua</small
+                    >
+                  </div>
+                  <div class="selected-product-status">
+                    <span
+                      class="product-status-badge"
+                      :class="{ active: product.active, inactive: !product.active }"
+                    >
+                      {{ product.active ? "Hoạt động" : "Không hoạt động" }}
+                    </span>
+                    <small class="selected-product-id">ID: {{ product.id }}</small>
+                  </div>
+                  <div class="variant-info">
+                    <small class="text-info">
+                      {{ getSelectedVariantsCount(product.id) }} biến thể đã chọn
+                    </small>
                   </div>
                 </div>
-
-                <div class="variant-options-section">
-                  <!-- Quantity Selector - Only show for COMBO -->
-                  <div class="option-row" v-if="formData.type === 'COMBO'">
-                    <label class="option-label">Số lượng yêu cầu:</label>
-                    <div class="quantity-selector">
-                      <button
-                        type="button"
-                        class="qty-btn qty-decrease"
-                        @click="decreaseQuantity(variant.idProductItem || variant.id)"
-                        :disabled="
-                          (variantOptions[variant.idProductItem || variant.id]
-                            .require_qty || 1) <= 1
-                        "
-                      >
-                        −
-                      </button>
-                      <input
-                        type="number"
-                        class="qty-input"
-                        v-model.number="
-                          variantOptions[variant.idProductItem || variant.id].require_qty
-                        "
-                        min="1"
-                        max="999"
-                        @input="validateQuantity(variant.idProductItem || variant.id)"
-                      />
-                      <button
-                        type="button"
-                        class="qty-btn qty-increase"
-                        @click="increaseQuantity(variant.idProductItem || variant.id)"
-                        :disabled="
-                          (variantOptions[variant.idProductItem || variant.id]
-                            .require_qty || 1) >= 999
-                        "
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Gift Option - Only show for COMBO -->
-                  <div class="option-row" v-if="formData.type === 'COMBO'">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        :id="'isGift_' + (variant.idProductItem || variant.id)"
-                        v-model="
-                          variantOptions[variant.idProductItem || variant.id].is_gift
-                        "
-                      />
-                      <label
-                        class="form-check-label"
-                        :for="'isGift_' + (variant.idProductItem || variant.id)"
-                      >
-                        Là quà tặng
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="variant-actions">
+                <div class="product-actions">
                   <button
                     type="button"
-                    class="btn-remove-variant"
-                    @click="removeVariant(variant.idProductItem)"
+                    class="btn-select-variants"
+                    @click="openVariantsSelection(product)"
+                    :disabled="isLoadingVariants"
+                  >
+                    <i class="bi bi-list-ul"></i>
+                    <span>Chọn biến thể</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-remove-product"
+                    @click="removeBaseProduct(product.id)"
                   >
                     <i class="bi bi-x"></i>
                   </button>
@@ -582,252 +388,480 @@
             </div>
           </div>
 
-          <!-- Gift Distribution Validation Feedback - Only show for COMBO -->
-          <div
-            v-if="selectedProductVariants.length > 0 && formData.type === 'COMBO'"
-            class="form-text mt-2"
-          >
-            <small
-              class="text-danger"
-              v-if="
-                Object.values(variantOptions).filter((option) => option?.is_gift === true)
-                  .length === selectedProductVariants.length &&
-                selectedProductVariants.length > 0
-              "
-            >
-              ❌ Không thể đặt tất cả sản phẩm làm quà tặng. Phải có ít nhất một sản phẩm
-              bán kèm.
-            </small>
-            <small
-              class="text-success"
-              v-else-if="
-                Object.values(variantOptions).filter((option) => option?.is_gift === true)
-                  .length < selectedProductVariants.length &&
-                Object.values(variantOptions).filter((option) => option?.is_gift === true)
-                  .length > 0
-              "
-            >
-              ✅ Phân phối sản phẩm hợp lệ:
-              {{
-                Object.values(variantOptions).filter(
-                  (option) => option?.is_gift === false
-                ).length
-              }}
-              sản phẩm bán kèm,
-              {{
-                Object.values(variantOptions).filter((option) => option?.is_gift === true)
-                  .length
-              }}
-              quà tặng
-            </small>
-            <small
-              class="text-info"
-              v-else-if="
-                Object.values(variantOptions).filter((option) => option?.is_gift === true)
-                  .length === 0
-              "
-            >
-              💡 Tất cả sản phẩm đều là sản phẩm bán kèm (không có quà tặng)
-            </small>
-          </div>
-        </div>
+          <!-- Selected Product Variants with Options - Grouped by Base Product -->
+          <div v-if="selectedProductVariants.length > 0" class="mb-3">
+            <label class="form-label">Biến thể sản phẩm và tùy chọn</label>
 
-        <!-- Global Gift Option Selection - Show when there are 2 or more gifts and type is COMBO -->
-        <div v-if="getTotalGiftsCount() >= 2 && formData.type === 'COMBO'" class="mb-3">
-          <label class="form-label">Tùy chọn quà tặng chung</label>
-          <div class="gift-option-container">
-            <select v-model="globalGiftOption" class="form-select">
-              <option value="">Chọn tùy chọn quà tặng</option>
-              <option
-                v-for="option in getAvailableGiftOptions()"
-                :key="option.value"
-                :value="option.value"
-              >
-                {{ option.label }}
-              </option>
-            </select>
-            <small class="form-text text-muted">
-              Tùy chọn này áp dụng cho tất cả {{ getTotalGiftsCount() }} quà tặng đã chọn
-            </small>
-          </div>
-        </div>
-
-        <!-- Variants Selection Modal -->
-        <div
-          v-if="showVariantsModal"
-          class="modal-backdrop"
-          @click="showVariantsModal = false"
-        >
-          <div class="variants-modal" @click.stop>
-            <div class="modal-header">
-              <h5 class="modal-title">
-                Chọn biến thể cho: {{ currentBaseProduct?.name }}
-              </h5>
-              <button
-                type="button"
-                class="btn-close-modal"
-                @click="showVariantsModal = false"
-              >
-                <i class="bi bi-x"></i>
-              </button>
-            </div>
-
-            <div class="modal-body">
-              <div v-if="isLoadingVariants" class="loading-container">
-                <div class="spinner-border" role="status">
-                  <span class="visually-hidden">Đang tải biến thể...</span>
+            <!-- Loop through each base product group -->
+            <div
+              v-for="(group, baseProductId) in groupedVariantsByBaseProduct"
+              :key="baseProductId"
+              class="base-product-group"
+            >
+              <!-- Base Product Header -->
+              <div class="base-product-header">
+                <img
+                  v-if="group.baseProduct?.mainImageUrl"
+                  :src="group.baseProduct.mainImageUrl"
+                  alt="Base Product"
+                  class="base-product-image"
+                />
+                <div class="base-product-info">
+                  <h6 class="base-product-name">{{ group.baseProduct?.name }}</h6>
+                  <small class="base-product-material">{{
+                    group.baseProduct?.material
+                  }}</small>
+                  <small class="base-product-variants-count"
+                    >{{ group.variants.length }} biến thể đã chọn</small
+                  >
                 </div>
-                <p>Đang tải danh sách biến thể...</p>
               </div>
 
-              <div
-                v-else-if="
-                  currentBaseProduct &&
-                  availableVariants[currentBaseProduct.id] &&
-                  availableVariants[currentBaseProduct.id].length > 0
-                "
-                class="variants-list"
-              >
+              <!-- Variants under this base product -->
+              <div class="selected-variants">
                 <div
-                  v-for="variant in availableVariants[currentBaseProduct.id]"
-                  :key="variant.id"
-                  class="variant-item"
-                  :class="{
-                    selected: isVariantSelectedForCurrentProduct(variant.idProductItem),
-                    'conflict-disabled':
-                      !checkPromotionConflict(variant).canAdd &&
-                      !isVariantSelectedForCurrentProduct(variant.idProductItem),
-                  }"
+                  v-for="variant in group.variants"
+                  :key="variant.idProductItem || variant.id"
+                  class="variant-option-card"
                 >
-                  <div class="variant-checkbox">
-                    <input
-                      type="checkbox"
-                      :checked="isVariantSelectedForCurrentProduct(variant.idProductItem)"
-                      :disabled="
-                        !checkPromotionConflict(variant).canAdd &&
-                        !isVariantSelectedForCurrentProduct(variant.idProductItem)
-                      "
-                      @click.stop
-                      @change="toggleProductVariant(variant)"
+                  <div class="variant-info-section">
+                    <img
+                      v-if="variant.imageUrl"
+                      :src="variant.imageUrl"
+                      alt="Variant"
+                      class="variant-option-image"
                     />
-                  </div>
-                  <img
-                    v-if="variant.imageUrl"
-                    :src="variant.imageUrl"
-                    alt="Variant"
-                    class="variant-image"
-                  />
-                  <div class="variant-content">
-                    <h6 class="variant-name">{{ variant.name || variant.sku }}</h6>
-                    <div class="variant-details">
-                      <small class="variant-sku">SKU: {{ variant.sku }}</small>
-
-                      <small class="variant-price">{{
-                        formatPrice(variant.price)
-                      }}</small>
-                      <small class="variant-cost"
-                        >Cost: {{ formatPrice(variant.cost) }}</small
-                      >
-                    </div>
-                    <div class="variant-stock-info">
-                      <small class="variant-qty">Tồn kho: {{ variant.qty }}</small>
-                      <small class="variant-safety"
-                        >An toàn: {{ variant.safetyStock }}</small
-                      >
-                      <small class="variant-rating">⭐ {{ variant.rating }}/5</small>
-                      <small class="variant-turnbuy"
-                        >🔥 {{ variant.turnBuy }} lượt mua</small
-                      >
-                      <div
-                        class="variant-promotions-info"
-                        v-if="variant.inPromotions && variant.inPromotions.length > 0"
-                      >
-                        <small class="promotions-label">Đang tham gia:</small>
-                        <div class="promotions-list-compact">
-                          <span
-                            v-for="promotion in variant.inPromotions"
-                            :key="promotion.id"
-                            class="promotion-tag-compact"
-                            :class="{
-                              active: promotion.isActive,
-                              inactive: !promotion.isActive,
-                            }"
-                            :title="`ID: ${promotion.id} - ${promotion.type} - ${promotion.name}`"
-                          >
-                            [{{ promotion.id }}] {{ promotion.type }} -
-                            {{ promotion.name }}
-                          </span>
-                        </div>
+                    <div class="variant-info-content">
+                      <h6 class="variant-option-name">
+                        {{ variant.name || variant.sku }}
+                      </h6>
+                      <div class="variant-details">
+                        <small class="variant-option-sku">SKU: {{ variant.sku }}</small>
+                        <small class="variant-option-price">{{
+                          formatPrice(variant.price)
+                        }}</small>
+                        <small class="variant-option-cost" v-if="variant.cost"
+                          >Cost: {{ formatPrice(variant.cost) }}</small
+                        >
                       </div>
-                      <small
-                        class="variant-no-promotions"
-                        v-else-if="
-                          variant.inPromotions && variant.inPromotions.length === 0
+                      <div class="variant-stock-info" v-if="variant.qty !== undefined">
+                        <small class="variant-qty">Tồn kho: {{ variant.qty }}</small>
+                        <small
+                          class="variant-safety"
+                          v-if="variant.safetyStock !== undefined"
+                          >An toàn: {{ variant.safetyStock }}</small
+                        >
+                        <small class="variant-rating" v-if="variant.rating !== undefined"
+                          >⭐ {{ variant.rating }}/5</small
+                        >
+                        <small
+                          class="variant-turnbuy"
+                          v-if="variant.turnBuy !== undefined"
+                          >🔥 {{ variant.turnBuy }} lượt mua</small
+                        >
+                        <div
+                          class="variant-promotions-info"
+                          v-if="variant.inPromotions && variant.inPromotions.length > 0"
+                        >
+                          <small class="promotions-label"
+                            >Đang tham gia các khuyến mãi:</small
+                          >
+                          <div class="promotions-list">
+                            <div
+                              v-for="promotion in variant.inPromotions"
+                              :key="promotion.id"
+                              class="promotion-tag"
+                              :class="{
+                                active: promotion.isActive,
+                                inactive: !promotion.isActive,
+                              }"
+                            >
+                              <div class="promotion-header">
+                                <span class="promotion-name">{{ promotion.name }}</span>
+                                <span class="promotion-id">ID: {{ promotion.id }}</span>
+                              </div>
+                              <div class="promotion-details">
+                                <small class="promotion-type">{{ promotion.type }}</small>
+                                <small class="promotion-dates">
+                                  {{ formatPromotionDate(promotion.startAt) }} -
+                                  {{ formatPromotionDate(promotion.endAt) }}
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <small
+                          class="variant-no-promotions"
+                          v-else-if="
+                            variant.inPromotions && variant.inPromotions.length === 0
+                          "
+                        >
+                          Chưa tham gia khuyến mãi nào
+                        </small>
+                      </div>
+                      <div class="variant-status" v-if="variant.active !== undefined">
+                        <span
+                          class="status-badge"
+                          :class="{
+                            active: variant.active === true || variant.active === 'true',
+                            inactive:
+                              variant.active === false || variant.active === 'false',
+                          }"
+                        >
+                          {{
+                            variant.active === true || variant.active === "true"
+                              ? "Hoạt động"
+                              : "Không hoạt động"
+                          }}
+                        </span>
+                        <small class="variant-id">ID: {{ variant.idProductItem }}</small>
+                      </div>
+                      <div
+                        class="variant-attributes"
+                        v-if="
+                          variant.attributes && Object.keys(variant.attributes).length > 0
                         "
                       >
-                        Chưa tham gia khuyến mãi
-                      </small>
+                        <span
+                          v-for="(value, key) in variant.attributes"
+                          :key="key"
+                          class="attribute-tag"
+                        >
+                          {{ key }}: {{ value }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="variant-options-section">
+                    <!-- Quantity Selector - Only show for COMBO -->
+                    <div class="option-row" v-if="formData.type === 'COMBO'">
+                      <label class="option-label">Số lượng yêu cầu:</label>
+                      <div class="quantity-selector">
+                        <button
+                          type="button"
+                          class="qty-btn qty-decrease"
+                          @click="decreaseQuantity(variant.idProductItem || variant.id)"
+                          :disabled="
+                            (variantOptions[variant.idProductItem || variant.id]
+                              .require_qty || 1) <= 1
+                          "
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          class="qty-input"
+                          v-model.number="
+                            variantOptions[variant.idProductItem || variant.id]
+                              .require_qty
+                          "
+                          min="1"
+                          max="999"
+                          @input="validateQuantity(variant.idProductItem || variant.id)"
+                        />
+                        <button
+                          type="button"
+                          class="qty-btn qty-increase"
+                          @click="increaseQuantity(variant.idProductItem || variant.id)"
+                          :disabled="
+                            (variantOptions[variant.idProductItem || variant.id]
+                              .require_qty || 1) >= 999
+                          "
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
 
-                    <!-- Conflict Warning -->
-                    <div
-                      v-if="
-                        !checkPromotionConflict(variant).canAdd &&
-                        !isVariantSelectedForCurrentProduct(variant.idProductItem)
-                      "
-                      class="conflict-warning"
+                    <!-- Gift Option - Only show for COMBO -->
+                    <div class="option-row" v-if="formData.type === 'COMBO'">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          :id="'isGift_' + (variant.idProductItem || variant.id)"
+                          v-model="
+                            variantOptions[variant.idProductItem || variant.id].is_gift
+                          "
+                        />
+                        <label
+                          class="form-check-label"
+                          :for="'isGift_' + (variant.idProductItem || variant.id)"
+                        >
+                          Là quà tặng
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="variant-actions">
+                    <button
+                      type="button"
+                      class="btn-remove-variant"
+                      @click="removeVariant(variant.idProductItem)"
                     >
-                      <span class="warning-icon">⚠</span>
-                      <span>Không thể chọn do xung đột loại khuyến mãi</span>
-                    </div>
-
-                    <div class="variant-status">
-                      <span
-                        class="status-badge"
-                        :class="{ active: variant.active, inactive: !variant.active }"
-                      >
-                        {{ variant.active ? "Hoạt động" : "Không hoạt động" }}
-                      </span>
-                      <small class="variant-id">ID: {{ variant.idProductItem }}</small>
-                    </div>
-                    <div class="variant-attributes">
-                      <span
-                        v-for="(value, key) in variant.attributes"
-                        :key="key"
-                        class="attribute-tag"
-                      >
-                        {{ key }}: {{ value }}
-                      </span>
-                    </div>
+                      <i class="bi bi-x"></i>
+                    </button>
                   </div>
                 </div>
               </div>
-
-              <div v-else class="no-variants">
-                <p>Không có biến thể nào cho sản phẩm này.</p>
-              </div>
             </div>
 
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="showVariantsModal = false"
+            <!-- Gift Distribution Validation Feedback - Only show for COMBO -->
+            <div
+              v-if="selectedProductVariants.length > 0 && formData.type === 'COMBO'"
+              class="form-text mt-2"
+            >
+              <small
+                class="text-danger"
+                v-if="
+                  Object.values(variantOptions).filter(
+                    (option) => option?.is_gift === true
+                  ).length === selectedProductVariants.length &&
+                  selectedProductVariants.length > 0
+                "
               >
-                Đóng
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="showVariantsModal = false"
+                ❌ Không thể đặt tất cả sản phẩm làm quà tặng. Phải có ít nhất một sản
+                phẩm bán kèm.
+              </small>
+              <small
+                class="text-success"
+                v-else-if="
+                  Object.values(variantOptions).filter(
+                    (option) => option?.is_gift === true
+                  ).length < selectedProductVariants.length &&
+                  Object.values(variantOptions).filter(
+                    (option) => option?.is_gift === true
+                  ).length > 0
+                "
               >
-                Hoàn thành ({{ getSelectedVariantsCount(currentBaseProduct?.id) }} đã
-                chọn)
-              </button>
+                ✅ Phân phối sản phẩm hợp lệ:
+                {{
+                  Object.values(variantOptions).filter(
+                    (option) => option?.is_gift === false
+                  ).length
+                }}
+                sản phẩm bán kèm,
+                {{
+                  Object.values(variantOptions).filter(
+                    (option) => option?.is_gift === true
+                  ).length
+                }}
+                quà tặng
+              </small>
+              <small
+                class="text-info"
+                v-else-if="
+                  Object.values(variantOptions).filter(
+                    (option) => option?.is_gift === true
+                  ).length === 0
+                "
+              >
+                💡 Tất cả sản phẩm đều là sản phẩm bán kèm (không có quà tặng)
+              </small>
+            </div>
+          </div>
+
+          <!-- Global Gift Option Selection - Show when there are 2 or more gifts and type is COMBO -->
+          <div v-if="getTotalGiftsCount() >= 2 && formData.type === 'COMBO'" class="mb-3">
+            <label class="form-label">Tùy chọn quà tặng chung</label>
+            <div class="gift-option-container">
+              <select v-model="globalGiftOption" class="form-select">
+                <option value="">Chọn tùy chọn quà tặng</option>
+                <option
+                  v-for="option in getAvailableGiftOptions()"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+              <small class="form-text text-muted">
+                Tùy chọn này áp dụng cho tất cả {{ getTotalGiftsCount() }} quà tặng đã
+                chọn
+              </small>
+            </div>
+          </div>
+
+          <!-- Variants Selection Modal -->
+          <div
+            v-if="showVariantsModal"
+            class="modal-backdrop"
+            @click="showVariantsModal = false"
+          >
+            <div class="variants-modal" @click.stop>
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  Chọn biến thể cho: {{ currentBaseProduct?.name }}
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close-modal"
+                  @click="showVariantsModal = false"
+                >
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <div v-if="isLoadingVariants" class="loading-container">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Đang tải biến thể...</span>
+                  </div>
+                  <p>Đang tải danh sách biến thể...</p>
+                </div>
+
+                <div
+                  v-else-if="
+                    currentBaseProduct &&
+                    availableVariants[currentBaseProduct.id] &&
+                    availableVariants[currentBaseProduct.id].length > 0
+                  "
+                  class="variants-list"
+                >
+                  <div
+                    v-for="variant in availableVariants[currentBaseProduct.id]"
+                    :key="variant.id"
+                    class="variant-item"
+                    :class="{
+                      selected: isVariantSelectedForCurrentProduct(variant.idProductItem),
+                      'conflict-disabled':
+                        !checkPromotionConflict(variant).canAdd &&
+                        !isVariantSelectedForCurrentProduct(variant.idProductItem),
+                    }"
+                  >
+                    <div class="variant-checkbox">
+                      <input
+                        type="checkbox"
+                        :checked="
+                          isVariantSelectedForCurrentProduct(variant.idProductItem)
+                        "
+                        :disabled="
+                          !checkPromotionConflict(variant).canAdd &&
+                          !isVariantSelectedForCurrentProduct(variant.idProductItem)
+                        "
+                        @click.stop
+                        @change="toggleProductVariant(variant)"
+                      />
+                    </div>
+                    <img
+                      v-if="variant.imageUrl"
+                      :src="variant.imageUrl"
+                      alt="Variant"
+                      class="variant-image"
+                    />
+                    <div class="variant-content">
+                      <h6 class="variant-name">{{ variant.name || variant.sku }}</h6>
+                      <div class="variant-details">
+                        <small class="variant-sku">SKU: {{ variant.sku }}</small>
+
+                        <small class="variant-price">{{
+                          formatPrice(variant.price)
+                        }}</small>
+                        <small class="variant-cost"
+                          >Cost: {{ formatPrice(variant.cost) }}</small
+                        >
+                      </div>
+                      <div class="variant-stock-info">
+                        <small class="variant-qty">Tồn kho: {{ variant.qty }}</small>
+                        <small class="variant-safety"
+                          >An toàn: {{ variant.safetyStock }}</small
+                        >
+                        <small class="variant-rating">⭐ {{ variant.rating }}/5</small>
+                        <small class="variant-turnbuy"
+                          >🔥 {{ variant.turnBuy }} lượt mua</small
+                        >
+                        <div
+                          class="variant-promotions-info"
+                          v-if="variant.inPromotions && variant.inPromotions.length > 0"
+                        >
+                          <small class="promotions-label">Đang tham gia:</small>
+                          <div class="promotions-list-compact">
+                            <span
+                              v-for="promotion in variant.inPromotions"
+                              :key="promotion.id"
+                              class="promotion-tag-compact"
+                              :class="{
+                                active: promotion.isActive,
+                                inactive: !promotion.isActive,
+                              }"
+                              :title="`ID: ${promotion.id} - ${promotion.type} - ${promotion.name}`"
+                            >
+                              [{{ promotion.id }}] {{ promotion.type }} -
+                              {{ promotion.name }}
+                            </span>
+                          </div>
+                        </div>
+                        <small
+                          class="variant-no-promotions"
+                          v-else-if="
+                            variant.inPromotions && variant.inPromotions.length === 0
+                          "
+                        >
+                          Chưa tham gia khuyến mãi
+                        </small>
+                      </div>
+
+                      <!-- Conflict Warning -->
+                      <div
+                        v-if="
+                          !checkPromotionConflict(variant).canAdd &&
+                          !isVariantSelectedForCurrentProduct(variant.idProductItem)
+                        "
+                        class="conflict-warning"
+                      >
+                        <span class="warning-icon">⚠</span>
+                        <span>Không thể chọn do xung đột loại khuyến mãi</span>
+                      </div>
+
+                      <div class="variant-status">
+                        <span
+                          class="status-badge"
+                          :class="{ active: variant.active, inactive: !variant.active }"
+                        >
+                          {{ variant.active ? "Hoạt động" : "Không hoạt động" }}
+                        </span>
+                        <small class="variant-id">ID: {{ variant.idProductItem }}</small>
+                      </div>
+                      <div class="variant-attributes">
+                        <span
+                          v-for="(value, key) in variant.attributes"
+                          :key="key"
+                          class="attribute-tag"
+                        >
+                          {{ key }}: {{ value }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="no-variants">
+                  <p>Không có biến thể nào cho sản phẩm này.</p>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  @click="showVariantsModal = false"
+                >
+                  Đóng
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="showVariantsModal = false"
+                >
+                  Hoàn thành ({{ getSelectedVariantsCount(currentBaseProduct?.id) }} đã
+                  chọn)
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
         <button type="submit" :disable="props.action === 'view'" class="btn btn-primary">
           <span v-if="props.action === 'create'">Tạo mới</span>
           <span v-else-if="props.action === 'create'">Tạo mới</span>
@@ -878,6 +912,7 @@ const formData = reactive({
   discountValue: "",
   comboPrice: "150000",
   qty: "200",
+  turnBuy: 0,
   startAt: "2025-07-01T04:23:00",
   endAt: "2025-10-20T19:22:00",
   active: true,
@@ -1134,30 +1169,36 @@ async function submitForm() {
         duration: 3,
       });
       return;
+    } else {
+      notification.success({
+        message: "Thành công",
+        description: "Khuyến mãi hợp lệ, tạo mới thành công.",
+        duration: 3,
+      });
     }
 
-    // Create promotion
-    const createResponse = await formTableService.create(formData);
-    console.log("Create successful:", createResponse.data);
+    // // Create promotion
+    // const createResponse = await formTableService.create(formData);
+    // console.log("Create successful:", createResponse.data);
 
-    // Update promotion ID for variants
-    checkSelectedProductVariants.forEach((variant) => {
-      variant.promotionId = createResponse.data.id;
-      api
-        .post("/admin/PromotionProducts", variant)
-        .then((res) => {
-          console.log("Promotion product created:", res.data);
-          router.push(`/Admin/${props.TableName}`);
-        })
-        .catch((err) => {
-          console.error("Error creating promotion product:", err);
-          notification.error({
-            message: "Lỗi",
-            description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
-            duration: 3,
-          });
-        });
-    });
+    // // Update promotion ID for variants
+    // checkSelectedProductVariants.forEach((variant) => {
+    //   variant.promotionId = createResponse.data.id;
+    //   api
+    //     .post("/admin/PromotionProducts", variant)
+    //     .then((res) => {
+    //       console.log("Promotion product created:", res.data);
+    //       router.push(`/Admin/${props.TableName}`);
+    //     })
+    //     .catch((err) => {
+    //       console.error("Error creating promotion product:", err);
+    //       notification.error({
+    //         message: "Lỗi",
+    //         description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
+    //         duration: 3,
+    //       });
+    //     });
+    // });
     // Create promotion products
   } catch (error) {
     console.error("Error in submitForm:", error);
@@ -2089,6 +2130,10 @@ const validateQuantity = (variantId) => {
 };
 </script>
 <style scoped>
+.no-pointer-events {
+  pointer-events: none;
+  opacity: 0.6; /* tuỳ chọn, làm mờ giao diện */
+}
 .card {
   border-radius: 12px;
   border: 1px solid #dee2e6;

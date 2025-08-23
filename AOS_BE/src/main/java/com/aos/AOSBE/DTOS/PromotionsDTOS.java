@@ -22,4 +22,5 @@ public class PromotionsDTOS {
     private boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int turnBuy;
 }
