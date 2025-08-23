@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -463,6 +464,29 @@ public class OrdersAPI {
 
         return ResponseEntity.ok(orderDetail.getLog());
     }
+	@PatchMapping("/admin/{id}/updateStatus")
+	public ResponseEntity<?> updateStatusOrders(@PathVariable int id,@RequestBody Map<String, String> updates){
+		String newStatus = updates.get("status");
+		Optional<Orders>  optionalOrders = ordersService.ordersFindById(id);
+		if(optionalOrders.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("đơn hàng không tồn tại");
+		}
+		List<String> validStatuses = List.of("pending","ready_to_pick","picking","cancel","money_collect_picking",
+				"picked","storing","transporting","sorting","delivering"
+				,"money_collect_delivering","delivered","delivery_fail","waiting_to_return",
+				"return","return_transporting","return_storing",
+				"returning","return_fail","returned","exception","damage","lost");
+		if (!validStatuses.contains(newStatus)) {
+		    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+		                         .body("Trạng thái không hợp lệ");
+		}
+		Orders order = optionalOrders.get();
+	    order.setShippingStatus(newStatus);
+	    ordersRepository.save(order);
+
+	    return ResponseEntity.ok(order);
+	}
 
 	@PostMapping("/cancel/{orderCode}")
 	public ResponseEntity<?> cancelOrder(@PathVariable String orderCode) {
