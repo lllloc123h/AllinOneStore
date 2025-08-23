@@ -250,18 +250,21 @@
             thêm
           </button>
         </div>
-        <div class="mb-3" v-for="(items, groupName) in variantPrevieBeforeSaveBaseProduct" :key="groupName">
-          <label class="form-label">{{ groupName }}</label>
-          <ul class="list-group w-100">
-            <li v-for="variant in items" :key="variant.id || variant.signalSku"
-              class="list-group-item d-flex align-items-center" style="cursor: pointer">
-              <div>
-                <strong>{{ variant.description }}</strong><br />
-                <small class="text-muted">{{ variant.signalSku }}</small>
+        <div class="row">
+          <div class="mb-3 col-6 " v-for="(items, groupName) in variantPrevieBeforeSaveBaseProduct" :key="groupName">
+            <label class="form-label">{{ groupName }}</label>
+            <div class="list-group w-100">
+              <div v-for="variant in items" :key="variant.id || variant.signalSku"
+                class="list-group-item d-flex align-items-center " style="cursor: pointer">
+                <div>
+                  <strong>{{ variant.description }}</strong><br />
+                  <small class="text-muted">{{ variant.signalSku }}</small>
+                </div>
               </div>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
+
 
         <label class="form-label">Preview combinations variant</label>
         <div v-for="(combo, index) in combinations" :key="index" class="mb-2">
@@ -293,7 +296,6 @@
                   <small>
                     SKU: {{ item.sku }} | Giá: {{ item.price.toLocaleString() }} VND | SL:
                     {{ item.qty }} </small><br />
-                  <small class="text-muted">Ảnh: {{ item.fileNameImgOfVariant || "Không có" }}</small>
                 </div>
               </div>
               <div class="d-flex flex-column gap-2">
