@@ -171,7 +171,7 @@
                   <div class="col-xl-4 col-lg-6">
                     <div class="stat-card cost-discount-card">
                       <div class="stat-icon cost-discount-icon">
-                        <i class="bi bi-calculator-fill"></i>
+                        <i class="bi bi-cash-coin"></i>
                       </div>
                       <div class="stat-content">
                         <h6 class="stat-label">Tổng Chi Phí Sản Phẩm</h6>
@@ -228,7 +228,7 @@
             </div>
             <div class="row g-4">
               <!-- Total Returns -->
-              <div class="col-xl-6 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card return-card">
                   <div class="stat-icon return-icon">
                     <i class="bi bi-box-arrow-in-left"></i>
@@ -244,28 +244,31 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xl-6 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card return-card">
                   <div class="stat-icon return-icon">
-                    <i class="bi bi-box-arrow-in-left"></i>
+                    <i class="bi bi-arrow-repeat"></i>
                   </div>
                   <div class="stat-content">
-                    <h6 class="stat-label">Tổng Giá Trị Đơn Đã Hoàn Trả</h6>
+                    <h6 class="stat-label">Tổng Hoàn Trả Cho Khách Thanh Toán Trước</h6>
                     <div class="stat-value return-count-value">
                       {{ formatCurrency(stats.returnedAndRefundOrders) }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted">Tổng tiền đơn hàng được hoàn trả</span>
+                      <span class="text-muted"
+                        >Tổng tiền đơn hàng được hoàn trả
+                        <strong>(không nhận hàng và hoàn tiền)</strong>
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Total Order Returned -->
-              <div class="col-xl-6 col-lg-6">
+              <!--  -->
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card return-order-card">
                   <div class="stat-icon return-order-icon">
-                    <i class="bi bi-arrow-repeat"></i>
+                    <i class="bi bi-exclamation-diamond-fill"></i>
                   </div>
                   <div class="stat-content">
                     <h6 class="stat-label">
@@ -281,16 +284,27 @@
                 </div>
               </div>
 
-              <!-- Total Return Amount -->
-              <div class="col-xl-4 col-lg-6">
+              <!--cancel -->
+            </div>
+          </div>
+          <div class="stats-section mb-5">
+            <div class="section-header">
+              <h3 class="section-title">
+                <i class="bi bi-x-lg"></i>
+                Thống Kê Hủy Đơn
+              </h3>
+            </div>
+            <div class="row g-4">
+              <!-- cancel nè -->
+              <div class="col-xl-6 col-lg-6">
                 <div class="stat-card return-amount-card">
                   <div class="stat-icon return-amount-icon">
-                    <i class="bi bi-currency-exchange"></i>
+                    <i class="bi bi-credit-card-2-front-fill"></i>
                   </div>
                   <div class="stat-content">
                     <h6 class="stat-label">Số lượng đơn đã hủy và thanh toán</h6>
                     <div class="stat-value return-amount-value">
-                      {{ formatCurrency(stats.cancelAndPaidOrders.length) }}
+                      {{ stats.cancelAndPaidOrders.length }} đơn
                     </div>
                     <div class="stat-description">
                       <span class="text-muted">Số lượng đơn đã hủy</span>
@@ -298,8 +312,7 @@
                   </div>
                 </div>
               </div>
-
-              <div class="col-xl-4 col-lg-6">
+              <div class="col-xl-6 col-lg-6">
                 <div class="stat-card return-amount-card">
                   <div class="stat-icon return-amount-icon">
                     <i class="bi bi-currency-exchange"></i>
@@ -322,8 +335,7 @@
                   </div>
                 </div>
               </div>
-
-              <div class="col-xl-4 col-lg-6">
+              <div class="col-xl-6 col-lg-6">
                 <div class="stat-card return-amount-card">
                   <div class="stat-icon return-amount-icon">
                     <i class="bi bi-currency-exchange"></i>
@@ -331,7 +343,7 @@
                   <div class="stat-content">
                     <h6 class="stat-label">Số lượng đơn đã hủy và hoàn tiền</h6>
                     <div class="stat-value return-amount-value">
-                      {{ formatCurrency(stats.cancelAndRefundOrders.length) }}
+                      {{ stats.cancelAndRefundOrders.length }} đơn
                     </div>
                     <div class="stat-description">
                       <span class="text-muted">Giá trị đơn đã hủy</span>
@@ -339,8 +351,30 @@
                   </div>
                 </div>
               </div>
-
-              <div class="col-xl-4 col-lg-6">
+              <div class="col-xl-6 col-lg-6">
+                <div class="stat-card return-amount-card">
+                  <div class="stat-icon return-amount-icon">
+                    <i class="bi bi-currency-exchange"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h6 class="stat-label">Giá trị đơn đã hủy và hoàn tiền</h6>
+                    <div class="stat-value return-amount-value">
+                      {{
+                        formatCurrency(
+                          stats.cancelAndRefundOrders.reduce(
+                            (total, order) => total + order,
+                            0
+                          )
+                        )
+                      }}
+                    </div>
+                    <div class="stat-description">
+                      <span class="text-muted">Giá trị đơn đã hủy</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-6">
                 <div class="stat-card return-amount-card">
                   <div class="stat-icon return-amount-icon">
                     <i class="bi bi-currency-exchange"></i>
@@ -348,7 +382,7 @@
                   <div class="stat-content">
                     <h6 class="stat-label">Số lượng đơn bị mất, hỏng và ngoại lệ</h6>
                     <div class="stat-value return-amount-value">
-                      {{ stats.countDamageLostException }}
+                      {{ stats.countDamageLostException }} đơn
                     </div>
                     <div class="stat-description">
                       <span class="text-muted">Giá trị đơn đã hủy</span>
@@ -356,7 +390,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xl-4 col-lg-6">
+              <div class="col-xl-6 col-lg-6">
                 <div class="stat-card return-amount-card">
                   <div class="stat-icon return-amount-icon">
                     <i class="bi bi-currency-exchange"></i>
@@ -375,17 +409,16 @@
             </div>
           </div>
 
-          <!-- Order Statistics -->
+          <!-- Shipping Overview -->
           <div class="stats-section mb-5">
             <div class="section-header">
               <h3 class="section-title">
-                <i class="bi bi-clipboard-check me-2"></i>
-                Thống Kê Đơn Hàng
+                <i class="bi bi-truck me-2"></i>
+                Thống Kê Thực Tế
               </h3>
             </div>
             <div class="row g-4">
-              <!-- Delivered Orders -->
-              <div class="col-xl-12 col-lg-12">
+              <div class="col-xl-4 col-lg-12">
                 <div class="stat-card order-card">
                   <div class="stat-icon delivered-order-icon">
                     <i class="bi bi-check-circle-fill"></i>
@@ -401,20 +434,8 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Shipping Overview -->
-          <div class="stats-section mb-5">
-            <div class="section-header">
-              <h3 class="section-title">
-                <i class="bi bi-truck me-2"></i>
-                Thống Kê Vận Chuyển
-              </h3>
-            </div>
-            <div class="row g-4">
               <!-- Estimated Shipping -->
-              <div class="col-xl-3 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card shipping-card">
                   <div class="stat-icon estimated-shipping-icon">
                     <i class="bi bi-calculator"></i>
@@ -434,7 +455,7 @@
               </div>
 
               <!-- Actual Shipping -->
-              <div class="col-xl-3 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card shipping-card">
                   <div class="stat-icon actual-shipping-icon">
                     <i class="bi bi-check-circle"></i>
@@ -453,10 +474,10 @@
                 </div>
               </div>
               <!-- Shipping Difference -->
-              <div class="col-xl-3 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card shipping-difference-card">
                   <div class="stat-icon shipping-difference-icon">
-                    <i class="bi bi-plus-minus"></i>
+                    <i class="bi bi-speedometer2"></i>
                   </div>
                   <div class="stat-content">
                     <h6 class="stat-label">Chênh Lệch Vận Chuyển Ước Tính</h6>
@@ -470,10 +491,10 @@
                 </div>
               </div>
               <!-- Actual Shipping Delivered -->
-              <div class="col-xl-3 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card shipping-delivered-card">
                   <div class="stat-icon shipping-delivered-icon">
-                    <i class="bi bi-truck-flatbed"></i>
+                    <i class="bi bi-arrow-down-up"></i>
                   </div>
                   <div class="stat-content">
                     <h6 class="stat-label">
@@ -490,10 +511,10 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xl-3 col-lg-6">
+              <div class="col-xl-4 col-lg-6">
                 <div class="stat-card shipping-delivered-card">
                   <div class="stat-icon shipping-delivered-icon">
-                    <i class="bi bi-truck-flatbed"></i>
+                    <i class="bi bi-graph-down-arrow"></i>
                   </div>
                   <div class="stat-content">
                     <h6 class="stat-label">Chi phí sản phẩm</h6>
@@ -508,7 +529,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xl-3 col-lg-6">
+              <div class="col-xl-12 col-lg-6">
                 <div class="stat-card shipping-delivered-card">
                   <div class="stat-icon shipping-delivered-icon">
                     <i class="bi bi-truck-flatbed"></i>
@@ -538,128 +559,6 @@
           </div>
 
           <!-- Discount Overview -->
-          <div class="stats-section mb-5">
-            <div class="section-header">
-              <h3 class="section-title">
-                <i class="bi bi-percent me-2"></i>
-                Thống Kê Khuyến Mãi
-              </h3>
-            </div>
-            <div class="row g-4">
-              <!-- Total Estimated Discount -->
-              <div class="col-xl-4 col-lg-6">
-                <div class="stat-card discount-card">
-                  <div class="stat-icon discount-icon">
-                    <i class="bi bi-gift"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Tổng Chiết Trừ Ước Tính</h6>
-                    <div class="stat-value discount-value">
-                      {{ formatCurrency(stats.totalEstimatedDiscountValue) }}
-                    </div>
-                    <div class="stat-description">
-                      <span class="text-muted">Tổng giảm giá ước tính trên đơn hàng</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Total Delivered Discount -->
-              <div class="col-xl-4 col-lg-6">
-                <div class="stat-card discount-delivered-card">
-                  <div class="stat-icon discount-delivered-icon">
-                    <i class="bi bi-check2-square"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Tổng Chiết Trừ Thực Tế</h6>
-                    <div class="stat-value discount-delivered-value">
-                      {{ formatCurrency(stats.totalDiscountValueDilivered) }}
-                    </div>
-                    <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng giảm giá các đơn đã giao thành công</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Discount Ratio -->
-              <div class="col-xl-4 col-lg-6">
-                <div class="stat-card discount-ratio-card">
-                  <div class="stat-icon discount-ratio-icon">
-                    <i class="bi bi-graph-down"></i>
-                  </div>
-                  <div class="stat-content">
-                    <h6 class="stat-label">Tỷ Lệ Chiết Trừ</h6>
-                    <div class="stat-value discount-ratio-value">
-                      {{ calculateDiscountRatio() }}%
-                    </div>
-                    <div class="stat-description">
-                      <span class="text-muted">Chiết trừ ước tính / Doanh thu gộp</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Summary Section -->
-          <div class="stats-section">
-            <div class="section-header">
-              <h3 class="section-title">
-                <i class="bi bi-clipboard-data me-2"></i>
-                Tổng Kết Hoạt Động
-              </h3>
-            </div>
-            <div class="summary-card">
-              <div class="row g-4">
-                <div class="col-md-6">
-                  <div class="summary-item">
-                    <div class="summary-icon revenue-summary-icon">
-                      <i class="bi bi-trophy"></i>
-                    </div>
-                    <div class="summary-content">
-                      <h6>Hiệu Quả Kinh Doanh</h6>
-                      <p class="summary-description">
-                        Tỷ lệ doanh thu ròng đạt
-                        <strong>{{ calculateRevenueRatio() }}%</strong>
-                        so với doanh thu gộp, thể hiện hiệu quả quản lý chi phí.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="summary-item">
-                    <div class="summary-icon shipping-summary-icon">
-                      <i class="bi bi-speedometer2"></i>
-                    </div>
-                    <div class="summary-content">
-                      <h6>Quản Lý Vận Chuyển</h6>
-                      <p class="summary-description">
-                        Độ chênh lệch phí vận chuyển:
-                        <strong>{{
-                          formatCurrency(
-                            Math.abs(
-                              stats.totalActualShippingFee -
-                                stats.totalEstimatedShippingFee
-                            )
-                          )
-                        }}</strong>
-                        {{
-                          stats.totalActualShippingFee -
-                            stats.totalEstimatedShippingFee >=
-                          0
-                            ? "(Vượt dự kiến)"
-                            : "(Tiết kiệm được)"
-                        }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -983,7 +882,7 @@ onMounted(() => {
 }
 
 .return-amount-icon {
-  background: linear-gradient(135deg, #e91e63, #c2185b);
+  background: linear-gradient(135deg, #1ebde9, #2b22dd);
 }
 
 /* Order Icons */

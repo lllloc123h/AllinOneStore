@@ -24,24 +24,40 @@
                 <img :src="currentImage" class="main-image" />
 
                 <!-- Navigation Arrows -->
-                <button class="gallery-nav gallery-nav-prev" @click="prevImage" v-if="images.length > 1">
+                <button
+                  class="gallery-nav gallery-nav-prev"
+                  @click="prevImage"
+                  v-if="images.length > 1"
+                >
                   <i class="bi bi-chevron-left"></i>
                 </button>
-                <button class="gallery-nav gallery-nav-next" @click="nextImage" v-if="images.length > 1">
+                <button
+                  class="gallery-nav gallery-nav-next"
+                  @click="nextImage"
+                  v-if="images.length > 1"
+                >
                   <i class="bi bi-chevron-right"></i>
                 </button>
 
                 <!-- Image Indicators -->
                 <div class="image-indicators" v-if="images.length > 1">
-                  <span v-for="(img, idx) in images" :key="idx"
-                    :class="['indicator', { active: currentImageIndex === idx }]" @click="selectImage(idx)"></span>
+                  <span
+                    v-for="(img, idx) in images"
+                    :key="idx"
+                    :class="['indicator', { active: currentImageIndex === idx }]"
+                    @click="selectImage(idx)"
+                  ></span>
                 </div>
               </div>
 
               <!-- Thumbnail Gallery -->
               <div class="thumbnail-gallery" v-if="images.length > 1">
-                <div v-for="(img, idx) in images" :key="idx"
-                  :class="['thumbnail-item', { active: currentImageIndex === idx }]" @click="selectImage(idx)">
+                <div
+                  v-for="(img, idx) in images"
+                  :key="idx"
+                  :class="['thumbnail-item', { active: currentImageIndex === idx }]"
+                  @click="selectImage(idx)"
+                >
                   <img :src="img.imageUrl" :alt="`Ảnh ${idx + 1}`" />
                 </div>
               </div>
@@ -56,22 +72,39 @@
                 <h1 class="product-title">{{ selectedProduct.baseProducts.name }}</h1>
                 <!-- Variant Selection -->
                 <div class="variant-section" v-if="Object.keys(mapVarriants).length > 0">
-                  <div v-for="(items, groupName, index) in mapVarriants" :key="groupName" class="variant-group">
+                  <div
+                    v-for="(items, groupName, index) in mapVarriants"
+                    :key="groupName"
+                    class="variant-group"
+                  >
                     <h5 class="variant-label">
-                      <i class="bi bi-palette-fill me-2" v-if="groupName.includes('Màu')"></i>
+                      <i
+                        class="bi bi-palette-fill me-2"
+                        v-if="groupName.includes('Màu')"
+                      ></i>
                       <i class="bi bi-rulers me-2" v-else></i>
                       {{ groupName }}
                     </h5>
                     <div class="variant-options">
-                      <label v-for="item in items" :key="item.id" :class="[
-                        'variant-button',
-                        {
-                          active: selected[groupName] === item.signalSku,
-                          disabled: item.isActive === false,
-                        },
-                      ]">
-                        <input type="radio" :name="groupName" :value="item.signalSku"
-                          :disabled="item.isActive === false" v-model="selected[groupName]" class="d-none" />
+                      <label
+                        v-for="item in items"
+                        :key="item.id"
+                        :class="[
+                          'variant-button',
+                          {
+                            active: selected[groupName] === item.signalSku,
+                            disabled: item.isActive === false,
+                          },
+                        ]"
+                      >
+                        <input
+                          type="radio"
+                          :name="groupName"
+                          :value="item.signalSku"
+                          :disabled="item.isActive === false"
+                          v-model="selected[groupName]"
+                          class="d-none"
+                        />
                         <span class="variant-content">{{ item.description }}</span>
                       </label>
                     </div>
@@ -80,10 +113,20 @@
 
                 <div class="rating-section">
                   <div class="stars">
-                    <i v-for="i in 5" :key="i"
-                      :class="['bi', i <= selectedProduct.baseProducts.rating ? 'bi-star-fill' : 'bi-star']"></i>
+                    <i
+                      v-for="i in 5"
+                      :key="i"
+                      :class="[
+                        'bi',
+                        i <= selectedProduct.baseProducts.rating
+                          ? 'bi-star-fill'
+                          : 'bi-star',
+                      ]"
+                    ></i>
                   </div>
-                  <span class="rating-text">{{ selectedProduct.baseProducts.rating.toFixed(1) }}</span>
+                  <span class="rating-text">{{
+                    selectedProduct.baseProducts.rating.toFixed(1)
+                  }}</span>
                   <span class="reviews-count">({{ totalReviews }} đánh giá)</span>
                 </div>
               </div>
@@ -102,7 +145,9 @@
                 </template>
                 <template v-else>
                   <div class="price-container">
-                    <span class="current-price">{{ formatPrice(selectedProduct.price) }}</span>
+                    <span class="current-price">{{
+                      formatPrice(selectedProduct.price)
+                    }}</span>
                   </div>
                 </template>
               </div>
@@ -133,12 +178,18 @@
                 </div>
                 <div class="detail-item">
                   <span class="label">Tình trạng:</span>
-                  <span :class="[
-                    'value',
-                    'stock-status',
-                    selectedProduct.qty > 0 ? 'in-stock' : 'out-of-stock',
-                  ]">
-                    {{ selectedProduct.qty > 0 ? `Còn ${selectedProduct.qty} sản phẩm` : "Hết hàng" }}
+                  <span
+                    :class="[
+                      'value',
+                      'stock-status',
+                      selectedProduct.qty > 0 ? 'in-stock' : 'out-of-stock',
+                    ]"
+                  >
+                    {{
+                      selectedProduct.qty > 0
+                        ? `Còn ${selectedProduct.qty} sản phẩm`
+                        : "Hết hàng"
+                    }}
                   </span>
                 </div>
               </div>
@@ -148,19 +199,36 @@
                 <div class="quantity-selector">
                   <label class="quantity-label">Số lượng:</label>
                   <div class="quantity-controls">
-                    <button @click="decreaseQty" class="qty-btn qty-btn-minus" :disabled="quantity <= 1">
+                    <button
+                      @click="decreaseQty"
+                      class="qty-btn qty-btn-minus"
+                      :disabled="quantity <= 1"
+                    >
                       <i class="bi bi-dash"></i>
                     </button>
-                    <input type="number" v-model="quantity" class="qty-input" min="1" :max="selectedProduct.qty" />
-                    <button @click="increaseQty" class="qty-btn qty-btn-plus"
-                      :disabled="quantity >= selectedProduct.qty">
+                    <input
+                      type="number"
+                      v-model="quantity"
+                      class="qty-input"
+                      min="1"
+                      :max="selectedProduct.qty"
+                    />
+                    <button
+                      @click="increaseQty"
+                      class="qty-btn qty-btn-plus"
+                      :disabled="quantity >= selectedProduct.qty"
+                    >
                       <i class="bi bi-plus"></i>
                     </button>
                   </div>
                 </div>
 
                 <div class="action-buttons">
-                  <button @click="addToCart" class="btn-add-cart" :disabled="selectedProduct.qty <= 0">
+                  <button
+                    @click="addToCart"
+                    class="btn-add-cart"
+                    :disabled="selectedProduct.qty <= 0"
+                  >
                     <i class="bi bi-bag-plus me-2"></i>
                     Thêm vào giỏ hàng
                   </button>
@@ -199,13 +267,19 @@
         <div class="tabs-container">
           <ul class="modern-tabs">
             <li class="tab-item">
-              <button :class="['tab-button', { active: activeTab === 'desc' }]" @click="activeTab = 'desc'">
+              <button
+                :class="['tab-button', { active: activeTab === 'desc' }]"
+                @click="activeTab = 'desc'"
+              >
                 <i class="bi bi-info-circle me-2"></i>
                 Mô tả sản phẩm
               </button>
             </li>
             <li class="tab-item">
-              <button :class="['tab-button', { active: activeTab === 'review' }]" @click="activeTab = 'review'">
+              <button
+                :class="['tab-button', { active: activeTab === 'review' }]"
+                @click="activeTab = 'review'"
+              >
                 <i class="bi bi-chat-square-text me-2"></i>
                 Đánh giá ({{ totalReviews }})
               </button>
@@ -253,7 +327,9 @@
                       <h5 class="specs-title">Thông số kỹ thuật</h5>
                       <div class="spec-row">
                         <span class="spec-label">Chất liệu:</span>
-                        <span class="spec-value">{{ selectedProduct.baseProducts.material }}</span>
+                        <span class="spec-value">{{
+                          selectedProduct.baseProducts.material
+                        }}</span>
                       </div>
                       <div class="spec-row">
                         <span class="spec-label">Mã sản phẩm:</span>
@@ -282,7 +358,11 @@
                     <div class="average-rating">
                       <span class="big-rating">{{ averageRating.toFixed(1) }}</span>
                       <div class="rating-stars">
-                        <i v-for="i in 5" :key="i" :class="['bi', i <= averageRating ? 'bi-star-fill' : 'bi-star']"></i>
+                        <i
+                          v-for="i in 5"
+                          :key="i"
+                          :class="['bi', i <= averageRating ? 'bi-star-fill' : 'bi-star']"
+                        ></i>
                       </div>
                       <p class="rating-count">{{ totalReviews }} đánh giá</p>
                     </div>
@@ -331,10 +411,14 @@
                         <div class="reviewer-details">
                           <h6 class="reviewer-name">{{ review.accountName }}</h6>
                           <div class="review-rating">
-                            <i v-for="i in 5" :key="i" :class="[
-                              'bi',
-                              i <= review.rating ? 'bi-star-fill' : 'bi-star',
-                            ]"></i>
+                            <i
+                              v-for="i in 5"
+                              :key="i"
+                              :class="[
+                                'bi',
+                                i <= review.rating ? 'bi-star-fill' : 'bi-star',
+                              ]"
+                            ></i>
                           </div>
                         </div>
                       </div>
@@ -346,37 +430,73 @@
                     <div class="review-content">
                       <p>{{ review.comment }}</p>
 
-                      <div class="review-images" v-if="review.imageUrl1 || review.imageUrl2 || review.imageUrl3">
-                        <img v-if="review.imageUrl1" :src="review.imageUrl1" alt="Ảnh đánh giá 1"
-                          class="review-image" />
-                        <img v-if="review.imageUrl2" :src="review.imageUrl2" alt="Ảnh đánh giá 2"
-                          class="review-image" />
-                        <img v-if="review.imageUrl3" :src="review.imageUrl3" alt="Ảnh đánh giá 3"
-                          class="review-image" />
+                      <div
+                        class="review-images"
+                        v-if="review.imageUrl1 || review.imageUrl2 || review.imageUrl3"
+                      >
+                        <img
+                          v-if="review.imageUrl1"
+                          :src="review.imageUrl1"
+                          alt="Ảnh đánh giá 1"
+                          class="review-image"
+                        />
+                        <img
+                          v-if="review.imageUrl2"
+                          :src="review.imageUrl2"
+                          alt="Ảnh đánh giá 2"
+                          class="review-image"
+                        />
+                        <img
+                          v-if="review.imageUrl3"
+                          :src="review.imageUrl3"
+                          alt="Ảnh đánh giá 3"
+                          class="review-image"
+                        />
                       </div>
                       <div class="review-video" v-if="review.videoUrl">
-                        <video :src="review.videoUrl" controls class="review-video-player"
-                          style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 12px;"></video>
+                        <video
+                          :src="review.videoUrl"
+                          controls
+                          class="review-video-player"
+                          style="
+                            width: 100%;
+                            max-width: 400px;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                            margin-top: 12px;
+                          "
+                        ></video>
                       </div>
                     </div>
                   </div>
 
                   <!-- Pagination -->
                   <div class="pagination-container" v-if="totalPages > 1">
-                    <button class="pagination-btn" @click="changePage(currentPage - 1)" :disabled="currentPage === 0">
+                    <button
+                      class="pagination-btn"
+                      @click="changePage(currentPage - 1)"
+                      :disabled="currentPage === 0"
+                    >
                       <i class="bi bi-chevron-left"></i>
                       Trước
                     </button>
 
                     <div class="page-numbers">
-                      <button v-for="page in totalPages" :key="page" @click="changePage(page - 1)"
-                        :class="['page-btn', { active: page - 1 === currentPage }]">
+                      <button
+                        v-for="page in totalPages"
+                        :key="page"
+                        @click="changePage(page - 1)"
+                        :class="['page-btn', { active: page - 1 === currentPage }]"
+                      >
                         {{ page }}
                       </button>
                     </div>
 
-                    <button class="pagination-btn" @click="changePage(currentPage + 1)"
-                      :disabled="currentPage === totalPages - 1">
+                    <button
+                      class="pagination-btn"
+                      @click="changePage(currentPage + 1)"
+                      :disabled="currentPage === totalPages - 1"
+                    >
                       Tiếp
                       <i class="bi bi-chevron-right"></i>
                     </button>
@@ -397,7 +517,11 @@
         </div>
 
         <div class="related-products-grid">
-          <div class="product-card" v-for="item in relatedItems.slice(0, 4)" :key="item.id">
+          <div
+            class="product-card"
+            v-for="item in relatedItems.slice(0, 4)"
+            :key="item.id"
+          >
             <div class="product-image-container">
               <img :src="item.imageUrl" :alt="item.name" class="product-image" />
               <div class="product-overlay">
@@ -462,7 +586,6 @@ const totalPages = ref(0);
 const uploaderKey = ref(Date.now());
 
 const discountedPrice = computed(() => {
-
   if (selectedProduct.value?.promotions[0]?.discountValue) {
     return Math.round(
       currentPrice.value * (1 - selectedProduct.value.promotions[0].discountValue / 100)
@@ -479,32 +602,40 @@ const fetchProductData = async (id) => {
     const res = await api.get(`/ProductItems/detail/${id}`);
     console.log("Product data:", res.data.content);
     product.value = res.data.content;
-    SkuColorList.value = new Set(product.value.map(e => {
-      return e.sku.split('-')[e.sku.split('-').length - 2]
-    }))
-    SkuSizeList.value = new Set(product.value.map(e => {
-      return e.sku.split('-')[e.sku.split('-').length - 1]
-    }))
-    listMapIfSelect.value = product.value.map(e => {
-      return e.sku.split('-')
-    })
+    SkuColorList.value = new Set(
+      product.value.map((e) => {
+        return e.sku.split("-")[e.sku.split("-").length - 2];
+      })
+    );
+    SkuSizeList.value = new Set(
+      product.value.map((e) => {
+        return e.sku.split("-")[e.sku.split("-").length - 1];
+      })
+    );
+    listMapIfSelect.value = product.value.map((e) => {
+      return e.sku.split("-");
+    });
     const filteredMap = {};
     for (const [groupName, items] of Object.entries(mapVarriants.value)) {
-      if (groupName === 'Màu sắc') {
-        let filteredItems = items.filter(item => SkuColorList.value.has(item.signalSku));
-        filteredItems.map(setIsActive => {
-          return { ...setIsActive, isActice: true }
-        })
+      if (groupName === "Màu sắc") {
+        let filteredItems = items.filter((item) =>
+          SkuColorList.value.has(item.signalSku)
+        );
+        filteredItems.map((setIsActive) => {
+          return { ...setIsActive, isActice: true };
+        });
         if (filteredItems.length) filteredMap[groupName] = { ...filteredItems };
-      } else if (groupName === 'Kích thước') {
-        const filteredItems = items.filter(item => SkuSizeList.value.has(item.signalSku));
+      } else if (groupName === "Kích thước") {
+        const filteredItems = items.filter((item) =>
+          SkuSizeList.value.has(item.signalSku)
+        );
         if (filteredItems.length) filteredMap[groupName] = { ...filteredItems };
       }
     }
     // Update the mapVarriants
     mapVarriants.value = filteredMap;
-    images.value = product.value.flatMap(p => p.images);
-    currentImage.value = images.value[0]
+    images.value = product.value.flatMap((p) => p.images);
+    currentImage.value = images.value[0];
     const defaultSelected = {};
     for (const [groupName, items] of Object.entries(mapVarriants.value)) {
       if (items.length > 0) {
@@ -512,7 +643,7 @@ const fetchProductData = async (id) => {
       }
     }
     selected.value = defaultSelected;
-    selectedProduct.value = product.value[0]
+    selectedProduct.value = product.value[0];
   } catch (err) {
     console.error("Lỗi tải chi tiết sản phẩm:", err);
   }
@@ -550,50 +681,60 @@ watch(
     fetchProductData(newId);
     fetchReviews();
     fetchAverageRating();
-  },
-
+  }
 );
-const listColorBaseOnSelectedSize = ref()
-watch(() => selected.value["Kích thước"], () => {
-  selected.value['Màu sắc'] = []
-  const filteredMap = {};
-  listColorBaseOnSelectedSize.value = listMapIfSelect.value.filter(findColor => selected.value["Kích thước"] === (findColor[findColor.length - 1])).map(color => {
-    return color[color.length - 2]
-  })
-  for (const [groupName, items] of Object.entries(mapVarriants.value)) {
-    if (groupName === 'Màu sắc') {
-      const itemList = Array.isArray(items) ? items : Object.values(items);
-      const safeColorList = Array.isArray(listColorBaseOnSelectedSize.value) ? listColorBaseOnSelectedSize.value : [];
-      const filteredItems = itemList.map(item => ({
-        ...item,
-        isActive: safeColorList.includes(item.signalSku)
-      }));
-      filteredMap[groupName] = filteredItems;
-    } else if (groupName === 'Kích thước') {
-      const itemList = Array.isArray(items) ? items : Object.values(items);
-      const filteredItems = itemList.map(item => ({
-        ...item,
-        isActive: true
-      }));
-      filteredMap[groupName] = filteredItems;
+const listColorBaseOnSelectedSize = ref();
+watch(
+  () => selected.value["Kích thước"],
+  () => {
+    selected.value["Màu sắc"] = [];
+    const filteredMap = {};
+    listColorBaseOnSelectedSize.value = listMapIfSelect.value
+      .filter(
+        (findColor) => selected.value["Kích thước"] === findColor[findColor.length - 1]
+      )
+      .map((color) => {
+        return color[color.length - 2];
+      });
+    for (const [groupName, items] of Object.entries(mapVarriants.value)) {
+      if (groupName === "Màu sắc") {
+        const itemList = Array.isArray(items) ? items : Object.values(items);
+        const safeColorList = Array.isArray(listColorBaseOnSelectedSize.value)
+          ? listColorBaseOnSelectedSize.value
+          : [];
+        const filteredItems = itemList.map((item) => ({
+          ...item,
+          isActive: safeColorList.includes(item.signalSku),
+        }));
+        filteredMap[groupName] = filteredItems;
+      } else if (groupName === "Kích thước") {
+        const itemList = Array.isArray(items) ? items : Object.values(items);
+        const filteredItems = itemList.map((item) => ({
+          ...item,
+          isActive: true,
+        }));
+        filteredMap[groupName] = filteredItems;
+      }
+    }
+    mapVarriants.value = filteredMap;
+  }
+);
+watch(
+  () => selected.value["Màu sắc"],
+  () => {
+    const color = selected.value["Màu sắc"];
+    const size = selected.value["Kích thước"];
+
+    if (color && size && size.length !== 0) {
+      const targetSku = `${color}-${size}`;
+      selectedProduct.value =
+        product.value.find((pro) => pro.sku.includes(targetSku)) || product.value[0];
+    } else {
+      const itemList = Array.isArray(product.value) ? product.value : [product.value];
+      selectedProduct.value = itemList[0];
     }
   }
-  mapVarriants.value = filteredMap;
-});
-watch(() => selected.value["Màu sắc"], () => {
-  const color = selected.value["Màu sắc"];
-  const size = selected.value["Kích thước"];
-
-  if (color && size && size.length !== 0) {
-    const targetSku = `${color}-${size}`;
-    selectedProduct.value = product.value.find(pro => pro.sku.includes(targetSku)) || product.value[0];
-  } else {
-    const itemList = Array.isArray(product.value)
-      ? product.value
-      : [product.value];
-    selectedProduct.value = itemList[0];
-  }
-});
+);
 function increaseQty() {
   quantity.value++;
 }
@@ -644,12 +785,11 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("vi-VN");
 }
 
-
 const addToCart = () => {
   if (!product.value || quantity.value <= 0) return;
 
   const itemUpdate = {
-    id: '',
+    id: "",
     accounts: authService.getUserName(),
     productItems: selectedProduct.value.id,
     qty: quantity.value,
@@ -663,8 +803,8 @@ const addToCart = () => {
     sku: selectedProduct.value.sku,
     createdAt: "",
     updatedAt: "",
-  }
-  console.log(itemUpdate)
+  };
+  console.log(itemUpdate);
   authService.updateCart(quantity.value);
 
   if (quantity.value <= selectedProduct.value.qty) {
@@ -674,7 +814,6 @@ const addToCart = () => {
       description: `Đã thêm ${quantity.value} x ${selectedProduct.value.name} vào giỏ hàng`,
       duration: 4.5,
     });
-
   } else {
     notification.error({
       message: "Thất bại",
@@ -729,7 +868,9 @@ const averageRating = ref(0);
 
 const fetchAverageRating = async () => {
   try {
-    const res = await api.get(`/reviews/product/average-rating/${selectedProduct.value.id}`);
+    const res = await api.get(
+      `/reviews/product/average-rating/${selectedProduct.value.id}`
+    );
     averageRating.value = res.data.averageRating || 0;
   } catch (err) {
     console.error("Lỗi lấy điểm trung bình:", err);
@@ -801,12 +942,12 @@ const fileInputRef = ref(null);
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>') repeat;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>')
+    repeat;
   animation: float 20s ease-in-out infinite;
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -884,7 +1025,7 @@ const fileInputRef = ref(null);
   user-select: none;
   font-weight: 500;
   min-width: 70px;
-  color: black
+  color: black;
 }
 
 .variant-button:hover:not(.disabled) {

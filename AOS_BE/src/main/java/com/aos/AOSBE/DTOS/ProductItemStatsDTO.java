@@ -1,6 +1,5 @@
 package com.aos.AOSBE.DTOS;
 
-import com.aos.AOSBE.Entity.ProductItems;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,9 @@ import lombok.NoArgsConstructor;
 public class ProductItemStatsDTO {
     private ProductItemsDTOS productItem;
     private Double rating;
-    private Double returnAmount;
-    private Double sumTotal;
-    private Double sumCost;
+    private Double revenue;
+    private Double discountOnProduct;
+    private Double totalCost;
+    private Integer countReturned;
+    private Double exceptionCost;
 }

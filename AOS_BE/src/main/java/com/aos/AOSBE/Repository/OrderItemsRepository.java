@@ -29,7 +29,7 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer>
 	List<OrderItems> findAllByBaseId(int orderId);
 	@Query("SELECT SUM(o.total) FROM OrderItems o WHERE o.productItems.id = ?1 AND o.orders.shippingStatus= 'delivered' AND o.orders.paymentStatus LIKE 'paid'")
 	Double sumTotalByProductItemId(int productItemId);
-	@Query("SELECT SUM(o.costAtBuy) FROM OrderItems o WHERE o.productItems.id = ?1 AND o.orders.shippingStatus= 'delivered' AND o.orders.paymentStatus LIKE 'paid'")
+	@Query("SELECT SUM(o.costAtBuy*o.qty) FROM OrderItems o WHERE o.productItems.id = ?1 AND o.orders.shippingStatus= 'delivered' AND o.orders.paymentStatus LIKE 'paid'")
 	Double sumCostAtBuyByProductItemId(int productItemId);
 
 
@@ -41,7 +41,20 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer>
 	@Query("SELECT SUM(o.costAtBuy * o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2")
 	Double sumCostAtBuyMultiQuantityByStatus(String shippingStatus, String paymentStatus);
 	//chênh lệch giá sản phẩm phải chịu
-	@Query("SELECT SUM(o.priceAtBuy - o.sellingPrice) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2")
+	@Query("SELECT SUM((o.priceAtBuy - o.sellingPrice)*o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2")
 	Double sumDiscountProductsByStatus(String shippingStatus, String paymentStatus);
 
+
+// proitem
+	@Query("SELECT SUM(o.priceAtBuy * o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2 AND o.productItems.id = ?3")
+	Double revenueProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId);
+
+	@Query("SELECT SUM(o.costAtBuy* o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2 AND o.productItems.id = ?3")
+	Double costProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId);
+
+	@Query("SELECT SUM((o.priceAtBuy - o.sellingPrice)*o.qty) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2 AND o.productItems.id = ?3")
+	Double discountProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId);
+
+	@Query("SELECT COUNT(o) FROM OrderItems o WHERE o.orders.shippingStatus LIKE ?1 AND o.orders.paymentStatus LIKE ?2 AND o.productItems.id = ?3")
+	Integer countProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId);
 }

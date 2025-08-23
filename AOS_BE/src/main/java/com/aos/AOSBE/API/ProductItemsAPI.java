@@ -1,10 +1,7 @@
 package com.aos.AOSBE.API;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.aos.AOSBE.DTOS.*;
@@ -110,13 +107,19 @@ public ResponseEntity<?> getProductItemsStatsByBaseProducts(@RequestParam("baseI
 			List<ProductItems> productItems = productItemsService.productItemsFindByBaseProductId(baseId);
 			List<ProductItemStatsDTO> response = new ArrayList<>();
 			for (ProductItems item : productItems) {
+				Double damge = orderItemsService.costProductItemByStatus("damage","%%", item.getId());
+				Double lost =orderItemsService.costProductItemByStatus("lost","%%", item.getId());
+				Double exception = orderItemsService.costProductItemByStatus("exception","%%", item.getId());
 				response.add(
 						new ProductItemStatsDTO(
 						productItemsMapper.mapper(item),
 						reviewsService.getAverageRatingByProductItemId(item.getId()),
-						returnsService.findTotalRefundAmountByProductItemId(item.getId()),
-						orderItemsService.sumTotalByProductId(item.getId()),
-						orderItemsService.sumCostAtBuyTime(item.getId()))
+								orderItemsService.revenueProductItemByStatus("delivered","paid", item.getId()),
+								orderItemsService.discountProductItemByStatus("delivered","paid", item.getId()),
+								orderItemsService.costProductItemByStatus("delivered","paid", item.getId()),
+								orderItemsService.countProductItemByStatus("returned","%%", item.getId()),
+								(damge != null ? damge : 0) + (lost != null ? lost : 0) + (exception != null ? exception : 0)
+					)
 				);
 			}
 			return ResponseEntity.ok(response);

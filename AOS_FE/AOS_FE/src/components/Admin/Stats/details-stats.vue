@@ -289,9 +289,9 @@
                   <div class="stat-icon bg-success">
                     <i class="bi bi-cash-coin"></i>
                   </div>
-                  <h6 class="stat-title">Doanh thu gộp <br /></h6>
+                  <h6 class="stat-title">Doanh thu <br /></h6>
                   <div class="stat-value">
-                    {{ formatPrice(selectedProductItem.sumTotal) }}
+                    {{ formatPrice(selectedProductItem.revenue) }}
                   </div>
                   <small class="text-muted">Lượt mua × Giá bán</small>
                 </div>
@@ -299,21 +299,14 @@
 
               <div class="col-md-3 mb-3">
                 <div class="stat-card text-center">
-                  <div class="stat-icon bg-warning">
+                  <div class="stat-icon" style="background-color: bisque">
                     <i class="bi bi-graph-up"></i>
                   </div>
-                  <h6 class="stat-title">Lợi nhuận gộp</h6>
+                  <h6 class="stat-title">Giảm giá trên giá bán (combo, discount)</h6>
                   <div class="stat-value">
-                    {{
-                      formatPrice(
-                        selectedProductItem.sumTotal -
-                          (selectedProductItem.sumCost + selectedProductItem.returnAmount)
-                      )
-                    }}
+                    {{ formatPrice(selectedProductItem.discountOnProduct) }}
                   </div>
-                  <small class="text-muted"
-                    >Lợi nhuận thuần - (Chi phí + hoàn tiền)</small
-                  >
+                  <small class="text-muted">Giảm giá trên giá bán</small>
                 </div>
               </div>
 
@@ -322,16 +315,62 @@
                   <div class="stat-icon bg-info">
                     <i class="bi bi-percent"></i>
                   </div>
-                  <h6 class="stat-title">Tỷ lệ lợi nhuận</h6>
+                  <h6 class="stat-title">Chi phí sản phẩm</h6>
+                  <div class="stat-value">
+                    {{ formatPrice(selectedProductItem.totalCost) }}
+                  </div>
+                  <small class="text-muted">Chi phí cho sản phẩm bán được</small>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                  <div class="stat-icon bg-danger">
+                    <i class="bi bi-x-octagon-fill"></i>
+                  </div>
+                  <h6 class="stat-title">Tổng số lượng giao thất bại</h6>
+                  <div class="stat-value">
+                    {{ selectedProductItem.countReturned }}
+                  </div>
+                  <small class="text-muted"
+                    >Số lượng sản phẩm nằm trong hóa đơn giao không thành công</small
+                  >
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                  <div class="stat-icon bg-warning">
+                    <i class="bi bi-exclamation-diamond-fill"></i>
+                  </div>
+                  <h6 class="stat-title">Chi Phí Do Ngoại Lệ</h6>
+                  <div class="stat-value">
+                    {{ formatPrice(selectedProductItem.exceptionCost) }}
+                  </div>
+                  <small class="text-muted"
+                    >Mất, Hư Hỏng trong quá trình vận chuyển</small
+                  >
+                </div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <div class="stat-card text-center">
+                  <div class="stat-icon bg-warning">
+                    <i class="bi bi-exclamation-diamond-fill"></i>
+                  </div>
+                  <h6 class="stat-title">Lợi nhuận</h6>
                   <div class="stat-value">
                     {{
-                      calculateProfitMargin(
-                        selectedProductItem.price,
-                        selectedProductItem.cost
+                      formatPrice(
+                        selectedProductItem.revenue -
+                          selectedProductItem.totalCost -
+                          selectedProductItem.discountOnProduct -
+                          selectedProductItem.exceptionCost
                       )
-                    }}%
+                    }}
                   </div>
-                  <small class="text-muted">Lợi nhuận / giá bán</small>
+                  <small class="text-muted"
+                    >Số tiền thực tế
+                    <strong>(Doanh thu - giảm giá - chi phí - ngoại lệ)</strong></small
+                  >
                 </div>
               </div>
             </div>
@@ -1531,9 +1570,11 @@ async function getProductItems(baseProductId) {
     productItemsList.value = items.map((item) => ({
       ...item.productItem,
       rating: item.rating,
-      returnAmount: item.returnAmount,
-      sumTotal: item.sumTotal,
-      sumCost: item.sumCost,
+      revenue: item.revenue,
+      discountOnProduct: item.discountOnProduct,
+      totalCost: item.totalCost,
+      countReturned: item.countReturned,
+      exceptionCost: item.exceptionCost,
       name: item.baseProducts?.name || selectedBaseProduct.value?.name,
     }));
   } catch (error) {
@@ -1543,8 +1584,8 @@ async function getProductItems(baseProductId) {
 }
 
 function formatPrice(price) {
-  if (!price) return "0 VND";
-  return `${price.toLocaleString("vi-VN")} VND`;
+  if (!price) return "0đ";
+  return `${price.toLocaleString("vi-VN")} đ`;
 }
 
 function getQuantityBadgeClass(qty) {

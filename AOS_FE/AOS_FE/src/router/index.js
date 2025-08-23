@@ -40,6 +40,15 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
+   scrollBehavior(to, from, savedPosition) {
+    // Nếu có savedPosition (vd: bấm nút Back/Forward) thì giữ nguyên
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      // Mỗi lần chuyển route mới → scroll lên đầu
+      return { top: 0 };
+    }
+  },
   routes
 })
 // const router = createRouter({

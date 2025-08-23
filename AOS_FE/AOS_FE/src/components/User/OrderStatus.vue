@@ -147,7 +147,7 @@
                   <i class="bi bi-tag me-1"></i>
                   Khuyến mãi
                 </span>
-                <span class="price-value unit-price">{{ sp.promotionName}}</span>
+                <span class="price-value unit-price">{{ sp.promotionName }}</span>
               </div>
             </div>
           </div>
@@ -189,7 +189,7 @@
               ></i>
             </span>
             <span class="summary-value">
-              {{ "-"+formatMoney(order.thanhToan.giamgia || 0) }}
+              {{ "-" + formatMoney(order.thanhToan.giamgia || 0) }}
             </span>
           </div>
           <div class="summary-item">
@@ -197,9 +197,7 @@
               <i class="bi bi-box me-1"></i>
               Phí vận chuyển
             </span>
-            <span class="summary-value"
-              >{{ formatMoney(order.vanChuyen.ship) }}</span
-            >
+            <span class="summary-value">{{ formatMoney(order.vanChuyen.ship) }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">
@@ -212,7 +210,7 @@
               ></i>
             </span>
             <span class="summary-value">
-              {{ "-"+formatMoney(order.vanChuyen.discounShip || 0) }}
+              {{ "-" + formatMoney(order.vanChuyen.discounShip || 0) }}
             </span>
           </div>
           <div class="summary-item total">
@@ -229,9 +227,7 @@
               <i class="bi bi-box me-1"></i>
               Phương thức thanh toán
             </span>
-            <span class="summary-value"
-              >{{ order.thanhToan.phuongThuc }}</span
-            >
+            <span class="summary-value">{{ order.thanhToan.phuongThuc }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">
@@ -239,10 +235,10 @@
               Trạng thái thanh toán
             </span>
             <span
-                class="detail-value"
-                :class="getPaymentStatusClass(order.thanhToan.trangThai)"
-              >
-                {{ order.thanhToan.trangThai }}
+              class="detail-value"
+              :class="getPaymentStatusClass(order.thanhToan.trangThai)"
+            >
+              {{ order.thanhToan.trangThai }}
             </span>
           </div>
         </div>
@@ -388,7 +384,7 @@
         <button
           class="btn btn-cancel"
           @click="cancelOrder(order.id)"
-          v-if="['pending', 'ready_to_pick',].includes(order.trangThai)"
+          v-if="['pending', 'ready_to_pick'].includes(order.trangThai)"
         >
           <i class="bi bi-x-circle me-2"></i>
           Hủy đơn hàng
@@ -446,7 +442,7 @@ const statusMap = {
   // GHN Status → UI (Tiếng Việt)
 
   // Chờ xác nhận (nội bộ, chưa gửi GHN)
-  "Chờ xác nhận": "Chờ xác nhận",
+  pending: "Chờ xác nhận",
 
   // Chờ lấy hàng
   ready_to_pick: "Chờ lấy hàng",
@@ -527,7 +523,9 @@ const loadOrder = async () => {
         couponship: orderData.order.freeshipCouponCode,
         discounShip: orderData.order.actualShippingFee,
         ship: orderData.order.estimatedShippingFee || 0,
-        giamPhiShip: (orderData.order.estimatedShippingFee || 0) - (orderData.order.actualShippingFee || 0),
+        giamPhiShip:
+          (orderData.order.estimatedShippingFee || 0) -
+          (orderData.order.actualShippingFee || 0),
       },
       thanhToan: {
         phuongThuc: orderData.order.paymentMethodName || "N/A",
@@ -538,7 +536,7 @@ const loadOrder = async () => {
       sanPham: orderData.order.items?.map((i) => ({
         anh: i.main_image_url || "no-image.png",
         ten: i.name,
-        soLuong: i.quantity,    
+        soLuong: i.quantity,
         gia: i.sellingPrice,
         sku: i.product?.sku,
         promotionName: i.promotionName || null,
@@ -591,7 +589,10 @@ const cancelOrder = async () => {
   if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) return;
 
   try {
-    if (order.shippingStatus === "Chờ xác nhận" || order.shippingStatus === "Đang xử lý") {
+    if (
+      order.shippingStatus === "Chờ xác nhận" ||
+      order.shippingStatus === "Đang xử lý"
+    ) {
       // Gọi API hủy nội bộ
       const res = await api.put(`/Users/Orders/cancelRefundOrder/${order.id}`);
       alert(res.data.MESSAGE);

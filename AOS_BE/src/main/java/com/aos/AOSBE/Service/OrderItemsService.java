@@ -61,4 +61,17 @@ public class OrderItemsService {
 	public Double sumCostAtBuyTime(Integer productItemId) {
 		return orderItemsRepository.sumCostAtBuyByProductItemId(productItemId);
 	}
+	//
+	public Double revenueProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId) {
+		return orderItemsRepository.revenueProductItemByStatus(shippingStatus, paymentStatus, productItemId);
+	}
+	public Double costProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId) {
+		return orderItemsRepository.costProductItemByStatus(shippingStatus, paymentStatus, productItemId);
+	}
+	public Double discountProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId) {
+		return orderItemsRepository.discountProductItemByStatus(shippingStatus, paymentStatus, productItemId);
+	}
+	public Integer countProductItemByStatus(String shippingStatus, String paymentStatus, int productItemId) {
+		return orderItemsRepository.countProductItemByStatus(shippingStatus, paymentStatus, productItemId);
+	}
 }
