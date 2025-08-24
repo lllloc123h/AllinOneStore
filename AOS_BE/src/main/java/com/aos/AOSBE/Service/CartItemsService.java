@@ -53,15 +53,20 @@ public class CartItemsService {
 
 	@Transactional
 	public void cartItemsDeleteAll(String email, List<OrderItemsDTOS> cartItemsSelected) {
-		List<CartItems> listCartNeedToRemove = new ArrayList<>();
-		for (OrderItemsDTOS element : cartItemsSelected) {
-			CartItems temp = cartItemsRepository.findByAccountsEmailAndProductItemsId(email, element.getProductItemId())
-					.orElse(null);
-			if (temp != null) {
-				listCartNeedToRemove.add(temp);
-			}
-		}
-		cartItemsRepository.deleteAll(listCartNeedToRemove);
+	    List<CartItems> listCartNeedToRemove = new ArrayList<>();
+	    for (OrderItemsDTOS element : cartItemsSelected) {
+	        CartItems temp = cartItemsRepository
+	            .findByAccountsEmailAndProductItemsIdAndComboGroupId(
+	                email,
+	                element.getProductItemId(),
+	                element.getComboGroupId() // nhớ truyền từ DTO xuống
+	            )
+	            .orElse(null);
+	        if (temp != null) {
+	            listCartNeedToRemove.add(temp);
+	        }
+	    }
+	    cartItemsRepository.deleteAll(listCartNeedToRemove);
 	}
 
 	public Optional<CartItems> cartItemsFindById(int id) {
@@ -73,9 +78,19 @@ public class CartItemsService {
 		cartItemsRepository.deleteById(id);
 	}
 
-	public CartItems cartFindByAccountEmailAndProductItemId(String email, int id) {
-		return cartItemsRepository.findByAccountsEmailAndProductItemsId(email, id).orElse(null);
-	}
+	// ✅ TH1: tìm cart item theo email + product (KHÔNG COMBO)
+    public CartItems cartFindByAccountEmailAndProductItemId(String email, int productItemId) {
+        return cartItemsRepository
+                .findByAccountsEmailAndProductItemsIdAndNoCombo(email, productItemId)
+                .orElse(null);
+    }
+
+    // ✅ TH2: tìm cart item theo email + product + comboGroupId
+    public CartItems cartFindByAccountEmailAndProductItemId(String email, int productItemId, UUID comboGroupId) {
+        return cartItemsRepository
+                .findByAccountsEmailAndProductItemsIdAndComboGroupId(email, productItemId, comboGroupId)
+                .orElse(null);
+    }
 
 	@Transactional
 	public void addCombo(CreateComboDTO entity, Accounts account) {
@@ -115,7 +130,7 @@ public class CartItemsService {
 					cartItem.setComboGroupId(uuid);
 					cartItem.setComboQty(1);
 					cartItem.setIsGift(
-							promotionProductsRepository.findByProductItems_Id(item.getItemId()).getFirst().isGift());
+							promotionProductsRepository.findByProductItemsIdAndPromotionsId(item.getItemId(),item.getPromotionId()).isGift());
 					cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
 					cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
 					cartItemsRepository.save(cartItem);

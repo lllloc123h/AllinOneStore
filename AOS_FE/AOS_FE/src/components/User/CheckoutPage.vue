@@ -314,6 +314,7 @@
                               {{ gift.name }} <br />
                               <span class="text-muted small">{{ gift.sku }}</span><br />
                               <span class="badge bg-success">Tặng kèm</span>
+                              <span class="ms-3">× {{ gift.quantity }}</span>
                             </div>
                           </li>
                         </ul>
@@ -405,7 +406,7 @@
                         <div class="ps-3">
                           <i class="bi bi-check-circle me-2 text-success"></i>Thành tiền:
                           <strong style="color: rgb(102, 126, 234)">{{ (item.price * item.quantity).toLocaleString()
-                            }}₫</strong>
+                          }}₫</strong>
                         </div>
                       </div>
                     </div>

@@ -68,5 +68,4 @@ public class OrderItems {
     
     @Column(name = "combo_qty")
     private Integer comboQty;
-
 }

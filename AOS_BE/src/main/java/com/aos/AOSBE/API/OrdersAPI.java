@@ -221,8 +221,10 @@ private OrderSummaryMapper orderSummaryMapper;
 	                    int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
 	                            ? orderItem.getComboQty()
 	                            : orderItem.getQty();
+
 	                    if (promo.getQty() >= qtyToReduce) {
 	                        promo.setQty(promo.getQty() - qtyToReduce);
+	                        promo.setTurnBuy(promo.getTurnBuy() + qtyToReduce);
 	                        promo.setUpdatedAt(LocalDateTime.now());
 	                        promotionsService.promotionsSave(promo);
 	                    } else {

@@ -48,9 +48,11 @@ public class UserProductEvents {
 	
     @Column(name = "referrer")
     private String referrer;
+    
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Accounts accounts;
+    
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductItems productItems;
