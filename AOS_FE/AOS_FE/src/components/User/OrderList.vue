@@ -547,6 +547,7 @@ const toggleReviewForm = (orderId, productItemId, sp) => {
   };
 };
 
+const activeReviewIndex = ref(null);
 async function submitReview(sp, orderId) {
   if (!newReview.value.text) return;
 
@@ -583,7 +584,7 @@ async function submitReview(sp, orderId) {
     uploaderKey.value = Date.now();
     activeReviewIndex.value = null;
 
-    await fetchReviews();
+    await loadOrders();
   } catch (err) {
     notification.error({
       message: "Lỗi gửi đánh giá",

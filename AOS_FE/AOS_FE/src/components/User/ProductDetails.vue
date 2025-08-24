@@ -80,16 +80,22 @@
 
                 <div class="rating-section">
                   <div class="stars">
-                    <i v-for="i in 5" :key="i" :class="[
-                      'bi',
-                      i <= selectedProduct.baseProducts.rating
-                        ? 'bi-star-fill'
-                        : 'bi-star',
-                    ]"></i>
+                    <i
+                      v-for="i in 5"
+                      :key="i"
+                      :class="[
+                        'bi',
+                        i <= Math.floor(averageRating)
+                          ? 'bi-star-fill'
+                          : i - averageRating < 1
+                          ? 'bi-star-half'
+                          : 'bi-star',
+                      ]"
+                    ></i>
                   </div>
-                  <span class="rating-text">{{
-                    selectedProduct.baseProducts.rating.toFixed(1)
-                    }}</span>
+                  <span class="rating-text">
+                    {{ averageRating.toFixed(1) }}
+                  </span>
                   <span class="reviews-count">({{ totalReviews }} đánh giá)</span>
                 </div>
               </div>
@@ -297,7 +303,18 @@
                     <div class="average-rating">
                       <span class="big-rating">{{ averageRating.toFixed(1) }}</span>
                       <div class="rating-stars">
-                        <i v-for="i in 5" :key="i" :class="['bi', i <= averageRating ? 'bi-star-fill' : 'bi-star']"></i>
+                        <i
+                      v-for="i in 5"
+                      :key="i"
+                      :class="[
+                        'bi',
+                        i <= Math.floor(averageRating)
+                          ? 'bi-star-fill'
+                          : i - averageRating < 1
+                          ? 'bi-star-half'
+                          : 'bi-star',
+                      ]"
+                    ></i>
                       </div>
                       <p class="rating-count">{{ totalReviews }} đánh giá</p>
                     </div>
@@ -454,7 +471,6 @@ import { useRoute } from "vue-router";
 import api, { authService } from "../../Configs/api";
 import { finalHandleCartProgress } from "../../Configs/cart";
 import { notification } from "ant-design-vue";
-import CloudinaryUploader from "../Module/Cloudinary.vue";
 
 const route = useRoute();
 const productId = ref(route.params.id);
@@ -574,13 +590,18 @@ onMounted(async () => {
 // Gọi lại khi ID trên URL thay đổi
 watch(
   () => route.params.id,
-  (newId) => {
+  async (newId) => {
     productId.value = newId;
-    fetchProductData(newId);
-    fetchReviews();
-    fetchAverageRating();
+    await fetchProductData(newId); // Đợi cập nhật selectedProduct xong
+
+    if (selectedProduct.value?.id) {
+      await fetchReviews();
+      await fetchAverageRating();
+      await fetchTotalReviews();
+    }
   }
 );
+
 const listColorBaseOnSelectedSize = ref();
 watch(
   () => selected.value["Kích thước"],
@@ -638,39 +659,6 @@ function increaseQty() {
 
 function decreaseQty() {
   if (quantity.value > 1) quantity.value--;
-}
-
-async function submitReview() {
-  if (!newReview.value.text) return;
-
-  try {
-    await api.post("/user/Reviews", {
-      productItems: product.value.id,
-      rating: newReview.value.rating,
-      comment: newReview.value.text,
-      imageUrl1: reviewImageUrl.value || null,
-    });
-
-    notification.success({
-      message: "Gửi đánh giá thành công",
-      description: "Cảm ơn bạn đã đánh giá sản phẩm!",
-      duration: 2.5,
-    });
-
-    // Reset form
-    newReview.value.text = "";
-    newReview.value.rating = 5;
-    reviewImageUrl.value = "";
-    uploaderKey.value = Date.now();
-    await fetchReviews();
-  } catch (err) {
-    notification.error({
-      message: "Lỗi gửi đánh giá",
-      description: "Vui lòng thử lại sau!",
-      duration: 4.5,
-    });
-    console.error(err);
-  }
 }
 
 function formatPrice(price) {
@@ -778,7 +766,10 @@ const totalReviews = ref(0);
 
 const fetchTotalReviews = async () => {
   try {
-    const res = await api.get(`/reviews/product/count/${productId.value}`);
+    const productId = selectedProduct.value?.id;
+    if (!productId) return;
+
+    const res = await api.get(`/reviews/product/count/${productId}`);
     totalReviews.value = res.data.total || 0;
   } catch (err) {
     console.error("Lỗi lấy tổng số đánh giá:", err);
