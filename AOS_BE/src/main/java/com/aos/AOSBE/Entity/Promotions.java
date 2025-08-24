@@ -36,7 +36,6 @@ public class Promotions {
 	@Column(name = "type")
 	private String type;
 
-
 	@Column(name = "discount_value")
 	private Double discountValue;
 
@@ -54,12 +53,15 @@ public class Promotions {
 
 	@Column(name = "is_active")
 	private boolean isActive;
+	
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
+	
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+	
 	@Column(name ="turn_buy")
 	private int turnBuy;
 }
