@@ -470,6 +470,7 @@ CREATE TABLE
 		min_order_amount DECIMAL(10, 2),
 --		max_discount_amount DECIMAL(10, 2),
 		qty INT,
+		turn_buy int default 0,
 		usage_per_customer INT, -- số lần sử dụng coupon của khách hàng
 		is_allow_voucher bit default 0,
 		is_active BIT NOT NULL DEFAULT 1,

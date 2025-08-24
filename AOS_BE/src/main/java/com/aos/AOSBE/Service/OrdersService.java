@@ -122,6 +122,7 @@ public class OrdersService {
 	            }
 	            // Trừ số lượng mã
 	            discountCoupon.setQty(discountCoupon.getQty() - 1);
+	            discountCoupon.setTurnBuy(discountCoupon.getTurnBuy() + 1);
 	            discountCoupon.setUpdatedAt(LocalDateTime.now());
 	            couponsRepository.save(discountCoupon);
 	        }
@@ -149,6 +150,7 @@ public class OrdersService {
 
 	            // Trừ số lượng mã freeship
 	            freeshipCoupon.setQty(freeshipCoupon.getQty() - 1);
+	            freeshipCoupon.setTurnBuy(freeshipCoupon.getTurnBuy() + 1);
 	            freeshipCoupon.setUpdatedAt(LocalDateTime.now());
 	            couponsRepository.save(freeshipCoupon);
 	        }

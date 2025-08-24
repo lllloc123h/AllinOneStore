@@ -38,6 +38,9 @@ public class Coupons {
 	
     @Column(name = "qty")
     private int qty;
+    
+    @Column(name = "turn_buy")
+    private int turnBuy;
 	
     @Column(name = "usage_per_customer")
     private Integer usagePerCustomer;

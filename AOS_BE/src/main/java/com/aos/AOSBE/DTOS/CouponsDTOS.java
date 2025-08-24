@@ -17,6 +17,7 @@ public class CouponsDTOS {
     private Double discountValue;
     private Double minOrderAmount;
     private int qty;
+	private int turnBuy;
     private int usagePerCustomer;
     private boolean isAllowVoucher;
     private boolean isActive;
