@@ -111,10 +111,47 @@ public class CartHandleAPI {
 
 	@GetMapping("/cart")
 	public ResponseEntity<?> cart() {
-		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-		List<CartItemsDTOS> cartListByAcount = cartItemsService.cartItemsFindAccounts(userEmail).stream().map(cartItemsMapper::mapper).toList();
-		return ResponseEntity.ok(cartListByAcount);
+	    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+	    // Lấy danh sách giỏ hàng theo user
+	    List<CartItems> cartItems = cartItemsService.getValidatedCart(userEmail);
+
+	    // Danh sách cần update nếu promotion hết hạn / không hợp lệ
+	    List<CartItems> needUpdate = new ArrayList<>();
+
+	    for (CartItems item : cartItems) {
+	        if (item.getPromotions() != null) {
+	            boolean isValid = promotionsService.isPromotionValid(item.getPromotions());
+	            if (!isValid) {
+	                // promotion không hợp lệ -> remove
+	                item.setPromotions(null);
+	                needUpdate.add(item);
+	            }
+	        } else {
+	            // nếu chưa có promotion thì thử gán cái mới nhất
+	            Promotions promo = promotionsService.findActivePromotionForItem(item.getProductItems().getId());
+	            if (promo != null) {
+	                item.setPromotions(promo);
+	                needUpdate.add(item);
+	            }
+	        }
+	    }
+
+	    // Nếu có cartItems cần cập nhật thì batch update
+	    if (!needUpdate.isEmpty()) {
+	        for (CartItems item : needUpdate) {
+	            cartItemsService.cartItemsSave(item);
+	        }
+	    }
+
+	    // Trả về DTO sau khi validate
+	    List<CartItemsDTOS> cartListByAccount = cartItems.stream()
+	            .map(cartItemsMapper::mapper)
+	            .toList();
+
+	    return ResponseEntity.ok(cartListByAccount);
 	}
+
 
 	@DeleteMapping("/cart/{id}")
 	public ResponseEntity<?> deleteCart(@PathVariable int id) {

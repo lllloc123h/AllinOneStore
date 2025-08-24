@@ -26,8 +26,12 @@ public interface CartItemsRepository extends JpaRepository<CartItems, Integer>, 
 
     List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroupId);
 
+//    @Modifying
+//    @Query("UPDATE CartItems c SET c.promotions.id = NULL WHERE c.promotions.id = ?1")
+//    void updateCartItemsWherePromotionIsNotExist(int promotionId);
+
     @Modifying
-    @Query("UPDATE CartItems c SET c.promotions.id = NULL WHERE c.promotions.id = ?1")
+    @Query("UPDATE CartItems c SET c.promotions = NULL, c.isGift = false WHERE c.promotions.id = ?1")
     void updateCartItemsWherePromotionIsNotExist(int promotionId);
 
     // ✅ Mới: xử lý chính xác từng trường hợp

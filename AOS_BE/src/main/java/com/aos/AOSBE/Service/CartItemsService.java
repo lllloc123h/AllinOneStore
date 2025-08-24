@@ -35,6 +35,9 @@ public class CartItemsService {
 	private PromotionsRepository promotionsRepository;
 	@Autowired
 	private PromotionProductsRepository promotionProductsRepository;
+    @Autowired
+    private PromotionsService promotionService;
+
 
 	public Page<CartItems> cartItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -170,6 +173,42 @@ public class CartItemsService {
 	@Transactional
 	public void updateCartItemsWherePromotionIsNotExist(int promotionId) {
 		cartItemsRepository.updateCartItemsWherePromotionIsNotExist(promotionId);
+	}
+
+	@Transactional
+	public void validateCartItemsPromotions(Accounts account) {
+	    List<CartItems> cartItems = cartItemsRepository.findByAccountsEmail(account.getEmail());
+
+	    for (CartItems item : cartItems) {
+	        if (item.getPromotions() != null) {
+	            boolean expired = item.getPromotions().getEndAt().isBefore(java.time.LocalDateTime.now());
+	            boolean inactive = !item.getPromotions().isActive();
+	            boolean outOfStock = item.getPromotions().getQty() <= 0;
+
+	            if (expired || inactive || outOfStock) {
+	                // reset thành sản phẩm bình thường
+	                item.setPromotions(null);
+	                item.setIsGift(false);
+	                cartItemsRepository.save(item);
+	            }
+	        }
+	    }
+	}
+	
+	public List<CartItems> getValidatedCart(String email) {
+	    List<CartItems> cartItems = cartItemsRepository.findByAccountsEmail(email);
+
+	    for (CartItems item : cartItems) {
+	        if (item.getPromotions() != null) {
+	            boolean valid = promotionService.isPromotionValid(item.getPromotions());
+	            if (!valid) {
+	                item.setPromotions(null);
+	                item.setIsGift(false);
+	                cartItemsRepository.save(item); // lưu từng item
+	            }
+	        }
+	    }
+	    return cartItems;
 	}
 
 }
