@@ -486,9 +486,17 @@ private OrderSummaryMapper orderSummaryMapper;
 		    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 		                         .body("Trạng thái không hợp lệ");
 		}
-
 		Orders order = optionalOrders.get();
+		String  orderStatus =order.getShippingStatus();
+		if(StatusReturnMoney.contains(orderStatus)) {
+	    	ordersRepository.save(order);
+
+		    return ResponseEntity.ok(order.getShippingStatus());
+	    }
+		
 	    order.setShippingStatus(newStatus);
+	    double total = order.getFinalTotal();
+	    
 	    if(StatusReturnMoney.contains(newStatus)) {
 
 			Optional<EWallets> EwalletUserOptional = EWalletsservice.eWalletsFindByAccountEmail(order.getAccounts().getEmail());
@@ -501,10 +509,13 @@ private OrderSummaryMapper orderSummaryMapper;
 			    return ResponseEntity.ok(order.getShippingStatus());
 			}
 			EWallets EwalletUser = EwalletUserOptional.get();
-			double total = order.getFinalTotal();
+			
 			EwalletUser.setBalance(EwalletUser.getBalance()+total);
 			EWalletsrepository.save(EwalletUser);
+			
+		    ordersRepository.save(order);
 
+		    return ResponseEntity.ok(order.getShippingStatus()+(", tiền hoàn: "+total));
 		}
 	    ordersRepository.save(order);
 

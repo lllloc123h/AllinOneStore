@@ -102,7 +102,7 @@
       <!-- Grid sản phẩm giảm giá -->
       <div class="row mt-4 g-4" v-if="discountedProducts.length > 0">
         <div
-          v-for="product in discountedProducts.slice(0, 4)"
+          v-for="product in discountedProducts.slice(0, 8)"
           :key="product.productItemId"
           class="col-lg-3 col-md-6 col-sm-6"
         >
@@ -140,6 +140,9 @@
               </div> -->
               <div class="decsription">
                 <p style="color: black;">{{ extractH2(product.description) }}</p>
+              </div>
+              <div class="time-info">
+                <p>Ngày cập nhật: {{ calTime(product.createdAt) }} ngày trước</p>
               </div>
             </div>
           </div>
@@ -288,7 +291,7 @@
       <!-- Sản phẩm bán chạy -->
       <div class="row g-4" v-if="bestSellers.length > 0">
         <div
-          v-for="product in bestSellers.slice(0, 4)"
+          v-for="product in bestSellers.slice(0, 8)"
           :key="product.id"
           class="col-lg-3 col-md-6 col-sm-6"
         >
@@ -455,14 +458,13 @@
                   class="accordion-collapse collapse show"
                 >
                   <div class="accordion-body">
-                    <strong>This is the first item’s accordion body.</strong> It is shown
-                    by default, until the collapse plugin adds the appropriate classes
-                    that we use to style each element. These classes control the overall
-                    appearance, as well as the showing and hiding via CSS transitions. You
-                    can modify any of this with custom CSS or overriding our default
-                    variables. It’s also worth noting that just about any HTML can go
-                    within the <code>.accordion-body</code>, though the transition does
-                    limit overflow.
+                    <strong>Chất lượng là lời hứa, không phải lời nói.</strong> 
+                    Từng sản phẩm tại shop đều được chọn lọc kỹ lưỡng
+                     từ chất liệu đến đường may, đảm bảo mang đến cho bạn cảm giác thoải mái,
+                      bền đẹp và đúng chuẩn phong cách. Chúng tôi không chỉ bán quần áo — chúng tôi trao gửi sự tự tin.
+                      <br>
+                      <strong>🧵 Nếu có bất kỳ lỗi nhỏ nào, bạn cứ yên tâm: 
+                        chúng tôi luôn sẵn sàng hỗ trợ đổi trả nhanh chóng và không rườm rà.</strong>
                   </div>
                 </div>
               </div>
@@ -482,14 +484,12 @@
                 </h2>
                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
                   <div class="accordion-body">
-                    <strong>This is the second item’s accordion body.</strong> It is
-                    hidden by default, until the collapse plugin adds the appropriate
-                    classes that we use to style each element. These classes control the
-                    overall appearance, as well as the showing and hiding via CSS
-                    transitions. You can modify any of this with custom CSS or overriding
-                    our default variables. It’s also worth noting that just about any HTML
-                    can go within the <code>.accordion-body</code>, though the transition
-                    does limit overflow.
+                    <strong>Giao hàng nhanh chóng, không để bạn phải chờ lâu.</strong> 
+                    Chúng tôi hiểu cảm giác háo hức khi chốt đơn một món đồ ưng ý — vì thế,
+                     đội ngũ vận chuyển luôn hoạt động hết công suất để đơn hàng đến tay bạn nhanh nhất có thể.
+                      Dù bạn ở Sài Gòn hay bất kỳ tỉnh thành nào, chúng tôi đều có giải pháp giao hàng linh hoạt,
+                       tiện lợi và đúng hẹn. <br>
+                       <strong>🚚 Đặt hôm nay, giao liền tay — để bạn luôn là người diện đẹp đầu tiên!</strong>
                   </div>
                 </div>
               </div>
@@ -512,14 +512,14 @@
                   class="accordion-collapse collapse"
                 >
                   <div class="accordion-body">
-                    <strong>This is the third item’s accordion body.</strong> It is hidden
-                    by default, until the collapse plugin adds the appropriate classes
-                    that we use to style each element. These classes control the overall
-                    appearance, as well as the showing and hiding via CSS transitions. You
-                    can modify any of this with custom CSS or overriding our default
-                    variables. It’s also worth noting that just about any HTML can go
-                    within the <code>.accordion-body</code>, though the transition does
-                    limit overflow.
+                    <strong>Chúng tôi luôn ở đây vì bạn.</strong> 
+                    Dù bạn đang phân vân chọn size, cần tư vấn phối đồ, 
+                    hay đơn giản chỉ muốn hỏi về tình trạng đơn hàng — 
+                    đội ngũ của chúng tôi luôn sẵn sàng hỗ trợ bạn một 
+                    cách nhanh chóng và chu đáo. Mỗi khách hàng đều là 
+                    một người bạn đồng hành trên hành trình thời trang, 
+                    và chúng tôi cam kết mang đến trải nghiệm mua sắm dễ chịu, 
+                    thân thiện và đáng nhớ.<strong> 💬 Bạn cần gì, cứ nói — chúng tôi lắng nghe</strong>
                   </div>
                 </div>
               </div>
@@ -625,6 +625,21 @@ onMounted(async () => {
     console.error("Lỗi khi tải dữ liệu:", error);
   }
 });
+// funtion cal time
+const newTime = new Date();
+const calTime = (passTimetr) => {
+  const newTime = new Date(); // thời gian hiện tại
+  const passTime = new Date(passTimetr); // thời gian quá khứ
+
+  const timestamp = newTime - passTime; // đơn vị là milliseconds
+  const timeObj = new Date(timestamp); // tạo đối tượng Date từ khoảng cách thời gian
+
+  const day = timeObj.getUTCDate(); // lấy số ngày (tính từ 1970-01-01)
+
+  console.log("Thời gian tính được = " + day + " ngày");
+  return day;
+};
+
 </script>
 
 <style scoped>

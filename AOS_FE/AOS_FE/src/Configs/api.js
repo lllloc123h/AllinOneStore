@@ -271,7 +271,7 @@ notification.success({
   }
 };
 const homeService = {
-  getBestSellers(limit = 4) {
+  getBestSellers(limit = 8) {
     return api.get('/homepage/bestsellers', {
       params: { limit }
     })

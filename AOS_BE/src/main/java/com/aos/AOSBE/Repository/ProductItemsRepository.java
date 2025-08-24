@@ -178,13 +178,17 @@ public interface ProductItemsRepository
 	List<ProductItems> findAllDiscountedProductIds();
 
 	@Query("""
-			SELECT pi FROM ProductItems pi
-			JOIN pi.baseProducts bp
-			WHERE bp.isActive = true
-			AND pi.qty > 0
-			ORDER BY bp.turnBuy DESC
-			""")
-	List<ProductItems> findBestSellersWithPrice(Pageable pageable);
+		    SELECT pi FROM ProductItems pi
+		    WHERE pi.id IN (
+		        SELECT MIN(pi2.id) FROM ProductItems pi2
+		        JOIN pi2.baseProducts bp2
+		        WHERE bp2.isActive = true
+		        AND pi2.qty > 0
+		        GROUP BY bp2.id, pi2.price
+		    )
+		    ORDER BY pi.baseProducts.turnBuy DESC
+		""")
+		List<ProductItems> findBestSellersWithPrice(Pageable pageable);
 	
 	
 }
