@@ -1,5 +1,6 @@
 package com.aos.AOSBE.API;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -129,11 +130,12 @@ public class CartHandleAPI {
 	            }
 	        } else {
 	            // nếu chưa có promotion thì thử gán cái mới nhất
-	            Promotions promo = promotionsService.findActivePromotionForItem(item.getProductItems().getId());
-	            if (promo != null) {
-	                item.setPromotions(promo);
-	                needUpdate.add(item);
-	            }
+	        	Promotions promo = promotionsService.findActivePromotionForItem(item.getProductItems().getId());
+	        	if (promo != null && promo.getQty() > 0 && promo.isActive() && 
+	        	    promo.getEndAt().isAfter(LocalDateTime.now())) {
+	        	    item.setPromotions(promo);
+	        	    needUpdate.add(item);
+	        	}
 	        }
 	    }
 
@@ -276,26 +278,26 @@ public class CartHandleAPI {
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
 		}
 	}
-@GetMapping("/customs/productItems")
-public ResponseEntity<?> getAllCustomByProductItemIds(@RequestParam("productItemIds") List<Integer> productItemIds) {
-		// get uesrname
-	String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-	List<CustomsDTOS> response = new ArrayList<>();
-	// truy xuất productItem
-for (int productItemId : productItemIds) {
-	List<Customs> customs = customsService.findCustomByEmailAndProductItems(userEmail, productItemId);
-	// nếu kh có custom nào thì thêm thông tin productItem
-	if (customs.isEmpty()) {
-		CustomsDTOS custom = new CustomsDTOS();
-		ProductItems productItem = productItemsService.productItemsFindById(productItemId).orElse(null);
-		custom.setProductItems(productItemsMapper.mapper2(productItem));
-		response.add(custom);
-		continue;
-	}else{
-		response.addAll(customs.stream().map(customsMapper::mapper).collect(Collectors.toList()));
+	@GetMapping("/customs/productItems")
+	public ResponseEntity<?> getAllCustomByProductItemIds(@RequestParam("productItemIds") List<Integer> productItemIds) {
+			// get uesrname
+		String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+		List<CustomsDTOS> response = new ArrayList<>();
+		// truy xuất productItem
+	for (int productItemId : productItemIds) {
+		List<Customs> customs = customsService.findCustomByEmailAndProductItems(userEmail, productItemId);
+		// nếu kh có custom nào thì thêm thông tin productItem
+		if (customs.isEmpty()) {
+			CustomsDTOS custom = new CustomsDTOS();
+			ProductItems productItem = productItemsService.productItemsFindById(productItemId).orElse(null);
+			custom.setProductItems(productItemsMapper.mapper2(productItem));
+			response.add(custom);
+			continue;
+		}else{
+			response.addAll(customs.stream().map(customsMapper::mapper).collect(Collectors.toList()));
+		}
 	}
-}
-	return ResponseEntity.ok(response);
-}
+		return ResponseEntity.ok(response);
+	}
 
 }

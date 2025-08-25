@@ -240,7 +240,7 @@
                   </div>
                   <span class="rating-text">{{
                     (selectedProductItem?.baseProducts?.rating || 0).toFixed(1)
-                    }}</span>
+                  }}</span>
                   <span class="rating-count">({{ Math.floor(Math.random() * 100) + 10 }} đánh giá)</span>
                 </div>
 
@@ -250,7 +250,7 @@
                     <div class="price-row">
                       <span class="current-price">{{
                         formatPrice(discountedPrice)
-                        }}</span>
+                      }}</span>
                       <span class="original-price">{{ formatPrice(currentPrice) }}</span>
                     </div>
                     <div class="discount-badge">
@@ -262,7 +262,7 @@
                     <div class="price-row">
                       <span class="current-price">{{
                         formatPrice(selectedProductItem?.price || 0)
-                        }}</span>
+                      }}</span>
                     </div>
                   </template>
                 </div>
@@ -318,7 +318,7 @@
                       <span class="detail-label">Chất liệu</span>
                       <span class="detail-value">{{
                         selectedProductItem?.baseProducts?.material
-                        }}</span>
+                      }}</span>
                     </div>
                   </div>
 
@@ -572,7 +572,7 @@ const itemCart = ref({
 });
 const addToCart = () => {
   if (!selectedProductItem.value || quantityForAddToCartPorductItem.value <= 0) return;
-  if (quantityForAddToCartPorductItem.value < selectedProductItem.value.safetyStock) {
+  if (quantityForAddToCartPorductItem.value) {
     authService.updateCart(quantityForAddToCartPorductItem.value);
     clearInterval(timer);
 
@@ -804,6 +804,7 @@ watch(images, (newImages) => {
   margin-bottom: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
+
 /* Thêm vào cuối file CSS của ProductsView.vue hoặc trong phần .page-header */
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -821,8 +822,7 @@ watch(images, (newImages) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>')
-    repeat-x;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,20 Q250,80 500,20 T1000,20 L1000,0 L0,0 Z"/></svg>') repeat-x;
   background-size: 1000px 100px;
   animation: wave 10s infinite linear;
   z-index: 0;
@@ -832,6 +832,7 @@ watch(images, (newImages) => {
   0% {
     background-position-x: 0;
   }
+
   100% {
     background-position-x: 1000px;
   }
@@ -841,6 +842,7 @@ watch(images, (newImages) => {
   position: relative;
   z-index: 1;
 }
+
 .header-content {
   max-width: 800px;
   margin: 0 auto;

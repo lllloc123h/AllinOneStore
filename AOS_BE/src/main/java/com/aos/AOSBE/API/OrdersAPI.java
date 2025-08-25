@@ -92,8 +92,8 @@ public class OrdersAPI {
 	private CommonKeyConstant commonKeyConstant = new CommonKeyConstant();
     @Autowired
     private CustomsService customsService;
-@Autowired
-private OrderSummaryMapper orderSummaryMapper;
+	@Autowired
+	private OrderSummaryMapper orderSummaryMapper;
     @Autowired
     private EWalletsRepository EWalletsrepository;
 	@GetMapping("/admin/Orders")
@@ -170,45 +170,59 @@ private OrderSummaryMapper orderSummaryMapper;
 
 	@PostMapping("/user/Orders")
 	public ResponseEntity<?> addNewOrdersByUserRoles(@RequestBody CreateOrderDTO request) {
-		System.out.println("Received customDTO: " + request.getCustoms());
-		System.out.println("Received entity: " + request.getOrder());
-		try {
-			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-			Accounts user = accountService.accountsFindByEmail(userEmail).orElse(null);
-			OrdersDTOS entity = request.getOrder();
-			entity.setAccounts(user.getId());
+	    try {
+	        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+	        Accounts user = accountService.accountsFindByEmail(userEmail)
+	                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản."));
 
-			// Xóa giỏ hàng
-			cartItemsService.cartItemsDeleteAll(userEmail, entity.getProducts());
+	        OrdersDTOS entity = request.getOrder();
+	        entity.setAccounts(user.getId());
 
-			// Lưu đơn hàng trước
-			Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
+	        // 1. Lưu đơn hàng trước
+	        Orders saved = ordersService.ordersSave(ordersMapper.mapperToObject(entity));
 
-			// Tạo thông báo
-			MessageDTOS entityMessage = new MessageDTOS();
-			entityMessage.setKeyMessage(commonKeyConstant.MessageOrder);
-			entityMessage.setAccounts(userEmail);
-			entityMessage.setNotification("Bạn có đơn hàng: " + saved.getId());
-			messageService.messageSave(messageMapper.mapperToObject(entityMessage));
+	        // 2. Tạo thông báo
+	        MessageDTOS entityMessage = new MessageDTOS();
+	        entityMessage.setKeyMessage(commonKeyConstant.MessageOrder);
+	        entityMessage.setAccounts(userEmail);
+	        entityMessage.setNotification("Bạn có đơn hàng: " + saved.getId());
+	        messageService.messageSave(messageMapper.mapperToObject(entityMessage));
 
-			// Trừ theo combo
-			Set<String> processedComboGroups = new HashSet<>();
+	        // 3. Xử lý orderItems
+	        Set<String> processedComboGroups = new HashSet<>();
 
-			List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
+	        List<OrderItems> orderItems = entity.getProducts().stream().map(item -> {
 	            OrderItems orderItem = orderItemsMapper.mapperToObject(item);
 
-	            // ✅ 1. Trừ tồn kho sản phẩm (luôn trừ, bất kể combo hay không)
-	            ProductItems updateTurnBuy = orderItem.getProductItems();
-	            updateTurnBuy.setTurnBuy(updateTurnBuy.getTurnBuy() + orderItem.getQty());
-	            updateTurnBuy.setQty(updateTurnBuy.getQty() - orderItem.getQty());
-	            productItemsService.productItemsSave(updateTurnBuy);
+	            // ✅ Lấy lại productItem từ DB (số lượng mới nhất)
+	            ProductItems dbProductItem = productItemsService.productItemsFindById(orderItem.getProductItems().getId())
+	            		.orElseThrow(() -> new IllegalArgumentException(
+	            			    "Sản phẩm bạn chọn không còn tồn tại hoặc đã ngừng kinh doanh. Vui lòng kiểm tra lại giỏ hàng."
+	            			));
 
-	            // Cộng sản phẩm đã bán
-//				BaseProducts updateTurnBuyForBP = orderItem.getProductItems().getBaseProducts();
-//				updateTurnBuyForBP.setTurnBuy(updateTurnBuyForBP.getTurnBuy() + orderItem.getQty());
-//				baseProductsService.baseProductsSave(updateTurnBuyForBP);
-	            
-	            // ✅ 2. Trừ số lượng khuyến mãi (combo) — chỉ 1 lần cho mỗi comboGroup
+	            int orderedQty = orderItem.getQty();
+	            int availableQty = dbProductItem.getQty();
+
+	            if (orderedQty > availableQty) {
+	                throw new IllegalStateException(
+	                    String.format(
+	                        "Sản phẩm \"%s\" hiện chỉ còn %d sản phẩm trong kho, nhưng bạn đang đặt %d. Vui lòng điều chỉnh số lượng.",
+	                        dbProductItem.getBaseProducts().getName(),
+	                        availableQty,
+	                        orderedQty
+	                    )
+	                );
+	            }
+
+	            // Trừ tồn kho
+	            dbProductItem.setTurnBuy(dbProductItem.getTurnBuy() + orderedQty);
+	            dbProductItem.setQty(availableQty - orderedQty);
+	            productItemsService.productItemsSave(dbProductItem);
+
+	            // Gắn lại productItem thật vào orderItem
+	            orderItem.setProductItems(dbProductItem);
+
+	            // ✅ Trừ số lượng khuyến mãi (combo) — chỉ 1 lần cho mỗi comboGroup
 	            Promotions promo = orderItem.getPromotions();
 	            String comboGroupId = orderItem.getComboGroupId() != null
 	                    ? orderItem.getComboGroupId().toString()
@@ -217,7 +231,6 @@ private OrderSummaryMapper orderSummaryMapper;
 	            if (promo != null) {
 	                boolean isComboProcessed = comboGroupId != null && processedComboGroups.contains(comboGroupId);
 	                if (!isComboProcessed) {
-	                    // Nếu có comboQty thì dùng comboQty, ngược lại dùng số lượng sản phẩm
 	                    int qtyToReduce = (orderItem.getComboQty() != null && orderItem.getComboQty() > 0)
 	                            ? orderItem.getComboQty()
 	                            : orderItem.getQty();
@@ -228,27 +241,43 @@ private OrderSummaryMapper orderSummaryMapper;
 	                        promo.setUpdatedAt(LocalDateTime.now());
 	                        promotionsService.promotionsSave(promo);
 	                    } else {
-	                        throw new IllegalStateException("Số lượng khuyến mãi không đủ.");
+	                        throw new IllegalStateException(
+	                                String.format("Chương trình khuyến mãi \"%s\" đã hết số lượng. Vui lòng chọn ưu đãi khác.",
+	                                    promo.getName())
+	                            );
 	                    }
-
-	                    // Đánh dấu combo đã xử lý
 	                    if (comboGroupId != null) {
 	                        processedComboGroups.add(comboGroupId);
 	                    }
 	                }
 	            }
+
 	            orderItem.setOrders(saved);
-				return orderItem;
-			}).collect(Collectors.toList());
-			orderItemsService.orderItemsSaveAll(orderItems);
-			if (request.getCustoms() != null) {
-				customsService.saveCustomFromCheckout(request.getCustoms(), saved.getId());
-			}
-			return ResponseEntity.ok(saved);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra"));
-		}
+	            return orderItem;
+	        }).collect(Collectors.toList());
+
+	        // 4. Lưu orderItems
+	        orderItemsService.orderItemsSaveAll(orderItems);
+
+	        // 5. Lưu custom fields nếu có
+	        if (request.getCustoms() != null) {
+	            customsService.saveCustomFromCheckout(request.getCustoms(), saved.getId());
+	        }
+
+	        // 6. ✅ Xóa giỏ hàng CHỈ SAU KHI thành công hết
+	        cartItemsService.cartItemsDeleteAll(userEmail, entity.getProducts());
+
+	        return ResponseEntity.ok(saved);
+
+	    } catch (Exception e) {
+	        ApiError error = new ApiError(
+	                HttpStatus.BAD_REQUEST.value(),
+	                e.getMessage(),
+	                e.getClass().getSimpleName(),
+	                LocalDateTime.now()
+	            );
+	            return ResponseEntity.badRequest().body(error);
+	        }
 	}
 
 	@GetMapping("/user/Orders/paypending")

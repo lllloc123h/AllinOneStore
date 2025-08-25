@@ -979,7 +979,14 @@ async function confirmOrder() {
     showSuccess.value = true;
   } catch (err) {
     console.error("🔥 Lỗi đặt hàng:", err.response?.data || err.message);
-    alert("Lỗi đặt hàng!");
+
+    // Lấy message cụ thể từ BE
+    const errorMessage =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      "Có lỗi xảy ra, vui lòng thử lại";
+
+    alert(errorMessage);
   }
 }
 // ==== Lifecycle ====

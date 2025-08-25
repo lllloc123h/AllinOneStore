@@ -64,17 +64,15 @@ public class PromotionsService {
 	}
 
 	public boolean isPromotionValid(Promotions promotion) {
-        if (promotion == null) return false;
+	    if (promotion == null) return false;
 
-        LocalDateTime now = LocalDateTime.now();
+	    LocalDateTime now = LocalDateTime.now();
 
-        if (!promotion.isActive()) return false;
-        if (promotion.getStartAt() != null && promotion.getStartAt().isAfter(now)) return false;
-        if (promotion.getEndAt() != null && promotion.getEndAt().isBefore(now)) return false;
-        if (promotion.getQty() <= 0) return false;
-
-        return true;
-    }
+	    return promotion.isActive()
+	        && (promotion.getStartAt() == null || !promotion.getStartAt().isAfter(now))
+	        && (promotion.getEndAt() == null || !promotion.getEndAt().isBefore(now))
+	        && promotion.getQty() > 0;
+	}
 	
 	public Promotions findActivePromotionForItem(int productItemId) {
 	    List<Promotions> promos = promotionsRepository.findActivePromotionsByProductItemId(productItemId);
