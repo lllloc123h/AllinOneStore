@@ -919,6 +919,7 @@ const fileInputRef = ref(null);
 .variant-button:hover:not(.disabled) {
   border-color: #667eea;
   background: #f0f2ff;
+  color: black;
 }
 
 .variant-button.active {
