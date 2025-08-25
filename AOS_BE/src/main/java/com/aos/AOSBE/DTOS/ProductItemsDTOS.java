@@ -2,10 +2,10 @@ package com.aos.AOSBE.DTOS;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.aos.AOSBE.Entity.BaseProducts;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class ProductItemsDTOS {
 	private int turnBuy;
 	private String description;
 	private String sku;
-	private int safetyStock;
+	private UUID searchPoint;
 	private int qty;
 	private LocalDateTime sellStart;
 	private LocalDateTime sellEnd;
@@ -50,7 +50,7 @@ public class ProductItemsDTOS {
 
 	}
 
-	public ProductItemsDTOS(double cost, int id, double price, int turnBuy, String description, int safetyStock,
+	public ProductItemsDTOS(double cost, int id, double price, int turnBuy, String description, UUID searchPoint,
 			String sku, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
 			LocalDateTime updatedAt) {
 		this.cost = cost;
@@ -58,7 +58,7 @@ public class ProductItemsDTOS {
 		this.price = price;
 		this.turnBuy = turnBuy;
 		this.description = description;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.sku = sku;
 		this.qty = qty;
 		this.sellStart = sellStart;
@@ -68,8 +68,8 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl) {
+							UUID searchPoint, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+							LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -77,7 +77,7 @@ public class ProductItemsDTOS {
 		this.turnBuy = turnBuy;
 		this.description = description;
 		this.sku = sku;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.qty = qty;
 		this.sellStart = sellStart;
 		this.sellEnd = sellEnd;
@@ -90,9 +90,9 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
-			BaseProducts baseProducts, List<PromotionsDTOS> promotions, List<ProductImagesDTOS> images) {
+							UUID searchPoint, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+							LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+							BaseProducts baseProducts, List<PromotionsDTOS> promotions, List<ProductImagesDTOS> images) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -100,7 +100,7 @@ public class ProductItemsDTOS {
 		this.turnBuy = turnBuy;
 		this.description = description;
 		this.sku = sku;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.qty = qty;
 		this.sellStart = sellStart;
 		this.sellEnd = sellEnd;
@@ -116,9 +116,9 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
-			BaseProducts baseProducts,boolean isActive) {
+							UUID searchPoint, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+							LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+							BaseProducts baseProducts, boolean isActive) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -126,7 +126,7 @@ public class ProductItemsDTOS {
 		this.turnBuy = turnBuy;
 		this.description = description;
 		this.sku = sku;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.qty = qty;
 		this.sellStart = sellStart;
 		this.sellEnd = sellEnd;
@@ -141,9 +141,9 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
-			BaseProducts baseProducts, List<ProductImagesDTOS> images) {
+							UUID searchPoint, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+							LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+							BaseProducts baseProducts, List<ProductImagesDTOS> images) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -151,7 +151,7 @@ public class ProductItemsDTOS {
 		this.turnBuy = turnBuy;
 		this.description = description;
 		this.sku = sku;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.qty = qty;
 		this.sellStart = sellStart;
 		this.sellEnd = sellEnd;
@@ -166,9 +166,9 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
-			BaseProducts baseProducts, List<ProductImagesDTOS> images, boolean isActive) {
+							UUID searchPoint, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+							LocalDateTime updatedAt, int baseId, String name, String material, String imageUrl,
+							BaseProducts baseProducts, List<ProductImagesDTOS> images, boolean isActive) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -176,7 +176,7 @@ public class ProductItemsDTOS {
 		this.turnBuy = turnBuy;
 		this.description = description;
 		this.sku = sku;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.qty = qty;
 		this.sellStart = sellStart;
 		this.sellEnd = sellEnd;
@@ -192,8 +192,8 @@ public class ProductItemsDTOS {
 	}
 
 	public ProductItemsDTOS(int id, double cost, double price, int turnBuy, String description, String sku,
-			int safetyStock, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
-			LocalDateTime updatedAt, int baseId) {
+							UUID searchPoint, int qty, LocalDateTime sellStart, LocalDateTime sellEnd, LocalDateTime createdAt,
+							LocalDateTime updatedAt, int baseId) {
 		super();
 		this.id = id;
 		this.cost = cost;
@@ -201,7 +201,7 @@ public class ProductItemsDTOS {
 		this.turnBuy = turnBuy;
 		this.description = description;
 		this.sku = sku;
-		this.safetyStock = safetyStock;
+		this.searchPoint = searchPoint;
 		this.qty = qty;
 		this.sellStart = sellStart;
 		this.sellEnd = sellEnd;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.aos.AOSBE.Service.QdrantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,8 @@ import com.aos.AOSBE.Service.ProductImagesService;
 public class ProductImagesAPI {
 	@Autowired
 	private ProductImagesService productImagesService;
-
+@Autowired
+private QdrantService qdrantService;
 	@Autowired
 	private ProductImagesMapper productImagesMapper;
 
@@ -88,10 +90,12 @@ public class ProductImagesAPI {
 	public ResponseEntity<?> updateProductImages(@PathVariable int id) {
 		try {
 			ProductImages address = productImagesService.productImagesFindById(id).orElse(null);
-
 			if (address != null) {
 				ProductImages updated = productImagesService.productImagesSetDefaultAddress(id, address);
-				return ResponseEntity.ok().body(Map.of("message", "Set as default successfully"));
+//				qdrantService.setPayLoad(updated.getImageUrl(), updated.getProductItems().getSearchPoint().toString());
+				// Cập nhật lại thông tin trong Qdrant
+//				qdrantService.updateProductPayloadByProductItemId(updated.getProductItems().getId(), Map.of("imageUrl", updated.getImageUrl()));
+				return ResponseEntity.ok().body(Map.of("message", "Set as default successfully","itemId",updated.getProductItems().getId()));
 			} else {
 				return ResponseEntity.badRequest().body(Map.of("message", "Address not found"));
 			}

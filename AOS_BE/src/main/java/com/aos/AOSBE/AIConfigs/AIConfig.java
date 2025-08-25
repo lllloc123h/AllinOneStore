@@ -12,6 +12,8 @@ import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQuery
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.template.st.StTemplateRenderer;
 import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.filter.Filter;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.aop.Advisor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,43 +42,6 @@ class AIConfig {
 //					.build())
 //			.build();
 
-	@Bean
-	PromptTemplate customPromptTemplate() {
-		return PromptTemplate.builder()
-				.renderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
-				.template(
-						"""
-								        <query>
-
-								        Thông tin ngữ cảnh nằm bên dưới.
-
-								        ---------------------
-								        <question_answer_context>
-								        ---------------------
-
-								        Dựa trên thông tin ngữ cảnh và không sử dụng kiến thức bên ngoài, hãy trả lời câu hỏi sau.
-
-								        Lưu ý các quy tắc sau:
-
-								        1. Nếu không tìm thấy câu trả lời trong ngữ cảnh, chỉ cần trả lời rằng bạn không biết.
-								        2. Tránh các câu kiểu như "Dựa trên ngữ cảnh..." hoặc "Theo thông tin cung cấp...".
-								""")
-				.build();
-	}
-
-	// chiến lược gửi request, ở đây là gửi tối đa 8000 token, với 10% dự trữ
-//    @PostConstruct
-//    public void loadSampleData() {
-//        List<Document> docs = List.of(
-//                new Document("Áo thun nam chất liệu cotton, thoáng mát, phù hợp mùa hè.",
-//                        Map.of("category", "áo thun", "gender", "nam")),
-//                new Document("Váy nữ dáng dài, màu pastel, thích hợp đi tiệc.",
-//                        Map.of("category", "váy", "gender", "nữ")),
-//                new Document("Quần jeans nam co giãn, dễ phối đồ.",
-//                        Map.of("category", "quần jeans", "gender", "nam"))
-//        );
-//        vectorStore.accept(docs);
-//    }
 	@Bean
 	ChatClient chatClientForForecast(ChatClient.Builder builder) {
 		return builder
@@ -114,36 +79,59 @@ class AIConfig {
 	}
 
 	@Bean
+	PromptTemplate customPromptTemplate() {
+		return PromptTemplate.builder()
+				.renderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
+				.template(
+						"""
+								        <query>
+
+								        Thông tin ngữ cảnh nằm bên dưới.
+
+								        ---------------------
+								        <question_answer_context>
+								        ---------------------
+
+								        Dựa trên thông tin ngữ cảnh và không sử dụng kiến thức bên ngoài, hãy trả lời câu hỏi sau.
+								        Lưu ý các quy tắc sau:
+								       1. Nếu không tìm thấy câu trả lời trong ngữ cảnh, chỉ trả lời rằng bạn không biết.
+								""")
+				.build();
+	}
+
+	@Bean
 	ChatClient chatClientForCustomer(ChatClient.Builder builder) {
 		return builder
 				.defaultSystem(
 						"""
-								Bạn là một trợ lý bán hàng chuyên nghiệp và thân thiện tại một cửa hàng chuyên về thời trang, quần áo.
-								Nhiệm vụ của bạn:
-								- Giới thiệu, tư vấn sản phẩm phù hợp với nhu cầu và sở thích của khách hàng.
-								- Trả lời có định dạng đẹp, sử dụng xuống dòng, gạch đầu dòng, emoji nếu cần.
-								- Trả lời các câu hỏi về đặc điểm, chất liệu, công dụng, giá cả, ưu đãi, chính sách đổi trả.
-								- Đưa ra gợi ý dựa trên thông tin khách hàng cung cấp (giới tính, độ tuổi, mục đích sử dụng, ngân sách, v.v.).
-								- Luôn trả lời ngắn gọn, dễ hiểu, nhiệt tình và rõ ràng.
-								- Không bịa ra thông tin nếu không biết — chỉ trả lời dựa trên dữ liệu được cung cấp.
-								- Nếu khách hỏi biết Trần Hữu Lộc hay không, hãy nói rằng "anh ấy rất đẹp trai".
-								Nếu không có đủ thông tin, hãy chủ động hỏi lại khách hàng để làm rõ nhu cầu.
+                        Bạn là một trợ lý bán hàng vui vẻ, nhiệt tình, thân thiện tại một cửa hàng thời trang, quần áo.
+                        Nhiệm vụ của bạn:
+                        - Luôn chào hỏi khách một cách thân thiện.
+                        - Giới thiệu sản phẩm phù hợp với nhu cầu, sở thích, màu sắc, size, ngân sách của khách.
+                        - Khi trả lời, sử dụng định dạng đẹp, xuống dòng, gạch đầu dòng, thỉnh thoảng thêm emoji để tạo cảm giác gần gũi 😊.
+                        - Nếu sản phẩm có imageUrl, hãy nhúng <img src='...'/>.
+                        - Nếu sản phẩm có url, hãy nhúng <a href='...'>Xem chi tiết</a>.
+                        - Nếu không có sản phẩm phù hợp với yêu cầu, hãy nói một cách thân thiện, ví dụ:
+                            "Ôi không 😢, hiện tại chúng mình không có sản phẩm nào đúng với màu Trắng và size M. Nhưng bạn có muốn thử các màu khác hoặc size khác không?"
+                        - Luôn đặt trải nghiệm khách hàng lên hàng đầu, trả lời vui vẻ, dễ hiểu, nhiệt tình và rõ ràng.
+                        - Không bịa thông tin nếu không biết.
+                        """
+				)
 
-								Luôn ưu tiên giúp khách hàng chọn được sản phẩm phù hợp và hài lòng nhất.
-
-								""")
 				.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory()).build(),
 						QuestionAnswerAdvisor.builder(vectorStore)
-								.searchRequest(SearchRequest.builder().similarityThreshold(0.5).topK(5).build())
+//								.searchRequest(SearchRequest.builder().similarityThreshold(0.5).topK(5).build())
 								.promptTemplate(customPromptTemplate()).build()
 				,
 						RetrievalAugmentationAdvisor.builder()
-								.queryTransformers(RewriteQueryTransformer.builder()
+										.queryTransformers(RewriteQueryTransformer.builder()
 										.chatClientBuilder(builder.build().mutate()).build())
-								.documentRetriever(VectorStoreDocumentRetriever.builder()
+										.documentRetriever(VectorStoreDocumentRetriever.builder()
 										.similarityThreshold(0.50).topK(5)
-										.vectorStore(vectorStore).build())
-								.build())
+										.filterExpression(new FilterExpressionBuilder().eq("isActive", "true").build())
+												.vectorStore(vectorStore).build())
+								.build()
+				)
 //                .defaultUser("Xin chào, mình cần tư vấn sản phẩm")
 				.build();
 	}

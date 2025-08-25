@@ -4,37 +4,77 @@
       <Dashboard></Dashboard>
     </div>
     <div class="article col-9 form-article">
-      <form class="product-form shadow p-4 rounded bg-white"
-        @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()">
-        <div class="mb-3" :style="props.action === 'view' || props.action === 'create' ? 'display:none;' : ''
-          ">
+      <form
+        class="product-form shadow p-4 rounded bg-white"
+        @submit.prevent="props.action === 'create' ? submitForm() : submitUpdateForm()"
+      >
+        <div
+          class="mb-3"
+          :style="
+            props.action === 'view' || props.action === 'create' ? 'display:none;' : ''
+          "
+        >
           <label for="id" class="form-label text-capitalize"></label>
-          <input id="id" v-model="formData.id" v-if="props.action !== 'create'" :hidden="props.action === 'view'"
-            type="number" class="form-control" placeholder="`Enter id`" readonly />
+          <input
+            id="id"
+            v-model="formData.id"
+            v-if="props.action !== 'create'"
+            :hidden="props.action === 'view'"
+            type="number"
+            class="form-control"
+            placeholder="`Enter id`"
+            readonly
+          />
         </div>
         <div class="mb-3">
           <label for="name" class="form-label text-capitalize fw-semibold">Name</label>
-          <input id="name" v-model="formData.name" type="text" class="form-control" placeholder="Enter name" />
+          <input
+            id="name"
+            v-model="formData.name"
+            type="text"
+            class="form-control"
+            placeholder="Enter name"
+          />
         </div>
 
         <div class="mb-3">
-          <label for="material" class="form-label text-capitalize fw-semibold">Material</label>
-          <input id="material" v-model="formData.material" type="text" class="form-control"
-            placeholder="Enter material" />
+          <label for="material" class="form-label text-capitalize fw-semibold"
+            >Material</label
+          >
+          <input
+            id="material"
+            v-model="formData.material"
+            type="text"
+            class="form-control"
+            placeholder="Enter material"
+          />
         </div>
         <div class="mb-3" v-show="props.action != 'view'">
-          <label for="categories" class="form-label text-capitalize fw-semibold">Categories</label>
+          <label for="categories" class="form-label text-capitalize fw-semibold"
+            >Categories</label
+          >
           <select id="categories" v-model="formData.categories" class="form-select">
             <option disabled value="">Select type</option>
-            <option v-for="item in categoriesDropDownList" :key="item.id" :value="item.name">
+            <option
+              v-for="item in categoriesDropDownList"
+              :key="item.id"
+              :value="item.name"
+            >
               {{ item.name }}
             </option>
           </select>
         </div>
         <div class="mb-3">
-          <label for="mainImageUrl" class="form-label text-capitalize fw-semibold">Main Image</label>
-          <uploadProducts ref="uploadRef" :maxFiles="1" :aspectRatio="'4:5'"
-            @update:images="handleImagesUploadBaseProduct" @delete-image="handleImagesDeleteBaseProduct" />
+          <label for="mainImageUrl" class="form-label text-capitalize fw-semibold"
+            >Main Image</label
+          >
+          <uploadProducts
+            ref="uploadRef"
+            :maxFiles="1"
+            :aspectRatio="'4:5'"
+            @update:images="handleImagesUploadBaseProduct"
+            @delete-image="handleImagesDeleteBaseProduct"
+          />
         </div>
 
         <!-- <div v-if="formData.mainImageUrl" class="mb-3 text-center">
@@ -46,51 +86,89 @@
         </div> -->
         <div class="mb-3 d-flex align-items-center gap-3">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="isActiveTrue" :value="true" v-model="formData.active" />
+            <input
+              class="form-check-input"
+              type="radio"
+              id="isActiveTrue"
+              :value="true"
+              v-model="formData.active"
+            />
             <label class="form-check-label" for="isActiveTrue">Active</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="isActiveFalse" :value="false" v-model="formData.active" />
+            <input
+              class="form-check-input"
+              type="radio"
+              id="isActiveFalse"
+              :value="false"
+              v-model="formData.active"
+            />
             <label class="form-check-label" for="isActiveFalse">Inactive</label>
           </div>
         </div>
         <!-- custom -->
         <div class="mb-3 d-flex align-items-center gap-3">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="isCustomTrue" :value="true" v-model="formData.custom"
-              :disabled="props.action === 'update'" />
+            <input
+              class="form-check-input"
+              type="radio"
+              id="isCustomTrue"
+              :value="true"
+              v-model="formData.custom"
+              :disabled="props.action === 'update'"
+            />
             <label class="form-check-label" for="isCustomTrue">Có thể custom</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="isCustomFalse" :value="false" v-model="formData.custom"
-              :disabled="props.action === 'update'" />
+            <input
+              class="form-check-input"
+              type="radio"
+              id="isCustomFalse"
+              :value="false"
+              v-model="formData.custom"
+              :disabled="props.action === 'update'"
+            />
             <label class="form-check-label" for="isCustomFalse">Không thể custom</label>
           </div>
         </div>
 
-        <button type="submit" :disabled="props.action == 'view'" class="btn btn-primary w-100 py-2 fw-bold">
+        <button
+          type="submit"
+          :disabled="props.action == 'view'"
+          class="btn btn-primary w-100 py-2 fw-bold"
+        >
           <span v-if="props.action === 'create'">Create</span>
           <span v-else>Update</span>
         </button>
       </form>
       <div v-if="selectedProduct" class="card mt-3 shadow-sm p-3 rounded-4">
-        <div class="modal fade show d-block" v-if="showModalToUpdateProductItems" tabindex="-1"
-          style="background-color: rgba(0, 0, 0, 0.5)">
-          <div class="modal-dialog">
+        <div
+          class="modal fade show d-block"
+          v-if="showModalToUpdateProductItems"
+          tabindex="-1"
+          style="background-color: rgba(0, 0, 0, 0.5)"
+        >
+          <div class="modal-dialog modal-xl" style="max-width: 900px">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">Product Form</h5>
-                <button type="button" class="btn-close" @click="
-                  () => {
-                    showModalToUpdateProductItems = false;
-                  }
-                "></button>
+                <button
+                  type="button"
+                  class="btn-close"
+                  @click="
+                    () => {
+                      showModalToUpdateProductItems = false;
+                    }
+                  "
+                ></button>
               </div>
 
               <div class="modal-body">
                 <!-- Form -->
                 <div class="mb-4">
-                  <label class="form-label text-capitalize fw-semibold">List Product Items Images</label>
+                  <label class="form-label text-capitalize fw-semibold"
+                    >List Product Items Images</label
+                  >
                   <table class="table table-hover custom-table">
                     <thead class="table-header-custom">
                       <tr>
@@ -100,38 +178,58 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item, index) in formDataUpdateProductItems.images" :key="item.id" class="table-row">
+                      <tr
+                        v-for="(item, index) in formDataUpdateProductItems.images"
+                        :key="item.id"
+                        class="table-row"
+                      >
                         <td class="table-cell action-cell">
                           {{ item.id }}
                         </td>
 
                         <td class="table-cell">
                           <span class="cell-content">
-                            <img :src="item.imageUrl" alt="image" style="
-                                max-width: 100px;
-                                max-height: 60px;
+                            <img
+                              :src="item.imageUrl"
+                              alt="image"
+                              style="
+                                max-width: 900px;
+                                max-height: 100px;
                                 object-fit: contain;
-                              " @error="handleImageError($event)" />
-                            <span v-if="item.imageError" style="
+                              "
+                              @error="handleImageError($event)"
+                            />
+                            <span
+                              v-if="item.imageError"
+                              style="
                                 padding: 4px 8px;
                                 background: #f8f9fa;
                                 border-radius: 4px;
                                 font-size: 0.8rem;
-                              ">
+                              "
+                            >
                               Không thể tải ảnh
                             </span>
                           </span>
                         </td>
 
                         <td class="table-cell action-cell">
-                          <input type="radio" name="defaultImage" :checked="item.default"
-                            @change="setImageDefault(item.id)" />
+                          <input
+                            type="radio"
+                            name="defaultImage"
+                            :checked="item.default"
+                            @change="setImageDefault(item.id)"
+                          />
                         </td>
 
                         <!-- Delete Button -->
                         <td class="table-cell action-cell">
-                          <button type="button" @click="deleteImageById(item.id)"
-                            class="btn btn-danger btn-sm action-btn" title="Xóa">
+                          <button
+                            type="button"
+                            @click="deleteImageById(item.id)"
+                            class="btn btn-danger btn-sm action-btn"
+                            title="Xóa"
+                          >
                             <i class="bi bi-trash"></i>
                           </button>
                         </td>
@@ -140,79 +238,157 @@
                   </table>
                 </div>
                 <div class="mb-4">
-                  <label class="form-label text-capitalize fw-semibold">Avatar</label>
-                  <uploadProducts ref="uploadRefProductItems" :maxFiles="5" :aspectRatio="'4:5'"
-                    @update:images="handleImagesUpdate" @delete-image="handleImagesDelete" />
+                  <label class="form-label text-capitalize fw-semibold"
+                    >Ảnh sản phẩm</label
+                  >
+                  <uploadProducts
+                    ref="uploadRefProductItems"
+                    :maxFiles="5"
+                    :aspectRatio="'4:5'"
+                    @update:images="handleImagesUpdate"
+                    @delete-image="handleImagesDelete"
+                  />
                 </div>
                 <div class="mb-3">
                   <label for="cost" class="form-label text-capitalize">Cost</label>
-                  <input id="cost" v-model="formDataUpdateProductItems.cost" type="number" class="form-control"
-                    placeholder="Enter cost" />
+                  <input
+                    id="cost"
+                    v-model="formDataUpdateProductItems.cost"
+                    type="number"
+                    class="form-control"
+                    placeholder="Enter cost"
+                    required
+                  />
                 </div>
 
                 <div class="mb-3">
                   <label for="price" class="form-label text-capitalize">Price</label>
-                  <input id="price" v-model="formDataUpdateProductItems.price" type="number" class="form-control"
-                    placeholder="Enter price" />
+                  <input
+                    id="price"
+                    v-model="formDataUpdateProductItems.price"
+                    type="number"
+                    class="form-control"
+                    placeholder="Enter price"
+                    required
+                  />
                 </div>
 
                 <div class="mb-3">
                   <label for="turnBuy" class="form-label text-capitalize">Turn Buy</label>
-                  <input id="turnBuy" v-model="formDataUpdateProductItems.turnBuy" type="number" class="form-control"
-                    placeholder="Enter turnBuy" />
+                  <input
+                    id="turnBuy"
+                    v-model="formDataUpdateProductItems.turnBuy"
+                    type="number"
+                    class="form-control"
+                    placeholder="Enter turnBuy"
+                    disabled
+                  />
                 </div>
 
                 <div class="mb-3">
-                  <label for="description" class="form-label text-capitalize">Description</label>
-                  <input id="description" v-model="formDataUpdateProductItems.description" type="text"
-                    class="form-control" placeholder="Enter description" />
+                  <label for="description" class="form-label text-capitalize"
+                    >Description (Hãy cập nhật dữ liệu cho Chatbot khi mô tả thay
+                    đổi)</label
+                  >
+                  <input
+                    id="description"
+                    v-model="formDataUpdateProductItems.description"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter description"
+                  />
                 </div>
 
                 <div class="mb-3">
                   <label for="sku" class="form-label text-capitalize">SKU</label>
-                  <input id="sku" v-model="formDataUpdateProductItems.sku" type="text" class="form-control"
-                    placeholder="Enter sku" />
+                  <input
+                    id="sku"
+                    v-model="formDataUpdateProductItems.sku"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter sku"
+                    disabled
+                  />
                 </div>
 
                 <div class="mb-3">
-                  <label for="safetyStock" class="form-label text-capitalize">Safety Stock</label>
-                  <input id="safetyStock" v-model="formDataUpdateProductItems.safetyStock" type="number"
-                    class="form-control" placeholder="Enter safety stock" />
+                  <label for="safetyStock" class="form-label text-capitalize"
+                    >Id vector store</label
+                  >
+                  <input
+                    id="safetyStock"
+                    v-model="formDataUpdateProductItems.searchPoint"
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter safety stock"
+                    disabled
+                  />
                 </div>
 
                 <div class="mb-3">
                   <label for="qty" class="form-label text-capitalize">Quantity</label>
-                  <input id="qty" v-model="formDataUpdateProductItems.qty" type="number" class="form-control"
-                    placeholder="Enter quantity" />
+                  <input
+                    id="qty"
+                    v-model="formDataUpdateProductItems.qty"
+                    type="number"
+                    class="form-control"
+                    placeholder="Enter quantity"
+                    required
+                  />
                 </div>
 
                 <div class="mb-3">
-                  <label for="sellStart" class="form-label text-capitalize">Sell Start</label>
-                  <input id="sellStart" v-model="formDataUpdateProductItems.sellStart" type="datetime-local"
-                    class="form-control" placeholder="Enter sell start" />
+                  <label for="sellStart" class="form-label text-capitalize"
+                    >Sell Start</label
+                  >
+                  <input
+                    id="sellStart"
+                    v-model="formDataUpdateProductItems.sellStart"
+                    type="datetime-local"
+                    class="form-control"
+                    placeholder="Enter sell start"
+                  />
                 </div>
 
                 <div class="mb-3">
                   <label for="sellEnd" class="form-label text-capitalize">Sell End</label>
-                  <input id="sellEnd" v-model="formDataUpdateProductItems.sellEnd" type="datetime-local"
-                    class="form-control" placeholder="Enter sell end" />
+                  <input
+                    id="sellEnd"
+                    v-model="formDataUpdateProductItems.sellEnd"
+                    type="datetime-local"
+                    class="form-control"
+                    placeholder="Enter sell end"
+                  />
                 </div>
                 <div class="mb-3 d-flex align-items-center gap-3">
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="isActiveTrue" :value="true"
-                      v-model="formDataUpdateProductItems.active" />
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      id="isActiveTrue"
+                      :value="true"
+                      v-model="formDataUpdateProductItems.active"
+                    />
                     <label class="form-check-label" for="isActiveTrue">Active</label>
                   </div>
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="isActiveFalse" :value="false"
-                      v-model="formDataUpdateProductItems.active" />
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      id="isActiveFalse"
+                      :value="false"
+                      v-model="formDataUpdateProductItems.active"
+                    />
                     <label class="form-check-label" for="isActiveFalse">Inactive</label>
                   </div>
                 </div>
               </div>
 
               <div class="modal-footer">
-                <button class="btn btn-secondary" @click="showModalToUpdateProductItems = false">
+                <button
+                  class="btn btn-secondary"
+                  @click="showModalToUpdateProductItems = false"
+                >
                   Close
                 </button>
                 <button class="btn btn-success" @click="submitFormUpdateProductItems">
@@ -223,10 +399,21 @@
           </div>
         </div>
         <div class="row">
-          <div class="dropdown mb-3 col-6" v-for="(items, groupName) in mapVarriants" :key="groupName">
+          <div
+            class="dropdown mb-3 col-6"
+            v-for="(items, groupName) in mapVarriants"
+            :key="groupName"
+          >
             <label class="form-label">Select {{ groupName }}</label>
-            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-              <span v-if="selected[groupName]" :style="{ color: refError === true ? 'red' : '' }">
+            <button
+              class="btn btn-outline-secondary dropdown-toggle w-100"
+              type="button"
+              data-bs-toggle="dropdown"
+            >
+              <span
+                v-if="selected[groupName]"
+                :style="{ color: refError === true ? 'red' : '' }"
+              >
                 {{ selected[groupName].description }} ({{
                   selected[groupName].signalSku
                 }})
@@ -234,10 +421,16 @@
               <span v-else>Select a {{ groupName }}</span>
             </button>
             <ul class="dropdown-menu w-100">
-              <li v-for="variant in items" :key="variant.id" @click="selectVariant(groupName, variant)"
-                class="dropdown-item d-flex align-items-center" style="cursor: pointer">
+              <li
+                v-for="variant in items"
+                :key="variant.id"
+                @click="selectVariant(groupName, variant)"
+                class="dropdown-item d-flex align-items-center"
+                style="cursor: pointer"
+              >
                 <div>
-                  <strong>{{ variant.description }}</strong><br />
+                  <strong>{{ variant.description }}</strong
+                  ><br />
                   <small class="text-muted">{{ variant.signalSku }}</small>
                 </div>
               </li>
@@ -246,18 +439,30 @@
         </div>
 
         <div class="d-flex flex-column gap-2">
-          <button class="btn btn-sm btn-outline-primary" @click="addToListVariantPreview()">
+          <button
+            class="btn btn-sm btn-outline-primary"
+            @click="addToListVariantPreview()"
+          >
             thêm
           </button>
         </div>
         <div class="row">
-          <div class="mb-3 col-6 " v-for="(items, groupName) in variantPrevieBeforeSaveBaseProduct" :key="groupName">
+          <div
+            class="mb-3 col-6"
+            v-for="(items, groupName) in variantPrevieBeforeSaveBaseProduct"
+            :key="groupName"
+          >
             <label class="form-label">{{ groupName }}</label>
             <div class="list-group w-100">
-              <div v-for="variant in items" :key="variant.id || variant.signalSku"
-                class="list-group-item d-flex align-items-center " style="cursor: pointer">
+              <div
+                v-for="variant in items"
+                :key="variant.id || variant.signalSku"
+                class="list-group-item d-flex align-items-center"
+                style="cursor: pointer"
+              >
                 <div>
-                  <strong>{{ variant.description }}</strong><br />
+                  <strong>{{ variant.description }}</strong
+                  ><br />
                   <small class="text-muted">{{ variant.signalSku }}</small>
                 </div>
               </div>
@@ -265,15 +470,15 @@
           </div>
         </div>
 
-
         <label class="form-label">Preview combinations variant</label>
         <div v-for="(combo, index) in combinations" :key="index" class="mb-2">
           <div class="border p-2 rounded">
-            <span v-for="(variant, index) in combo" :key="variant.signalSku">{{ variant.description }} {{ index == 0 ?
-              "-" : "" }}
+            <span v-for="(variant, index) in combo" :key="variant.signalSku"
+              >{{ variant.description }} {{ index == 0 ? "-" : "" }}
             </span>
-            <span v-for="(variant, index) in combo" :key="variant.signalSku">{{ variant.signalSku }} {{ index == 0 ? "-"
-              : "" }}</span>
+            <span v-for="(variant, index) in combo" :key="variant.signalSku"
+              >{{ variant.signalSku }} {{ index == 0 ? "-" : "" }}</span
+            >
           </div>
         </div>
         <div class="d-flex flex-column gap-2">
@@ -287,23 +492,37 @@
             Chưa có biến thể nào được thêm.
           </div>
           <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(item, index) in list">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+              v-for="(item, index) in list"
+            >
               <div class="d-flex align-items-center">
-                <img :src="item.imgPreview || previewMainImg" alt="Preview" class="me-3 rounded"
-                  style="width: 50px; height: 50px; object-fit: cover" />
+                <img
+                  :src="item.imgPreview || previewMainImg"
+                  alt="Preview"
+                  class="me-3 rounded"
+                  style="width: 50px; height: 50px; object-fit: cover"
+                />
                 <div>
-                  NAME: <strong>{{ item.name }}</strong><br />
+                  NAME: <strong>{{ item.name }}</strong
+                  ><br />
                   <small>
-                    SKU: {{ item.sku }} | Giá: {{ item.price.toLocaleString() }} VND | SL:
-                    {{ item.qty }} </small><br />
+                    SKU: {{ item.sku }} | Giá: {{ item.price.toLocaleString() }} đ | SL:
+                    {{ item.qty }} </small
+                  ><br />
                 </div>
               </div>
               <div class="d-flex flex-column gap-2">
-                <button class="btn btn-sm btn-outline-primary"
-                  @click="openPopupToUpdateProductItems(item.productItemsId)">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  @click="openPopupToUpdateProductItems(item.productItemsId)"
+                >
                   Cập nhật
                 </button>
-                <button class="btn btn-sm btn-outline-danger" @click="removeVariant(item.productItemsId)">
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  @click="removeVariant(item.productItemsId)"
+                >
                   Xóa
                 </button>
               </div>
@@ -365,12 +584,42 @@ const listProductItemsToSave = ref({});
 const expandedSections = ref(["category-0", "productItems-0", "variant-0", "price"]);
 const showModalToUpdateProductItems = ref(false);
 import { notification } from "ant-design-vue";
+import { Modal } from "ant-design-vue";
+
+const showConfirm = (id) => {
+  Modal.confirm({
+    title: "Bạn có muốn cập nhật lại dữ liệu cho Chat bot về sản phẩm",
+    content: "Hành động này không thể hoàn tác.",
+    okText: "OK",
+    cancelText: "Hủy",
+    onOk() {
+      api
+        .put("/admin/qdrant?productItemId=" + id)
+        .then((response) => {
+          notification.success({
+            message: "Cập nhật thành công",
+            description: "Dữ liệu đã được cập nhật thành công cho Chat bot.",
+          });
+        })
+        .catch((error) => {
+          notification.error({
+            message: "Cập nhật thất bại",
+            description: `Thất bại`,
+          });
+          console.log(error);
+        });
+    },
+    onCancel() {
+      console.log("Người dùng bấm Cancel");
+    },
+  });
+};
 const formData = reactive({
   id: "",
   name: "áo thun 1",
   material: "Cotton Nam",
   categories: "",
-  mainImageUrl: "",
+  mainImageUrl: null,
   custom: "true",
   turnBuy: "0",
   rating: "0",
@@ -405,7 +654,7 @@ const formDataUpdateProductItems = ref({
   turnBuy: 0,
   description: "",
   sku: "",
-  safetyStock: "",
+  searchPoint: "",
   qty: "",
   sellStart: "",
   sellEnd: "",
@@ -438,7 +687,7 @@ async function openPopupToUpdateProductItems(id) {
   formDataUpdateProductItems.value = list.value.find(
     (condition) => condition.productItemsId === id
   );
-  console.log("formDataUpdateProductItems:", uploadRefProductItems.value);
+  console.log("formDataUpdateProductItems:", formDataUpdateProductItems.value);
   // if (
   //   uploadRefProductItems.value === null &&
   //   formDataUpdateProductItems.value.images.length > 0
@@ -459,18 +708,18 @@ async function openPopupToUpdateProductItems(id) {
 async function removeVariant(index) {
   try {
     const response = await api.delete("/admin/ProductItems/" + index);
+    notification.success({
+      message: "Success",
+      description: `Biến thể đã được xóa thành công.`,
+    });
   } catch (error) {
     console.error("Remove variant failed:", error);
     notification.error({
       message: "Error",
-      description: `Lỗi khi xóa biến thể: ${error.message}`,
+      description: `${error.response.data.message}`,
     });
   }
   await getProductItems(props.id);
-  notification.success({
-    message: "Success",
-    description: `Biến thể đã được xóa thành công.`,
-  });
 }
 async function selectVariant(GroupName, Variant) {
   selected.value[GroupName] = Variant;
@@ -521,8 +770,8 @@ async function saveProductItems() {
       price: 0,
       turnBuy: 0,
       description: "",
-      sku: item[1].signalSku + "-" + item[0].signalSku,
-      safetyStock: 0,
+      sku: props.id + "-" + item[1].signalSku + "-" + item[0].signalSku,
+      searchPoint: "",
       qty: 0,
       sellStart: "",
       sellEnd: "",
@@ -534,7 +783,7 @@ async function saveProductItems() {
       promotions: [],
       isGift: false,
       baseProducts: {},
-      imageUrl: "",
+      imageUrl: formData.mainImageUrl,
       material: "",
       name: "",
       productItemsId: "",
@@ -548,18 +797,30 @@ async function saveProductItems() {
         return condition.sku.includes(productItems.sku);
       });
       if (isContainSku.length > 0) {
+        notification.error({
+          message: "Error",
+          description: `Biến thể với SKU ${productItems.sku} đã tồn tại. Vui lòng kiểm tra lại.`,
+        });
         console.log("Debug Avoid duplicate:", productItems);
-        continue;
+        return;
       }
       const response = await api.post(`/admin/ProductItems`, productItems);
+      notification.success({
+        message: "Success",
+        description: `Biến thể với SKU ${productItems.sku} đã được thêm thành công.`,
+      });
       console.log("Insert successful:", response.data);
       await getProductItems(props.id);
     }
   } catch (error) {
+    notification.error({
+      message: "Error",
+      description: `Lưu biến thể thất bại. Vui lòng thử lại.`,
+    });
     console.error("Insert failed:", error);
   }
 
-  console.log(listProductItemsToSave.value);
+  console.log("listProductItemsTosave ", listProductItemsToSave.value);
 }
 
 function generateVariantCombinations(groupedVariants) {
@@ -589,6 +850,13 @@ function generateVariantCombinations(groupedVariants) {
 }
 
 async function submitUpdateForm() {
+  if (formData.mainImageUrl === null) {
+    notification.error({
+      message: "Error",
+      description: `Vui lòng thêm ảnh đại diện cho sản phẩm`,
+    });
+    return;
+  }
   try {
     formData.createdAt = formatDateTimeLocal(formData.createdAt);
     formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
@@ -623,6 +891,7 @@ async function submitFormUpdateProductItems() {
       formDataUpdateProductItems.value.productItemsId,
       formDataUpdateProductItems.value
     );
+    showConfirm(formDataUpdateProductItems.value.productItemsId);
     console.log("Update successful:", response.data);
     showModalToUpdateProductItems.value = false;
     await getProductItems(props.id);
@@ -633,6 +902,13 @@ async function submitFormUpdateProductItems() {
 
 async function submitForm() {
   console.log(formData);
+  if (formData.mainImageUrl === null) {
+    notification.error({
+      message: "Error",
+      description: `Vui lòng thêm ảnh đại diện cho sản phẩm`,
+    });
+    return;
+  }
   try {
     const response = await formTableService.create(formData);
     console.log("Insert successful:", response.data);
@@ -702,25 +978,30 @@ const handleImagesUploadBaseProduct = async (images) => {
 const handleImagesDeleteBaseProduct = async (index) => {
   console.log("Deleting image at index:", index);
   formData.mainImageUrl = null;
-  try {
-    const response = await api.put(`/admin/BaseProducts/${props.id}`, formData);
-    showModalToUpdateProductItems.value = false;
-    notification.success({
-      message: "Xóa thành công",
-      description: `Ảnh đã được xóa thành công.`,
-      duration: 3,
-    });
-    console.log("Image deleted successfully");
-    await getProductItems(props.id);
-  } catch (error) {
-    showModalToUpdateProductItems.value = false;
-    notification.error({
-      message: "Xóa thất bại",
-      description: `Không thể xóa ảnh.`,
-      duration: 3,
-    });
-    console.error("Failed to delete image:", error);
-  }
+  notification.success({
+    message: "Xóa thành công",
+    description: `Hãy cập nhật lại ảnh mới`,
+    duration: 3,
+  });
+  // try {
+  //   const response = await api.put(`/admin/BaseProducts/${props.id}`, formData);
+  //   showModalToUpdateProductItems.value = false;
+  //   notification.success({
+  //     message: "Xóa thành công",
+  //     description: `Ảnh đã được xóa thành công.`,
+  //     duration: 3,
+  //   });
+  //   console.log("Image deleted successfully");
+  //   await getProductItems(props.id);
+  // } catch (error) {
+  //   showModalToUpdateProductItems.value = false;
+  //   notification.error({
+  //     message: "Xóa thất bại",
+  //     description: `Không thể xóa ảnh.`,
+  //     duration: 3,
+  //   });
+  //   console.error("Failed to delete image:", error);
+  // }
 };
 
 const handleImagesUpdate = async (images) => {
@@ -799,29 +1080,27 @@ const handleImagesDelete = async (index) => {
 const setImageDefault = async (id) => {
   try {
     const response = await api.put(`/admin/ProductImages/` + id);
-    console.log("Update successful:", response.data);
+    if (response) {
+      notification.success({
+        message: "Cập nhật thành công",
+        description: `Ảnh đã được đặt làm mặc định.`,
+        duration: 3,
+      });
+    }
     showModalToUpdateProductItems.value = false;
     await getProductItems(props.id);
     formDataUpdateProductItems.value = list.value.find(
       (condition) => condition.productItemsId === props.id
     );
-    notification.success({
-      message: "Cập nhật thành công",
-      description: `Ảnh đã được cập nhật thành ảnh mặc định.`,
-      duration: 3,
-    });
+    // showConfirm(response.data.itemId);
   } catch (error) {
     console.error("Update failed:", error);
   }
 };
 const deleteImageById = async (id) => {
   try {
-
-
     // console.log("Delete successful:", formDataUpdateProductItems.value);
-    let image = formDataUpdateProductItems.value.images.find(
-      (image) => image.id === id
-    );
+    let image = formDataUpdateProductItems.value.images.find((image) => image.id === id);
     console.log("Delete successful:", image);
     if (image.default === true) {
       showModalToUpdateProductItems.value = false;
@@ -888,7 +1167,6 @@ onMounted(async () => {
         }
       })
       .catch((error) => console.log(error));
-
 });
 watch(() => props.id, fetchData);
 </script>

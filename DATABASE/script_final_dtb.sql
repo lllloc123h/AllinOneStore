@@ -184,7 +184,7 @@ create table
 		turn_buy int default 0,
 		description nvarchar (max),
 		sku varchar(100),
-		safety_stock int default 0,
+		search_point UNIQUEIDENTIFIER null,
 		qty int default 0,
 		is_active bit default 1,
 		sell_start datetime default getdate (),

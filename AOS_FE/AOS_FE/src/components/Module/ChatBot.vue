@@ -116,6 +116,13 @@
                 {{ size.description }}
               </option>
             </select>
+            <button
+              style="margin-left: 10px"
+              class="btn btn-danger rounded-5"
+              @click="resetFilters"
+            >
+              Hủy lọc
+            </button>
           </div>
         </div>
 
@@ -161,6 +168,10 @@ const listColor = ref([]);
 const listSize = ref([]);
 const selectedColor = ref("");
 const selectedSize = ref("");
+const resetFilters = () => {
+  selectedColor.value = "";
+  selectedSize.value = "";
+};
 onMounted(async () => {
   try {
     const colorData = await api.get("/VariantValues/values?name=" + COLOR);
@@ -227,8 +238,18 @@ const sendMessage = () => {
 
   // Simulate API call with delay for better UX
   setTimeout(() => {
+    const selectedMap = new Map();
+    if (selectedColor.value) {
+      selectedMap.set("color", selectedColor.value);
+    }
+    if (selectedSize.value) {
+      selectedMap.set("size", selectedSize.value);
+    }
+    const filtersObj = Object.fromEntries(selectedMap);
+    // Sử dụng selectedMap cho các mục đích khác (gửi API, hiển thị, ...)
+    console.log("map", filtersObj);
     api
-      .post("/openai/chat", { message: text })
+      .post("/openai/chat", { message: text, filters: filtersObj })
       .then((response) => {
         messages.value.push({
           from: "bot",
@@ -240,7 +261,8 @@ const sendMessage = () => {
       .catch((error) => {
         messages.value.push({
           from: "bot",
-          text: "Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau! 😔",
+          text:
+            "Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau! 😔   <img style='max-width: 80px; height: auto;' src='https://res.cloudinary.com/da2v8uqir/image/upload/v1756050248/products/bzwcwcx8kwt8azesf4e6.webp' alt='' />",
           timestamp: new Date(),
         });
         console.error("Error sending message:", error);

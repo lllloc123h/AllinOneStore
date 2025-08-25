@@ -2,11 +2,9 @@ package com.aos.AOSBE.Mapper;
 
 import com.aos.AOSBE.CommonFunctions.HandleListSkuToFilter;
 import com.aos.AOSBE.DTOS.PromotionProductFillterDTO;
-import com.aos.AOSBE.DTOS.PromotionProductsDTOS;
 import com.aos.AOSBE.DTOS.PromotionsDTOS;
 import com.aos.AOSBE.Entity.ProductImages;
 import com.aos.AOSBE.Entity.ProductItems;
-import com.aos.AOSBE.Entity.PromotionProducts;
 import com.aos.AOSBE.Repository.ProductImagesRepository;
 import com.aos.AOSBE.Repository.PromotionProductsRepository;
 import com.aos.AOSBE.Repository.PromotionsRepository;
@@ -45,7 +43,7 @@ public class PromotionProductFillterMapper {
                rating == null ? 0.0 : rating,
                 entity.getTurnBuy(),
                 handleListSkuToFilter.getDescriptionOfSku(entity.getSku()),
-                entity.getSafetyStock(),
+                entity.getSearchPoint(),
                 entity.getQty(),
                 imageUrl == null || imageUrl.isEmpty() ? "" : imageUrl.get(0).getImageUrl(),
                 entity.isActive(),

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +17,7 @@ public class PromotionProductFillterDTO {
     private Double rating;
     private int turnBuy;
     private String sku;
-    private int safetyStock;
+    private UUID searchPoint;
     private int qty;
     private String imageUrl;
     private boolean active;
