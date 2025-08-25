@@ -71,7 +71,8 @@
                         <i class="bi bi-star me-1"></i>
                         Chọn mặc định
                       </button>
-                      <button class="delete-btn" @click="removeAddress(address.id)" title="Xóa địa chỉ">
+                      <button class="delete-btn" :disabled="address.default" @click="removeAddress(address.id)"
+                        title="Xóa địa chỉ">
                         <i class="bi bi-trash"></i>
                       </button>
                       <button class="edit-btn" @click="editAddress(address)" title="Sửa địa chỉ">
@@ -1125,6 +1126,10 @@ export default {
   transform: scale(1.1);
 }
 
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {
