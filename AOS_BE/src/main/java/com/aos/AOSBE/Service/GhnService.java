@@ -102,7 +102,11 @@ public class GhnService {
         GhnCreateOrderRequestDTO dto = new GhnCreateOrderRequestDTO();
 
         // 1. Thông tin thanh toán & ghi chú
-        dto.setPayment_type_id(2); // người nhận trả
+        if (order.getFreeshipCouponCode() != null && !order.getFreeshipCouponCode().isBlank()) {
+            dto.setPayment_type_id(1); // Bên gửi trả phí
+        } else {
+            dto.setPayment_type_id(2); // Bên nhận trả phí
+        }
         dto.setRequired_note(requiredNote);
 
         // 2. Thông tin trả hàng
