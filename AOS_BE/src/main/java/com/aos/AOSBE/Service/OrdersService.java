@@ -198,7 +198,6 @@ public class OrdersService {
 	                if (orderedQty > productItem.getQty()) {
 	                    throw new IllegalStateException("Sản phẩm " + productItem.getId() + " không đủ tồn kho.");
 	                }
-	                productItem.setQty(productItem.getQty() - orderedQty);
 	                productItemsRepository.save(productItem);
 	            }
 
@@ -453,5 +452,34 @@ public class OrdersService {
 		);
 	}
 
+	@Transactional
+	public Optional<Orders> ordersFindByOrderCode(String orderCode) {
+		return ordersRepository.findByGhnOrderCode(orderCode);
+	}
+
+	@Transactional
+	public void rollbackProductItemsWhenCancel(int orderId) {
+		List<OrderItems> orderItemsList = orderItemsRepository.findByOrdersId(orderId);
+
+		for (OrderItems item : orderItemsList) {
+			ProductItems product = productItemsRepository.findById(item.getProductItems().getId())
+									.orElse(null);
+			if (product != null) {
+				int qty = item.getQty();
+
+				int beforeQty = product.getQty();
+				int beforeTurnBuy = product.getTurnBuy();
+
+				product.setQty(product.getQty() + qty);
+				product.setTurnBuy(Math.max(0, product.getTurnBuy() - qty));
+
+				productItemsRepository.save(product);
+
+				System.out.println("Rollback productId=" + product.getId() +
+								" QTY: " + beforeQty + " -> " + product.getQty() +
+								" TURNBUY: " + beforeTurnBuy + " -> " + product.getTurnBuy());
+			}
+		}
+	}
 
 }

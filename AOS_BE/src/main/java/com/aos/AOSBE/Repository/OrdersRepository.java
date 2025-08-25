@@ -2,6 +2,7 @@ package com.aos.AOSBE.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -69,5 +70,5 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer>, JpaSpe
 	@Query("SELECT o FROM Orders o WHERE o.shippingStatus = ?1 AND o.paymentStatus = ?2")
 	List<Orders> findAllByShippingStatusAndPaymentStatus(String shippingStatus, String paymentStatus);
 
-
+	Optional<Orders> findByGhnOrderCode(String orderCode);
 }

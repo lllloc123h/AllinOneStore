@@ -332,12 +332,14 @@ private OrderSummaryMapper orderSummaryMapper;
 
 				order.setShippingStatus("cancel");
 				ordersService.ordersSave(order);
+				ordersService.rollbackProductItemsWhenCancel(order.getId());
 				return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn và hoàn tiền thành công"));
 			}
 
 			// ✅ Nếu chưa thanh toán thì chỉ cập nhật trạng thái
 			order.setShippingStatus("cancel");
 			ordersService.ordersSave(order);
+			ordersService.rollbackProductItemsWhenCancel(order.getId());
 			return ResponseEntity.ok(Map.of("MESSAGE", "Hủy đơn thành công"));
 
 		} catch (Exception e) {
@@ -528,11 +530,19 @@ private OrderSummaryMapper orderSummaryMapper;
 	public ResponseEntity<?> cancelOrder(@PathVariable String orderCode) {
 		try {
 			boolean success = ghnService.cancelGhnOrder(orderCode);
-			if (success) {
-				return ResponseEntity.ok("Đã hủy đơn thành công: " + orderCode);
-			} else {
-				return ResponseEntity.status(500).body("Không thể hủy đơn: " + orderCode);
+			if (!success) {
+				return ResponseEntity.status(500).body("Không thể hủy đơn trên GHN: " + orderCode);
 			}
+			Orders order = ordersService.ordersFindByOrderCode(orderCode).orElse(null);
+			if (order == null) {
+				return ResponseEntity.status(404).body("Không tìm thấy đơn hàng trong hệ thống: " + orderCode);
+			}
+			order.setShippingStatus("cancel");
+			ordersService.ordersSave(order);
+			ordersService.rollbackProductItemsWhenCancel(order.getId());
+
+			return ResponseEntity.ok("Đã hủy đơn thành ");
+
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Lỗi khi hủy đơn: " + e.getMessage());
 		}
