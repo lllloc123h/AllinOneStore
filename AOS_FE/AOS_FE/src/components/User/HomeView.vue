@@ -155,8 +155,8 @@
         <div class="col-12 text-center">
           <div class="placeholder-section">
             <i class="bi bi-percent display-1 text-muted"></i>
-            <h5 class="text-muted mt-3">Chưa có sản phẩm giảm giá</h5>
-            <p class="text-muted">Các ưu đãi hấp dẫn sẽ sớm được cập nhật</p>
+            <h5 class="text-muted mt-3">Chưa có tin tức giảm giá</h5>
+            <p class="text-muted">Các thông tin ưu đãi hấp dẫn sẽ sớm được cập nhật</p>
           </div>
         </div>
       </div>
