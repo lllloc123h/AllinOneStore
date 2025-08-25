@@ -102,7 +102,7 @@ public class GhnService {
         GhnCreateOrderRequestDTO dto = new GhnCreateOrderRequestDTO();
 
         // 1. Thông tin thanh toán & ghi chú
-        if (order.getFreeshipCouponCode() != null && !order.getFreeshipCouponCode().isBlank()) {
+        if (order.getActualShippingFee() == 0) {
             dto.setPayment_type_id(1); // Bên gửi trả phí
         } else {
             dto.setPayment_type_id(2); // Bên nhận trả phí
@@ -164,7 +164,7 @@ public class GhnService {
 
 
         // 6. Chi tiết đơn hàng
-        dto.setCod_amount((int) order.getFinalTotal());
+        dto.setCod_amount(totalProductCost);
         dto.setContent("Theo New York Times"); // hoặc nội dung động tùy bạn
         dto.setLength(12);
         dto.setWidth(12);
