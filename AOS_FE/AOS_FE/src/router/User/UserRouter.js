@@ -28,7 +28,7 @@ export default [
         name: 'upload1',
         component: uploadProducts,
     },
-     {
+    {
         path: 'upload2',
         name: 'upload2',
         component: () => import('../../components/Module/upload-single-img-video.vue'),
@@ -48,12 +48,12 @@ export default [
         name: 'ProductDetails',
         component: ProductDetails
     },
-        {
+    {
         path: 'news',
         name: 'news',
         component: () => import('../../components/User/NewsView.vue')
     },
-     {
+    {
         path: 'news/:id',
         name: 'newsDetail',
         component: () => import('../../components/User/NewsDetailView.vue')
@@ -78,7 +78,7 @@ export default [
         component: Cart,
         meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
-     {
+    {
         path: '/load',
         name: 'load',
         component: () => import('../../components/Module/ImageUpload.vue')
@@ -99,63 +99,69 @@ export default [
         path: '/OrderStatus/:id?',
         name: 'OrderStatus',
         component: OrderStatus,
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/Customizer/create/:id',
         name: 'CustomizerCreate',
         component: () => import('../../components/User/CustomizerView.vue'),
         props: route => ({ productItemId: route.params.id, action: 'create' }),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/Customizer/update/:id',
         name: 'CustomizerUpdate',
         component: () => import('../../components/User/CustomizerView.vue'),
         props: route => ({ customId: route.params.id, action: 'update' }),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/Checkoutpage',
         name: 'CheckoutPage',
         component: () => import('../../components/User/CheckoutPage.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/shippingaddress',
         name: 'shippingaddress',
         component: () => import('../../components/Module/ShippingAddress.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/momotopup',
         name: 'momotopup',
         component: () => import('../../components/User/MomoTopUp.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
+    },
+    {
+        path: '/momowithdraw',
+        name: 'momowithdraw',
+        component: () => import('../../components/User/MomoWithdraw.vue'),
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/wallet',
         name: 'wallet',
         component: () => import('../../components/User/WalletInfor.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/momo/return',
         name: 'momo-return',
         component: () => import('../../components/User/WalletInfor.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/user-orders',
         name: 'user-orders',
         component: () => import('../../components/User/UserOrders.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
     },
     {
         path: '/order-list',
         name: 'order-list',
-        component: ()=> import('../../components/User/OrderList.vue'),
-        meta : { requiresAuth: true ,requiresRoles: ['USER', 'ADMIN'] }
-    }, 
-    
+        component: () => import('../../components/User/OrderList.vue'),
+        meta: { requiresAuth: true, requiresRoles: ['USER', 'ADMIN'] }
+    },
+
 ]

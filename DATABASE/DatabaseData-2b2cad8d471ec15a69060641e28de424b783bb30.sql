@@ -930,7 +930,20 @@ VALUES
     4,
     1
   );
-
+  
+INSERT INTO Bank_Codes (bank_code, bank_name, momo_numeric_code,logo_Url) VALUES
+('VCB', N'Vietcombank', NULL,N'https://images.seeklogo.com/logo-png/28/1/vietcombank-logo-png_seeklogo-286660.png'),
+('ACB', N'Asia Commercial Bank', NULL,N'https://images.seeklogo.com/logo-png/40/1/asia-commercial-bank-acb-logo-png_seeklogo-408380.png'),
+('BIDV', N'Bank for Investment and Development of Vietnam', NULL,N'https://images.seeklogo.com/logo-png/47/1/bidv-logo-png_seeklogo-479946.png'),
+('CTG', N'VietinBank', NULL,N'https://images.seeklogo.com/logo-png/31/1/vietin-bank-logo-png_seeklogo-311486.png'),
+('MBB', N'MBBank (Military Bank)', NULL,N'https://images.seeklogo.com/logo-png/47/1/mb-bank-logo-png_seeklogo-477159.png'),
+('TPB', N'TPBank', NULL,N'https://images.seeklogo.com/logo-png/48/1/tpbank-logo-png_seeklogo-480758.png'),
+('VIB', N'Vietnam International Bank', NULL,N'https://images.seeklogo.com/logo-png/28/1/vib-logo-png_seeklogo-287288.png'),
+('STB', N'Sacombank', NULL,N'https://images.seeklogo.com/logo-png/33/1/sacombank-logo-png_seeklogo-337185.png'),
+('AGRI', N'Agribank', NULL,N'https://images.seeklogo.com/logo-png/38/1/agribank-logo-png_seeklogo-382741.png'),
+('SEAB', N'SeABank', NULL,N'https://images.seeklogo.com/logo-png/48/1/seabank-logo-png_seeklogo-486271.png'),
+('HDB', N'HDBank', NULL,N'https://cdn.hdbank.com.vn/hdbank-file/picture/logo_1645778839158.png'),
+('OCB', N'OCB', NULL,N'https://images.seeklogo.com/logo-png/53/1/orient-commercial-joint-stock-bank-logo-png_seeklogo-530347.png')
 --delete from product_items
 INSERT INTO
   product_items (
@@ -2081,20 +2094,20 @@ VALUES
 GO
 INSERT INTO promotions (
     name, description, type, discount_value,
-    combo_price, qty, start_at, end_at,
+    combo_price, qty, turn_buy, start_at, end_at,
     is_active, created_at, updated_at
 )
 VALUES
-(N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 10.00, NULL, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 50000, NULL, 100, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 30000, NULL, 500, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 210000, 50, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, 399000, 30, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 15.00, NULL, 100, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 20.00, NULL, 150, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Mua 1 tặng 1 khăn cổ', N'Khuyến mãi phụ kiện kèm áo sơ mi', 'COMBO', NULL, 0, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 30.00, NULL, 50, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
-(N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 100000, NULL, 80, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
+(N'Giảm 10% toàn site', N'Áp dụng cho tất cả đơn hàng từ 200K', 'DISCOUNT', 10.00, NULL,0, 200, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 50K cho đơn trên 500K', N'Giảm giá cố định', 'DISCOUNT', 50000, NULL, 100,0, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'FREESHIP toàn quốc', N'Không cần nhập mã', 'DISCOUNT', 30000, NULL, 500,0, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 2 áo thun tặng 1', N'Áp dụng riêng cho áo thun mùa hè', 'COMBO', NULL, 210000, 50,0, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Siêu combo 3 áo sơ mi', N'3 áo sơ mi giá chỉ 399K', 'COMBO', NULL, 399000, 30,0, GETDATE(), DATEADD(DAY, 14, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Voucher sinh nhật', N'Chỉ áp dụng khi có ngày sinh nhật', 'DISCOUNT', 15.00, NULL, 100, 0,GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Khách hàng mới', N'Ưu đãi lần đầu mua', 'DISCOUNT', 20.00, NULL, 150,0, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 1 tặng 1 khăn cổ', N'Khuyến mãi phụ kiện kèm áo sơ mi', 'COMBO', NULL, 0, 80,0, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Flash sale cuối tuần', N'Tối đa 30%', 'DISCOUNT', 30.00, NULL, 50,0, GETDATE(), DATEADD(DAY, 3, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 100K đơn trên 1 triệu', N'Tặng thêm voucher khi mua nhiều', 'DISCOUNT', 100000, NULL, 80,0, GETDATE(), DATEADD(DAY, 20, GETDATE()), 1, GETDATE(), GETDATE());
 INSERT INTO promotions (
 	name,
 	description,
@@ -2102,6 +2115,7 @@ INSERT INTO promotions (
 	discount_value,
 	combo_price,
 	qty,
+	turn_buy,
 	start_at,
 	end_at,
 	is_active,
@@ -2109,13 +2123,13 @@ INSERT INTO promotions (
 	updated_at
 )
 VALUES
-(N'Khuyến mãi hè', N'Giảm giá 20% toàn bộ sản phẩm trong mùa hè', 'DISCOUNT', 20.00, NULL, 100, GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Khuyến mãi hè', N'Giảm giá 20% toàn bộ sản phẩm trong mùa hè', 'DISCOUNT', 20.00, NULL, 100, 0,GETDATE(), DATEADD(DAY, 30, GETDATE()), 1, GETDATE(), GETDATE()),
 
-(N'Mua 2 tặng 1', N'Khi mua 2 sản phẩm sẽ được tặng 1 sản phẩm cùng loại', 'COMBO', NULL, 0.00, 50, GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Mua 2 tặng 1', N'Khi mua 2 sản phẩm sẽ được tặng 1 sản phẩm cùng loại', 'COMBO', NULL, 0.00, 50, 0,GETDATE(), DATEADD(DAY, 15, GETDATE()), 1, GETDATE(), GETDATE()),
 
-(N'Giảm 100k đơn từ 500k', N'Áp dụng cho đơn hàng từ 500,000 VNĐ trở lên', 'DISCOUNT', 100000, NULL, 200, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
+(N'Giảm 100k đơn từ 500k', N'Áp dụng cho đơn hàng từ 500,000 VNĐ trở lên', 'DISCOUNT', 100000, NULL, 200,0, GETDATE(), DATEADD(DAY, 10, GETDATE()), 1, GETDATE(), GETDATE()),
 
-(N'Combo Café Tháng 7', N'Combo 3 gói café chỉ 199,000 VNĐ', 'COMBO', NULL, 199000, 30, GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE());
+(N'Combo Café Tháng 7', N'Combo 3 gói café chỉ 199,000 VNĐ', 'COMBO', NULL, 199000, 30, 0,GETDATE(), DATEADD(DAY, 7, GETDATE()), 1, GETDATE(), GETDATE());
 
 INSERT INTO coupons (
     code, description, discount_type, discount_value,
@@ -2172,7 +2186,7 @@ INSERT INTO promotion_products (
 ) VALUES
 (2, 1, 1, 0,0, GETDATE(), GETDATE()), -- Sản phẩm 1 là bắt buộc trong combo
 (2, 2, 1, 0,0, GETDATE(), GETDATE()); -- Sản phẩm 2 cũng bắt buộc
-
+go
 -- INSERT 30 orders
 select * from orders where account_id = 1;
 DECLARE @i INT = 1;
