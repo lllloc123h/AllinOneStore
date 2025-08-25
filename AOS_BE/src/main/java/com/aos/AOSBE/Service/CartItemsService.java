@@ -95,68 +95,72 @@ public class CartItemsService {
                 .orElse(null);
     }
 
-	@Transactional
-	public void addCombo(CreateComboDTO entity, Accounts account) {
-		cartItemsRepository.deleteById(entity.getCartId());
-		String[] comboGroup = new String[entity.getItems().size()];
-		for (int i = 0; i < entity.getItems().size(); i++) {
-			comboGroup[i] = String.valueOf(entity.getItems().get(i).getItemId());
-		}
-		String comboGroupString = String.join("-", comboGroup);
-		List<CartItems> cartItems = cartItemsRepository.findAllCartItemsByComboGroup(comboGroupString);
-		// kiểm tra comboGroup đã tồn tại chưa
-		if (cartItems.size() > 0) {
-			// kiểm tra số lượng ở các item trong combo
-			boolean flag = true;
-			for (int i = 0; i < cartItems.size(); i++) {
-				int tempQty = cartItems.get(i).getQty() / cartItems.get(i).getComboQty();
-				if (tempQty != entity.getItems().get(i).getQuantity()) {
-					flag = false;
-					break;
-				}
-			}
-			if (flag) {
-				// nếu số lượng bằng thì tặng 1 đơn vị
-				for (int i = 0; i < cartItems.size(); i++) {
-					cartItems.get(i).setComboQty(cartItems.get(i).getComboQty() + 1);
-					cartItems.get(i).setQty(cartItems.get(i).getQty() + entity.getItems().get(i).getQuantity());
-					cartItemsRepository.save(cartItems.get(i));
-				}
-			} else {
-				// không bằng thì tạo mới combo
-				UUID uuid = UUID.randomUUID();
-				for (CreateComboDTO.Items item : entity.getItems()) {
-					CartItems cartItem = new CartItems();
-					cartItem.setAccounts(account);
-					cartItem.setComboGroup(comboGroupString);
-					cartItem.setQty(item.getQuantity());
-					cartItem.setComboGroupId(uuid);
-					cartItem.setComboQty(1);
-					cartItem.setIsGift(
-							promotionProductsRepository.findByProductItemsIdAndPromotionsId(item.getItemId(),item.getPromotionId()).isGift());
-					cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
-					cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
-					cartItemsRepository.save(cartItem);
-				}
-			}
-		} else {
-			UUID uuid = UUID.randomUUID();
-			for (CreateComboDTO.Items item : entity.getItems()) {
-				CartItems cartItem = new CartItems();
-				cartItem.setAccounts(account);
-				cartItem.setComboGroup(comboGroupString);
-				cartItem.setQty(item.getQuantity());
-				cartItem.setComboGroupId(uuid);
-				cartItem.setComboQty(1);
-				cartItem.setIsGift(
-						promotionProductsRepository.findByProductItemsIdAndPromotionsId(item.getItemId(),item.getPromotionId()).isGift());
-				cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
-				cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
-				cartItemsRepository.save(cartItem);
-			}
+    @Transactional
+    public void addCombo(CreateComboDTO entity, Accounts account) {
+        // Nếu đang convert từ item lẻ -> xóa item đó
+        if (entity.getCartId() != null) {
+            cartItemsRepository.deleteById(entity.getCartId());
+        }
 
-		}
-	}
+        UUID existingGroupId = null;
+
+        // Tìm trong giỏ của user xem đã có combo giống hệt chưa
+        List<CartItems> userCart = cartItemsRepository.findAllByAccountsId(account.getId());
+
+        outerLoop:
+        for (CartItems ci : userCart) {
+            if (ci.getComboGroupId() != null) {
+                UUID groupId = ci.getComboGroupId();
+                List<CartItems> comboItems = cartItemsRepository.findAllByComboGroupId(groupId);
+
+                if (comboItems.size() == entity.getItems().size()) {
+                    boolean same = true;
+                    for (CreateComboDTO.Items dtoItem : entity.getItems()) {
+                        CartItems matched = comboItems.stream()
+                            .filter(c -> c.getProductItems().getId().equals(dtoItem.getItemId()))
+                            .findFirst().orElse(null);
+                        if (matched == null || (matched.getQty() / matched.getComboQty()) != dtoItem.getQuantity()) {
+                            same = false;
+                            break;
+                        }
+                    }
+                    if (same) {
+                        existingGroupId = groupId;
+                        break outerLoop;
+                    }
+                }
+            }
+        }
+
+        if (existingGroupId != null) {
+            // Combo đã tồn tại -> tăng comboQty
+            List<CartItems> comboItems = cartItemsRepository.findAllByComboGroupId(existingGroupId);
+            for (int i = 0; i < comboItems.size(); i++) {
+                CartItems ci = comboItems.get(i);
+                int addQty = entity.getItems().get(i).getQuantity();
+                ci.setComboQty(ci.getComboQty() + 1);
+                ci.setQty(ci.getQty() + addQty);
+                cartItemsRepository.save(ci);
+            }
+        } else {
+            // Tạo combo mới
+            UUID newGroupId = UUID.randomUUID();
+            for (CreateComboDTO.Items item : entity.getItems()) {
+                CartItems cartItem = new CartItems();
+                cartItem.setAccounts(account);
+                cartItem.setComboGroupId(newGroupId);
+                cartItem.setQty(item.getQuantity());
+                cartItem.setComboQty(1);
+                cartItem.setIsGift(
+                    promotionProductsRepository.findByProductItemsIdAndPromotionsId(item.getItemId(), item.getPromotionId()).isGift()
+                );
+                cartItem.setProductItems(productItemsRepository.findById(item.getItemId()).orElse(null));
+                cartItem.setPromotions(promotionsRepository.findById(item.getPromotionId()).orElse(null));
+                cartItemsRepository.save(cartItem);
+            }
+        }
+    }
+
 
 	public List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroup) {
 		return cartItemsRepository.findCartItemsByAccountsAndComboGroupId(accounts, comboGroup);

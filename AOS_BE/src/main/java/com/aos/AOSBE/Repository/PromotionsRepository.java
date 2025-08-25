@@ -40,12 +40,20 @@ public interface PromotionsRepository extends JpaRepository<Promotions, Integer>
     @Query("SELECT pp.promotions FROM PromotionProducts pp WHERE pp.productItems= ?1" )
     List<Promotions> findAllPromotionPromotionsByProductItem(int productItemId);
 
+//    @Query("SELECT pp.promotions FROM PromotionProducts pp " +
+//    	       "WHERE pp.productItems.id = :productItemId " +
+//    	       "AND pp.promotions.isActive = true " +
+//    	       "AND pp.promotions.startAt <= CURRENT_TIMESTAMP " +
+//    	       "AND pp.promotions.endAt >= CURRENT_TIMESTAMP " +
+//    	       "ORDER BY pp.promotions.discountValue DESC, pp.promotions.startAt DESC")
+//    	Promotions findBestActivePromotionByProductItemId(int productItemId);
+
     @Query("SELECT pp.promotions FROM PromotionProducts pp " +
     	       "WHERE pp.productItems.id = :productItemId " +
     	       "AND pp.promotions.isActive = true " +
     	       "AND pp.promotions.startAt <= CURRENT_TIMESTAMP " +
     	       "AND pp.promotions.endAt >= CURRENT_TIMESTAMP " +
     	       "ORDER BY pp.promotions.discountValue DESC, pp.promotions.startAt DESC")
-    	Promotions findBestActivePromotionByProductItemId(int productItemId);
+    	List<Promotions> findBestActivePromotionsByProductItemId(int productItemId);
 
 }

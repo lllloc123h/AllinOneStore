@@ -25,6 +25,11 @@ public interface CartItemsRepository extends JpaRepository<CartItems, Integer>, 
     List<CartItems> findAllCartItemsByComboGroup(String comboGroup);
 
     List<CartItems> findCartItemsByAccountsAndComboGroupId(Accounts accounts, UUID comboGroupId);
+    
+    List<CartItems> findAllByAccountsId(Integer accountId);
+
+    List<CartItems> findAllByComboGroupId(UUID comboGroupId);
+
 
 //    @Modifying
 //    @Query("UPDATE CartItems c SET c.promotions.id = NULL WHERE c.promotions.id = ?1")

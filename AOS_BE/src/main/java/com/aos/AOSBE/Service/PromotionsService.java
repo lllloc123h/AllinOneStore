@@ -77,7 +77,9 @@ public class PromotionsService {
     }
 	
 	public Promotions findActivePromotionForItem(int productItemId) {
-	    return promotionsRepository.findBestActivePromotionByProductItemId(productItemId);
+	    List<Promotions> promos = promotionsRepository.findActivePromotionsByProductItemId(productItemId);
+	    if (promos.isEmpty()) return null;
+	    return promos.get(0); // hoặc chọn theo logic bạn muốn
 	}
 
 }
