@@ -541,7 +541,6 @@ import { formatDate, formatDateTimeLocal } from "../../Module/CommonsFunctions.j
 import Dashboard from "../../Module/DashBoard.vue";
 import createCrudService from "../../../Configs/reusableCRUDService.js";
 import { useRouter } from "vue-router";
-import ImageUpload from "../../Module/ImageUpload.vue";
 import api from "../../../Configs/api.js";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -858,8 +857,8 @@ async function submitUpdateForm() {
     return;
   }
   try {
-    formData.createdAt = formatDateTimeLocal(formData.createdAt);
-    formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
+    formData.createdAt = null;
+    formData.updatedAt = null;
     console.log(formData);
     const response = await formTableService.update(props.id, formData);
     console.log("Update successful:", response.data);
@@ -909,6 +908,8 @@ async function submitForm() {
     });
     return;
   }
+  formData.createdAt = null;
+  formData.updatedAt = null;
   try {
     const response = await formTableService.create(formData);
     console.log("Insert successful:", response.data);
@@ -947,7 +948,7 @@ const handleImagesUploadBaseProduct = async (images) => {
   if (images.length > 0) {
     formData.mainImageUrl = images[0].cloudinaryUrl || images[0].url;
     formData.id = props.id;
-    if (images[0].cloudinaryUrl) {
+    if (images[0].cloudinaryUrl && props.action === "update") {
       try {
         formData.createdAt = formatDateTimeLocal(formData.createdAt);
         formData.updatedAt = formatDateTimeLocal(formData.updatedAt);
