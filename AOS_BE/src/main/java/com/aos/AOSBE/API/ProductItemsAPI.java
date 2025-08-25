@@ -5,8 +5,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.aos.AOSBE.DTOS.*;
+import com.aos.AOSBE.Entity.ProductImages;
 import com.aos.AOSBE.Mapper.*;
 import com.aos.AOSBE.Service.*;
+import org.springframework.ai.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,8 @@ public class ProductItemsAPI {
 
 	@Autowired
 	private PromotionsMapper promotionsMapper;
+	@Autowired
+	private ProductImagesService imagesService;
 
 	@Autowired
 	private PromotionProductsService promotionProductsService;
@@ -64,6 +68,8 @@ public class ProductItemsAPI {
 	private OrderItemsService orderItemsService;
 	@Autowired
 	private ReturnsService returnsService;
+	@Autowired
+	private QdrantService qdrantService;
 	@GetMapping("/admin/ProductItems")
 	public ResponseEntity<?> getAllProductItemsApi(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "0") Map<String, Object> filters) {
@@ -133,9 +139,17 @@ public ResponseEntity<?> getProductItemsStatsByBaseProducts(@RequestParam("baseI
 		try {
 			ProductItems mapped = productItemsMapper.mapperToObject(entity);
 			mapped.setId(null);
+			mapped.setSearchPoint(UUID.randomUUID());
 			ProductItems saved = productItemsService.productItemsSave(mapped);
+			ProductImages images = new ProductImages();
+			images.setProductItems(saved);
+			images.setImageUrl(entity.getImageUrl());
+			images.setDefault(true);
+			productImagesService.productImagesSave(images);
+			List<Document> docs =qdrantService.createDocumentForChatBotSearch(saved);
 			return ResponseEntity.ok(saved);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.badRequest().body(Map.of("message", "Đã có lỗi xảy ra: " + e.getMessage()));
 		}
 	}

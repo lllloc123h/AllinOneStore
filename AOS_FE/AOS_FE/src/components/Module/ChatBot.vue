@@ -240,7 +240,8 @@ const sendMessage = () => {
       .catch((error) => {
         messages.value.push({
           from: "bot",
-          text: "Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau! 😔",
+          text:
+            "Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau! 😔   <img style='max-width: 80px; height: auto;' src='https://res.cloudinary.com/da2v8uqir/image/upload/v1756050248/products/bzwcwcx8kwt8azesf4e6.webp' alt='' />",
           timestamp: new Date(),
         });
         console.error("Error sending message:", error);

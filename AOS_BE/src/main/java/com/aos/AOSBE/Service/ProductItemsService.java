@@ -77,6 +77,8 @@ public class ProductItemsService {
 
 	@Autowired
 	private PriceHistoriesRepository priceHistoriesRepository;
+	@Autowired
+	private QdrantService qdrantService;
 
 	public Page<ProductItems> productItemsFindAll(int page, int size, Map<String, Object> filters) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -151,6 +153,7 @@ public class ProductItemsService {
 		if (!orderItemsRepository.findAllByProductItemId(id).isEmpty()) {
 			throw new RuntimeException("Sản phẩm đã được mua, không thể xóa.");
 		}
+		qdrantService.deleteDocumentByPayloadProductItemId(id);
 		productItemsRepository.deleteById(id);
 	}
 

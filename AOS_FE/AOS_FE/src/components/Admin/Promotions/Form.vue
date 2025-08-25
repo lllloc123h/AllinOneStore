@@ -1169,36 +1169,34 @@ async function submitForm() {
         duration: 3,
       });
       return;
-    } else {
-      notification.success({
-        message: "Thành công",
-        description: "Khuyến mãi hợp lệ, tạo mới thành công.",
-        duration: 3,
-      });
     }
+    // Create promotion
+    const createResponse = await formTableService.create(formData);
+    console.log("Create successful:", createResponse.data);
 
-    // // Create promotion
-    // const createResponse = await formTableService.create(formData);
-    // console.log("Create successful:", createResponse.data);
-
-    // // Update promotion ID for variants
-    // checkSelectedProductVariants.forEach((variant) => {
-    //   variant.promotionId = createResponse.data.id;
-    //   api
-    //     .post("/admin/PromotionProducts", variant)
-    //     .then((res) => {
-    //       console.log("Promotion product created:", res.data);
-    //       router.push(`/Admin/${props.TableName}`);
-    //     })
-    //     .catch((err) => {
-    //       console.error("Error creating promotion product:", err);
-    //       notification.error({
-    //         message: "Lỗi",
-    //         description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
-    //         duration: 3,
-    //       });
-    //     });
-    // });
+    // Update promotion ID for variants
+    checkSelectedProductVariants.forEach((variant) => {
+      variant.promotionId = createResponse.data.id;
+      api
+        .post("/admin/PromotionProducts", variant)
+        .then((res) => {
+          console.log("Promotion product created:", res.data);
+          notification.success({
+            message: "Tạo thành công",
+            description: "Khuyến mãi và sản phẩm khuyến mãi đã được tạo thành công.",
+            duration: 3,
+          });
+          router.push(`/Admin/${props.TableName}`);
+        })
+        .catch((err) => {
+          console.error("Error creating promotion product:", err);
+          notification.error({
+            message: "Lỗi",
+            description: "Đã xảy ra lỗi khi tạo sản phẩm khuyến mãi.",
+            duration: 3,
+          });
+        });
+    });
     // Create promotion products
   } catch (error) {
     console.error("Error in submitForm:", error);

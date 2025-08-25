@@ -10,6 +10,7 @@ import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -42,10 +43,13 @@ public class OpenAIService {
 	}
 
 	public String userChatBot(String message, String conversationId) {
+		FilterExpressionBuilder b = new FilterExpressionBuilder();
+
 		// dinh dang response dep hon
 		String resp = this.chatClientForCustomer.prompt().user(message)
 				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "isActive == true"))
+//				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, b.eq("isActive", true)))
+//				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "isActive == true"))
 				.call().content();
 		return resp;
 	}

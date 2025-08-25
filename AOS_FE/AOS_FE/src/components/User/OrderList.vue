@@ -81,7 +81,7 @@
                 <div class="product-info">
                   <h5 class="product-name">{{ sp.ten }}</h5>
                   <div class="product-details">
-                    <span class="sku">Mã sản phẩm: {{ sp.sku }}</span>
+                    <span class="sku">{{ sp.sku }}</span>
                     <span class="quantity">SL: {{ sp.soLuong }}</span>
                     <span class="price">{{ formatMoney(sp.gia) }}</span>
                   </div>
@@ -630,7 +630,7 @@ const showVideoUpload = ref(false);
 }
 
 .design-card {
-  background: #fff;
+  background: #f3f3f6;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.08);
   display: flex;

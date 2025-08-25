@@ -1,6 +1,7 @@
 package com.aos.AOSBE.Entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,8 +45,8 @@ public class ProductItems {
     @Column(name = "sku")
     private String sku;
 	
-    @Column(name = "safety_stock")
-    private int safetyStock;
+    @Column(name = "search_point")
+    private UUID searchPoint;
 	
     @Column(name = "qty")
     private int qty;

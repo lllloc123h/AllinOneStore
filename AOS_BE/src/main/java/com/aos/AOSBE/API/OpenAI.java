@@ -43,7 +43,8 @@ public class OpenAI {
 			String response = openAIService.userChatBot(chat.getMessage(), conversationId);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body(null);
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(e.getMessage());
 		}
 	}
 
