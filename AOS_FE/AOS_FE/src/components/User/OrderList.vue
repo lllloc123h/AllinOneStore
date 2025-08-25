@@ -158,7 +158,7 @@
                         </div>
                         <div class="form-group">
                           <UploadImages
-                            :maxFiles="5"
+                            :maxFiles="3"
                             :aspectRatio="'4:5'"
                             :titleUpload="'đánh giá sản phẩm'"
                             @uploaded="handleImageUploaded"
@@ -283,9 +283,6 @@
           <div class="order-actions">
             <button class="btn-detail" @click="goToOrder(order.id)">
               <i class="bi bi-eye me-2"></i>Xem chi tiết
-            </button>
-            <button class="btn-reorder" @click="reorder(order)">
-              <i class="bi bi-arrow-repeat me-2"></i>Đặt lại
             </button>
           </div>
         </div>

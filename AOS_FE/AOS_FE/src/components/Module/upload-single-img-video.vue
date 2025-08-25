@@ -39,7 +39,7 @@
           ></i>
           <h5>{{ isVideo ? "Kéo thả video vào đây" : "Kéo thả ảnh avatar vào đây" }}</h5>
           <p>hoặc</p>
-          <button class="browse-btn" @click="triggerFileInput">
+          <button type="button" class="browse-btn" @click="triggerFileInput">
             <i class="bi bi-folder2-open me-2"></i>
             {{ isVideo ? "Chọn video từ máy tính" : "Chọn ảnh từ máy tính" }}
           </button>
