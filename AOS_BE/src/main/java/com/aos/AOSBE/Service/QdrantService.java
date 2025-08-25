@@ -44,33 +44,93 @@ public class QdrantService {
 
 @Autowired
 QdrantClient qdrantClient;
-    @Transactional
-    public List<Document> createDocumentForChatBotSearch(ProductItems productItems) {
-        String docContent = "Tên sản phẩm: "+productItems.getBaseProducts().getName() + " với mô tả "
-                + productItems.getDescription() + ". Thông tin màu sắc, size: "
-                + handleListSkuToFilter.getDescriptionOfSku(productItems.getSku()) + ". Tên danh mục: "
-                + productItems.getBaseProducts().getCategories().getName();
-        // 3. Thêm vào Qdrant
-        Map<String, Object> payload = new HashMap<>();
+//    @Transactional
+//    public List<Document> createDocumentForChatBotSearch(ProductItems productItems) {
+//        String docContent = "Tên sản phẩm: "+productItems.getBaseProducts().getName() + " với mô tả "
+//                + productItems.getDescription() + ". Thông tin màu sắc, size: "
+//                + handleListSkuToFilter.getDescriptionOfSku(productItems.getSku()) + ". Tên danh mục: "
+//                + productItems.getBaseProducts().getCategories().getName();
+//        // 3. Thêm vào Qdrant
+//        Map<String, Object> payload = new HashMap<>();
 //		payload.put("createdAt", productItems.getCreatedAt().toString());
 //		payload.put("updatedAt", productItems.getUpdatedAt().toString());
-        payload.put("productItemId", productItems.getId());
-        payload.put("baseProductId", productItems.getBaseProducts().getId());
-        payload.put("category", productItems.getBaseProducts().getCategories().getName());
-        payload.put("catalog", productItems.getBaseProducts().getCategories().getCatalogs().getName());
-        payload.put("isCustom", productItems.getBaseProducts().isCustom());
-        payload.put("isActive", productItems.isActive() ? "true" : "false");
-        payload.put("url","http://localhost:5173/product/" + productItems.getBaseProducts().getId());
-        payload.put("color", handleListSkuToFilter.getSingleDescriptionColorOfSku(productItems.getSku()));
-        payload.put("size", handleListSkuToFilter.getSingleDescriptionSizeOfSku(productItems.getSku()));
-        payload.put("imageUrl",productImagesRepository.checkContainDefaultImagesByProductItemId(productItems.getId()).get(0).getImageUrl());
-        Document doc = new Document(
-                productItems.getSearchPoint().toString(),
-                docContent,
-                payload);
-        qdrantStore.doAdd(List.of(doc));
-        return List.of(doc);
-    }
+//        payload.put("productItemId", productItems.getId());
+//        payload.put("baseProductId", productItems.getBaseProducts().getId());
+//        payload.put("category", productItems.getBaseProducts().getCategories().getName());
+//        payload.put("catalog", productItems.getBaseProducts().getCategories().getCatalogs().getName());
+//        payload.put("isCustom", productItems.getBaseProducts().isCustom());
+//        payload.put("isActive", productItems.isActive() ? "true" : "false");
+//        payload.put("url","http://localhost:5173/product/" + productItems.getBaseProducts().getId());
+//        payload.put("color", handleListSkuToFilter.getSingleDescriptionColorOfSku(productItems.getSku()));
+//        payload.put("size", handleListSkuToFilter.getSingleDescriptionSizeOfSku(productItems.getSku()));
+//        payload.put("imageUrl",productImagesRepository.checkContainDefaultImagesByProductItemId(productItems.getId()).get(0).getImageUrl());
+//        Document doc = new Document(
+//                productItems.getSearchPoint().toString(),
+//                docContent,
+//                payload);
+//        qdrantStore.doAdd(List.of(doc));
+//        return List.of(doc);
+//    }
+@Transactional
+public List<Document> createDocumentForChatBotSearch(ProductItems productItems) {
+    // Payload trước
+    Map<String, Object> payload = new HashMap<>();
+    payload.put("productItemId", productItems.getId());
+    payload.put("baseProductId", productItems.getBaseProducts().getId());
+    payload.put("category", productItems.getBaseProducts().getCategories().getName());
+    payload.put("catalog", productItems.getBaseProducts().getCategories().getCatalogs().getName());
+    payload.put("isCustom", productItems.getBaseProducts().isCustom());
+    payload.put("isActive", productItems.isActive() ? "true" : "false");
+    payload.put("url", "http://localhost:5173/product/" + productItems.getBaseProducts().getId());
+    payload.put("color", handleListSkuToFilter.getSingleDescriptionColorOfSku(productItems.getSku()));
+    payload.put("size", handleListSkuToFilter.getSingleDescriptionSizeOfSku(productItems.getSku()));
+    payload.put("imageUrl", productImagesRepository
+            .checkContainDefaultImagesByProductItemId(productItems.getId())
+            .get(0)
+            .getImageUrl());
+
+    // Convert payload -> chuỗi có format
+    StringBuilder payloadStr = new StringBuilder("Thông tin chi tiết sản phẩm:\n");
+    payload.forEach((k, v) -> {
+        if (k.equals("url")) {
+            payloadStr.append("- ").append(k).append(": <a href='").append(v).append("'>Xem chi tiết</a>\n");
+        } else if (k.equals("imageUrl")) {
+            payloadStr.append("- ").append(k).append(": <img src='").append(v).append("' style='max-width:200px';style='border-radius: 10px';/>\n");
+        } else {
+            payloadStr.append("- ").append(k).append(": ").append(v).append("\n");
+        }
+    });
+
+    // Nội dung chính (mô tả sản phẩm + payload format)
+    String docContent = """
+            Tên sản phẩm: %s
+            Mô tả: %s
+            Màu sắc: %s
+            Size: %s
+            Danh mục: %s
+            Có thể custom: %s
+
+            %s
+            """.formatted(
+            productItems.getBaseProducts().getName(),
+            productItems.getDescription(),
+            handleListSkuToFilter.getSingleDescriptionColorOfSku(productItems.getSku()),
+            handleListSkuToFilter.getSingleDescriptionSizeOfSku(productItems.getSku()),
+            productItems.getBaseProducts().getCategories().getName(),
+            productItems.getBaseProducts().isCustom() ? "Có" : "Không",
+            payloadStr.toString()
+    );
+
+    Document doc = new Document(
+            productItems.getSearchPoint().toString(),
+            docContent,
+            payload
+    );
+
+    qdrantStore.doAdd(List.of(doc));
+    return List.of(doc);
+}
+
     @Transactional
     public void upsertDocument(ProductItems productItems) {
         createDocumentForChatBotSearch(productItems);

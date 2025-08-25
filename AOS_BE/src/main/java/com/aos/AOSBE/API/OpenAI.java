@@ -31,6 +31,7 @@ public class OpenAI {
 	@PostMapping("/openai/chat")
 	public ResponseEntity<?> chatWithOpenAI(@RequestBody ChatDTO chat) {
 		try {
+			System.out.println("Filter ở OPEN AI: " + chat.getFilters().isEmpty());
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			System.out.println("User Email ở OPEN AI: " + userEmail);
 			String conversationId = "";
@@ -40,7 +41,7 @@ public class OpenAI {
 				conversationId = userEmail;
 			}
 			// Logic to call OpenAI API and return response
-			String response = openAIService.userChatBot(chat.getMessage(), conversationId);
+			String response = openAIService.userChatBot(chat.getMessage(), conversationId, chat.getFilters());
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
 			e.printStackTrace();

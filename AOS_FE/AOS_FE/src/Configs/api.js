@@ -20,7 +20,6 @@ const excludedPaths = [
   '/Accounts/verify-otp',
   '/BaseProducts',
   '/VariantValues',
-  '/openai/chat',
   '/Promotions/',
   '/Promotions',
   '/shipping/fee', "/ProductItems/detail", "/UserProductEvents",

@@ -10,6 +10,7 @@ import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class OpenAIService {
@@ -42,16 +44,22 @@ public class OpenAIService {
 		this.chatClientForCustomerForRequest = chatClientForCustomerForRequest;
 	}
 
-	public String userChatBot(String message, String conversationId) {
-		FilterExpressionBuilder b = new FilterExpressionBuilder();
+	public String userChatBot(String message, String conversationId,Map<String,String> filters) {
 
 		// dinh dang response dep hon
-		String resp = this.chatClientForCustomer.prompt().user(message)
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+		ChatClient.ChatClientRequestSpec resp = this.chatClientForCustomer.prompt().user(message)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
 //				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, b.eq("isActive", true)))
 //				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "isActive == true"))
-				.call().content();
-		return resp;
+		if (filters != null && !filters.isEmpty()) {
+			String filterStr = filters.entrySet().stream()
+					.map(e -> e.getKey() + " == '" + e.getValue() + "'")
+					.collect(Collectors.joining(" && "));
+			System.out.println("Filter expression: " + filterStr);
+			resp.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, filterStr));
+		}
+
+        return resp.call().content();
 	}
 
 	public String adminChatBot(String message, String conversationId) {
