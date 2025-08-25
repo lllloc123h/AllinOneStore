@@ -16,6 +16,10 @@
               <i class="bi bi-plus-circle me-2"></i>
               Nạp tiền
             </button>
+            <button class="btn btn-topup" @click="MomoWithdraw">
+              <i class="bi bi-plus-circle me-2"></i>
+              Rút tiền
+            </button>
           </div>
         </div>
       </div>
@@ -509,7 +513,9 @@ async function fetchInfor() {
 function MomoTopUp() {
   router.push({ name: "momotopup" });
 }
-
+function MomoWithdraw() {
+  router.push({ name: "momowithdraw" });
+}
 onMounted(() => {
   fetchInfor();
   console.log("WalletInfor component mounted", route.query);

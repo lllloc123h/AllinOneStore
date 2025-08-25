@@ -1,10 +1,16 @@
 package com.aos.AOSBE.API;
 
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -24,6 +30,7 @@ import com.aos.AOSBE.DTOS.EWalletTransactionsDTOS;
 import com.aos.AOSBE.DTOS.MOMOPAYRequestDTO;
 import com.aos.AOSBE.DTOS.MomoCallbackDTO;
 import com.aos.AOSBE.DTOS.TopUpRequestDTO;
+import com.aos.AOSBE.DTOS.WithdrawRequestDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.EWalletTransactions;
 import com.aos.AOSBE.Entity.EWallets;
@@ -297,6 +304,89 @@ public class MomoPaymentAPI {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body("Server error");
 		}
+	}
+
+	@PostMapping("/api/e-wallet/withdraw/bank")
+	public ResponseEntity<?> withdrawToBank(@RequestBody WithdrawRequestDTOS dto) {
+		try {
+			String endpoint = "https://payment.momo.vn/v2/gateway/api/disbursement/pay";
+
+			String domain = System.getProperty("BE_PAKE_DOMAIN_ORIGIN");
+			String partnerCode = System.getProperty("MOMO_PARTNER");
+			String accessKey = System.getProperty("MOMO_ACCESS_KEY");
+			String secretKey = System.getProperty("MOMO_SECRECT_KEY");
+			String publicKey = System.getProperty("MOMO_PUBLIC_KEY");
+			String returnUrl = "http://localhost:5173/momo/return";
+			String notifyUrl = domain + "/api/e-wallet/callback";
+			String requestId = UUID.randomUUID().toString();
+			String orderId = "WD" + System.currentTimeMillis();
+			String json = "{\n" + "  \"partnerCode\": \"" + partnerCode + "\",\n" + "  \"partnerRefId\": \"" + orderId
+					+ "\",\n" + "  \"partnerTransId\": \"" + requestId + "\",\n" + "  \"amount\": " + dto.getAmount()
+					+ ",\n" + "  \"description\": \"Withdraw \"\n" + "}";
+			String encrypted = encrypt(json, publicKey);
+			String rawSignature = "accessKey=" + accessKey + "&amount=" + dto.getAmount() + "&disbursementMethod="
+					+ encrypted + "&extraData=" + "&orderId=" + orderId + "&orderInfo="
+					+ (dto.getRequestType().equals("disburseToBank") ? "Withdraw to bank " + dto.getBankCode()
+							: "Withdraw to wallet " + dto.getWalletId())
+					+ "&partnerCode=" + partnerCode + "&requestId=" + requestId + "&requestType="
+					+ dto.getRequestType();
+			Map<String, Object> requestBody = new LinkedHashMap<>();
+			requestBody.put("accessKey", accessKey);
+			requestBody.put("amount", dto.getAmount());
+
+			if (dto.getRequestType().equals("disburseToBank")) {
+				requestBody.put("bankAccountHolderName", dto.getBankAccountHolderName());
+				requestBody.put("bankAccountNo", dto.getBankAccount());
+				requestBody.put("bankCode", dto.getBankCode());
+			}
+
+			requestBody.put("extraData", "");
+			requestBody.put("ipnUrl", notifyUrl);
+			requestBody.put("lang", "vi");
+			requestBody.put("orderId", orderId);
+			requestBody.put("orderInfo",
+					dto.getRequestType().equals("disburseToBank") ? "Withdraw to bank " + dto.getBankCode()
+							: "Withdraw to wallet " + dto.getWalletId());
+			requestBody.put("partnerCode", partnerCode);
+			requestBody.put("partnerRefId", orderId);
+			requestBody.put("partnerTransId", requestId);
+			requestBody.put("redirectUrl", returnUrl);
+			requestBody.put("requestId", requestId);
+			requestBody.put("requestType", dto.getRequestType());
+
+			if (dto.getRequestType().equals("disburseToWallet")) {
+				requestBody.put("walletId", dto.getWalletId());
+			}
+
+			requestBody.put("disbursementMethod", encrypted);
+
+// --- Signature ---
+			String signature = hmacSHA256(rawSignature, secretKey);
+			requestBody.put("signature", signature);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<Map> response = restTemplate.postForEntity(endpoint, request, Map.class);
+			return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("Message", "Đã có lỗi xảy ra: " + e.getMessage()));
+		}
+
+	}
+
+	public static String encrypt(String plainText, String base64PublicKey) throws Exception {
+		byte[] keyBytes = Base64.getDecoder().decode(base64PublicKey);
+		X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		PublicKey publicKey = keyFactory.generatePublic(spec);
+
+		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding"); // typical for MoMo
+		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+		byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+		return Base64.getEncoder().encodeToString(encryptedBytes);
 	}
 
 	public String hmacSHA256(String data, String secretKey) throws Exception {

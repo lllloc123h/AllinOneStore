@@ -26,6 +26,7 @@ public class AosBeApplication {
 		System.setProperty("MOMO_PARTNER", dotenv.get("MOMO_PARTNER"));
 		System.setProperty("MOMO_ACCESS_KEY", dotenv.get("MOMO_ACCESS_KEY"));
 		System.setProperty("MOMO_SECRECT_KEY", dotenv.get("MOMO_SECRECT_KEY"));
+		System.setProperty("MOMO_PUBLIC_KEY", dotenv.get("MOMO_PUBLIC_KEY"));
 
 		System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
 		System.setProperty("QDRANT_KEY", dotenv.get("QDRANT_KEY"));

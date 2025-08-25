@@ -542,7 +542,13 @@ create table message(
 	FOREIGN KEY ([user_id]) REFERENCES accounts (id) ON DELETE CASCADE
 )
 	go 
-
+CREATE TABLE Bank_Codes (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  bank_code VARCHAR(20) NOT NULL UNIQUE,
+  bank_name NVARCHAR(255) NOT NULL,
+  momo_numeric_code VARCHAR(20) NULL ,  -- optional MoMo-specific code,
+  logo_Url NVARCHAR(255) NULL
+);
 
 INSERT INTO
 	accounts (

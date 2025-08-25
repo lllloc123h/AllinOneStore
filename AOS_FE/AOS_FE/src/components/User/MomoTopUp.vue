@@ -3,54 +3,52 @@
 
     <div class="container mt-5">
         <h3 class="mb-4">Top-Up Form</h3>
-        <form @submit.prevent="momoTopUp">
-            <div class="mb-3">
-                <label for="amount" class="form-label">Amount</label>
-                <input type="number" class="form-control" id="amount" v-model="topUpAmount" required min="10000"
-                    max="500000" />
-            </div>
-            <div>
-                <p>Your amount is too small. Please choose:</p>
-                <button class="btn btn-outline-primary" @click="() => (topUpAmount = topUpAmount * 1000)">{{ topUpAmount
-                    * 1000 }}</button>
-                <button class="btn btn-outline-primary" @click="() => (topUpAmount = topUpAmount * 100000)">{{
-                    topUpAmount
-                    * 100000 }}</button>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Payment Method</label>
-                <div class="d-flex gap-3">
-                    <button type="button" class="btn"
-                        :class="paymentMethod === 'momo' ? 'btn-outline-primary' : 'btn-outline-secondary'"
-                        @click="paymentMethod = 'momo'">
-                        <i class="bi bi-phone" style="font-size: 1.5rem;"></i><br />
-                        MoMo
-                    </button>
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" class="form-control" id="amount" v-model="topUpAmount" required min="10000"
+                max="500000" />
+        </div>
+        <div>
+            <p>Your amount is too small. Please choose:</p>
+            <button class="btn btn-outline-primary" @click="() => (topUpAmount = topUpAmount * 1000)">{{ topUpAmount
+                * 1000 }}</button>
+            <button class="btn btn-outline-primary" @click="() => (topUpAmount = topUpAmount * 100000)">{{
+                topUpAmount
+                * 100000 }}</button>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Payment Method</label>
+            <div class="d-flex gap-3">
+                <button type="button" class="btn"
+                    :class="paymentMethod === 'momo' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                    @click="paymentMethod = 'momo'">
+                    <i class="bi bi-phone" style="font-size: 1.5rem;"></i><br />
+                    MoMo
+                </button>
 
-                    <button type="button" class="btn"
-                        :class="paymentMethod === 'bank' ? 'btn-outline-primary' : 'btn-outline-secondary'"
-                        @click="paymentMethod = 'bank'">
-                        <i class="bi bi-bank" style="font-size: 1.5rem;"></i><br />
-                        Bank
-                    </button>
+                <button type="button" class="btn"
+                    :class="paymentMethod === 'bank' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                    @click="paymentMethod = 'bank'">
+                    <i class="bi bi-bank" style="font-size: 1.5rem;"></i><br />
+                    Bank
+                </button>
 
-                    <button type="button" class="btn"
-                        :class="paymentMethod === 'card' ? 'btn-outline-primary' : 'btn-outline-secondary'"
-                        @click="paymentMethod = 'card'">
-                        <i class="bi bi-credit-card" style="font-size: 1.5rem;"></i><br />
-                        Card
-                    </button>
-                </div>
-            </div>
-
-            <div class="button-holder">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-wallet2 me-2"></i> Top Up
+                <button type="button" class="btn"
+                    :class="paymentMethod === 'card' ? 'btn-outline-primary' : 'btn-outline-secondary'"
+                    @click="paymentMethod = 'card'">
+                    <i class="bi bi-credit-card" style="font-size: 1.5rem;"></i><br />
+                    Card
                 </button>
             </div>
-        </form>
+        </div>
+
+        <div class="button-holder">
+            <button type="submit" class="btn btn-primary" @click="momoTopUp">
+                <i class="bi bi-wallet2 me-2"></i> Top Up
+            </button>
+        </div>
     </div>
-    <div v-if="!payURL && showPopUp" class="popup-overlay" @click.self="closePopup">
+    <div v-if="payURL && showPopUp" class="popup-overlay" @click.self="closePopup">
         <div class="popup-iframe text-center">
             <h5 class="mb-3">MoMo Payment</h5>
             <a :href="payURL" target="_blank" class="btn btn-primary">Open Payment</a>
