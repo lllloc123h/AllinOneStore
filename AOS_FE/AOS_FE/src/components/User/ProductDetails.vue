@@ -80,18 +80,14 @@
 
                 <div class="rating-section">
                   <div class="stars">
-                    <i
-                      v-for="i in 5"
-                      :key="i"
-                      :class="[
-                        'bi',
-                        i <= Math.floor(averageRating)
-                          ? 'bi-star-fill'
-                          : i - averageRating < 1
+                    <i v-for="i in 5" :key="i" :class="[
+                      'bi',
+                      i <= Math.floor(averageRating)
+                        ? 'bi-star-fill'
+                        : i - averageRating < 1
                           ? 'bi-star-half'
                           : 'bi-star',
-                      ]"
-                    ></i>
+                    ]"></i>
                   </div>
                   <span class="rating-text">
                     {{ averageRating.toFixed(1) }}
@@ -105,7 +101,7 @@
                 <template v-if="discountedPrice !== currentPrice">
                   <div class="discount-badge">
                     <i class="bi bi-tag-fill me-1"></i>
-                    Giảm {{ selectedProduct.promotions.discountPercent }}%
+                    Giảm {{ formatPrice(selectedProduct.promotions[0].discountValue) }}
                   </div>
                   <div class="price-container">
                     <span class="current-price">{{ formatPrice(discountedPrice) }}</span>
@@ -117,7 +113,7 @@
                   <div class="price-container">
                     <span class="current-price">{{
                       formatPrice(selectedProduct.price)
-                      }}</span>
+                    }}</span>
                   </div>
                 </template>
               </div>
@@ -274,7 +270,7 @@
                         <span class="spec-label">Chất liệu:</span>
                         <span class="spec-value">{{
                           selectedProduct.baseProducts.material
-                          }}</span>
+                        }}</span>
                       </div>
                       <div class="spec-row">
                         <span class="spec-label">Mã sản phẩm:</span>
@@ -303,18 +299,14 @@
                     <div class="average-rating">
                       <span class="big-rating">{{ averageRating.toFixed(1) }}</span>
                       <div class="rating-stars">
-                        <i
-                      v-for="i in 5"
-                      :key="i"
-                      :class="[
-                        'bi',
-                        i <= Math.floor(averageRating)
-                          ? 'bi-star-fill'
-                          : i - averageRating < 1
-                          ? 'bi-star-half'
-                          : 'bi-star',
-                      ]"
-                    ></i>
+                        <i v-for="i in 5" :key="i" :class="[
+                          'bi',
+                          i <= Math.floor(averageRating)
+                            ? 'bi-star-fill'
+                            : i - averageRating < 1
+                              ? 'bi-star-half'
+                              : 'bi-star',
+                        ]"></i>
                       </div>
                       <p class="rating-count">{{ totalReviews }} đánh giá</p>
                     </div>
@@ -372,7 +364,7 @@
                       </div>
                       <span class="review-date">{{
                         formatTimeAgo(review.createdAt)
-                        }}</span>
+                      }}</span>
                     </div>
 
                     <div class="review-content">
@@ -500,7 +492,7 @@ const uploaderKey = ref(Date.now());
 const discountedPrice = computed(() => {
   if (selectedProduct.value?.promotions[0]?.discountValue) {
     return Math.round(
-      currentPrice.value * (1 - selectedProduct.value.promotions[0].discountValue / 100)
+      currentPrice.value - selectedProduct.value.promotions[0].discountValue
     );
   }
   return currentPrice.value;
@@ -651,7 +643,10 @@ watch(() => selected.value["Màu sắc"], () => {
       : [product.value];
     selectedProduct.value = itemList[0];
   }
-  currentPrice.value = selectedProduct.value.price;
+  if (selectedProduct.value) {
+    console.log("Selected Product:", selectedProduct.value);
+    currentPrice.value = selectedProduct.value.price;
+  }
 });
 function increaseQty() {
   quantity.value++;
@@ -767,8 +762,10 @@ const totalReviews = ref(0);
 const fetchTotalReviews = async () => {
   try {
     const productId = selectedProduct.value?.id;
-    if (!productId) return;
-
+    if (!productId) {
+      console.warn("Chưa có productId để lấy reviews");
+      return; // sẽ không còn warning
+    }
     const res = await api.get(`/reviews/product/count/${productId}`);
     totalReviews.value = res.data.total || 0;
   } catch (err) {

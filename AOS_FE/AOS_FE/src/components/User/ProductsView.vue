@@ -465,7 +465,7 @@ const isExpanded = (sectionId) => {
   return expandedSections.value.includes(sectionId);
 };
 function increaseQty() {
-  quantityForAddToCartPorductItem.value++;
+  quantityForAddToCartPorductItem.value = quantityForAddToCartPorductItem.value + 1;
 }
 
 const discountedPrice = computed(() => {
@@ -478,7 +478,7 @@ const discountedPrice = computed(() => {
   return currentPrice.value;
 });
 function decreaseQty() {
-  if (quantityForAddToCartPorductItem.value > 1) quantityForAddToCartPorductItem.value--;
+  if (quantityForAddToCartPorductItem.value > 1) quantityForAddToCartPorductItem.value = quantityForAddToCartPorductItem.value - 1;
 }
 const prevImage = () => {
   if (images.value.length === 0) return;
@@ -573,7 +573,6 @@ const itemCart = ref({
 const addToCart = () => {
   if (!selectedProductItem.value || quantityForAddToCartPorductItem.value <= 0) return;
   if (quantityForAddToCartPorductItem.value) {
-    authService.updateCart(quantityForAddToCartPorductItem.value);
     clearInterval(timer);
 
     let payLoad = {
@@ -601,12 +600,16 @@ const addToCart = () => {
       createdAt: "",
       updatedAt: "",
     };
-    console.log(itemUpdate);
-    authService.updateCart(quantityForAddToCartPorductItem.value);
 
     if (quantityForAddToCartPorductItem.value <= selectedProductItem.value.qty) {
       console.log("Adding to cart:", itemUpdate);
       finalHandleCartProgress(itemUpdate);
+      authService.updateCart(quantityForAddToCartPorductItem.value);
+      notification.success({
+        message: "Thành công",
+        description: `Đã thêm ${quantityForAddToCartPorductItem.value} sản phẩm vào giỏ hàng!`,
+        duration: 4.5,
+      });
     } else {
       notification.error({
         message: "Thất bại",
