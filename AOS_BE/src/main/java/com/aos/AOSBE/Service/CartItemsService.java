@@ -58,13 +58,17 @@ public class CartItemsService {
 	public void cartItemsDeleteAll(String email, List<OrderItemsDTOS> cartItemsSelected) {
 	    List<CartItems> listCartNeedToRemove = new ArrayList<>();
 	    for (OrderItemsDTOS element : cartItemsSelected) {
-	        CartItems temp = cartItemsRepository
-	            .findByAccountsEmailAndProductItemsIdAndComboGroupId(
-	                email,
-	                element.getProductItemId(),
-	                element.getComboGroupId() // nhớ truyền từ DTO xuống
-	            )
-	            .orElse(null);
+	        CartItems temp;
+	        if (element.getComboGroupId() == null) {
+	            temp = cartItemsRepository
+	                .findByAccountsEmailAndProductItemsIdAndNoCombo(email, element.getProductItemId())
+	                .orElse(null);
+	        } else {
+	            temp = cartItemsRepository
+	                .findByAccountsEmailAndProductItemsIdAndComboGroupId(email, element.getProductItemId(), element.getComboGroupId())
+	                .orElse(null);
+	        }
+
 	        if (temp != null) {
 	            listCartNeedToRemove.add(temp);
 	        }
