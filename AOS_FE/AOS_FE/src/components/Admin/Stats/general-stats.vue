@@ -74,7 +74,7 @@
                       <div class="stat-content">
                         <h6 class="stat-label">Tổng số hóa đơn</h6>
                         <div class="stat-value gross-revenue-value">
-                          {{ stats.countOrders }}
+                          {{ stats.countOrders || 0 }}
                         </div>
                         <div class="stat-description">
                           <span class="text-muted">Tất cả đơn hàng đã được tạo </span>
@@ -296,7 +296,7 @@
                   <div class="stat-content">
                     <h6 class="stat-label">Số lượng đơn đã hủy và thanh toán</h6>
                     <div class="stat-value return-amount-value">
-                      {{ stats.cancelAndPaidOrders.length }} đơn
+                      {{ stats.cancelAndPaidOrders != null ? stats.cancelAndPaidOrders.length : 0 }} đơn
                     </div>
                     <div class="stat-description">
                       <span class="text-muted">Số lượng đơn đã hủy</span>
@@ -313,10 +313,15 @@
                     <h6 class="stat-label">Giá trị đơn đã hủy và thanh toán</h6>
                     <div class="stat-value return-amount-value">
                       {{
-                        formatCurrency(
-                          stats.cancelAndPaidOrders.reduce((total, order) => total + order, 0)
-                        )
-
+                        stats.cancelAndPaidOrders == null
+                          ? "0 đ"
+                          :
+                          formatCurrency(
+                            stats.cancelAndPaidOrders.reduce(
+                              (total, order) => total + order,
+                              0
+                            )
+                          )
                       }}
                     </div>
                     <div class="stat-description">
@@ -333,7 +338,7 @@
                   <div class="stat-content">
                     <h6 class="stat-label">Số lượng đơn đã hủy và hoàn tiền</h6>
                     <div class="stat-value return-amount-value">
-                      {{ stats.cancelAndRefundOrders?.length }} đơn
+                      {{ stats.cancelAndRefundOrders != null ? stats.cancelAndPaidOrders.length : 0 }} đơn
                     </div>
                     <div class="stat-description">
                       <span class="text-muted">Giá trị đơn đã hủy</span>
@@ -350,12 +355,15 @@
                     <h6 class="stat-label">Giá trị đơn đã hủy và hoàn tiền</h6>
                     <div class="stat-value return-amount-value">
                       {{
-                        formatCurrency(
-                          stats.cancelAndRefundOrders.reduce(
-                            (total, order) => total + order,
-                            0
+                        stats.cancelAndRefundOrders == null
+                          ? "0 đ"
+                          :
+                          formatCurrency(
+                            stats.cancelAndRefundOrders.reduce(
+                              (total, order) => total + order,
+                              0
+                            )
                           )
-                        )
                       }}
                     </div>
                     <div class="stat-description">
@@ -689,7 +697,6 @@ const fetchStats = async () => {
 
     const response = await api.get("/admin/Orders/general-stats");
     stats.value = response.data;
-
     console.log("General stats loaded:", stats.value);
   } catch (err) {
     console.error("Failed to fetch general stats:", err);
