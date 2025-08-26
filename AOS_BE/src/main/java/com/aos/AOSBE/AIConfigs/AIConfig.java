@@ -149,8 +149,10 @@ class AIConfig {
 								- Các sản phẩm đã mua theo độ tuổi: <listProductBoughtByBirthday>
 
 								Dựa vào dữ liệu trên, hãy đưa ra danh sách sản phẩm phù hợp nhất với khách hàng. Mục tiêu:
+								- Đầu tiên nêu các thông tin cơ bản về khác hàng như giới tính ngày sinh
 								- Gợi ý sản phẩm hợp gu và nhu cầu.
 								- Viết rõ ràng, ngắn gọn, dùng markdown, bullet, emoji nếu cần.
+								- phân tích như cầu mua hàng về thông tin cơ bản đã cũng cấp
 								- Nếu dữ liệu chưa đủ, hãy hỏi thêm thông tin như mục đích sử dụng, ngân sách, loại sản phẩm yêu thích,...
 								- Luôn chào hỏi khách một cách thân thiện.
 								- Giới thiệu sản phẩm phù hợp với nhu cầu, sở thích, màu sắc, size, ngân sách của khách.

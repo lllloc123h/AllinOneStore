@@ -1,7 +1,5 @@
 package com.aos.AOSBE.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aos.AOSBE.DTOS.TrainDTO;
-import com.aos.AOSBE.DTOS.UserProductEventsDTOS;
 import com.aos.AOSBE.Entity.Accounts;
 import com.aos.AOSBE.Entity.UserProductEvents;
 import com.aos.AOSBE.Mapper.UserProductEventsMapper;
@@ -77,11 +74,11 @@ public class UserProductEventsService {
 				ac.getBirthday().getYear() - 5, ac.getBirthday().getYear() + 5, "ADDTOCART"));
 
 		// listProductByBirthday
-		List<UserProductEventsDTOS> listBehaviour = new ArrayList<>();
-		userProductEventsRepository.findAll().forEach(elementBehaviour -> {
-			listBehaviour.add(userProductEventsMapper.mapper(elementBehaviour));
-		});
-		;
+//		List<UserProductEventsDTOS> listBehaviour = new ArrayList<>();
+//		userProductEventsRepository.findAll().forEach(elementBehaviour -> {
+//			listBehaviour.add(userProductEventsMapper.mapper(elementBehaviour));
+//		});
+//		;
 		return trainDTO;
 	}
 
