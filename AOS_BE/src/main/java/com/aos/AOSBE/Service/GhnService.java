@@ -164,8 +164,13 @@ public class GhnService {
 
 
         // 6. Chi tiết đơn hàng
-        dto.setCod_amount(totalProductCost);
-        dto.setContent("Theo New York Times"); // hoặc nội dung động tùy bạn
+        if (order.getActualShippingFee() == 0) {
+            dto.setCod_amount((int) order.getFinalTotal());
+        } else {
+            dto.setCod_amount((int)(totalProductCost - order.getDiscountValue()));
+        }
+
+        dto.setContent("Theo New York Times"); 
         dto.setLength(12);
         dto.setWidth(12);
         dto.setHeight(12);
