@@ -158,16 +158,15 @@ public class MomoPaymentAPI {
 			transaction.setOrderId("" + dto.getOrderId());
 			transaction.setStatus("PENDING");
 			String total = dto.getFinalToTal().toString();
-			if (total.endsWith("0")) {
-				total = total.substring(0, total.length() - 1);
-			}
+
+			total = total.substring(0, total.length() - 1);
 			// Create payment data
 			Map<String, String> rawData = new LinkedHashMap<>();
 			rawData.put("accessKey", accessKey);
 			rawData.put("amount", total);
 			rawData.put("extraData", "");
 			rawData.put("ipnUrl", notifyUrl);
-			rawData.put("orderId", dto.getOrderId() + "");
+			rawData.put("orderId", UUID.randomUUID().toString() + "_ORDER_" + dto.getOrderId() + "");
 			rawData.put("orderInfo", "Thanh toán đơn hàng có mã " + dto.getOrderId());
 			rawData.put("partnerCode", partnerCode);
 			rawData.put("redirectUrl", returnUrl);
@@ -209,8 +208,9 @@ public class MomoPaymentAPI {
 	public ResponseEntity<?> momoCallback(@RequestBody MomoCallbackDTO callback) {
 		try {
 
-			String momoOrderId = callback.getOrderId();
+			String momoOrderId = callback.getOrderId().split("_")[callback.getOrderId().split("_").length - 1];
 			EWalletTransactions transaction = eWalletTransactionsService.eWalletTransactionsFindByOrderID(momoOrderId);
+
 //			 1. Check result
 			switch (callback.getResultCode()) {
 			case 0: {
@@ -233,14 +233,14 @@ public class MomoPaymentAPI {
 						return ResponseEntity.ok("Transaction already processed or not found");
 					}
 				} else {
-					if (transaction != null && !"SUCCESS".equals(transaction.getStatus())) {
+					if (transaction != null && !"paid".equals(transaction.getStatus())) {
 						// 3. Update transaction status
 						Orders order = ordersService.ordersFindById(Integer.parseInt(momoOrderId)).orElse(null);
 						if (order == null) {
 							return ResponseEntity.badRequest()
 									.body(Map.of("Message", "Đã có lỗi xảy ra: Không tìm thấy Order"));
 						}
-						order.setPaymentStatus("SUCCESS");
+						order.setPaymentStatus("paid");
 						Orders updated = ordersService.ordersSave(order);
 						transaction.setStatus("SUCCESS");
 						eWalletTransactionsService.eWalletTransactionsSave(transaction);
