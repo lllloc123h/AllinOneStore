@@ -3,21 +3,15 @@
   <div class="product-card">
     <div class="modern-card">
       <!-- Discount Badge -->
-      <div
-        v-if="props.product.promotions && props.product.promotions.length > 0"
-        class="discount-badge"
-      >
+      <div v-if="props.product.promotions && props.product.promotions.length > 0" class="discount-badge">
         <i class="bi bi-lightning-charge me-1"></i>
         Ưu đãi
       </div>
 
       <!-- Image Container with 4:5 Aspect Ratio -->
       <div class="image-container">
-        <img
-          class="product-image"
-          :src="props.product?.imageUrl || '../../assets/imgs/ao_bomber_nu.webp'"
-          :alt="props.product?.name || 'Sản phẩm'"
-        />
+        <img class="product-image" :src="props.product?.imageUrl || '../../assets/imgs/ao_bomber_nu.webp'"
+          :alt="props.product?.name || 'Sản phẩm'" />
         <div class="image-overlay">
           <button class="quick-view-btn" @click="goToDetailPage(props.product.id)">
             <i class="bi bi-eye"></i>
@@ -25,11 +19,8 @@
           </button>
         </div>
         <!-- Custom Info Bottom Right -->
-        <div
-          v-if="props.product.custom"
-          class="custom-info-badge"
-          title="Sản phẩm này có thể tùy chỉnh màu sắc, kích thước và thiết kế theo yêu cầu của bạn"
-        >
+        <div v-if="props.product.custom" class="custom-info-badge"
+          title="Sản phẩm này có thể tùy chỉnh màu sắc, kích thước và thiết kế theo yêu cầu của bạn">
           <i class="bi bi-palette"></i>
           <span>Tùy chỉnh</span>
         </div>
@@ -41,12 +32,8 @@
         <div class="rating-price-row">
           <div class="rating-sales">
             <div class="stars">
-              <i
-                v-for="i in 5"
-                :key="i"
-                :class="i <= props.product.rating ? 'bi bi-star-fill' : 'bi bi-star'"
-                class="star-icon"
-              ></i>
+              <i v-for="i in 5" :key="i" :class="i <= props.product.rating ? 'bi bi-star-fill' : 'bi bi-star'"
+                class="star-icon"></i>
             </div>
             <div class="sales-info">
               <i class="bi bi-graph-up-arrow me-1"></i>
@@ -174,8 +161,8 @@ onMounted(() => {
   displayPrice.value =
     sortedPrices.length > 1
       ? `${sortedPrices[0].toLocaleString()}đ - ${sortedPrices[
-          sortedPrices.length - 1
-        ].toLocaleString()}đ`
+        sortedPrices.length - 1
+      ].toLocaleString()}đ`
       : `${sortedPrices[0].toLocaleString()}đ`;
 });
 function goToDetailPage(productId) {
@@ -243,10 +230,12 @@ function formatPrice(price) {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -279,11 +268,9 @@ function formatPrice(price) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.8) 0%,
-    rgba(118, 75, 162, 0.8) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(102, 126, 234, 0.8) 0%,
+      rgba(118, 75, 162, 0.8) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -455,7 +442,7 @@ function formatPrice(price) {
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   font-weight: 500;
   display: flex;
   align-items: center;
