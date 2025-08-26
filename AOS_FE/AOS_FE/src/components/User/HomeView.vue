@@ -325,7 +325,7 @@
                 <span class="rating-text">(4.9)</span>
                 <span class="sold-count"
                   >• Đã bán
-                  {{ product.soldCount || Math.floor(Math.random() * 100) + 50 }}</span
+                  {{ product.soldCount|| 0 }}</span
                 >
               </div>
             </div>
