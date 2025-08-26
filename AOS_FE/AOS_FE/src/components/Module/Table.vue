@@ -41,31 +41,31 @@
             </td>
             <td class="table-cell action-cell">
               <div class="action-buttons">
-                <div v-if="item.shippingStatus === 'pending' && !item.orderCode">
-                  <button
-                    type="button"
-                    @click="showForm = true"
-                    class="btn btn-success btn-sm"
-                  >
-                    Xác nhận
-                  </button>
+<div v-if="item.shippingStatus === 'pending' && !item.orderCode">
+  <button
+    type="button"
+    @click="activeItemId = item.id"
+    class="btn btn-success btn-sm"
+  >
+    Xác nhận
+  </button>
 
-                  <div v-if="showForm" class="mt-2">
-                    <select v-model="selectedNote" class="form-select form-select-sm">
-                      <option value="CHOTHUHANG">Cho thử hàng</option>
-                      <option value="CHOXEMHANGKHONGTHU">Cho xem hàng không thử</option>
-                      <option value="KHONGCHOXEMHANG">Không cho xem hàng</option>
-                    </select>
+  <div v-if="activeItemId === item.id" class="mt-2">
+    <select v-model="selectedNote" class="form-select form-select-sm">
+      <option value="CHOTHUHANG">Cho thử hàng</option>
+      <option value="CHOXEMHANGKHONGTHU">Cho xem hàng không thử</option>
+      <option value="KHONGCHOXEMHANG">Không cho xem hàng</option>
+    </select>
 
-                    <button
-                      type="button"
-                      @click="approveOrderById(item.id, selectedNote)"
-                      class="btn btn-primary btn-sm mt-2"
-                    >
-                      Gửi đơn
-                    </button>
-                  </div>
-                </div>
+    <button
+      type="button"
+      @click="approveOrderById(item.id, selectedNote)"
+      class="btn btn-primary btn-sm mt-2"
+    >
+      Gửi đơn
+    </button>
+  </div>
+</div>
                 <button
                   type="button"
                   @click="goToView(item.id)"
@@ -1062,7 +1062,7 @@ watch(
   { deep: true }
 );
 
-const showForm = ref(false);
+const activeItemId = ref(null);
 const selectedNote = ref("KHONGCHOXEMHANG");
 
 const approveOrderById = async (orderId, requiredNote) => {

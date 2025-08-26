@@ -57,15 +57,7 @@
               <span class="total-label">Tổng tiền</span>
               <span class="total-amount">{{ formatMoney(order.tongTien) }}</span>
             </div>
-            <div class="order-actions">
-              <button
-                v-if="order.paymentStatus === 'Chưa thanh toán'"
-                class="btn-pay"
-                @click="pay(order)"
-              >
-                <i class="bi bi-credit-card me-2"></i>Thanh toán
-              </button>
-            </div>
+            
           </div>
 
           <!-- Products Section -->
@@ -284,7 +276,15 @@
             <button class="btn-detail" @click="goToOrder(order.id)">
               <i class="bi bi-eye me-2"></i>Xem chi tiết
             </button>
+                          <button
+                v-if="order.paymentStatus === 'unpaid'"
+                class="btn-pay"
+                @click="pay(order)"
+              >
+                <i class="bi bi-credit-card me-2"></i>Thanh toán
+              </button>
           </div>
+
         </div>
       </div>
     </div>
@@ -452,7 +452,7 @@ const filteredOrders = computed(() => {
   if (selectedTab.value === "Chờ thanh toán") {
     console.log("Filtering for unpaid orders");
     return orders.value.filter(
-      (o) => o.paymentStatus === "Chưa thanh toán" && o.paymentMethodId === 2
+      (o) => o.paymentStatus === "unpaid" && o.paymentMethodId === 2
     );
   } else {
     if (
