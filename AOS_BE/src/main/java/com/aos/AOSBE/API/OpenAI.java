@@ -1,5 +1,7 @@
 package com.aos.AOSBE.API;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,7 +60,7 @@ public class OpenAI {
 			if (userEmail.contains("anonymousUser")) {
 				conversationId = session.getId();
 			} else {
-				conversationId = userEmail;
+				conversationId = UUID.randomUUID().toString();
 			}
 			// Logic to call OpenAI API and return response
 			String response = openAIService.forecastChatBot(chat.getMessage(), conversationId);
@@ -78,7 +80,8 @@ public class OpenAI {
 			if (userEmail.contains("anonymousUser")) {
 				conversationId = session.getId();
 			} else {
-				conversationId = userEmail;
+				conversationId = UUID.randomUUID().toString();
+				;
 			}
 			// Logic to call OpenAI API and return response
 			String response = openAIService.personalProductChatBot(chat.getMessage(), conversationId);

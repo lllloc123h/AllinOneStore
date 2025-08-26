@@ -44,22 +44,22 @@ api.interceptors.request.use(config => {
   console.log('Request URL:', config.url, '| Excluded:', isExcluded);
   // neu url ko ngoai le 
   if (!isExcluded) {
-  // kiểm tra token
+    // kiểm tra token
     if (token) {
-  const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
-    config.headers.Authorization = `Bearer ${token}`;
+      const isExpirate = new Date(authService.parseJwt(token).exp * 1000).toLocaleString();
+      config.headers.Authorization = `Bearer ${token}`;
       if (!isExpirate >= new Date().toLocaleString()) {
         notification.info({
-        message: "Token hết hạn",
-        description: `Token hết hạn lúc: ${isExpirate}. Vui lòng đăng nhập lại.`,
-      });
+          message: "Token hết hạn",
+          description: `Token hết hạn lúc: ${isExpirate}. Vui lòng đăng nhập lại.`,
+        });
         localStorage.removeItem('jwtToken')
-      this.removeUserHeader();
-      this.setTokenRef(null);
-      this.updateCart(0);
-      router.push('/login')
+        this.removeUserHeader();
+        this.setTokenRef(null);
+        this.updateCart(0);
+        router.push('/login')
       }
-    }else{
+    } else {
       console.log('api chưa gắn token');
       notification.warning({
         message: "Chưa đăng nhập",
@@ -97,9 +97,11 @@ api.interceptors.response.use(
         authService.setTokenRef(null);
         authService.removeUserHeader();
         router.push('/login')
-        setTimeout(() => {
-          alert('Hết phiên đăng nhập, vui lòng đăng nhập lại !')
-        }, 500)
+
+        notification.info({
+          message: "Hết phiên đăng nhập, vui lòng đăng nhập lại !",
+          description: `Hết phiên đăng nhập, vui lòng đăng nhập lại !`,
+        });
       }
     }
     return Promise.reject(err)
@@ -243,10 +245,10 @@ const authService = {
     this.removeUserHeader();
     router.push('/');
     setTimeout(() => {
-notification.success({
-      message: "Đăng xuất thành công",
-      description: "Bạn đã đăng xuất thành công.",
-    });
+      notification.success({
+        message: "Đăng xuất thành công",
+        description: "Bạn đã đăng xuất thành công.",
+      });
     }, 600);
     cartSize.value = 0;
     localStorage.removeItem('cartSize');

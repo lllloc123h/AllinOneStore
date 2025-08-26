@@ -11,11 +11,8 @@ import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.template.st.StTemplateRenderer;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
-import org.springframework.aop.Advisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -104,34 +101,31 @@ class AIConfig {
 		return builder
 				.defaultSystem(
 						"""
-                        Bạn là một trợ lý bán hàng vui vẻ, nhiệt tình, thân thiện tại một cửa hàng thời trang, quần áo.
-                        Nhiệm vụ của bạn:
-                        - Luôn chào hỏi khách một cách thân thiện.
-                        - Giới thiệu sản phẩm phù hợp với nhu cầu, sở thích, màu sắc, size, ngân sách của khách.
-                        - Khi trả lời, sử dụng định dạng đẹp, xuống dòng, gạch đầu dòng, thỉnh thoảng thêm emoji để tạo cảm giác gần gũi 😊.
-                        - Nếu sản phẩm có imageUrl, hãy nhúng <img src='...'/>.
-                        - Nếu sản phẩm có url, hãy nhúng <a href='...'>Xem chi tiết</a>.
-                        - Nếu không có sản phẩm phù hợp với yêu cầu, hãy nói một cách thân thiện, ví dụ:
-                            "Ôi không 😢, hiện tại chúng mình không có sản phẩm nào đúng với màu Trắng và size M. Nhưng bạn có muốn thử các màu khác hoặc size khác không?"
-                        - Luôn đặt trải nghiệm khách hàng lên hàng đầu, trả lời vui vẻ, dễ hiểu, nhiệt tình và rõ ràng.
-                        - Không bịa thông tin nếu không biết.
-                        """
-				)
+								Bạn là một trợ lý bán hàng vui vẻ, nhiệt tình, thân thiện tại một cửa hàng thời trang, quần áo.
+								Nhiệm vụ của bạn:
+								- Luôn chào hỏi khách một cách thân thiện.
+								- Giới thiệu sản phẩm phù hợp với nhu cầu, sở thích, màu sắc, size, ngân sách của khách.
+								- Khi trả lời, sử dụng định dạng đẹp, xuống dòng, gạch đầu dòng, thỉnh thoảng thêm emoji để tạo cảm giác gần gũi 😊.
+								- Nếu sản phẩm có imageUrl, hãy nhúng <img src='...'/>.
+								- Nếu sản phẩm có url, hãy nhúng <a href='...'>Xem chi tiết</a>.
+								- Nếu không có sản phẩm phù hợp với yêu cầu, hãy nói một cách thân thiện, ví dụ:
+								    "Ôi không 😢, hiện tại chúng mình không có sản phẩm nào đúng với màu Trắng và size M. Nhưng bạn có muốn thử các màu khác hoặc size khác không?"
+								- Luôn đặt trải nghiệm khách hàng lên hàng đầu, trả lời vui vẻ, dễ hiểu, nhiệt tình và rõ ràng.
+								- Không bịa thông tin nếu không biết.
+								""")
 
 				.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory()).build(),
 						QuestionAnswerAdvisor.builder(vectorStore)
 //								.searchRequest(SearchRequest.builder().similarityThreshold(0.5).topK(5).build())
-								.promptTemplate(customPromptTemplate()).build()
-				,
+								.promptTemplate(customPromptTemplate()).build(),
 						RetrievalAugmentationAdvisor.builder()
-										.queryTransformers(RewriteQueryTransformer.builder()
+								.queryTransformers(RewriteQueryTransformer.builder()
 										.chatClientBuilder(builder.build().mutate()).build())
-										.documentRetriever(VectorStoreDocumentRetriever.builder()
-										.similarityThreshold(0.50).topK(5)
+								.documentRetriever(VectorStoreDocumentRetriever.builder().similarityThreshold(0.50)
+										.topK(5)
 										.filterExpression(new FilterExpressionBuilder().eq("isActive", "true").build())
-												.vectorStore(vectorStore).build())
-								.build()
-				)
+										.vectorStore(vectorStore).build())
+								.build())
 //                .defaultUser("Xin chào, mình cần tư vấn sản phẩm")
 				.build();
 	}
@@ -158,51 +152,21 @@ class AIConfig {
 								- Gợi ý sản phẩm hợp gu và nhu cầu.
 								- Viết rõ ràng, ngắn gọn, dùng markdown, bullet, emoji nếu cần.
 								- Nếu dữ liệu chưa đủ, hãy hỏi thêm thông tin như mục đích sử dụng, ngân sách, loại sản phẩm yêu thích,...
-
+								- Luôn chào hỏi khách một cách thân thiện.
+								- Giới thiệu sản phẩm phù hợp với nhu cầu, sở thích, màu sắc, size, ngân sách của khách.
+								- Khi trả lời, sử dụng định dạng đẹp, xuống dòng, gạch đầu dòng, thỉnh thoảng thêm emoji để tạo cảm giác gần gũi 😊.
+								- Nếu sản phẩm có imageUrl, hãy nhúng <img style="max-width:150px; height:auto; border-radius:8px;"  src='...'/>.
+								- Nếu sản phẩm có url, hãy nhúng <a href='...'>Xem chi tiết</a>.
+								- Nếu không có sản phẩm phù hợp với yêu cầu, hãy nói một cách thân thiện, ví dụ:
+								    "Ôi không 😢, hiện tại chúng mình không có sản phẩm nào đúng với màu Trắng và size M. Nhưng bạn có muốn thử các màu khác hoặc size khác không?"
+								- Luôn đặt trải nghiệm khách hàng lên hàng đầu, trả lời vui vẻ, dễ hiểu, nhiệt tình và rõ ràng.
+								- Không bịa thông tin nếu không biết.
 								Nếu có thể, giải thích vì sao bạn chọn các sản phẩm đó cho khách.
-
+								- Dựa trên các dữ liệu đã có đưa ra top 5 sản phẩm phù hợp
+								và đặt link: <a href='/product/{(sản phẩm).baseProducts.id}'>Xem chi tiết</a>
 								""")
 				.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory()).build()).build();
 
-//		return builder
-//				.defaultSystem(
-//						"""
-//								Bạn là một trợ lý bán hàng chuyên nghiệp và thân thiện tại một cửa hàng chuyên về thời trang, quần áo.
-//								Nhiệm vụ của bạn:
-//								- Giới thiệu, tư vấn sản phẩm phù hợp với nhu cầu và sở thích của khách hàng.
-//								- Trả lời có định dạng đẹp, sử dụng xuống dòng, gạch đầu dòng, emoji nếu cần.
-//								- Trả lời các câu hỏi về đặc điểm, chất liệu, công dụng, giá cả, ưu đãi, chính sách đổi trả.
-//								- Đưa ra gợi ý dựa trên thông tin khách hàng cung cấp (giới tính, độ tuổi, mục đích sử dụng, ngân sách, v.v.).
-//								- Luôn trả lời ngắn gọn, dễ hiểu, nhiệt tình và rõ ràng.
-//								- Không bịa ra thông tin nếu không biết — chỉ trả lời dựa trên dữ liệu được cung cấp.
-//								- Nếu khách hỏi biết Trần Hữu Lộc hay không, hãy nói rằng "anh ấy rất đẹp trai".
-//								Nếu không có đủ thông tin, hãy chủ động hỏi lại khách hàng để làm rõ nhu cầu.
-//
-//								Luôn ưu tiên giúp khách hàng chọn được sản phẩm phù hợp và hài lòng nhất.
-//
-//								""")
-//				.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory()).build(),
-//						QuestionAnswerAdvisor.builder(vectorStore)
-//								.searchRequest(SearchRequest.builder().similarityThreshold(0.5).topK(5).build())
-//								.promptTemplate(customPromptTemplate()).build())
-////                .defaultUser("Xin chào, mình cần tư vấn sản phẩm")
-//				.build();
 	}
-//    PromptTemplate customTemplate = new SystemPromptTemplate(
-//            """
-//   {instructions}
-//
-//   Các thông tin có thể hữu ích được tìm thấy trong cơ sở tri thức:
-//
-//   {long_term_memory}
-//   """
-//    );
-//    PromptChatMemoryAdvisor advisor = PromptChatMemoryAdvisor.builder(memory)
-//            .systemPromptTemplate(customTemplate)
-//            .build();
-
-//VectorStoreChatMemoryAdvisor advisor = VectorStoreChatMemoryAdvisor.builder(vectorStore)
-//        .promptTemplate(customTemplate)
-//        .build();
 
 }

@@ -52,9 +52,7 @@
 
             <!-- Chat Messages -->
             <div v-for="(msg, index) in messages" :key="index" class="message-wrapper">
-              <div
-                :class="['message', msg.from === 'user' ? 'user-message' : 'bot-message']"
-              >
+              <div :class="['message', msg.from === 'user' ? 'user-message' : 'bot-message']">
                 <div v-if="msg.from === 'bot'" class="message-avatar">
                   <i class="bi bi-robot"></i>
                 </div>
@@ -88,25 +86,22 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions" v-if="!loading">
-          <!-- <div class="quick-action-chips">
-            <button
-              v-for="action in quickActions"
-              :key="action.id"
-              class="quick-chip"
-              @click="sendQuickMessage(action.message)"
-            >
+          <div class="quick-action-chips">
+            <button v-for="action in quickActions" :key="action.id" class="quick-chip"
+              @click="sendQuickMessage(action.message)">
               <i :class="action.icon"></i>
               {{ action.text }}
             </button>
-          </div> -->
+            <button v-for="action in quickActionsGuessProductUserMayBeBought" :key="action.id" class="quick-chip"
+              @click="sendQuickMessageGuessProduct(action.message)">
+              <i :class="action.icon"></i>
+              {{ action.text }}
+            </button>
+          </div>
           <div class="quick-action-divider">
             <select name="" id="" v-model="selectedColor">
               <option value="">Chọn màu sắc</option>
-              <option
-                v-for="color in listColor"
-                :key="color.id"
-                :value="color.description"
-              >
+              <option v-for="color in listColor" :key="color.id" :value="color.description">
                 {{ color.description }}
               </option>
             </select>
@@ -116,11 +111,7 @@
                 {{ size.description }}
               </option>
             </select>
-            <button
-              style="margin-left: 10px"
-              class="btn btn-danger rounded-5"
-              @click="resetFilters"
-            >
+            <button style="margin-left: 10px" class="btn btn-danger rounded-5" @click="resetFilters">
               Hủy lọc
             </button>
           </div>
@@ -130,18 +121,9 @@
         <div class="chat-footer">
           <form @submit.prevent="sendMessage" class="message-form">
             <div class="input-container">
-              <input
-                v-model="input"
-                type="text"
-                class="message-input"
-                placeholder="Nhập tin nhắn của bạn..."
-                :disabled="loading"
-              />
-              <button
-                type="submit"
-                class="send-button"
-                :disabled="!input.trim() || loading"
-              >
+              <input v-model="input" type="text" class="message-input" placeholder="Nhập tin nhắn của bạn..."
+                :disabled="loading" />
+              <button type="submit" class="send-button" :disabled="!input.trim() || loading">
                 <i class="bi bi-send-fill"></i>
               </button>
             </div>
@@ -205,7 +187,14 @@ const quickActions = ref([
     icon: "bi bi-headset",
   },
 ]);
-
+const quickActionsGuessProductUserMayBeBought = ref([
+  {
+    id: 1,
+    text: "Phân tích xu hướng nhu cầu mua hàng của tôi",
+    message: "Phân tích xu hướng nhu cầu mua hàng của tôi",
+    icon: "bi bi-bag-heart",
+  }
+]);
 const scrollToBottom = () => {
   nextTick(() => {
     if (chatContainer.value) {
@@ -273,12 +262,66 @@ const sendMessage = () => {
       });
   }, 800);
 };
+const sendMessageGuessProduct = () => {
+  const text = input.value.trim();
+  if (!text || loading.value) return;
 
+  // Add user message
+  messages.value.push({
+    from: "user",
+    text,
+    timestamp: new Date(),
+  });
+
+  input.value = "";
+  loading.value = true;
+  scrollToBottom();
+
+  // Simulate API call with delay for better UX
+  setTimeout(() => {
+    const selectedMap = new Map();
+    if (selectedColor.value) {
+      selectedMap.set("color", selectedColor.value);
+    }
+    if (selectedSize.value) {
+      selectedMap.set("size", selectedSize.value);
+    }
+    const filtersObj = Object.fromEntries(selectedMap);
+    // Sử dụng selectedMap cho các mục đích khác (gửi API, hiển thị, ...)
+    console.log("map", filtersObj);
+    api
+      .post("/openai/personalProducts", { message: text, filters: filtersObj })
+      .then((response) => {
+        messages.value.push({
+          from: "bot",
+          text: response.data.replace(/\n/g, "<br>"),
+          timestamp: new Date(),
+        });
+        hasNewMessage.value = !open.value;
+      })
+      .catch((error) => {
+        messages.value.push({
+          from: "bot",
+          text:
+            "Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau! 😔   <img style='max-width: 80px; height: auto;' src='https://res.cloudinary.com/da2v8uqir/image/upload/v1756050248/products/bzwcwcx8kwt8azesf4e6.webp' alt='' />",
+          timestamp: new Date(),
+        });
+        console.error("Error sending message:", error);
+      })
+      .finally(() => {
+        loading.value = false;
+        scrollToBottom();
+      });
+  }, 800);
+};
 const sendQuickMessage = (message) => {
   input.value = message;
   sendMessage();
 };
-
+const sendQuickMessageGuessProduct = (message) => {
+  input.value = message;
+  sendMessageGuessProduct();
+};
 const toggleOpen = () => {
   selectedColor.value = "";
   selectedSize.value = "";
@@ -307,7 +350,8 @@ onMounted(() => {
   margin-top: 12px;
   display: flex;
   justify-content: flex-start;
-  padding-left: 0; /* bỏ padding */
+  padding-left: 0;
+  /* bỏ padding */
 }
 
 .quick-action-divider select {
@@ -404,10 +448,12 @@ onMounted(() => {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.2);
     opacity: 0.7;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -485,10 +531,12 @@ onMounted(() => {
 }
 
 @keyframes blink {
+
   0%,
   50% {
     opacity: 1;
   }
+
   51%,
   100% {
     opacity: 0.3;
@@ -656,20 +704,24 @@ onMounted(() => {
 .typing-dots span:nth-child(1) {
   animation-delay: 0s;
 }
+
 .typing-dots span:nth-child(2) {
   animation-delay: 0.2s;
 }
+
 .typing-dots span:nth-child(3) {
   animation-delay: 0.4s;
 }
 
 @keyframes typing {
+
   0%,
   60%,
   100% {
     transform: translateY(0);
     opacity: 0.4;
   }
+
   30% {
     transform: translateY(-10px);
     opacity: 1;
