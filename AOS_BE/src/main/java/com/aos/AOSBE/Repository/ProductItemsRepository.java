@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.aos.AOSBE.DTOS.BestSellerProductDTO;
 import com.aos.AOSBE.Entity.BaseProducts;
 import com.aos.AOSBE.Entity.ProductItems;
 
@@ -178,17 +179,27 @@ public interface ProductItemsRepository
 	List<ProductItems> findAllDiscountedProductIds();
 
 	@Query("""
-		    SELECT pi FROM ProductItems pi
+		    SELECT new com.aos.AOSBE.DTOS.BestSellerProductDTO(
+		        pi.id,
+		        bp.name,
+			    bp.mainImageUrl,
+		        pi.turnBuy,
+		        bp.rating,
+		        pi.price,
+		        (SELECT SUM(pi3.turnBuy) FROM ProductItems pi3 WHERE pi3.baseProducts.id = bp.id)
+		    )
+		    FROM ProductItems pi
+		    JOIN pi.baseProducts bp
 		    WHERE pi.id IN (
-		        SELECT MIN(pi2.id) FROM ProductItems pi2
+		        SELECT MIN(pi2.id)
+		        FROM ProductItems pi2
 		        JOIN pi2.baseProducts bp2
-		        WHERE bp2.isActive = true
-		        AND pi2.qty > 0
+		        WHERE bp2.isActive = true AND pi2.qty > 0
 		        GROUP BY bp2.id, pi2.price
 		    )
-		    ORDER BY pi.baseProducts.turnBuy DESC
+		    ORDER BY bp.turnBuy DESC
 		""")
-		List<ProductItems> findBestSellersWithPrice(Pageable pageable);
+		List<BestSellerProductDTO> findBestSellersWithTotalTurnBuy(Pageable pageable);
 	
 	
 }
