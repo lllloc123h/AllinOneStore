@@ -180,7 +180,7 @@ public interface ProductItemsRepository
 
 	@Query("""
 		    SELECT new com.aos.AOSBE.DTOS.BestSellerProductDTO(
-		        pi.id,
+		        bp.id,
 		        bp.name,
 			    bp.mainImageUrl,
 		        pi.turnBuy,
