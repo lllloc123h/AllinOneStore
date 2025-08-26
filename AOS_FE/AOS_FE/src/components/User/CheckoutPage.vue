@@ -824,39 +824,35 @@ const discountAmount = computed(() => {
   const coupon = selectedDiscountCoupon.value;
   if (!coupon) return 0;
 
-  // ✅ đọc isAllowVoucher từ mọi biến thể có thể có
   const allowVoucher = readBool(coupon, "isAllowVoucher", "allowVoucher", "is_allow_voucher");
 
-  // ✅ chọn baseTotal đúng theo allowVoucher
   const normalSum = groupedProducts.value.normalItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   const baseTotal = allowVoucher ? totalPrice.value : normalSum;
 
-  // ❗️Nếu không cho stacking mà không có hàng thường -> không giảm
   if (!allowVoucher && normalSum <= 0) return 0;
 
-  // ✅ minOrder: nếu không cho stacking thì check trên normalTotal, còn lại check trên total
   const minOrder = coupon?.minOrderAmount ?? 0;
   const thresholdBase = allowVoucher ? totalPrice.value : normalSum;
   if (minOrder && thresholdBase < minOrder) return 0;
 
-  // ✅ tính giảm giá theo loại
+  // ✅ giảm thẳng
   if (coupon.discountType === "G-DISCOUNT") {
-    const discount = ((coupon.discountValue ?? 0) / 100) * baseTotal;
+    const discount = coupon.discountValue ?? 0;
     const capped =
       coupon.maxDiscountAmount != null
         ? Math.min(discount, coupon.maxDiscountAmount)
         : discount;
 
-    // ❌ KHÔNG ép theo totalPrice nữa, chỉ chặn theo baseTotal để đảm bảo “chỉ trừ phần normal” khi cần
     return Math.min(capped, baseTotal);
   }
 
-  // Fixed amount
+  // nếu còn loại khác (ví dụ fixed khác) thì giữ
   return Math.min(coupon.discountValue ?? 0, baseTotal);
 });
+
 
 
 const freeshipDiscount = computed(() => {
