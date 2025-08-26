@@ -95,10 +95,8 @@
                           {{ formatCurrency(stats.estimatedRevenue) }}
                         </div>
                         <div class="stat-description">
-                          <span class="text-muted"
-                            >Doanh thu chưa trừ đi khuyến mãi, chiết khấu, phí vận chuyển
-                            <strong>(giá bán x số lượng)</strong></span
-                          >
+                          <span class="text-muted">Doanh thu chưa trừ đi khuyến mãi, chiết khấu, phí vận chuyển
+                            <strong>(giá bán x số lượng)</strong></span>
                         </div>
                       </div>
                     </div>
@@ -139,9 +137,8 @@
                           {{ formatCurrency(stats.estimatedShippingDifference) }}
                         </div>
                         <div class="stat-description">
-                          Tổng chênh lệch phí vận chuyển phải trả<strong
-                            >(Phí vận chuyển đã giảm cho khách hàng)</strong
-                          >
+                          Tổng chênh lệch phí vận chuyển phải trả<strong>(Phí vận chuyển đã giảm cho khách
+                            hàng)</strong>
                         </div>
                       </div>
                     </div>
@@ -159,10 +156,8 @@
                           {{ formatCurrency(stats.estimatedPriceDifference) }}
                         </div>
                         <div class="stat-description">
-                          <span class="text-muted"
-                            >Tổng chiết trừ cho giảm giá trên sản phẩm
-                            <strong>(giảm trực tiếp, combo)</strong></span
-                          >
+                          <span class="text-muted">Tổng chiết trừ cho giảm giá trên sản phẩm
+                            <strong>(giảm trực tiếp, combo)</strong></span>
                         </div>
                       </div>
                     </div>
@@ -197,18 +192,16 @@
                           {{
                             formatCurrency(
                               stats.estimatedRevenue -
-                                stats.estimatedDiscountOnOrder -
-                                stats.estimatedShippingDifference -
-                                stats.estimatedPriceDifference -
-                                stats.estimatedCost
+                              stats.estimatedDiscountOnOrder -
+                              stats.estimatedShippingDifference -
+                              stats.estimatedPriceDifference -
+                              stats.estimatedCost
                             )
                           }}
                         </div>
                         <div class="stat-description">
-                          <span class="text-muted"
-                            >Doanh thu - mã giảm giá - Chênh lệch vận chuyển - Giảm giá
-                            trực tiếp - Chi phí sản phẩm</span
-                          >
+                          <span class="text-muted">Doanh thu - mã giảm giá - Chênh lệch vận chuyển - Giảm giá
+                            trực tiếp - Chi phí sản phẩm</span>
                         </div>
                       </div>
                     </div>
@@ -255,8 +248,7 @@
                       {{ formatCurrency(stats.returnedAndRefundOrders) }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng tiền đơn hàng được hoàn trả
+                      <span class="text-muted">Tổng tiền đơn hàng được hoàn trả
                         <strong>(không nhận hàng và hoàn tiền)</strong>
                       </span>
                     </div>
@@ -322,11 +314,9 @@
                     <div class="stat-value return-amount-value">
                       {{
                         formatCurrency(
-                          stats.cancelAndPaidOrders.reduce(
-                            (total, order) => total + order,
-                            0
-                          )
+                          stats.cancelAndPaidOrders.reduce((total, order) => total + order, 0)
                         )
+
                       }}
                     </div>
                     <div class="stat-description">
@@ -343,7 +333,7 @@
                   <div class="stat-content">
                     <h6 class="stat-label">Số lượng đơn đã hủy và hoàn tiền</h6>
                     <div class="stat-value return-amount-value">
-                      {{ stats.cancelAndRefundOrders.length }} đơn
+                      {{ stats.cancelAndRefundOrders?.length }} đơn
                     </div>
                     <div class="stat-description">
                       <span class="text-muted">Giá trị đơn đã hủy</span>
@@ -446,9 +436,7 @@
                       {{ formatCurrency(stats.actualRevenue) }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted"
-                        >Doanh thu cho các đơn giao thành công và đã thanh toán</span
-                      >
+                      <span class="text-muted">Doanh thu cho các đơn giao thành công và đã thanh toán</span>
                     </div>
                   </div>
                 </div>
@@ -466,9 +454,7 @@
                       {{ formatCurrency(stats.actualDiscountOnOrder) }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng phí vận chuyển trên hóa đơn ước tính</span
-                      >
+                      <span class="text-muted">Tổng phí vận chuyển trên hóa đơn ước tính</span>
                     </div>
                   </div>
                 </div>
@@ -504,9 +490,7 @@
                       {{ formatCurrency(stats.actualPriceDifference) }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng phí vận chuyển đã giao thành công</span
-                      >
+                      <span class="text-muted">Tổng phí vận chuyển đã giao thành công</span>
                     </div>
                   </div>
                 </div>
@@ -522,9 +506,7 @@
                       {{ formatCurrency(stats.actualCost) }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng chi phí sản phẩm đã giao thành công</span
-                      >
+                      <span class="text-muted">Tổng chi phí sản phẩm đã giao thành công</span>
                     </div>
                   </div>
                 </div>
@@ -540,24 +522,26 @@
                       {{
                         formatCurrency(
                           stats.actualRevenue -
-                            stats.actualDiscountOnOrder -
-                            stats.actualShippingDifference -
-                            stats.actualPriceDifference -
-                            stats.actualCost
+                          stats.actualDiscountOnOrder -
+                          stats.actualShippingDifference -
+                          stats.actualPriceDifference -
+                          stats.actualCost
                         )
                       }}
                     </div>
                     <div class="stat-description">
-                      <span class="text-muted"
-                        >Tổng chi phí sản phẩm đã giao thành công</span
-                      >
+                      <span class="text-muted">Tổng chi phí sản phẩm đã giao thành công</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
+          <button class="quick-chip" :disabled="action != false"
+            @click="sendQuickMessage('Phân tích xu hướng của sản phẩm có id và dự đoán nhu cầu trong 30 ngày tới')">
+            <i :class="action.icon"></i>
+            {{ action.text }}
+          </button>
           <!-- Discount Overview -->
         </div>
       </div>
@@ -569,7 +553,8 @@
 import { ref, onMounted } from "vue";
 import Dashboard from "../../Module/DashBoard.vue";
 import api from "../../../Configs/api.js";
-
+const action = ref(true);
+const input = ref("");
 // Reactive data
 const stats = ref({
   countOrders: 0,
@@ -639,7 +624,63 @@ const listDashBoard = [
   "VariantValues",
   "Variants",
 ];
+const sendQuickMessage = (message) => {
+  input.value = message;
+  action.value = false;
+  sendMessage();
+};
+const sendMessage = () => {
+  const text = input.value.trim();
+  if (!text || loading.value) return;
 
+  // Add user message
+  messages.value.push({
+    from: "user",
+    text,
+    timestamp: new Date(),
+  });
+
+  input.value = "";
+  loading.value = true;
+  scrollToBottom();
+
+  // Simulate API call with delay for better UX
+  setTimeout(() => {
+    const selectedMap = new Map();
+    if (selectedColor.value) {
+      selectedMap.set("color", selectedColor.value);
+    }
+    if (selectedSize.value) {
+      selectedMap.set("size", selectedSize.value);
+    }
+    const filtersObj = Object.fromEntries(selectedMap);
+    // Sử dụng selectedMap cho các mục đích khác (gửi API, hiển thị, ...)
+    console.log("map", filtersObj);
+    api
+      .post("/openai/chat", { message: text, filters: filtersObj })
+      .then((response) => {
+        messages.value.push({
+          from: "bot",
+          text: response.data.replace(/\n/g, "<br>"),
+          timestamp: new Date(),
+        });
+        hasNewMessage.value = !open.value;
+      })
+      .catch((error) => {
+        messages.value.push({
+          from: "bot",
+          text:
+            "Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau! 😔   <img style='max-width: 80px; height: auto;' src='https://res.cloudinary.com/da2v8uqir/image/upload/v1756050248/products/bzwcwcx8kwt8azesf4e6.webp' alt='' />",
+          timestamp: new Date(),
+        });
+        console.error("Error sending message:", error);
+      })
+      .finally(() => {
+        loading.value = false;
+        scrollToBottom();
+      });
+  }, 800);
+};
 // Methods
 const fetchStats = async () => {
   try {
@@ -770,6 +811,7 @@ onMounted(() => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
