@@ -14,4 +14,5 @@ public class BestSellerProductDTO {
     private int turnBuy;
     private int rating;
     private double price;
+    private Long totalTurnBuy; // ✅ Đổi từ int sang Long
 }

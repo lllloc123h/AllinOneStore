@@ -17,19 +17,7 @@ public class BestSellerService {
     private final ProductItemsRepository productItemsRepository;
 
     public List<BestSellerProductDTO> getBestSellers(int limit) {
-        return productItemsRepository.findBestSellersWithPrice(PageRequest.of(0, limit))
-                .stream()
-                .map(pi -> {
-                    var bp = pi.getBaseProducts();
-                    return new BestSellerProductDTO(
-                            bp.getId(),
-                            bp.getName(),
-                            bp.getMainImageUrl(),
-                            bp.getTurnBuy(),
-                            bp.getRating(),
-                            pi.getPrice()
-                            );
-                })
-                .collect(Collectors.toList());
+        return productItemsRepository.findBestSellersWithTotalTurnBuy(PageRequest.of(0, limit));
     }
+
 }

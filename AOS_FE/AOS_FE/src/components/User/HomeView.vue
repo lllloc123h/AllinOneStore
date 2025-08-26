@@ -325,7 +325,7 @@
                 <span class="rating-text">(4.9)</span>
                 <span class="sold-count"
                   >• Đã bán
-                  {{ product.soldCount|| 0 }}</span
+                  {{ product.totalTurnBuy}}</span
                 >
               </div>
             </div>
