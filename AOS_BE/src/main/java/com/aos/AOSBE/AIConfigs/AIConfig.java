@@ -151,8 +151,10 @@ class AIConfig {
 								Dựa vào dữ liệu trên, hãy đưa ra danh sách sản phẩm phù hợp nhất với khách hàng. Mục tiêu:
 								- Đầu tiên nêu các thông tin cơ bản về khác hàng như giới tính ngày sinh
 								- Gợi ý sản phẩm hợp gu và nhu cầu.
+								- Dựa trên các dữ liệu đã có đưa ra top 5 sản phẩm phù hợp
+								và đặt link: <a href='/product/{(sản phẩm).baseProducts.id}'>Xem chi tiết</a>
+
 								- Viết rõ ràng, ngắn gọn, dùng markdown, bullet, emoji nếu cần.
-								- phân tích như cầu mua hàng về thông tin cơ bản đã cũng cấp
 								- Nếu dữ liệu chưa đủ, hãy hỏi thêm thông tin như mục đích sử dụng, ngân sách, loại sản phẩm yêu thích,...
 								- Luôn chào hỏi khách một cách thân thiện.
 								- Giới thiệu sản phẩm phù hợp với nhu cầu, sở thích, màu sắc, size, ngân sách của khách.
@@ -164,8 +166,7 @@ class AIConfig {
 								- Luôn đặt trải nghiệm khách hàng lên hàng đầu, trả lời vui vẻ, dễ hiểu, nhiệt tình và rõ ràng.
 								- Không bịa thông tin nếu không biết.
 								Nếu có thể, giải thích vì sao bạn chọn các sản phẩm đó cho khách.
-								- Dựa trên các dữ liệu đã có đưa ra top 5 sản phẩm phù hợp
-								và đặt link: <a href='/product/{(sản phẩm).baseProducts.id}'>Xem chi tiết</a>
+
 								""")
 				.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory()).build()).build();
 
