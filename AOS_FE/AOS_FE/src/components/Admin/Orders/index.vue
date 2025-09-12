@@ -68,14 +68,14 @@ const exportOrders = async (startDate, endDate) => {
         start: startDate,
         end: endDate
       },
-      responseType: 'blob' // 🛑 Quan trọng nếu API trả về file
+      responseType: 'blob'
     });
 
-    // Tạo link tải file
+   
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'orders.xlsx'); // đổi tên file nếu cần
+    link.setAttribute('download', 'orders.xlsx'); 
     document.body.appendChild(link);
     link.click();
     link.remove();
