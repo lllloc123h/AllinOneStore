@@ -782,4 +782,24 @@ export default [
         component: () => import('../../components/Admin/BankCodes/Form.vue'),
         props: route => ({ TableName: 'BankCodes', action: 'update', id: route.params.id, })
     },
+    {
+        path: 'EmailTEGV',
+        component: import('../../components/Admin/EmailTEGV/index.vue'),
+        props: route => ({ TableName: 'EmailTEGV' })
+    },
+    {
+        path: 'EmailTEGV/create',
+        component: () => import('../../components/Admin/EmailTEGV/Form.vue'),
+        props: route => ({ TableName: 'EmailTEGV', action: 'create' })
+    },
+    {
+        path: 'EmailTEGV/view/:id',
+        component: () => import('../../components/Admin/EmailTEGV/Form.vue'),
+        props: route => ({ TableName: 'EmailTEGV', action: 'view', id: route.params.id, })
+    },
+    {
+        path: 'EmailTEGV/update/:id',
+        component: () => import('../../components/Admin/EmailTEGV/Form.vue'),
+        props: route => ({ TableName: 'EmailTEGV', action: 'update', id: route.params.id, })
+    },
 ]

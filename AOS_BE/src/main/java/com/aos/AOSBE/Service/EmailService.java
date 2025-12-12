@@ -1,9 +1,12 @@
 package com.aos.AOSBE.Service;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -160,35 +163,51 @@ public class EmailService {
 			e.printStackTrace();
 		}
 	}
+
 	public void sendForgotPasswordOtp(String toEmail, String otpCode) {
-	    String subject = "Reset Your Password - OTP Verification";
+		String subject = "Reset Your Password - OTP Verification";
 
-	    String htmlContent =
-	        "<html>" +
-	        "<head><meta charset=\"UTF-8\"><title>Reset Password</title></head>" +
-	        "<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">" +
-	        "<table width=\"100%\" style=\"max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px #ccc;\">" +
-	        "<tr><td align=\"center\">" +
-	        "<h2 style=\"color:#333;\">Reset Your Password</h2>" +
-	        "<p style=\"color:#666;\">Use the code below to reset your password:</p>" +
-	        "<p style=\"font-size:32px; font-weight:bold; color:#2c3e50; letter-spacing:5px;\">" + otpCode + "</p>" +
-	        "<p style=\"font-size:14px; color:#999;\">This OTP will expire in 5 minutes.</p>" +
-	        "<p style=\"font-size:12px; color:#bbb; margin-top:40px;\">If you did not request this, please ignore this email.</p>" +
-	        "</td></tr>" +
-	        "</table>" +
-	        "</body>" +
-	        "</html>";
+		String htmlContent = "<html>" + "<head><meta charset=\"UTF-8\"><title>Reset Password</title></head>"
+				+ "<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">"
+				+ "<table width=\"100%\" style=\"max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px #ccc;\">"
+				+ "<tr><td align=\"center\">" + "<h2 style=\"color:#333;\">Reset Your Password</h2>"
+				+ "<p style=\"color:#666;\">Use the code below to reset your password:</p>"
+				+ "<p style=\"font-size:32px; font-weight:bold; color:#2c3e50; letter-spacing:5px;\">" + otpCode
+				+ "</p>" + "<p style=\"font-size:14px; color:#999;\">This OTP will expire in 5 minutes.</p>"
+				+ "<p style=\"font-size:12px; color:#bbb; margin-top:40px;\">If you did not request this, please ignore this email.</p>"
+				+ "</td></tr>" + "</table>" + "</body>" + "</html>";
 
-	    try {
-	        MimeMessage message = mailSender.createMimeMessage();
-	        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-	        helper.setTo(toEmail);
-	        helper.setSubject(subject);
-	        helper.setText(htmlContent, true);
-	        mailSender.send(message);
-	    } catch (MessagingException e) {
-	        e.printStackTrace();
-	    }
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			helper.setTo(toEmail);
+			helper.setSubject(subject);
+			helper.setText(htmlContent, true);
+			mailSender.send(message);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
 	}
 
+	public void sendEmailWithImages(String toEmail, String subject, String message, MultipartFile[] imageFiles)
+			throws MessagingException, IOException {
+
+		MimeMessage mimeMessage = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+		helper.setTo(toEmail);
+		helper.setSubject(subject);
+
+//		helper.setText(message, true);
+		helper.setText(message.replace("\n", "<br>"), true);
+
+		// attach multiple images
+		if (imageFiles != null) {
+			for (MultipartFile file : imageFiles) {
+				helper.addAttachment(file.getOriginalFilename(), file);
+			}
+		}
+
+		mailSender.send(mimeMessage);
+	}
 }
